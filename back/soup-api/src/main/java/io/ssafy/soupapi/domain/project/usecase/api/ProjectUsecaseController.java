@@ -24,6 +24,13 @@ import org.springframework.web.bind.annotation.RestController;
 public class ProjectUsecaseController {
     private final ProjectUsecase projectUsecase;
 
+    /**
+     * 프로젝트 생성 Post API
+     *
+     * @param createProjectDto request dto for create project
+     * @param member           member who create project
+     * @return mongodb project objectId
+     */
     @PostMapping("")
     public ResponseEntity<BaseResponse<String>> createProject(
             @Valid @RequestBody CreateProjectDto createProjectDto,
