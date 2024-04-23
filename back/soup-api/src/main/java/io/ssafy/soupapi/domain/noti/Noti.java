@@ -1,0 +1,66 @@
+package io.ssafy.soupapi.domain.noti;
+
+import io.ssafy.soupapi.domain.BaseEntity;
+import io.ssafy.soupapi.domain.chat.Chat;
+import io.ssafy.soupapi.domain.member.Member;
+import jakarta.persistence.*;
+import lombok.*;
+import org.hibernate.annotations.SQLRestriction;
+
+@Getter
+@Setter
+@Entity
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString(callSuper = true)
+@EqualsAndHashCode(callSuper = true)
+@Table(name = "noti")
+@AttributeOverrides({
+        @AttributeOverride(name = "status", column = @Column(name = "noti_status")),
+        @AttributeOverride(name = "createdAt", column = @Column(name = "noti_created_at")),
+        @AttributeOverride(name = "modifiedAt", column = @Column(name = "noti_modified_at"))
+})
+@SQLRestriction("status=TRUE")
+public class Noti extends BaseEntity {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "noti_id")
+    private Long id;
+    @Column(name = "noti_title", length = 100, nullable = false)
+    private String title;
+    @Column(name = "noti_is_read", nullable = false)
+    private boolean isRead;
+    @ManyToOne
+    @JoinColumn(name = "member_id", nullable = false)
+    private Member member;
+    @ManyToOne
+    @JoinColumn(name = "chat_id", nullable = false)
+    private Chat chat;
+
+    /**
+     * Member Entity 설정
+     * Member - Noti Entity 간 일관성 유지
+     *
+     * @param member member element to be set
+     */
+    public void setMember(Member member) {
+        this.member = member;
+        if (!member.getNotiList().contains(this)) {
+            member.getNotiList().add(this);
+        }
+    }
+
+    /**
+     * Chat Entity 설정
+     * Chat - Noti Entity 간 일관성 유지
+     *
+     * @param chat chat element to be set
+     */
+    public void setChat(Chat chat) {
+        this.chat = chat;
+        if (!chat.getNotiList().contains(this)) {
+            chat.getNotiList().add(this);
+        }
+    }
+}
