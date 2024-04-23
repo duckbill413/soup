@@ -48,7 +48,7 @@ public class SecurityConfig {
     @Bean
     public UserDetailsService users() {
         TemporalMember temporalMember = TemporalMember.temporal()
-                .id(UUID.randomUUID())
+                .id(UUID.fromString("4032b5ad-6068-461e-b169-088957523df8"))
                 .username("soup")
                 .password("soup")
                 .authorities(getAdminRole())

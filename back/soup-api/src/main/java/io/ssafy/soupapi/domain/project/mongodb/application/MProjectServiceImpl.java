@@ -9,7 +9,9 @@ import io.ssafy.soupapi.domain.project.usecase.dto.request.CreateProjectDto;
 import io.ssafy.soupapi.global.security.TemporalMember;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.bson.types.ObjectId;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -27,8 +29,9 @@ public class MProjectServiceImpl implements MProjectService {
      * @param member           project maker
      * @return mongodb project object id
      */
+    @Transactional
     @Override
-    public String createProject(CreateProjectDto createProjectDto, TemporalMember temporalMember) { // TODO: member security 적용
+    public ObjectId createProject(CreateProjectDto createProjectDto, TemporalMember temporalMember) { // TODO: member security 적용
         // 프로젝트 및 프로젝트 이름 설정
         var project = Project.builder()
                 .info(
@@ -46,8 +49,6 @@ public class MProjectServiceImpl implements MProjectService {
                         .build()
         );
 
-        var savedProject = MProjectRepository.save(project);
-
-        return savedProject.getId();
+        return MProjectRepository.save(project).getId();
     }
 }

@@ -4,6 +4,7 @@ import jakarta.persistence.Id;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
@@ -13,11 +14,12 @@ import java.util.List;
 @Getter
 @Setter
 @Builder
-@Document(collation = "projects")
+@Document(collection = "projects")
 public class Project {
     @Id
+    @Builder.Default
     @Field("project_id")
-    private String id;
+    private ObjectId id = null;
     @Field("project_info")
     private Info info;
     @Field("project_tools")
