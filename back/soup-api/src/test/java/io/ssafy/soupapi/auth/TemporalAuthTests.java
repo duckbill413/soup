@@ -1,7 +1,7 @@
 package io.ssafy.soupapi.auth;
 
-import io.ssafy.soupapi.domain.member.Member;
-import io.ssafy.soupapi.domain.member.SocialType;
+import io.ssafy.soupapi.domain.member.entity.Member;
+import io.ssafy.soupapi.domain.member.entity.SocialType;
 import io.ssafy.soupapi.domain.member.dao.MemberRepository;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Test;

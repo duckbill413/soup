@@ -1,8 +1,8 @@
-package io.ssafy.soupapi.domain.noti;
+package io.ssafy.soupapi.domain.noti.entity;
 
 import io.ssafy.soupapi.domain.BaseEntity;
-import io.ssafy.soupapi.domain.chat.Chat;
-import io.ssafy.soupapi.domain.member.Member;
+import io.ssafy.soupapi.domain.chat.entity.Chat;
+import io.ssafy.soupapi.domain.member.entity.Member;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.SQLRestriction;
@@ -21,7 +21,7 @@ import org.hibernate.annotations.SQLRestriction;
         @AttributeOverride(name = "createdAt", column = @Column(name = "noti_created_at")),
         @AttributeOverride(name = "modifiedAt", column = @Column(name = "noti_modified_at"))
 })
-@SQLRestriction("status=TRUE")
+@SQLRestriction("noti_status=TRUE")
 public class Noti extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

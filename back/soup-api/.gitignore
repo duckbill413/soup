@@ -284,3 +284,4 @@ gradle-app.setting
 
 # Custom
 application.yml
+/src/main/resources/app.properties

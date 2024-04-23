@@ -1,8 +1,8 @@
-package io.ssafy.soupapi.domain.chat;
+package io.ssafy.soupapi.domain.chat.entity;
 
 import io.ssafy.soupapi.domain.BaseEntity;
-import io.ssafy.soupapi.domain.member.Member;
-import io.ssafy.soupapi.domain.noti.Noti;
+import io.ssafy.soupapi.domain.member.entity.Member;
+import io.ssafy.soupapi.domain.noti.entity.Noti;
 import io.ssafy.soupapi.domain.project.postgresql.entity.Project;
 import jakarta.persistence.*;
 import lombok.*;
@@ -25,7 +25,7 @@ import java.util.List;
         @AttributeOverride(name = "createdAt", column = @Column(name = "chat_created_at")),
         @AttributeOverride(name = "modifiedAt", column = @Column(name = "chat_modified_at"))
 })
-@SQLRestriction("status=TRUE")
+@SQLRestriction("chat_status=TRUE")
 public class Chat extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
