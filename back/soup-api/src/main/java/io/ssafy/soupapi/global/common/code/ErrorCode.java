@@ -46,10 +46,10 @@ public enum ErrorCode {
     NULL_POINT_ERROR(404, "G010", "Null Point Exception"),
 
     // @RequestBody 및 @RequestParam, @PathVariable 값이 유효하지 않음
-    NOT_VALID_ERROR(404, "G011", "Handle Validation Exception"),
+    NOT_VALID_ERROR(400, "G011", "Handle Validation Exception"),
 
     // Header 가 유효하지 않은 경우
-    NOT_VALID_HEADER_ERROR(404, "G012", "Header에 데이터가 존재하지 않는 경우 "),
+    NOT_VALID_HEADER_ERROR(400, "G012", "Header에 데이터가 존재하지 않는 경우 "),
     // 로컬 파일 업로드 실패,
     FAILED_TO_UPLOAD_LOCAL_FILE(404, "F001", "로컬 파일 업로드 실패"),
     // 로컬 파일 업로드 실패,

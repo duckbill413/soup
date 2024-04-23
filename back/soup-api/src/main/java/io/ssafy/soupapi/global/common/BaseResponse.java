@@ -2,18 +2,12 @@ package io.ssafy.soupapi.global.common;
 
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import io.ssafy.soupapi.global.common.code.SuccessCode;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.http.ResponseEntity;
 
-@Getter
-@AllArgsConstructor
+@Schema(description = "Base Response")
 @JsonPropertyOrder({"status", "message", "result"})
-public class BaseResponse<T> {
-    private T result;
-    private int status;
-    private String message;
-
+public record BaseResponse<T>(T result, int status, String message) {
     public static <T> ResponseEntity<BaseResponse<T>> success(SuccessCode successCode, T data) {
         return ResponseEntity
                 .status(successCode.getStatus())
