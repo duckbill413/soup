@@ -9,7 +9,6 @@ export default function ProjectDetailLayout({ children }: Readonly<{ children: R
       <Header />
       <div className={styles.content}>
         {children}
-        asdd
       </div>
     </div>)
 }
