@@ -8,5 +8,5 @@ export const container = style({
 
 
 export const content = style({
-  padding: `${vars.space.large} 0 0 ${vars.space.xLarge}`
+  padding: `${vars.space.xLarge} 0 0 ${vars.space.xxLarge}`
 });
