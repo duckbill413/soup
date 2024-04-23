@@ -7,6 +7,7 @@ import io.ssafy.soupapi.global.security.TemporalMember;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Log4j2
 @Service
@@ -24,10 +25,11 @@ public class ProjectUsecaseImpl implements ProjectUsecase {
      * @param member      project maker
      * @return mongodb project objectId
      */
+    @Transactional
     @Override
     public String createProject(CreateProjectDto createProjectDto, TemporalMember temporalMember) {
         var projectId = mProjectService.createProject(createProjectDto, temporalMember); // TODO: member security 적용
-//        pProjectService.registProject(projectId, createProjectDto, temporalMember); // TODO: member security 적용
+        pProjectService.registProject(projectId.toHexString(), createProjectDto, temporalMember); // TODO: member security 적용
         return projectId.toHexString();
     }
 }

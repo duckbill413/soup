@@ -1,8 +1,8 @@
 package io.ssafy.soupapi.domain.project.postgresql.entity;
 
 import io.ssafy.soupapi.domain.BaseEntity;
-import io.ssafy.soupapi.domain.chat.Chat;
-import io.ssafy.soupapi.domain.projectauth.ProjectAuth;
+import io.ssafy.soupapi.domain.chat.entity.Chat;
+import io.ssafy.soupapi.domain.projectauth.entity.ProjectAuth;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.SQLRestriction;
@@ -24,7 +24,7 @@ import java.util.List;
         @AttributeOverride(name = "createdAt", column = @Column(name = "project_created_at")),
         @AttributeOverride(name = "modifiedAt", column = @Column(name = "project_modified_at"))
 })
-@SQLRestriction("status=TRUE")
+@SQLRestriction("project_status=TRUE")
 public class Project extends BaseEntity {
     @Id
     @Column(name = "project_id")

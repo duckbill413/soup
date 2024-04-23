@@ -1,12 +1,12 @@
 package io.ssafy.soupapi.domain.project.postgresql.application;
 
 
-import io.ssafy.soupapi.domain.member.Member;
+import io.ssafy.soupapi.domain.member.entity.Member;
 import io.ssafy.soupapi.domain.project.mongodb.entity.ProjectRole;
 import io.ssafy.soupapi.domain.project.postgresql.dao.PProjectRepository;
 import io.ssafy.soupapi.domain.project.postgresql.entity.Project;
 import io.ssafy.soupapi.domain.project.usecase.dto.request.CreateProjectDto;
-import io.ssafy.soupapi.domain.projectauth.ProjectAuth;
+import io.ssafy.soupapi.domain.projectauth.entity.ProjectAuth;
 import io.ssafy.soupapi.global.security.TemporalMember;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -16,7 +16,7 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class PProjectServiceImpl implements PProjectService {
-    private final PProjectRepository PProjectRepository;
+    private final PProjectRepository pProjectRepository;
 
     /**
      * mongodb에서 생성된 프로젝트를 postgresql project 객체로 연관 등록
@@ -40,6 +40,6 @@ public class PProjectServiceImpl implements PProjectService {
                 .member(Member.builder().id(temporalMember.getId()).build()) // TODO: member security 적용
                 .project(project)
                 .build());
-        PProjectRepository.save(project);
+        pProjectRepository.save(project);
     }
 }
