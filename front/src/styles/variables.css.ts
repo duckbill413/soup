@@ -1,10 +1,5 @@
-import { createGlobalTheme,globalFontFace } from '@vanilla-extract/css'
+import { createGlobalTheme } from '@vanilla-extract/css'
 
-globalFontFace('Pretendard-Regular', {
-  src: `url('https://cdn.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Regular.woff') format('woff')`,
-  fontWeight: '400',
-  fontStyle: 'normal',
-});
 
 const vars = createGlobalTheme(':root', {
   fontSize:{
@@ -38,9 +33,7 @@ const vars = createGlobalTheme(':root', {
     layout: '',
     black: '#363636',
   },
-  fontFamily: {
-    body: 'Pretendard-Regular, sans-serif',
-  },
+
 
 
 

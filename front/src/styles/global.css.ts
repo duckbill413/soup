@@ -7,6 +7,5 @@ export const container = style({
 });
 
 globalStyle('body', {
-  fontFamily: vars.fontFamily.body,
   margin: '0',
 });
