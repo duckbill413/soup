@@ -24,7 +24,7 @@ public class GlobalControllerAdvice {
                 .message(e.getMessage())
                 .build();
 
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return ResponseEntity.status(response.getStatus()).body(response);
     }
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> handleMethodValidation(MethodArgumentNotValidException ex) {
@@ -35,7 +35,7 @@ public class GlobalControllerAdvice {
                 .errors(Objects.requireNonNull(bindingResult).getFieldErrors())
                 .build();
 
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return ResponseEntity.status(response.getStatus()).body(response);
     }
 
     @ExceptionHandler(HandlerMethodValidationException.class)
@@ -45,7 +45,7 @@ public class GlobalControllerAdvice {
                 .message(ex.getMessage())
                 .build();
 
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return ResponseEntity.status(response.getStatus()).body(response);
     }
     @ExceptionHandler(RuntimeException.class)
     protected ResponseEntity<ErrorResponse> handleRuntimeExceptions(RuntimeException e) {
@@ -55,7 +55,7 @@ public class GlobalControllerAdvice {
                 .message(e.getMessage())
                 .build();
 
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return ResponseEntity.status(response.getStatus()).body(response);
     }
     /**
      * 예외 처리 되지 않은 모든 에러 처리
@@ -71,6 +71,6 @@ public class GlobalControllerAdvice {
                 .message(e.getMessage())
                 .build();
 
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return ResponseEntity.status(response.getStatus()).body(response);
     }
 }
