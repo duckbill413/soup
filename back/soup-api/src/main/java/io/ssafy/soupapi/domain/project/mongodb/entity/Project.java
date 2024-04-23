@@ -7,6 +7,7 @@ import lombok.Setter;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -21,7 +22,8 @@ public class Project {
     private Info info;
     @Field("project_tools")
     private List<Tool> tools;
+    @Builder.Default
     @Field("project_team_members")
-    private List<TeamMember> teamMembers;
+    private List<TeamMember> teamMembers = new ArrayList<>();
     private Proposal proposal;
 }

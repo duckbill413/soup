@@ -2,6 +2,7 @@ package io.ssafy.soupapi.domain.projectauth;
 
 import io.ssafy.soupapi.domain.BaseEntity;
 import io.ssafy.soupapi.domain.member.Member;
+import io.ssafy.soupapi.domain.project.mongodb.entity.ProjectRole;
 import io.ssafy.soupapi.domain.project.postgresql.entity.Project;
 import jakarta.persistence.*;
 import lombok.*;
@@ -29,8 +30,9 @@ public class ProjectAuth extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "project_auth_id")
     private UUID id;
-    @Column(name = "project_auth_position")
-    private String position; // TODO: Enum으로 변경 필요
+    @Column(name = "project_auth_role")
+    @Enumerated(EnumType.STRING)
+    private ProjectRole role;
     @ManyToOne
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;

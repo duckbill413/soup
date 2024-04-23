@@ -29,6 +29,10 @@ public class Project extends BaseEntity {
     @Id
     @Column(name = "project_id")
     private String id;
+    @Column(name = "project_name")
+    private String name;
+    @Column(name = "project_img_url")
+    private String imgUrl;
     @Column(name = "project_file_uri")
     private String fileUri;
     @Column(name = "project_jira_username")
@@ -39,7 +43,7 @@ public class Project extends BaseEntity {
     @OneToMany(mappedBy = "project")
     private List<Chat> chatList = new ArrayList<>();
     @Builder.Default
-    @OneToMany(mappedBy = "project")
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL)
     private List<ProjectAuth> projectAuthList = new ArrayList<>();
 
     /**
