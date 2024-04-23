@@ -1,5 +1,5 @@
 
-function FourthMain() {
+function MainSpec() {
     return (
       <div style={{
         height:"90vh",
@@ -13,4 +13,4 @@ function FourthMain() {
     )
 }
 
-export default FourthMain
+export default MainSpec

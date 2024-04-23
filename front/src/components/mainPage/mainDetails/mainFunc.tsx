@@ -1,5 +1,5 @@
 
-function ThirdMain() {
+function MainFunc() {
     return (
       <div style={{
           height: "90vh",
@@ -14,4 +14,4 @@ function ThirdMain() {
     )
 }
 
-export default ThirdMain
+export default MainFunc

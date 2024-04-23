@@ -1,10 +1,10 @@
 import vars from '@/styles/variables.css'
 import DownButton from '#/assets/icons/mainpage/downbutton'
-import { FirstPagepic1, FirstPagepic2, FirstPagepic3 } from '#/assets/icons/mainpage/first/firstillust'
+import { FirstPagepic1, FirstPagepic2, FirstPagepic3 } from '#/assets/icons/mainpage/intro/firstillust'
 import { bounceAnimation } from '@/styles/main/mainPage.css'
 
 
-function FirstMain({ onButtonClick }: {onButtonClick?: () => void}) {
+function MainIntro({ onButtonClick }: {onButtonClick?: () => void}) {
     return (
         <div style={{height:"90vh", width:'100%', display: 'flex', flexDirection: 'column', alignItems: 'center', backgroundColor: '#b6d8f2'}}>
           <div style={{
@@ -39,4 +39,4 @@ function FirstMain({ onButtonClick }: {onButtonClick?: () => void}) {
     )
 }
 
-export default FirstMain
+export default MainIntro
