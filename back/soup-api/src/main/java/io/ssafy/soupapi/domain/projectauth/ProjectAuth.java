@@ -2,7 +2,7 @@ package io.ssafy.soupapi.domain.projectauth;
 
 import io.ssafy.soupapi.domain.BaseEntity;
 import io.ssafy.soupapi.domain.member.Member;
-import io.ssafy.soupapi.domain.project.Project;
+import io.ssafy.soupapi.domain.project.postgresql.entity.Project;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.SQLRestriction;

@@ -1,4 +1,4 @@
-package io.ssafy.soupapi.domain.project;
+package io.ssafy.soupapi.domain.project.postgresql.entity;
 
 import io.ssafy.soupapi.domain.BaseEntity;
 import io.ssafy.soupapi.domain.chat.Chat;
