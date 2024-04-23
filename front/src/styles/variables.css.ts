@@ -18,15 +18,18 @@ const vars = createGlobalTheme(':root', {
     base: '1.5rem',
     large: '3rem',
     xLarge: '4rem',
+    xxLarge: '5rem',
   },
   color: {
     white: '#ffffff',
     main: '#349B00',
+    lightGreen: '#4FEC00',
     cream: '#FFF1C0',
     brown: '#564300',
     orange: '#FF7E20',
     black: '#363636',
     gray: '#D9D9D9',
+    deepGray: '#535252'
 
   },
   backgroundColor:{
