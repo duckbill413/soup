@@ -15,6 +15,7 @@ import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -24,6 +25,7 @@ import java.util.UUID;
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
@@ -32,6 +34,7 @@ public class SecurityConfig {
                         .anyRequest().authenticated()
                 )
                 .csrf(AbstractHttpConfigurer::disable)
+                .addFilterBefore(temporalAuthenticateFilter(), UsernamePasswordAuthenticationFilter.class)
         ;
 
         return http.build();
@@ -73,7 +76,12 @@ public class SecurityConfig {
         };
     }
 
-    public static Collection<GrantedAuthority> getAdminRole() {
+    @Bean
+    public TemporalAuthenticateFilter temporalAuthenticateFilter() {
+        return new TemporalAuthenticateFilter();
+    }
+
+    private static Collection<GrantedAuthority> getAdminRole() {
         Collection<GrantedAuthority> authorities = new ArrayList<>();
         authorities.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
         return authorities;
