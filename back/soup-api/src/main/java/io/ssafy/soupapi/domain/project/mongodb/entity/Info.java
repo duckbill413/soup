@@ -11,14 +11,18 @@ import java.time.LocalDate;
 @Setter
 @Builder
 public class Info {
-    @Field("name")
+    @Field("project_name")
     private String name;
-    @Field("description")
+    @Field("project_description")
     private String description;
-    @Field("profile_img_url")
-    private String profileImgUrl;
-    @Field("start_date")
+    @Field("project_img_url")
+    private String imgUrl;
+    @Field("project_start_date")
     private LocalDate startDate;
-    @Field("end_date")
+    @Field("project_end_date")
     private LocalDate endDate;
+    @Field("project_jira_username")
+    private String jiraUsername;
+    @Field("project_jira_key")
+    private String jiraKey;
 }

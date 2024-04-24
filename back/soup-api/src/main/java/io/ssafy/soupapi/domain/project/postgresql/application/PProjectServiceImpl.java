@@ -8,12 +8,15 @@ import io.ssafy.soupapi.domain.project.postgresql.dto.response.SimpleProjectDto;
 import io.ssafy.soupapi.domain.project.postgresql.entity.Project;
 import io.ssafy.soupapi.domain.project.usecase.dto.request.CreateProjectDto;
 import io.ssafy.soupapi.domain.projectauth.entity.ProjectAuth;
+import io.ssafy.soupapi.global.common.code.ErrorCode;
 import io.ssafy.soupapi.global.common.request.PageOffsetRequest;
 import io.ssafy.soupapi.global.common.response.OffsetPagination;
 import io.ssafy.soupapi.global.common.response.PageOffsetResponse;
+import io.ssafy.soupapi.global.exception.BaseExceptionHandler;
 import io.ssafy.soupapi.global.security.TemporalMember;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.bson.types.ObjectId;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -50,6 +53,7 @@ public class PProjectServiceImpl implements PProjectService {
                 .build());
         pProjectRepository.save(project);
     }
+
     @Transactional(readOnly = true)
     @Override
     public PageOffsetResponse<List<SimpleProjectDto>> findSimpleProjects(PageOffsetRequest pageOffset, TemporalMember member) { // TODO: member security 적용
@@ -60,5 +64,15 @@ public class PProjectServiceImpl implements PProjectService {
                 .content(data.getContent())
                 .pagination(OffsetPagination.offset(data.getTotalPages(), data.getTotalElements(), data.getPageable()))
                 .build();
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public List<ProjectRole> getProjectRoles(ObjectId projectId, TemporalMember member) { // TODO: security member
+        List<ProjectAuth> response = pProjectRepository.findProjectAuthByProjectIdAndMemberId(projectId.toHexString(), member.getId());
+        if (response.isEmpty()) {
+            throw new BaseExceptionHandler(ErrorCode.NOT_FOUND_PROJECT_AUTH);
+        }
+        return response.stream().map(ProjectAuth::getRole).toList();
     }
 }

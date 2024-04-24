@@ -1,5 +1,6 @@
 package io.ssafy.soupapi.domain.project.usecase.api;
 
+import io.ssafy.soupapi.domain.project.mongodb.dto.response.ProjectInfoDto;
 import io.ssafy.soupapi.domain.project.usecase.application.ProjectUsecase;
 import io.ssafy.soupapi.domain.project.usecase.dto.request.CreateProjectDto;
 import io.ssafy.soupapi.global.common.code.SuccessCode;
@@ -10,12 +11,12 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.bson.types.ObjectId;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.text.ParseException;
 
 @Log4j2
 @RestController
@@ -37,10 +38,21 @@ public class ProjectUsecaseController {
     public ResponseEntity<BaseResponse<String>> createProject(
             @Valid @RequestBody CreateProjectDto createProjectDto,
             @AuthenticationPrincipal TemporalMember temporalMember
-    ) {
+    ) throws ParseException {
         return BaseResponse.success(
                 SuccessCode.INSERT_SUCCESS,
                 projectUsecase.createProject(createProjectDto, temporalMember) // TODO: member security 적용
+        );
+    }
+
+    @GetMapping("/{projectId}/info")
+    public ResponseEntity<BaseResponse<ProjectInfoDto>> findProjectInfo(
+            @PathVariable(name = "projectId") String projectId,
+            @AuthenticationPrincipal TemporalMember member // TODO: security member
+    ) {
+        return BaseResponse.success(
+                SuccessCode.SELECT_SUCCESS,
+                projectUsecase.findProjectInfo(new ObjectId(projectId), member)
         );
     }
 }

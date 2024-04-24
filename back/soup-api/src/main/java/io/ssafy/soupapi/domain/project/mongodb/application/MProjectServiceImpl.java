@@ -1,11 +1,14 @@
 package io.ssafy.soupapi.domain.project.mongodb.application;
 
 import io.ssafy.soupapi.domain.project.mongodb.dao.MProjectRepository;
+import io.ssafy.soupapi.domain.project.mongodb.dto.response.ProjectInfoDto;
 import io.ssafy.soupapi.domain.project.mongodb.entity.Info;
 import io.ssafy.soupapi.domain.project.mongodb.entity.Project;
 import io.ssafy.soupapi.domain.project.mongodb.entity.ProjectRole;
 import io.ssafy.soupapi.domain.project.mongodb.entity.TeamMember;
 import io.ssafy.soupapi.domain.project.usecase.dto.request.CreateProjectDto;
+import io.ssafy.soupapi.global.common.code.ErrorCode;
+import io.ssafy.soupapi.global.exception.BaseExceptionHandler;
 import io.ssafy.soupapi.global.security.TemporalMember;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -13,13 +16,14 @@ import org.bson.types.ObjectId;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.ParseException;
 import java.util.List;
 
 @Log4j2
 @Service
 @RequiredArgsConstructor
 public class MProjectServiceImpl implements MProjectService {
-    private final MProjectRepository MProjectRepository;
+    private final MProjectRepository mProjectRepository;
 
     /**
      * 프로젝트 생성 및 최초 팀 구성 설정
@@ -31,13 +35,15 @@ public class MProjectServiceImpl implements MProjectService {
      */
     @Transactional
     @Override
-    public ObjectId createProject(CreateProjectDto createProjectDto, TemporalMember temporalMember) { // TODO: member security 적용
+    public ObjectId createProject(CreateProjectDto createProjectDto, TemporalMember temporalMember) throws ParseException { // TODO: member security 적용
         // 프로젝트 및 프로젝트 이름 설정
         var project = Project.builder()
                 .info(
                         Info.builder()
                                 .name(createProjectDto.name())
-                                .profileImgUrl(createProjectDto.imgUrl())
+                                .imgUrl(createProjectDto.imgUrl())
+                                .startDate(createProjectDto.getStartDate())
+                                .endDate(createProjectDto.getEndDate())
                                 .build()
                 ).build();
         // 프로젝트 팀 구성 설정 (프로젝트 생성자에게 ADMIN 권한 부여)
@@ -49,6 +55,34 @@ public class MProjectServiceImpl implements MProjectService {
                         .build()
         );
 
-        return MProjectRepository.save(project).getId();
+        return mProjectRepository.save(project).getId();
+    }
+
+    /**
+     * ProjectInfoDto 반환 (키 정보 X)
+     *
+     * @param projectId mongodb project id
+     * @return ProjectInfoDto that key info is null
+     */
+    @Transactional(readOnly = true)
+    @Override
+    public ProjectInfoDto findProjectInfo(ObjectId projectId) {
+        var project = mProjectRepository.findById(projectId).orElseThrow(() ->
+                new BaseExceptionHandler(ErrorCode.NOT_FOUND_PROJECT));
+        return ProjectInfoDto.toProjectInfoDto(project);
+    }
+
+    /**
+     * ProjectInfoDto 반환 (키 정보 O)
+     *
+     * @param projectId mongodb project id
+     * @return ProjectInfoDto that has key info
+     */
+    @Transactional(readOnly = true)
+    @Override
+    public ProjectInfoDto findProjectInfoWithKey(ObjectId projectId) {
+        var project = mProjectRepository.findById(projectId).orElseThrow(() ->
+                new BaseExceptionHandler(ErrorCode.NOT_FOUND_PROJECT));
+        return ProjectInfoDto.toProjectInfoWithKeyDto(project);
     }
 }
