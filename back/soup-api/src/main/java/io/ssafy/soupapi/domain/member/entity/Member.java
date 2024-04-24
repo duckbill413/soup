@@ -1,9 +1,9 @@
-package io.ssafy.soupapi.domain.member;
+package io.ssafy.soupapi.domain.member.entity;
 
 import io.ssafy.soupapi.domain.BaseEntity;
-import io.ssafy.soupapi.domain.chat.Chat;
-import io.ssafy.soupapi.domain.noti.Noti;
-import io.ssafy.soupapi.domain.projectauth.ProjectAuth;
+import io.ssafy.soupapi.domain.chat.entity.Chat;
+import io.ssafy.soupapi.domain.noti.entity.Noti;
+import io.ssafy.soupapi.domain.projectauth.entity.ProjectAuth;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.SQLRestriction;
@@ -29,7 +29,7 @@ import java.util.UUID;
         @AttributeOverride(name = "createdAt", column = @Column(name = "member_created_at")),
         @AttributeOverride(name = "modifiedAt", column = @Column(name = "member_modified_at"))
 })
-@SQLRestriction("status=TRUE")
+@SQLRestriction("member_status=TRUE")
 public class Member extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

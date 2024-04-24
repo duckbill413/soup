@@ -1,8 +1,9 @@
-package io.ssafy.soupapi.domain.projectauth;
+package io.ssafy.soupapi.domain.projectauth.entity;
 
 import io.ssafy.soupapi.domain.BaseEntity;
-import io.ssafy.soupapi.domain.member.Member;
-import io.ssafy.soupapi.domain.project.Project;
+import io.ssafy.soupapi.domain.member.entity.Member;
+import io.ssafy.soupapi.domain.project.mongodb.entity.ProjectRole;
+import io.ssafy.soupapi.domain.project.postgresql.entity.Project;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.SQLRestriction;
@@ -23,14 +24,15 @@ import java.util.UUID;
         @AttributeOverride(name = "createdAt", column = @Column(name = "project_auth_created_at")),
         @AttributeOverride(name = "modifiedAt", column = @Column(name = "project_auth_modified_at"))
 })
-@SQLRestriction("status=TRUE")
+@SQLRestriction("project_auth_status=TRUE")
 public class ProjectAuth extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "project_auth_id")
     private UUID id;
-    @Column(name = "project_auth_position")
-    private String position; // TODO: Enum으로 변경 필요
+    @Column(name = "project_auth_role")
+    @Enumerated(EnumType.STRING)
+    private ProjectRole role;
     @ManyToOne
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;

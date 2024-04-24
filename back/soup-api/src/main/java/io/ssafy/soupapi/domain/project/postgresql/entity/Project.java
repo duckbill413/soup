@@ -1,8 +1,8 @@
-package io.ssafy.soupapi.domain.project;
+package io.ssafy.soupapi.domain.project.postgresql.entity;
 
 import io.ssafy.soupapi.domain.BaseEntity;
-import io.ssafy.soupapi.domain.chat.Chat;
-import io.ssafy.soupapi.domain.projectauth.ProjectAuth;
+import io.ssafy.soupapi.domain.chat.entity.Chat;
+import io.ssafy.soupapi.domain.projectauth.entity.ProjectAuth;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.SQLRestriction;
@@ -24,11 +24,15 @@ import java.util.List;
         @AttributeOverride(name = "createdAt", column = @Column(name = "project_created_at")),
         @AttributeOverride(name = "modifiedAt", column = @Column(name = "project_modified_at"))
 })
-@SQLRestriction("status=TRUE")
+@SQLRestriction("project_status=TRUE")
 public class Project extends BaseEntity {
     @Id
     @Column(name = "project_id")
     private String id;
+    @Column(name = "project_name")
+    private String name;
+    @Column(name = "project_img_url")
+    private String imgUrl;
     @Column(name = "project_file_uri")
     private String fileUri;
     @Column(name = "project_jira_username")
@@ -39,7 +43,7 @@ public class Project extends BaseEntity {
     @OneToMany(mappedBy = "project")
     private List<Chat> chatList = new ArrayList<>();
     @Builder.Default
-    @OneToMany(mappedBy = "project")
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL)
     private List<ProjectAuth> projectAuthList = new ArrayList<>();
 
     /**

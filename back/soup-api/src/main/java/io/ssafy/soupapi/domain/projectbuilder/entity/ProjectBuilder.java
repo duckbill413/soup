@@ -1,4 +1,4 @@
-package io.ssafy.soupapi.domain.projectbuilder;
+package io.ssafy.soupapi.domain.projectbuilder.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -11,7 +11,6 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "project_builder")
-
 public class ProjectBuilder {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
