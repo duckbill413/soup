@@ -2,9 +2,10 @@ package io.ssafy.soupapi.domain.project.usecase.api;
 
 import io.ssafy.soupapi.domain.project.usecase.application.ProjectUsecase;
 import io.ssafy.soupapi.domain.project.usecase.dto.request.CreateProjectDto;
-import io.ssafy.soupapi.global.common.response.BaseResponse;
 import io.ssafy.soupapi.global.common.code.SuccessCode;
+import io.ssafy.soupapi.global.common.response.BaseResponse;
 import io.ssafy.soupapi.global.security.TemporalMember;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/projects")
 @RequiredArgsConstructor
-@Tag(name = "프로젝트")
+@Tag(name = "프로젝트", description = "Project Domain Usecase Controller")
 public class ProjectUsecaseController {
     private final ProjectUsecase projectUsecase;
 
@@ -31,6 +32,7 @@ public class ProjectUsecaseController {
      * @param member           member who create project
      * @return mongodb project objectId
      */
+    @Operation(summary = "프로젝트 생성 요청")
     @PostMapping("")
     public ResponseEntity<BaseResponse<String>> createProject(
             @Valid @RequestBody CreateProjectDto createProjectDto,
