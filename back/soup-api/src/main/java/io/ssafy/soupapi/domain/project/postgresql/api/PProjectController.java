@@ -8,6 +8,7 @@ import io.ssafy.soupapi.global.common.response.BaseResponse;
 import io.ssafy.soupapi.global.common.response.PageOffsetResponse;
 import io.ssafy.soupapi.global.security.TemporalMember;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;
@@ -28,13 +29,14 @@ public class PProjectController {
 
     /**
      * 간단한 프로젝트 정보 리스트 조회
+     *
      * @param pageOffset offset page request
-     * @param member login member
+     * @param member     login member
      * @return simple project list with page info
      */
     @GetMapping("")
     public ResponseEntity<BaseResponse<PageOffsetResponse<List<SimpleProjectDto>>>> findSimpleProjects(
-            PageOffsetRequest pageOffset,
+            @Valid PageOffsetRequest pageOffset,
             @AuthenticationPrincipal TemporalMember member // TODO: member security 적용
     ) {
         return BaseResponse.success(

@@ -1,6 +1,7 @@
 package io.ssafy.soupapi.global.common.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.Max;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 
@@ -8,6 +9,7 @@ import org.springframework.data.domain.Sort;
 public record PageOffsetRequest(
         @Schema(description = "페이지 번호 (최초 페이지 번호: 1)")
         int page,
+        @Max(value = 100, message = "페이지 최대 100개까지 한번에 호출할 수 있습니다.")
         @Schema(description = "페이지 크기")
         int size
 ) {
