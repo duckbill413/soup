@@ -6,9 +6,28 @@ import sample from "#/assets/icons/mainpage/sample1.jpg"
 import Calendar from '@/containers/outline/components/calendar'
 import Add from "#/assets/icons/outline/addButton.svg"
 import Image from 'next/image'
+import ToolTable from '@/containers/outline/components/toolTable'
+import { useState } from 'react'
+
+
+interface TableRow {
+  name: string;
+  description: string;
+}
 
 function Outline () {
   const sampleSrc = sample.src
+  const [rows, setRows] = useState<TableRow[]>([]);
+
+  // AddButton 클릭 이벤트 핸들러
+  const handleAddRow = () => {
+    const newRow = {
+      name: `Tool ${rows.length + 1}`,
+      description: 'https://naver.com',
+    };
+    setRows([...rows, newRow]);
+  };
+
   return (
     <div>
       <StepTitle stepNum={1} title="프로젝트 개요" desc="프로젝트 정보를 입력하고, 팀을 구성해보세요."/>
@@ -43,9 +62,9 @@ function Outline () {
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
             <div style={{display: 'flex', alignItems:'center'}}>
               <p className={styles.boldText}>협업 툴</p>
-              <Image src={Add} alt="add" width={32} height={32}/>
+              <Image src={Add} alt="add" width={32} height={32} onClick={handleAddRow}/>
             </div>
-
+            <ToolTable rows={rows}/>
           </div>
 
 
