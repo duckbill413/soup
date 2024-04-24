@@ -11,6 +11,7 @@ export const container = style({
   padding: vars.space.tiny,
   color: 'white',
   boxShadow: `0px 0px 5px black`,
+  zIndex: 2
 });
 
 export const assistant = style({
