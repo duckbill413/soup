@@ -2,7 +2,7 @@
 
 import Lottie from 'react-lottie-player'
 import * as styles from '@/styles/exception.css'
-import lottieJson from '../../public/assets/animations/loadingAnimation.json'
+import lottieJson from '@/../public/assets/animations/loadingAnimation.json'
 
 export default function Loading() {
   return (
