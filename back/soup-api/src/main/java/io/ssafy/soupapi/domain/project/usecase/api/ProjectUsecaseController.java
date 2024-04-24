@@ -16,8 +16,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import java.text.ParseException;
-
 @Log4j2
 @RestController
 @RequestMapping("/api/projects")
@@ -38,7 +36,7 @@ public class ProjectUsecaseController {
     public ResponseEntity<BaseResponse<String>> createProject(
             @Valid @RequestBody CreateProjectDto createProjectDto,
             @AuthenticationPrincipal TemporalMember temporalMember
-    ) throws ParseException {
+    ) {
         return BaseResponse.success(
                 SuccessCode.INSERT_SUCCESS,
                 projectUsecase.createProject(createProjectDto, temporalMember) // TODO: member security 적용

@@ -4,9 +4,9 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Pattern;
 
-import java.text.ParseException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Objects;
 
 @Schema(description = "프로젝트 생성 요청")
 public record CreateProjectDto(
@@ -22,11 +22,17 @@ public record CreateProjectDto(
         @Schema(description = "프로젝트 종료일")
         String endDate
 ) {
-    public LocalDate getStartDate() throws ParseException {
+    public LocalDate getStartDate() {
+        if (Objects.isNull(startDate)) {
+            return LocalDate.now();
+        }
         return LocalDate.parse(startDate, DateTimeFormatter.BASIC_ISO_DATE);
     }
 
-    public LocalDate getEndDate() throws ParseException {
+    public LocalDate getEndDate() {
+        if (Objects.isNull(endDate)) {
+            return LocalDate.of(2049, 12, 31);
+        }
         return LocalDate.parse(endDate, DateTimeFormatter.BASIC_ISO_DATE);
     }
 }

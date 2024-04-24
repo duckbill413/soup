@@ -35,7 +35,7 @@ public class MProjectServiceImpl implements MProjectService {
      */
     @Transactional
     @Override
-    public ObjectId createProject(CreateProjectDto createProjectDto, TemporalMember temporalMember) throws ParseException { // TODO: member security 적용
+    public ObjectId createProject(CreateProjectDto createProjectDto, TemporalMember temporalMember) { // TODO: member security 적용
         // 프로젝트 및 프로젝트 이름 설정
         var project = Project.builder()
                 .info(

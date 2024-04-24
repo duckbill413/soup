@@ -12,8 +12,6 @@ import org.bson.types.ObjectId;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.text.ParseException;
-
 @Log4j2
 @Service
 @RequiredArgsConstructor
@@ -32,7 +30,7 @@ public class ProjectUsecaseImpl implements ProjectUsecase {
      */
     @Transactional
     @Override
-    public String createProject(CreateProjectDto createProjectDto, TemporalMember temporalMember) throws ParseException {
+    public String createProject(CreateProjectDto createProjectDto, TemporalMember temporalMember) {
         var projectId = mProjectService.createProject(createProjectDto, temporalMember); // TODO: member security 적용
         pProjectService.registProject(projectId.toHexString(), createProjectDto, temporalMember); // TODO: member security 적용
         return projectId.toHexString();
