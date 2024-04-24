@@ -16,7 +16,7 @@ export const container = style({
 
 export const assistant = style({
   display: 'flex',
-  justifyContent: 'end',
+  justifyContent: 'flex-end',
 });
 
 globalStyle(`${container} > div`, {

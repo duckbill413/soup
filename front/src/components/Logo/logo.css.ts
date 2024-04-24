@@ -1,5 +1,7 @@
 import { style } from '@vanilla-extract/css'
 
-export const logo = style({
+const logo = style({
   cursor: 'pointer',
 });
+
+export default logo;

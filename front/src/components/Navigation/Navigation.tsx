@@ -1,34 +1,21 @@
 'use client'
-/*
- Navigation(Left)
- */
+
 import React, { useState } from 'react'
 import * as styles from '@/components/Navigation/navigation.css'
 import vars from '@/styles/variables.css'
-import {
-  API,
-  build,
-  ERD,
-  flow,
-  func,
-  outline,
-  plan,
-  readme,
-} from '@/../public/assets/icons/navigation'
+import { API, build, ERD, flow, func, outline, plan, readme } from '@/../public/assets/icons/navigation'
 import { usePathname } from 'next/navigation'
 import Link from 'next/link'
 
+type ColorPath ={
+  index: number;
+  iconPath: string;
+}
 export default function Navigation() {
-  // CurrentPath
   const path = usePathname()
-
-  // ParentPath
   const parentPath = path.slice(0, path.lastIndexOf('/'))
-
-  // HoverMouse Point
   const [hoverIndex, setHoverIndex] = useState<number>(-1)
 
-  // Navigation entities
   const iconPathMapping = [
     { icon: outline, path: '/outline', name: '개요' },
     { icon: plan, path: '/plan', name: '계획서' },
@@ -39,6 +26,17 @@ export default function Navigation() {
     { icon: build, path: '/build', name: '빌드' },
     { icon: readme, path: '/readme', name: 'README' },
   ]
+
+  const determineColor = ({ index, iconPath }:ColorPath) => {
+    if (hoverIndex === index) {
+      return vars.color.black
+    }
+    if (path.includes(iconPath)) {
+      return vars.color.lightGreen
+    }
+    return vars.color.white
+  }
+
 
   return (
     <div className={styles.container}>
@@ -54,17 +52,10 @@ export default function Navigation() {
               onMouseLeave={() => setHoverIndex(-1)}
             >
               <Icon
-                color={
-                  hoverIndex === index
-                    ? vars.color.black
-                    : path.includes(iconPath)
-                      ? vars.color.lightGreen
-                      : vars.color.white
-                }
+                color={determineColor({ index, iconPath })}
               />
               <p className={`${styles.navName}`}>{name}</p>
             </div>
-            {/* 아이콘 아래 있는 회색 바 */}
             <div className={styles.bar} />
           </Link>
         </React.Fragment>
