@@ -1,7 +1,7 @@
-import Func from '#/assets//icons/mainpage/func/showFunc.svg'
+import Func from '#/assets/icons/mainpage/func/showFunc.svg'
 import illust from '#/assets/icons/mainpage/func/illustFunc.svg'
 import Image from 'next/image'
-import * as styles from '@/containers/main/noauth/subPage.css'
+import * as styles from '@/containers/main/styles/subPage.css'
 
 function MainFunc() {
   return (
