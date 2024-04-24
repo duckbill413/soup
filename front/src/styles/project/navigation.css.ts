@@ -15,6 +15,7 @@ export const container = style({
   color: 'white',
   cursor: 'pointer',
   transitionDuration: '400ms',
+  zIndex: 1,
   selectors: {
     '&:hover': {
       width: '150px',
