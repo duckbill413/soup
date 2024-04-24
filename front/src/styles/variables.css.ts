@@ -29,7 +29,8 @@ const vars = createGlobalTheme(':root', {
     orange: '#FF7E20',
     black: '#363636',
     gray: '#D9D9D9',
-    deepGray: '#535252'
+    lightGray: '#F4F4F4',
+    deepGray: '#797979'
 
   },
   backgroundColor:{
