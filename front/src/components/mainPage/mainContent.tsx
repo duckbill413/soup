@@ -1,14 +1,14 @@
 "use client"
 
 import React, { useEffect, useRef, useState } from 'react';
-import SecondMain from "@/components/mainpage/secondMain";
-import FirstMain from "@/components/mainpage/firstMain";
-import ThirdMain from "@/components/mainpage/thirdMain";
-import FourthMain from "@/components/mainpage/fourthMain";
-import "./App.css";
-// import MainPageHeader from '@/components/mainpage/mainPageHeader'
+import * as styles from "@/styles/main/mainPage.css"
+import MainPlan from "@/components/mainPage/mainDetails/mainPlan";
+import MainIntro from "@/components/mainPage/mainDetails/mainIntro";
+import MainFunc from "@/components/mainPage/mainDetails/mainFunc";
+import MainSpec from "@/components/mainPage/mainDetails/mainSpec";
+import "./noScrollBar.css";
 
-export default function MainPage() {
+export default function MainContent () {
   const outerDivRef = useRef<HTMLDivElement>(null);
   const [currentPage, setCurrentPage] = useState<number>(1);
 
@@ -55,11 +55,11 @@ export default function MainPage() {
   }, [currentPage]);
 
   return (
-    <div ref={outerDivRef} style={{height:'90vh', width:'100%', overflowY:'auto'}}>
-      <FirstMain onButtonClick={handleClick}/>
-      <SecondMain/>
-      <ThirdMain/>
-      <FourthMain/>
+    <div ref={outerDivRef} className={styles.pageContainer}>
+      <MainIntro onButtonClick={handleClick}/>
+      <MainPlan/>
+      <MainFunc/>
+      <MainSpec/>
     </div>
   );
 }

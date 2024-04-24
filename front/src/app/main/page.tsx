@@ -1,11 +1,11 @@
-import MainPageHeader from '@/components/mainpage/mainPageHeader'
-import MainPage from '@/app/main/page1'
+import MainPageHeader from '@/components/mainPage/mainPageHeader'
+import MainContent from '@/components/mainPage/mainContent'
 
-export default function Home() {
+export default function MainPage () {
   return(
     <div>
       <MainPageHeader/>
-      <MainPage/>
+      <MainContent/>
     </div>
   )
 }
