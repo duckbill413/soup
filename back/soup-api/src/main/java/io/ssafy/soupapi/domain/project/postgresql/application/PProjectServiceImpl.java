@@ -4,13 +4,21 @@ package io.ssafy.soupapi.domain.project.postgresql.application;
 import io.ssafy.soupapi.domain.member.entity.Member;
 import io.ssafy.soupapi.domain.project.mongodb.entity.ProjectRole;
 import io.ssafy.soupapi.domain.project.postgresql.dao.PProjectRepository;
+import io.ssafy.soupapi.domain.project.postgresql.dto.response.SimpleProjectDto;
 import io.ssafy.soupapi.domain.project.postgresql.entity.Project;
 import io.ssafy.soupapi.domain.project.usecase.dto.request.CreateProjectDto;
 import io.ssafy.soupapi.domain.projectauth.entity.ProjectAuth;
+import io.ssafy.soupapi.global.common.request.PageOffsetRequest;
+import io.ssafy.soupapi.global.common.response.OffsetPagination;
+import io.ssafy.soupapi.global.common.response.PageOffsetResponse;
 import io.ssafy.soupapi.global.security.TemporalMember;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Log4j2
 @Service
@@ -41,5 +49,16 @@ public class PProjectServiceImpl implements PProjectService {
                 .project(project)
                 .build());
         pProjectRepository.save(project);
+    }
+    @Transactional(readOnly = true)
+    @Override
+    public PageOffsetResponse<List<SimpleProjectDto>> findSimpleProjects(PageOffsetRequest pageOffset, TemporalMember member) { // TODO: member security 적용
+        var data = pProjectRepository.findSimpleProjectsByMemberId(
+                member.getId(), PageOffsetRequest.of(pageOffset, Sort.by(Sort.Direction.DESC, "modifiedAt"))
+        );
+        return PageOffsetResponse.<List<SimpleProjectDto>>builder()
+                .content(data.getContent())
+                .pagination(OffsetPagination.offset(data.getTotalPages(), data.getTotalElements(), data.getPageable()))
+                .build();
     }
 }
