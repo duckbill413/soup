@@ -2,7 +2,7 @@
 
 import Lottie from 'react-lottie-player'
 import * as styles from '@/styles/exception.css'
-import lottieJson from '../../public/assets/animations/notFoundAnimation.json'
+import lottieJson from '@/../public/assets/animations/notFoundAnimation.json'
 
 export default function NotFound() {
   return (
