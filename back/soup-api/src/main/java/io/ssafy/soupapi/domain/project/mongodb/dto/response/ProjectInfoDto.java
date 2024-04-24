@@ -12,11 +12,17 @@ import java.util.Objects;
 
 @Schema(description = "프로젝트 정보")
 public record ProjectInfoDto(
+        @Schema(description = "프로젝트 id")
         String id,
+        @Schema(description = "프로젝트 이름")
         String name,
+        @Schema(description = "프로젝트 설명")
         String description,
+        @Schema(description = "프로젝트 프로필 이미지")
         String profileImgUrl,
+        @Schema(description = "프로젝트 시작일")
         LocalDate startDate,
+        @Schema(description = "프로젝트 종료일")
         LocalDate endDate,
         @JsonInclude(JsonInclude.Include.NON_EMPTY)
         @Schema(description = "프로젝트 지라 정보")

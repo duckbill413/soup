@@ -1,5 +1,7 @@
 package io.ssafy.soupapi.domain.project.usecase.api;
 
+import io.ssafy.soupapi.domain.project.mongodb.dto.request.UpdateProjectProposal;
+import io.ssafy.soupapi.domain.project.mongodb.dto.response.GetProjectProposal;
 import io.ssafy.soupapi.domain.project.mongodb.dto.response.ProjectInfoDto;
 import io.ssafy.soupapi.domain.project.usecase.application.ProjectUsecase;
 import io.ssafy.soupapi.domain.project.usecase.dto.request.CreateProjectDto;
@@ -43,6 +45,14 @@ public class ProjectUsecaseController {
         );
     }
 
+    /**
+     * MongoDB Project Info 조회
+     *
+     * @param projectId 조회하는 Project의 Id
+     * @param member    Project를 조회하는 대상
+     * @return ProjectInfoDto Object
+     */
+    @Operation(summary = "프로젝트 정보 요청", description = "프로젝트 개요 화면의 프로젝트 정보 요청")
     @GetMapping("/{projectId}/info")
     public ResponseEntity<BaseResponse<ProjectInfoDto>> findProjectInfo(
             @PathVariable(name = "projectId") String projectId,
@@ -51,6 +61,29 @@ public class ProjectUsecaseController {
         return BaseResponse.success(
                 SuccessCode.SELECT_SUCCESS,
                 projectUsecase.findProjectInfo(new ObjectId(projectId), member)
+        );
+    }
+
+    @PatchMapping("/{projectId}/proposal")
+    public ResponseEntity<BaseResponse<GetProjectProposal>> changeProjectProposal(
+            @RequestBody UpdateProjectProposal updateProjectProposal,
+            @AuthenticationPrincipal TemporalMember member // TODO: security member
+    ) {
+        return BaseResponse.success(
+                SuccessCode.UPDATE_SUCCESS,
+                projectUsecase.updateProjectProposal(updateProjectProposal, member)
+        );
+    }
+
+    @GetMapping("/{projectId}/proposal")
+
+    public ResponseEntity<BaseResponse<GetProjectProposal>> findProjectProposal(
+            @PathVariable(name = "projectId") String projectId,
+            @AuthenticationPrincipal TemporalMember member // TODO: security member
+    ) {
+        return BaseResponse.success(
+                SuccessCode.SELECT_SUCCESS,
+                projectUsecase.findProjectProposal(new ObjectId(projectId), member)
         );
     }
 }

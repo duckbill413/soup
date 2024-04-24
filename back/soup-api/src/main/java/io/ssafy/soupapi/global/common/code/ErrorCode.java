@@ -80,7 +80,8 @@ public enum ErrorCode {
     // 프로젝트 에러(CODE: 300)
     NOT_FOUND_PROJECT(404, "B300", "존재하지 않는 프로젝트 입니다."),
     // 프로젝트 권한(CODE: 400)
-    NOT_FOUND_PROJECT_AUTH(404, "B400", "프로젝트 권한이 존재하지 않습니다."); // End
+    NOT_FOUND_PROJECT_AUTH(404, "B400", "프로젝트 권한이 존재하지 않습니다."),
+    FAILED_TO_UPDATE_PROJECT(401, "B401", "프로젝트 업데이트 권한이 없습니다."); // End
 
     /**
      * ******************************* Error Code Constructor ***************************************

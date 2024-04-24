@@ -1,10 +1,14 @@
 package io.ssafy.soupapi.domain.project.usecase.application;
 
 import io.ssafy.soupapi.domain.project.mongodb.application.MProjectService;
+import io.ssafy.soupapi.domain.project.mongodb.dto.request.UpdateProjectProposal;
+import io.ssafy.soupapi.domain.project.mongodb.dto.response.GetProjectProposal;
 import io.ssafy.soupapi.domain.project.mongodb.dto.response.ProjectInfoDto;
 import io.ssafy.soupapi.domain.project.mongodb.entity.ProjectRole;
 import io.ssafy.soupapi.domain.project.postgresql.application.PProjectService;
 import io.ssafy.soupapi.domain.project.usecase.dto.request.CreateProjectDto;
+import io.ssafy.soupapi.global.common.code.ErrorCode;
+import io.ssafy.soupapi.global.exception.BaseExceptionHandler;
 import io.ssafy.soupapi.global.security.TemporalMember;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -36,6 +40,13 @@ public class ProjectUsecaseImpl implements ProjectUsecase {
         return projectId.toHexString();
     }
 
+    /**
+     * 프로젝트 Info 데이터 조회
+     *
+     * @param projectId 조회할 mongodb project projectId
+     * @param member    조회하는 member
+     * @return ProjectInfoDto
+     */
     @Override
     public ProjectInfoDto findProjectInfo(ObjectId projectId, TemporalMember member) { // TODO: security member
         var projectRoles = pProjectService.getProjectRoles(projectId, member);
@@ -46,5 +57,29 @@ public class ProjectUsecaseImpl implements ProjectUsecase {
         }
 
         return mProjectService.findProjectInfo(projectId);
+    }
+
+    /**
+     * 프로젝트 Info 데이터 조회
+     *
+     * @param projectId 조회할 mongodb project projectId
+     * @param member    조회하는 member
+     * @return ProjectInfoDto
+     */
+    @Override
+    public GetProjectProposal findProjectProposal(ObjectId projectId, TemporalMember member) {
+        // 프로젝트 권한 검사
+        pProjectService.getProjectRoles(projectId, member);
+        // 프로젝트 기획서 데이터 조회
+        return mProjectService.findProjectProposal(projectId);
+    }
+
+    @Override
+    public GetProjectProposal updateProjectProposal(UpdateProjectProposal updateProjectProposal, TemporalMember member) {
+        var roles = pProjectService.getProjectRoles(projectId, member);
+        if (roles.contains(ProjectRole.VIEWER)) {
+            throw new BaseExceptionHandler(ErrorCode.FAILED_TO_UPDATE_PROJECT);
+        }
+        return mProjectService.findProjectProposal(projectId);
     }
 }

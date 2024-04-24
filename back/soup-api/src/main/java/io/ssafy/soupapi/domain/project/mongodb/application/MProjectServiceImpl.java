@@ -2,6 +2,7 @@ package io.ssafy.soupapi.domain.project.mongodb.application;
 
 import io.ssafy.soupapi.domain.project.mongodb.dao.MProjectRepository;
 import io.ssafy.soupapi.domain.project.mongodb.dto.response.ProjectInfoDto;
+import io.ssafy.soupapi.domain.project.mongodb.dto.response.GetProjectProposal;
 import io.ssafy.soupapi.domain.project.mongodb.entity.Info;
 import io.ssafy.soupapi.domain.project.mongodb.entity.Project;
 import io.ssafy.soupapi.domain.project.mongodb.entity.ProjectRole;
@@ -16,7 +17,6 @@ import org.bson.types.ObjectId;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.text.ParseException;
 import java.util.List;
 
 @Log4j2
@@ -84,5 +84,18 @@ public class MProjectServiceImpl implements MProjectService {
         var project = mProjectRepository.findById(projectId).orElseThrow(() ->
                 new BaseExceptionHandler(ErrorCode.NOT_FOUND_PROJECT));
         return ProjectInfoDto.toProjectInfoWithKeyDto(project);
+    }
+
+    /**
+     * ProjectProposalDto 반환 (키 정보 O)
+     *
+     * @param projectId mongodb project id
+     * @return ProjectProposalDto that has key info
+     */
+    @Override
+    public GetProjectProposal findProjectProposal(ObjectId projectId) {
+        var project = mProjectRepository.findById(projectId).orElseThrow(() ->
+                new BaseExceptionHandler(ErrorCode.NOT_FOUND_PROJECT));
+        return GetProjectProposal.toProjectProposalDto(project);
     }
 }
