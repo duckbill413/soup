@@ -78,9 +78,9 @@ springdoc:
 cloud:
   aws:
     region:
-      static:ap-northeast-2
+      static: ap-northeast-2
     credentials:
-      accessKey:${AWS_ACCESS_KEY}
-      secretKey:${AWS_SECRET_KEY}
+      accessKey: ${AWS_ACCESS_KEY}
+      secretKey: ${AWS_SECRET_KEY}
     s3:
-      bucket:soup-bucket
+      bucket: soup-bucket
