@@ -2,7 +2,7 @@ import { style } from '@vanilla-extract/css'
 import vars from '@/styles/variables.css'
 
 export const container = style({
-  padding: `${vars.space.base} ${vars.space.base} ${vars.space.xLarge}`,
+  paddingBottom: vars.space.large,
 
   display: 'flex',
   justifyContent: 'space-between',
