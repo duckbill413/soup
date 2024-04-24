@@ -1,5 +1,5 @@
 import { StepTitleProps } from '@/types/step'
-import * as styles from '@/styles/project/stepTitle.css'
+import * as styles from '@/components/StepTitle/stepTitle.css'
 import InfoIcon from '@/../public/assets/icons/info'
 
 export function StepTitle({ stepNum, title, desc, children }: StepTitleProps) {
