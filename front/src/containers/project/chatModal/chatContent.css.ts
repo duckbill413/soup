@@ -82,7 +82,7 @@ export const chatModalContentList = styleVariants({
     backgroundColor: vars.color.white,
   }],
   nickname: [{ margin: `0px 0px 5px 0px` }],
-  time: [{ display: 'flex', alignItems: 'end', fontSize: vars.fontSize.caption, color: vars.color.deepGray }],
+  time: [{ display: 'flex', alignItems: 'flex-end', fontSize: vars.fontSize.caption, color: vars.color.deepGray }],
 })
 globalStyle(`${chatModalContentList.profile} > img`, {
   width: '50px',

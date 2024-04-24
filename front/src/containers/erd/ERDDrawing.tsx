@@ -1,21 +1,12 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { ErdEditorElement } from '@dineug/erd-editor'
 
 import * as styles from '@/containers/erd/erd.css'
 
-export function ERDDrawing() {
-  // const [editor, setEditor] = useState()
-  useEffect(() => {
-    const loadErdEditor = async () => {
-      const { default: ErdEditor } = await import('@dineug/erd-editor')
-      generateVuerd()
-    }
-
-    loadErdEditor()
-  }, [])
-
+export default function ERDDrawing() {
+  // Define generateVuerd function before using it in useEffect
   const generateVuerd = () => {
     const container: any = document.querySelector('#app-erd')
     if (!container) return
@@ -31,6 +22,15 @@ export function ERDDrawing() {
     container.appendChild(editor)
     editor.systemDarkMode = false
   }
+
+  useEffect(() => {
+    const loadErdEditor = async () => {
+      await import('@dineug/erd-editor')
+      generateVuerd()
+    }
+
+    loadErdEditor()
+  }, [])
 
   return <div className={styles.container} id="app-erd" />
 }

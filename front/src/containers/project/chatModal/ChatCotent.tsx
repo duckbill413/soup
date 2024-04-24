@@ -1,4 +1,4 @@
-import * as styles from '@/containers/project/chatEntity/chatContent.css'
+import * as styles from '@/containers/project/chatModal/chatContent.css'
 import Image from 'next/image'
 import sendSvg from '#/assets/icons/send.svg'
 import { faker } from '@faker-js/faker'
@@ -28,12 +28,16 @@ type Props = {
 }
 export default function ChatContent({ isVisible }: Props) {
   // Animation상태는 세 종류 1.첫 시작(first) 2. 열 때(after), 3. 닫을 때(before)
-  const getModalStyle = () =>
-    isVisible
-      ? styles.chatModalAnimation.after
-      : isVisible === null
-        ? styles.chatModalAnimation.first
-        : styles.chatModalAnimation.before
+  const getModalStyle = () => {
+    if (isVisible) {
+      return styles.chatModalAnimation.after;
+    }
+    if (isVisible === null) {
+      return styles.chatModalAnimation.first;
+    }
+    return styles.chatModalAnimation.before;
+  };
+
 
   return (
     <div
@@ -50,7 +54,7 @@ export default function ChatContent({ isVisible }: Props) {
                   className={styles.chatModalContentList.layout}
                 >
                   <div className={styles.chatModalContentList.profile}>
-                    <img src={chat.memberProfileImage} alt="image" />
+                    <img width={44} height={44} src={chat.memberProfileImage} alt="프로필" />
                   </div>
                   <div className={styles.chatModalContentList.userArea}>
                     <p className={styles.chatModalContentList.nickname}>

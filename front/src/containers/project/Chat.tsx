@@ -3,7 +3,7 @@
 import chatSvg from '#/assets/icons/chat.svg'
 import chatXSvg from '#/assets/icons/chatX.svg'
 import Image from 'next/image'
-import * as styles from '@/containers/project/chat.css'
+import styles from '@/containers/project/chat.css'
 import { useState } from 'react'
 import ChatContent from '@/containers/project/chatModal/ChatCotent'
 
@@ -20,10 +20,10 @@ export default function Chat() {
   return (
     <>
       <ChatContent isVisible={isVisible} />
-      <div onClick={handleVisible}>
+      <button type='button' onClick={handleVisible}>
         {!isVisible ? (
           <Image
-            className={styles.chat}
+            className={styles}
             src={chatSvg}
             alt="Chat"
             width={SVG_SIZE}
@@ -31,14 +31,14 @@ export default function Chat() {
           />
         ) : (
           <Image
-            className={styles.chat}
+            className={styles}
             src={chatXSvg}
             alt="Chat"
             width={SVG_SIZE}
             height={SVG_SIZE}
           />
         )}
-      </div>
+      </button>
     </>
   )
 }

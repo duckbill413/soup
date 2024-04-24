@@ -15,9 +15,9 @@ export default function Header() {
         <p>{projectName}</p>
       </div>
       <div className={styles.assistant}>
-        <Image src={voicechat} width={44} height={44} alt="" />
-        <Image src={notification} width={44} height={44} alt="" />
-        <img src={faker.image.avatar()} alt="profile-image" />
+        <Image src={voicechat} width={44} height={44} alt="음성 채팅" />
+        <Image src={notification} width={44} height={44} alt="알림" />
+        <img src={faker.image.avatar()} width={44} height={44} alt="프로필" />
       </div>
     </div>
   )
