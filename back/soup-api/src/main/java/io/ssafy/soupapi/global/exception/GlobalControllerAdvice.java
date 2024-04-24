@@ -1,6 +1,6 @@
 package io.ssafy.soupapi.global.exception;
 
-import io.ssafy.soupapi.global.common.ErrorResponse;
+import io.ssafy.soupapi.global.common.response.ErrorResponse;
 import io.ssafy.soupapi.global.common.code.ErrorCode;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;

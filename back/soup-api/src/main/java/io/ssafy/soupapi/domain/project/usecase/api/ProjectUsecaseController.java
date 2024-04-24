@@ -2,7 +2,7 @@ package io.ssafy.soupapi.domain.project.usecase.api;
 
 import io.ssafy.soupapi.domain.project.usecase.application.ProjectUsecase;
 import io.ssafy.soupapi.domain.project.usecase.dto.request.CreateProjectDto;
-import io.ssafy.soupapi.global.common.BaseResponse;
+import io.ssafy.soupapi.global.common.response.BaseResponse;
 import io.ssafy.soupapi.global.common.code.SuccessCode;
 import io.ssafy.soupapi.global.security.TemporalMember;
 import io.swagger.v3.oas.annotations.tags.Tag;
