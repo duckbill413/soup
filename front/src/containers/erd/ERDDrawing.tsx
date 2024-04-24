@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { ErdEditorElement } from '@dineug/erd-editor'
 
-import * as styles from '@/styles/project/projectDetail/erd/erd.css'
+import * as styles from '@/containers/erd/erd.css'
 
 export function ERDDrawing() {
   // const [editor, setEditor] = useState()
@@ -32,7 +32,5 @@ export function ERDDrawing() {
     editor.systemDarkMode = false
   }
 
-  return (
-    <div className={styles.container} id="app-erd" />
-  )
+  return <div className={styles.container} id="app-erd" />
 }

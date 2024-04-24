@@ -1,11 +1,11 @@
-import MainPageHeader from '@/components/mainPage/mainPageHeader'
-import MainContent from '@/components/mainPage/mainContent'
+import MainPageHeader from '@/containers/main/noauth/mainPageHeader'
+import MainContent from '@/containers/main/noauth/mainContent'
 
-export default function MainPage () {
-  return(
+export default function MainPage() {
+  return (
     <div>
-      <MainPageHeader/>
-      <MainContent/>
+      <MainPageHeader />
+      <MainContent />
     </div>
   )
 }
