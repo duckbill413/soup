@@ -1,6 +1,7 @@
 "use client"
 
 import React, { useEffect, useRef, useState } from 'react';
+import * as styles from "@/styles/main/mainPage.css"
 import MainPlan from "@/components/mainPage/mainDetails/mainPlan";
 import MainIntro from "@/components/mainPage/mainDetails/mainIntro";
 import MainFunc from "@/components/mainPage/mainDetails/mainFunc";
@@ -54,7 +55,7 @@ export default function MainContent () {
   }, [currentPage]);
 
   return (
-    <div ref={outerDivRef} style={{height:'90vh', width:'100%', overflowY:'auto'}}>
+    <div ref={outerDivRef} className={styles.pageContainer}>
       <MainIntro onButtonClick={handleClick}/>
       <MainPlan/>
       <MainFunc/>

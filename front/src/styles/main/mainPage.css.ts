@@ -1,4 +1,5 @@
 import { style, keyframes } from '@vanilla-extract/css';
+import vars from '@/styles/variables.css'
 
 // 애니메이션 정의
 const bounce = keyframes({
@@ -15,4 +16,16 @@ const bounce = keyframes({
 // bounce 스타일 생성
 export const bounceAnimation = style({
   animation: `${bounce} 1s infinite`,
+  margin: vars.space.tiny,
+  padding: 0,
+  background: 'none',
+  border: 'none',
+  position:'absolute',
+  bottom:'0'
 });
+
+export const pageContainer = style ({
+  height:'90vh',
+  width:'100%',
+  overflowY:'auto'
+})
