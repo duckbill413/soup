@@ -4,7 +4,7 @@ import vars from '@/styles/variables.css'
 
 // ChatSVG
 const chat = style({
-  position: 'absolute',
+  position: 'fixed',
   right: 0,
   bottom: 0,
   margin: vars.space.small,

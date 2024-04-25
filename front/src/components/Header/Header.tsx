@@ -10,9 +10,9 @@ const projectName = '스타트 프로젝트, 스프'
 
 type Props={
   theme: 'white'|'black';
-  isVoice: boolean;
+  useVoice: boolean;
 }
-export default function Header({theme,isVoice}:Props) {
+export default function Header({theme,useVoice}:Props) {
   return (
     <div className={`${theme==='white' ? styles.whiteTheme : ""} ${styles.container}`}>
       <div>
@@ -20,7 +20,7 @@ export default function Header({theme,isVoice}:Props) {
         <p>{projectName}</p>
       </div>
       <div className={styles.assistant}>
-        {isVoice && <Image src={voicechat} width={44} height={44} alt="음성 채팅" />}
+        {useVoice && <Image src={voicechat} width={44} height={44} alt="음성 채팅" />}
         <Notification color={theme ==='white' ? 'black' : 'white'}/>
         <img src={faker.image.avatar()} width={44} height={44} alt="프로필" />
       </div>
