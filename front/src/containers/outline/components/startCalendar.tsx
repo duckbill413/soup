@@ -4,7 +4,7 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 // import dayjs from 'dayjs'
 
-function Calendar () {
+function StartCalendar () {
   // const datePickerFormat = "YYYY-MM-DD";
   // const datePickerUtils = {
   //   format: datePickerFormat,
@@ -38,4 +38,4 @@ function Calendar () {
   )
 }
 
-export default Calendar
+export default StartCalendar
