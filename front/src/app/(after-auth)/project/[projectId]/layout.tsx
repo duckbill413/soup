@@ -9,7 +9,7 @@ export default function ProjectDetailLayout({
   return (
     <div className={styles.container}>
       <Navigation />
-      <Header />
+      <Header theme='black' useVoice/>
       <div className={styles.content}>{children}</div>
       <Chat />
     </div>
