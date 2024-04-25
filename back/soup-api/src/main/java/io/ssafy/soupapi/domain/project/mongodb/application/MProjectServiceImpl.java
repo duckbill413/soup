@@ -1,8 +1,9 @@
 package io.ssafy.soupapi.domain.project.mongodb.application;
 
 import io.ssafy.soupapi.domain.project.mongodb.dao.MProjectRepository;
-import io.ssafy.soupapi.domain.project.mongodb.dto.response.ProjectInfoDto;
+import io.ssafy.soupapi.domain.project.mongodb.dto.request.UpdateProjectProposal;
 import io.ssafy.soupapi.domain.project.mongodb.dto.response.GetProjectProposal;
+import io.ssafy.soupapi.domain.project.mongodb.dto.response.ProjectInfoDto;
 import io.ssafy.soupapi.domain.project.mongodb.entity.Info;
 import io.ssafy.soupapi.domain.project.mongodb.entity.Project;
 import io.ssafy.soupapi.domain.project.mongodb.entity.ProjectRole;
@@ -87,15 +88,30 @@ public class MProjectServiceImpl implements MProjectService {
     }
 
     /**
-     * ProjectProposalDto 반환 (키 정보 O)
+     * ProjectProposalDto 반환
      *
      * @param projectId mongodb project id
-     * @return ProjectProposalDto that has key info
+     * @return ProjectProposalDto
      */
+    @Transactional(readOnly = true)
     @Override
     public GetProjectProposal findProjectProposal(ObjectId projectId) {
-        var project = mProjectRepository.findById(projectId).orElseThrow(() ->
+        var project = mProjectRepository.findProposalById(projectId).orElseThrow(() ->
                 new BaseExceptionHandler(ErrorCode.NOT_FOUND_PROJECT));
-        return GetProjectProposal.toProjectProposalDto(project);
+        return GetProjectProposal.toProjectProposalDto(projectId, project.getProposal());
+    }
+
+    /**
+     * 프로젝트 제안서 업데이트
+     *
+     * @param updateProjectProposal proposal update data
+     * @return ProjectProposalDto
+     */
+    @Transactional
+    @Override
+    public GetProjectProposal updateProjectProposal(UpdateProjectProposal updateProjectProposal) {
+        mProjectRepository.updateProposal(new ObjectId(updateProjectProposal.projectId()),
+                UpdateProjectProposal.toProjectProposal(updateProjectProposal));
+        return findProjectProposal(new ObjectId(updateProjectProposal.projectId()));
     }
 }

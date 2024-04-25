@@ -76,10 +76,12 @@ public class ProjectUsecaseImpl implements ProjectUsecase {
 
     @Override
     public GetProjectProposal updateProjectProposal(UpdateProjectProposal updateProjectProposal, TemporalMember member) {
-        var roles = pProjectService.getProjectRoles(projectId, member);
+        // 프로젝트 제안서 수정 권한 검증
+        var roles = pProjectService.getProjectRoles(new ObjectId(updateProjectProposal.projectId()), member);
         if (roles.contains(ProjectRole.VIEWER)) {
             throw new BaseExceptionHandler(ErrorCode.FAILED_TO_UPDATE_PROJECT);
         }
-        return mProjectService.findProjectProposal(projectId);
+        // 프로젝트 제안서 수정
+        return mProjectService.updateProjectProposal(updateProjectProposal);
     }
 }

@@ -1,5 +1,6 @@
 package io.ssafy.soupapi.domain.project.mongodb.application;
 
+import io.ssafy.soupapi.domain.project.mongodb.dto.request.UpdateProjectProposal;
 import io.ssafy.soupapi.domain.project.mongodb.dto.response.ProjectInfoDto;
 import io.ssafy.soupapi.domain.project.mongodb.dto.response.GetProjectProposal;
 import io.ssafy.soupapi.domain.project.usecase.dto.request.CreateProjectDto;
@@ -14,4 +15,6 @@ public interface MProjectService {
     ProjectInfoDto findProjectInfoWithKey(ObjectId projectId);
 
     GetProjectProposal findProjectProposal(ObjectId projectId);
+
+    GetProjectProposal updateProjectProposal(UpdateProjectProposal updateProjectProposal);
 }

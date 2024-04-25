@@ -64,9 +64,10 @@ public class ProjectUsecaseController {
         );
     }
 
-    @PatchMapping("/{projectId}/proposal")
+    @Operation(description = "프로젝트 제안서 업데이트")
+    @PutMapping("/{projectId}/proposal")
     public ResponseEntity<BaseResponse<GetProjectProposal>> changeProjectProposal(
-            @RequestBody UpdateProjectProposal updateProjectProposal,
+            @Valid @RequestBody UpdateProjectProposal updateProjectProposal,
             @AuthenticationPrincipal TemporalMember member // TODO: security member
     ) {
         return BaseResponse.success(
@@ -75,8 +76,8 @@ public class ProjectUsecaseController {
         );
     }
 
+    @Operation(description = "프로젝트 제안서 조회")
     @GetMapping("/{projectId}/proposal")
-
     public ResponseEntity<BaseResponse<GetProjectProposal>> findProjectProposal(
             @PathVariable(name = "projectId") String projectId,
             @AuthenticationPrincipal TemporalMember member // TODO: security member
