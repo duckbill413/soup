@@ -5,6 +5,7 @@ import io.ssafy.soupapi.domain.project.mongodb.dto.response.GetProjectProposal;
 import io.ssafy.soupapi.domain.project.mongodb.dto.response.ProjectInfoDto;
 import io.ssafy.soupapi.domain.project.usecase.application.ProjectUsecase;
 import io.ssafy.soupapi.domain.project.usecase.dto.request.CreateProjectDto;
+import io.ssafy.soupapi.domain.project.usecase.dto.request.InviteTeammate;
 import io.ssafy.soupapi.global.common.code.SuccessCode;
 import io.ssafy.soupapi.global.common.response.BaseResponse;
 import io.ssafy.soupapi.global.security.TemporalMember;
@@ -85,6 +86,18 @@ public class ProjectUsecaseController {
         return BaseResponse.success(
                 SuccessCode.SELECT_SUCCESS,
                 projectUsecase.findProjectProposal(new ObjectId(projectId), member)
+        );
+    }
+
+    @Operation(description = "프로젝트 팀원 초대")
+    @PostMapping("/{projectId}/team")
+    public ResponseEntity<BaseResponse<String>> inviteProjectTeammate(
+            @RequestBody InviteTeammate inviteTeammate,
+            @AuthenticationPrincipal TemporalMember member // TODO: security member
+    ) {
+        return BaseResponse.success(
+                SuccessCode.INSERT_SUCCESS,
+                projectUsecase.inviteProjectTeammate(inviteTeammate, member)
         );
     }
 }

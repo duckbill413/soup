@@ -9,6 +9,7 @@ import io.ssafy.soupapi.domain.project.mongodb.entity.Project;
 import io.ssafy.soupapi.domain.project.mongodb.entity.ProjectRole;
 import io.ssafy.soupapi.domain.project.mongodb.entity.TeamMember;
 import io.ssafy.soupapi.domain.project.usecase.dto.request.CreateProjectDto;
+import io.ssafy.soupapi.domain.project.usecase.dto.request.InviteTeammate;
 import io.ssafy.soupapi.global.common.code.ErrorCode;
 import io.ssafy.soupapi.global.exception.BaseExceptionHandler;
 import io.ssafy.soupapi.global.security.TemporalMember;
@@ -113,5 +114,14 @@ public class MProjectServiceImpl implements MProjectService {
         mProjectRepository.updateProposal(new ObjectId(updateProjectProposal.projectId()),
                 UpdateProjectProposal.toProjectProposal(updateProjectProposal));
         return findProjectProposal(new ObjectId(updateProjectProposal.projectId()));
+    }
+
+    @Transactional
+    @Override
+    public void addTeammate(InviteTeammate inviteTeammate) {
+        var project = mProjectRepository.findTeammateById(
+                new ObjectId(inviteTeammate.projectId())
+        ).orElseThrow(() -> new BaseExceptionHandler(ErrorCode.NOT_FOUND_PROJECT));
+        project.getTeamMembers().add(InviteTeammate.toTeamMember(inviteTeammate));
     }
 }
