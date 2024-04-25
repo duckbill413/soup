@@ -1,5 +1,6 @@
 import '@/containers/api/table.css'
 import { APITableData } from '@/types/apitable'
+import Link from 'next/link'
 
 export default function Table({ data }: APITableData) {
   return (
@@ -17,7 +18,9 @@ export default function Table({ data }: APITableData) {
         {data.map((item) => (
           <tr key={item.id}>
             <td>{item.domain}</td>
-            <td>{item.name}</td>
+            <td>
+              <Link href={`api/${1}`}>{item.name}</Link>
+            </td>
             <td>{item.method}</td>
             <td>{item.uri}</td>
             <td colSpan={2}>{item.desc}</td>
