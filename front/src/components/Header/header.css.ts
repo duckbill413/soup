@@ -14,6 +14,10 @@ export const container = style({
   zIndex: 2
 });
 
+export const whiteTheme = style({
+  backgroundColor: 'white',
+  boxShadow: '0px 0px'
+})
 export const assistant = style({
   display: 'flex',
   justifyContent: 'flex-end',
