@@ -8,7 +8,7 @@ import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfi
 
 @OpenAPIDefinition(
         servers = {
-                @Server(url="https://be-api.so-up.store", description="Default Server url")
+                @Server(url="https://back.so-up.store", description="Default Server url")
         }
 )
 @SpringBootApplication(exclude = {SecurityAutoConfiguration.class})
