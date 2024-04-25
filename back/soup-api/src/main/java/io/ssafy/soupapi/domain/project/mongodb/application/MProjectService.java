@@ -21,5 +21,5 @@ public interface MProjectService {
     GetProjectProposal updateProjectProposal(UpdateProjectProposal updateProjectProposal);
 
     @Transactional
-    void addTeammate(InviteTeammate inviteTeammate);
+    void addTeammate(InviteTeammate inviteTeammate, String username);
 }

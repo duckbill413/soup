@@ -20,6 +20,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
 
 @Log4j2
 @Service
@@ -118,10 +120,16 @@ public class MProjectServiceImpl implements MProjectService {
 
     @Transactional
     @Override
-    public void addTeammate(InviteTeammate inviteTeammate) {
+    public void addTeammate(InviteTeammate inviteTeammate, String username) {
         var project = mProjectRepository.findTeammateById(
                 new ObjectId(inviteTeammate.projectId())
         ).orElseThrow(() -> new BaseExceptionHandler(ErrorCode.NOT_FOUND_PROJECT));
-        project.getTeamMembers().add(InviteTeammate.toTeamMember(inviteTeammate));
+
+        if (Objects.isNull(username)) {
+            project.getTeamMembers().add(InviteTeammate.toTeamMember(inviteTeammate));
+            return;
+        }
+
+        project.getTeamMembers().add(InviteTeammate.toTeamMember(inviteTeammate, UUID.fromString(username)));
     }
 }

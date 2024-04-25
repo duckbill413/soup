@@ -9,14 +9,19 @@ import io.ssafy.soupapi.domain.project.mongodb.entity.ProjectRole;
 import io.ssafy.soupapi.domain.project.postgresql.application.PProjectService;
 import io.ssafy.soupapi.domain.project.usecase.dto.request.CreateProjectDto;
 import io.ssafy.soupapi.domain.project.usecase.dto.request.InviteTeammate;
+import io.ssafy.soupapi.domain.projectauth.entity.ProjectAuth;
 import io.ssafy.soupapi.global.common.code.ErrorCode;
 import io.ssafy.soupapi.global.exception.BaseExceptionHandler;
 import io.ssafy.soupapi.global.security.TemporalMember;
+import io.ssafy.soupapi.global.util.GmailUtil;
+import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.bson.types.ObjectId;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Objects;
 
 @Log4j2
 @Service
@@ -25,6 +30,7 @@ public class ProjectUsecaseImpl implements ProjectUsecase {
     private final MProjectService mProjectService;
     private final PProjectService pProjectService;
     private final MemberRepository memberRepository;
+    private final GmailUtil gmailUtil;
 
     /**
      * 프로젝트 생성
@@ -52,7 +58,7 @@ public class ProjectUsecaseImpl implements ProjectUsecase {
      */
     @Override
     public ProjectInfoDto findProjectInfo(ObjectId projectId, TemporalMember member) { // TODO: security member
-        var projectRoles = pProjectService.getProjectRoles(projectId, member);
+        var projectRoles = pProjectService.getProjectRoles(projectId.toHexString(), member);
 
         // 상위 권한 유저의 경우 키 정보 같이 조회
         if (projectRoles.contains(ProjectRole.MAINTAINER) || projectRoles.contains(ProjectRole.ADMIN)) {
@@ -72,7 +78,7 @@ public class ProjectUsecaseImpl implements ProjectUsecase {
     @Override
     public GetProjectProposal findProjectProposal(ObjectId projectId, TemporalMember member) {
         // 프로젝트 권한 검사
-        pProjectService.getProjectRoles(projectId, member);
+        pProjectService.getProjectRoles(projectId.toHexString(), member);
         // 프로젝트 기획서 데이터 조회
         return mProjectService.findProjectProposal(projectId);
     }
@@ -80,7 +86,7 @@ public class ProjectUsecaseImpl implements ProjectUsecase {
     @Override
     public GetProjectProposal updateProjectProposal(UpdateProjectProposal updateProjectProposal, TemporalMember member) {
         // 프로젝트 제안서 수정 권한 검증
-        var roles = pProjectService.getProjectRoles(new ObjectId(updateProjectProposal.projectId()), member);
+        var roles = pProjectService.getProjectRoles(updateProjectProposal.projectId(), member);
         if (roles.contains(ProjectRole.VIEWER)) {
             throw new BaseExceptionHandler(ErrorCode.FAILED_TO_UPDATE_PROJECT);
         }
@@ -90,12 +96,26 @@ public class ProjectUsecaseImpl implements ProjectUsecase {
 
     @Transactional
     @Override
-    public String inviteProjectTeammate(InviteTeammate inviteTeammate, TemporalMember member) {
+    public String inviteProjectTeammate(InviteTeammate inviteTeammate, TemporalMember member) throws MessagingException {
+        var project = pProjectService.findById(inviteTeammate.projectId());
         // 팀 멤버를 초대하는 사람의 권한 확인
-        var roles = pProjectService.getProjectRoles(new ObjectId(inviteTeammate.projectId()), member);
-        var teammate = memberRepository.findById()
+        var from = memberRepository.findById(member.getId()).orElseThrow(() ->
+                new BaseExceptionHandler(ErrorCode.NOT_FOUND_USER));
+        var roles = pProjectService.getProjectRoles(inviteTeammate.projectId(), member);
         if (roles.contains(ProjectRole.MAINTAINER) || roles.contains(ProjectRole.ADMIN)) {
-            mProjectService.addTeammate(inviteTeammate);
+            var to = memberRepository.findByEmail(inviteTeammate.email()).stream().findFirst().orElse(null);
+
+            // 몽고 DB에 팀원 정보 추가
+            mProjectService.addTeammate(inviteTeammate, Objects.isNull(to) ? null : to.getNickname());
+            // PostgreSQL 에 팀원 정보 추가
+            pProjectService.addTeammate(inviteTeammate, to, project);
+            // 초대 메일 전송
+            gmailUtil.sendMail(inviteTeammate.email(), from.getNickname(),
+                    project.getName() + " Soup 프로젝트 초대",
+                    project.getName() + """
+                            Soup 프로젝트에 참가해 팀원과 함께 프로젝트를
+                            만들어가 봐요!
+                            """);
             return "새로운 팀원을 초대 하였습니다.";
         }
         throw new BaseExceptionHandler(ErrorCode.UNAUTHORIZED_USER_EXCEPTION);

@@ -8,6 +8,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.SQLRestriction;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 @Getter
@@ -30,11 +32,14 @@ public class ProjectAuth extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "project_auth_id")
     private UUID id;
-    @Column(name = "project_auth_role")
+    @Builder.Default
+    @ElementCollection
     @Enumerated(EnumType.STRING)
-    private ProjectRole role;
+    @CollectionTable(name = "project_auth_role", joinColumns = @JoinColumn(name = "member_id"))
+    @Column(name = "role")
+    private Set<ProjectRole> roles = new HashSet<>();
     @ManyToOne
-    @JoinColumn(name = "member_id", nullable = false)
+    @JoinColumn(name = "member_id")
     private Member member;
     @ManyToOne
     @JoinColumn(name = "project_id", nullable = false)

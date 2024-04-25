@@ -7,10 +7,13 @@ import io.ssafy.soupapi.domain.project.postgresql.dao.PProjectRepository;
 import io.ssafy.soupapi.domain.project.postgresql.dto.response.SimpleProjectDto;
 import io.ssafy.soupapi.domain.project.postgresql.entity.Project;
 import io.ssafy.soupapi.domain.project.usecase.dto.request.CreateProjectDto;
+import io.ssafy.soupapi.domain.project.usecase.dto.request.InviteTeammate;
 import io.ssafy.soupapi.domain.projectauth.entity.ProjectAuth;
+import io.ssafy.soupapi.global.common.code.ErrorCode;
 import io.ssafy.soupapi.global.common.request.PageOffsetRequest;
 import io.ssafy.soupapi.global.common.response.OffsetPagination;
 import io.ssafy.soupapi.global.common.response.PageOffsetResponse;
+import io.ssafy.soupapi.global.exception.BaseExceptionHandler;
 import io.ssafy.soupapi.global.security.TemporalMember;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -19,7 +22,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Log4j2
 @Service
@@ -45,7 +50,7 @@ public class PProjectServiceImpl implements PProjectService {
                 .build();
         // 프로젝트 최초 권한 등록
         project.addProjectAuth(ProjectAuth.builder()
-                .role(ProjectRole.ADMIN)
+                .roles(Set.of(ProjectRole.ADMIN))
                 .member(Member.builder().id(temporalMember.getId()).build()) // TODO: member security 적용
                 .project(project)
                 .build());
@@ -66,8 +71,29 @@ public class PProjectServiceImpl implements PProjectService {
 
     @Transactional(readOnly = true)
     @Override
-    public List<ProjectRole> getProjectRoles(ObjectId projectId, TemporalMember member) { // TODO: security member
-        List<ProjectAuth> response = pProjectRepository.findProjectAuthByProjectIdAndMemberId(projectId.toHexString(), member.getId());
-        return response.stream().map(ProjectAuth::getRole).toList();
+    public List<ProjectRole> getProjectRoles(String projectId, TemporalMember member) { // TODO: security member
+        List<ProjectAuth> response = pProjectRepository.findProjectAuthByProjectIdAndMemberId(projectId, member.getId());
+        return response.stream().findFirst().orElseThrow(() -> new BaseExceptionHandler(ErrorCode.NOT_FOUND_PROJECT_AUTH))
+                .getRoles().stream().toList();
+    }
+
+    @Transactional
+    @Override
+    public void addTeammate(InviteTeammate inviteTeammate, Member teammate, Project project) {
+        ProjectAuth projectAuth = ProjectAuth.builder()
+                .roles(new HashSet<>(inviteTeammate.roles()))
+                .member(teammate)
+                .project(project)
+                .build();
+        project.addProjectAuth(projectAuth);
+
+        pProjectRepository.save(project);
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public Project findById(String projectId) {
+        return pProjectRepository.findById(projectId).orElseThrow(() ->
+                new BaseExceptionHandler(ErrorCode.NOT_FOUND_PROJECT));
     }
 }

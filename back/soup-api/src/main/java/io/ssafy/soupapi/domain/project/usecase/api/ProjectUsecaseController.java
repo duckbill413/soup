@@ -11,6 +11,7 @@ import io.ssafy.soupapi.global.common.response.BaseResponse;
 import io.ssafy.soupapi.global.security.TemporalMember;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -94,7 +95,7 @@ public class ProjectUsecaseController {
     public ResponseEntity<BaseResponse<String>> inviteProjectTeammate(
             @RequestBody InviteTeammate inviteTeammate,
             @AuthenticationPrincipal TemporalMember member // TODO: security member
-    ) {
+    ) throws MessagingException {
         return BaseResponse.success(
                 SuccessCode.INSERT_SUCCESS,
                 projectUsecase.inviteProjectTeammate(inviteTeammate, member)

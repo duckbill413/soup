@@ -6,6 +6,7 @@ import io.ssafy.soupapi.domain.project.mongodb.dto.response.ProjectInfoDto;
 import io.ssafy.soupapi.domain.project.usecase.dto.request.CreateProjectDto;
 import io.ssafy.soupapi.domain.project.usecase.dto.request.InviteTeammate;
 import io.ssafy.soupapi.global.security.TemporalMember;
+import jakarta.mail.MessagingException;
 import org.bson.types.ObjectId;
 
 public interface ProjectUsecase {
@@ -17,5 +18,5 @@ public interface ProjectUsecase {
 
     GetProjectProposal updateProjectProposal(UpdateProjectProposal updateProjectProposal, TemporalMember member);
 
-    String inviteProjectTeammate(InviteTeammate inviteTeammate, TemporalMember member);
+    String inviteProjectTeammate(InviteTeammate inviteTeammate, TemporalMember member) throws MessagingException;
 }
