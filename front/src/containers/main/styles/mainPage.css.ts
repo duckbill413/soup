@@ -29,3 +29,17 @@ export const pageContainer = style ({
   width:'100%',
   overflowY:'auto'
 })
+
+export const mainPageHeader = style ({
+  display: 'flex',
+  justifyContent: 'space-between',
+  height: '10vh',
+  width: '95%',
+  marginLeft: '2%',
+})
+
+export const mainPageHeaderBtn = style ({
+  padding: 0,
+  background: 'none',
+  border: 'none',
+})

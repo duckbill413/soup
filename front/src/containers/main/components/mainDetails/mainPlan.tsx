@@ -1,5 +1,5 @@
 import Image from 'next/image'
-import * as styles from '@/containers/main/noauth/subPage.css'
+import * as styles from '@/containers/main/styles/mainSubPage.css'
 import AI from '#/assets/icons/mainpage/plan/illustAI.svg'
 import Plan from '#/assets/icons/mainpage/plan/showPlan.svg'
 

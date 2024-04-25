@@ -3,9 +3,9 @@ import {
   FirstPagepic2,
   FirstPagepic3,
 } from '#/assets/icons/mainpage/intro/firstillust'
-import * as styles from '@/containers/main/noauth/mainIntro.css'
+import * as styles from '@/containers/main/styles/mainIntro.css'
 import DownButton from '#/assets/icons/mainpage/downbutton'
-import { bounceAnimation } from '@/containers/main/noauth/mainPage.css'
+import { bounceAnimation } from '@/containers/main/styles/mainPage.css'
 
 function MainIntro({ onButtonClick }: { onButtonClick?: () => void }) {
   return (

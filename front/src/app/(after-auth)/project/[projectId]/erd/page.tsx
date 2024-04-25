@@ -1,5 +1,5 @@
 import { StepTitleWithGuide } from '@/components/StepTitle/StepTitle'
-import { ERDDrawing } from '@/containers/erd/ERDDrawing'
+import ERDDrawing from '@/containers/erd/ERDDrawing'
 import * as styles from '@/containers/erd/erd.css'
 
 export default function ERD() {

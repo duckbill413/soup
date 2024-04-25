@@ -3,8 +3,8 @@ import vars from '@/styles/variables.css'
 
 
 // ChatSVG
-export const chat = style({
-  position: 'absolute',
+const chat = style({
+  position: 'fixed',
   right: 0,
   bottom: 0,
   margin: vars.space.small,
@@ -12,3 +12,4 @@ export const chat = style({
 
 })
 
+export default chat;

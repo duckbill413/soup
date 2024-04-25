@@ -1,12 +1,12 @@
 'use client'
 
 import React, { useEffect, useRef, useState } from 'react'
-import * as styles from '@/containers/main/noauth/mainPage.css'
-import MainPlan from '@/containers/main/noauth/mainDetails/mainPlan'
-import MainIntro from '@/containers/main/noauth/mainDetails/mainIntro'
-import MainFunc from '@/containers/main/noauth/mainDetails/mainFunc'
-import MainSpec from '@/containers/main/noauth/mainDetails/mainSpec'
-import './noScrollBar.css'
+import * as styles from '@/containers/main/styles/mainPage.css'
+import MainPlan from '@/containers/main/components/mainDetails/mainPlan'
+import MainIntro from '@/containers/main/components/mainDetails/mainIntro'
+import MainFunc from '@/containers/main/components/mainDetails/mainFunc'
+import MainSpec from '@/containers/main/components/mainDetails/mainSpec'
+import '../styles/noScrollBar.css'
 
 export default function MainContent() {
   const outerDivRef = useRef<HTMLDivElement>(null)

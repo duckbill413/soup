@@ -30,9 +30,9 @@ export const chatModal = style({
   height: '550px',
   display: 'flex',
   flexDirection: 'column',
-  position: 'absolute',
+  position: 'fixed',
   right: '3%',
-  bottom: '15%',
+  bottom: '13%',
   backgroundColor: vars.color.white,
   boxShadow: 'rgba(0, 0, 0, 0.24) 0px 3px 8px',
   borderRadius: '3px',
@@ -82,7 +82,7 @@ export const chatModalContentList = styleVariants({
     backgroundColor: vars.color.white,
   }],
   nickname: [{ margin: `0px 0px 5px 0px` }],
-  time: [{ display: 'flex', alignItems: 'end', fontSize: vars.fontSize.caption, color: vars.color.deepGray }],
+  time: [{ display: 'flex', alignItems: 'flex-end', fontSize: vars.fontSize.caption, color: vars.color.deepGray }],
 })
 globalStyle(`${chatModalContentList.profile} > img`, {
   width: '50px',

@@ -3,11 +3,11 @@
 import chatSvg from '#/assets/icons/chat.svg'
 import chatXSvg from '#/assets/icons/chatX.svg'
 import Image from 'next/image'
-import * as styles from '@/containers/project/chat.css'
+import styles from '@/containers/project/chat.css'
 import { useState } from 'react'
 import ChatContent from '@/containers/project/chatModal/ChatCotent'
 
-const SVG_SIZE = 110
+const SVG_SIZE = 90
 
 export default function Chat() {
   // Modal을 보여주는 상태관리 null타입은 첫 상태이고 이 후 true false가 된다.
@@ -20,10 +20,10 @@ export default function Chat() {
   return (
     <>
       <ChatContent isVisible={isVisible} />
-      <div onClick={handleVisible}>
+      <button type='button' onClick={handleVisible}>
         {!isVisible ? (
           <Image
-            className={styles.chat}
+            className={styles}
             src={chatSvg}
             alt="Chat"
             width={SVG_SIZE}
@@ -31,14 +31,14 @@ export default function Chat() {
           />
         ) : (
           <Image
-            className={styles.chat}
+            className={styles}
             src={chatXSvg}
             alt="Chat"
             width={SVG_SIZE}
             height={SVG_SIZE}
           />
         )}
-      </div>
+      </button>
     </>
   )
 }
