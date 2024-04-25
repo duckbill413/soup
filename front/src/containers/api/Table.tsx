@@ -1,6 +1,7 @@
 import '@/containers/api/table.css'
+import { APITableData } from '@/types/apitable'
 
-export default function Table() {
+export default function Table({ data }: APITableData) {
   return (
     <table>
       <thead>
@@ -9,19 +10,21 @@ export default function Table() {
           <th>API 이름</th>
           <th>종류</th>
           <th>URI</th>
-          <th>설명</th>
+          <th colSpan={2}>설명</th>
         </tr>
       </thead>
       <tbody>
+        {data.map((item) => (
+          <tr key={item.id}>
+            <td>{item.domain}</td>
+            <td>{item.name}</td>
+            <td>{item.method}</td>
+            <td>{item.uri}</td>
+            <td colSpan={2}>{item.desc}</td>
+          </tr>
+        ))}
         <tr>
-          <td>Board</td>
-          <td>게시글 리스트 조회</td>
-          <td>GET</td>
-          <td>/board</td>
-          <td>게시글을 전부 조회한다.</td>
-        </tr>
-        <tr>
-          <td colSpan={5}>+ 새로 만들기</td>
+          <td colSpan={6}>+ 새로 만들기</td>
         </tr>
       </tbody>
     </table>
