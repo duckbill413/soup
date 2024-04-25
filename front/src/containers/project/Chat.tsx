@@ -7,7 +7,7 @@ import styles from '@/containers/project/chat.css'
 import { useState } from 'react'
 import ChatContent from '@/containers/project/chatModal/ChatCotent'
 
-const SVG_SIZE = 110
+const SVG_SIZE = 90
 
 export default function Chat() {
   // Modal을 보여주는 상태관리 null타입은 첫 상태이고 이 후 true false가 된다.

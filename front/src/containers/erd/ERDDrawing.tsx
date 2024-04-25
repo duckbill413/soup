@@ -6,7 +6,6 @@ import { ErdEditorElement } from '@dineug/erd-editor'
 import * as styles from '@/containers/erd/erd.css'
 
 export default function ERDDrawing() {
-  // Define generateVuerd function before using it in useEffect
   const generateVuerd = () => {
     const container: any = document.querySelector('#app-erd')
     if (!container) return
