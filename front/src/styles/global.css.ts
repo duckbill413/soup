@@ -1,5 +1,4 @@
 import { globalStyle, style } from '@vanilla-extract/css'
-import vars from '@/styles/variables.css'
 
 export const container = style({
   width: '100vw',
@@ -8,4 +7,15 @@ export const container = style({
 
 globalStyle('body', {
   margin: '0',
+});
+
+globalStyle('button', {
+  border: 'none',
+  padding: 0,
+  margin: 0,
+  textAlign: 'start',
+  font: 'inherit',
+  color: 'inherit',
+  background: 'none',
+  cursor: 'pointer'
 });
