@@ -1,4 +1,4 @@
-import * as styles from "@/containers/outline/styles/outlineTable.css"
+import * as styles from "@/containers/outline/styles/table/outlineTable.css"
 
 interface TableRow {
   name: string;
@@ -7,7 +7,7 @@ interface TableRow {
 
 function ToolTable ({ rows }: { rows: TableRow[] }) {
   return (
-    <table style={{ width: '80%' }}>
+    <table>
       <thead>
       <tr>
         <th className={styles.tableToolTitle}>툴 이름</th>
@@ -17,8 +17,8 @@ function ToolTable ({ rows }: { rows: TableRow[] }) {
       <tbody>
       {rows.map((row) => (
         <tr>
-          <td className={styles.tableToolContent}>{row.name}</td>
-          <td className={styles.tableToolContent}><a href={row.description}>{row.description}</a></td>
+          <td>{row.name}</td>
+          <td><a href={row.description}>{row.description}</a></td>
         </tr>
       ))}
       </tbody>

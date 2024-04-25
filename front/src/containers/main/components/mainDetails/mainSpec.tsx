@@ -1,4 +1,4 @@
-import * as styles from '@/containers/main/styles/subPage.css'
+import * as styles from '@/containers/main/styles/mainSubPage.css'
 import Image from 'next/image'
 import illust from '#/assets/icons/mainpage/spec/illustSpec.svg'
 import show from '#/assets/icons/mainpage/spec/showSpec.svg'

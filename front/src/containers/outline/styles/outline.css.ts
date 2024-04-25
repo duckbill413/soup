@@ -1,8 +1,19 @@
-import { style } from '@vanilla-extract/css';
+import { globalStyle, style } from '@vanilla-extract/css'
 import vars from '@/styles/variables.css'
 
-export const boldText = style ({
+globalStyle('p', {
   fontWeight:'bold',
   fontSize: '1.3rem',
   marginRight:vars.space.tiny
+})
+
+export const container = style ({
+  display:'flex',
+  justifyContent:'center'
+})
+
+export const mainDivision = style ({
+  display: 'flex',
+  flexDirection: 'column',
+  width: '93%'
 })
