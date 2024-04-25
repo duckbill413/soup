@@ -8,4 +8,5 @@ export interface APIInput {
   isEssential: boolean
   placeholder?: string
   options?: Array<Option>
+  multiline?: boolean
 }

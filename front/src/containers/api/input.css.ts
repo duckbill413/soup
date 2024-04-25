@@ -23,18 +23,12 @@ export const essential = style({
 
 export const input = style({
   width: 'fit-content',
-  height: 'fit-content',
   minWidth: '500px',
-  border: `2px solid ${vars.color.gray}`,
-  borderRadius: vars.space.tiny,
-  padding: `${vars.space.tiny} ${vars.space.small}`,
 
   fontSize: vars.fontSize.small,
   fontFamily: 'inherit',
   color: vars.color.black,
   fontWeight: 500,
-
-  whiteSpace: 'pre-line',
 
   '::placeholder': {
     color: vars.color.deepGray,
@@ -46,18 +40,4 @@ export const input = style({
     border: `2px solid ${vars.color.main}`,
     boxShadow: `0 0 8px ${vars.color.main}`,
   },
-})
-
-export const select = style({
-  width: 'fit-content',
-  height: 'fit-content',
-  minWidth: '200px',
-  border: `2px solid ${vars.color.gray}`,
-  borderRadius: vars.space.tiny,
-  padding: `${vars.space.tiny} ${vars.space.small}`,
-
-  fontSize: vars.fontSize.small,
-  fontFamily: 'inherit',
-  color: vars.color.black,
-  fontWeight: 500,
 })
