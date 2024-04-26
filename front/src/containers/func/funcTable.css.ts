@@ -1,6 +1,5 @@
 import { globalStyle, style } from '@vanilla-extract/css'
 import vars from '@/styles/variables.css'
-import { tableHeader } from '@/containers/func/page.css'
 
 export const container = style({
 
