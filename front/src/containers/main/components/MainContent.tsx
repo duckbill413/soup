@@ -2,10 +2,10 @@
 
 import React, { useEffect, useRef, useState } from 'react'
 import * as styles from '@/containers/main/styles/mainPage.css'
-import MainPlan from '@/containers/main/components/mainDetails/mainPlan'
-import MainIntro from '@/containers/main/components/mainDetails/mainIntro'
-import MainFunc from '@/containers/main/components/mainDetails/mainFunc'
-import MainSpec from '@/containers/main/components/mainDetails/mainSpec'
+import MainPlan from '@/containers/main/components/mainDetails/MainPlan'
+import MainIntro from '@/containers/main/components/mainDetails/MainIntro'
+import MainFunc from '@/containers/main/components/mainDetails/MainFunc'
+import MainSpec from '@/containers/main/components/mainDetails/MainSpec'
 import '../styles/noScrollBar.css'
 
 export default function MainContent() {

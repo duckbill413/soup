@@ -2,8 +2,8 @@ import { StepTitleWithGuide } from '@/components/StepTitle/StepTitle';
 import Change from "#/assets/icons/plan/change.svg"
 import Image from 'next/image'
 import * as styles from "@/containers/plan/styles/plan.css"
-import PlanAfterAI from '@/containers/plan/components/afterAI/main'
-import PlanBeforeAI from '@/containers/plan/components/beforeAI/main'
+import PlanAfterAI from '@/containers/plan/components/afterAI/Main'
+import PlanBeforeAI from '@/containers/plan/components/beforeAI/Main'
 
 function Plan () {
   return (
