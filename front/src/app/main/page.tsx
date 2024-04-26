@@ -1,5 +1,5 @@
-import MainPageHeader from '@/containers/main/components/mainPageHeader'
-import MainContent from '@/containers/main/components/mainContent'
+import MainPageHeader from '@/containers/main/components/MainPageHeader'
+import MainContent from '@/containers/main/components/MainContent'
 
 export default function MainPage() {
   return (

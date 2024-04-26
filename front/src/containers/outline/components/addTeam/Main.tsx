@@ -3,7 +3,7 @@
 import Image from 'next/image'
 import { useState } from 'react'
 import Add from '#/assets/icons/outline/addButton.svg'
-import TeamTable from '@/containers/outline/components/addTeam/teamTable'
+import TeamTable from '@/containers/outline/components/addTeam/TeamTable'
 import * as styles from "@/containers/outline/styles/addTeam/outlineAddTeam.css"
 
 interface TeamTableType {
