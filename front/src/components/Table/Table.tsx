@@ -3,11 +3,11 @@ import { TableProps } from '@/types/table'
 
 export default function Table({ headers, hasNewLine, children }: TableProps) {
   return (
-    <table>
+    <table className={styles.table}>
       <thead>
         <tr>
-          {headers.map((item) => (
-            <th colSpan={item.colSpan ?? 1}>
+          {headers.map((item, k) => (
+            <th colSpan={item.colSpan ?? 1} key={k}>
               {item.title}
               <span
                 className={styles.essential}
@@ -26,13 +26,12 @@ export default function Table({ headers, hasNewLine, children }: TableProps) {
         {hasNewLine ? (
           <tr>
             <td
-              colSpan={
-                (headers.reduce(
-                  (result, item) => result + (item.colSpan ?? 1),
-                  headers.length,
-                ),
-                0)
-              }
+              className={styles.newLine}
+              colSpan={headers.reduce(
+                (result, item) =>
+                  result + (item.colSpan ? item.colSpan - 1 : 0),
+                headers.length,
+              )}
             >
               + 새로 만들기
             </td>

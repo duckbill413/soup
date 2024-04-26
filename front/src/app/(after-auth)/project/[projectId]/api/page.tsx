@@ -1,6 +1,6 @@
 import { StepTitleWithGuide } from '@/components/StepTitle/StepTitle'
 import IconButton from '@/containers/api/IconButton'
-import Table from '@/containers/api/Table'
+import APITable from '@/containers/api/APITable'
 import * as style from '@/containers/api/index.css'
 import { APITableRow } from '@/types/apitable'
 import { ErrorIcon, FilterIcon, SettingIcon } from '@/../public/assets/icons'
@@ -18,7 +18,7 @@ const sampleData: Array<APITableRow> = [
     desc: '게시글을 전부 조회한다. 게시글을 하나만 조회할 수 있는겁니다. 뻥이고 사실 전부 조회할 수 있음요',
   },
   {
-    id: 1,
+    id: 2,
     domain: 'Board',
     domainColor: '#93B5E7',
     name: '게시글 등록',
@@ -50,7 +50,7 @@ export default function ApiSpecification() {
           </IconButton>
         </div>
       </div>
-      <Table data={sampleData} />
+      <APITable data={sampleData} />
     </div>
   )
 }

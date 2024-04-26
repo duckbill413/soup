@@ -22,3 +22,19 @@ globalStyle('button', {
   background: 'none',
   cursor: 'pointer',
 })
+
+globalStyle('input', {
+  fontFamily: 'inherit',
+})
+
+globalStyle('textarea', {
+  fontFamily: 'inherit',
+})
+
+globalStyle('button', {
+  fontFamily: 'inherit',
+})
+
+globalStyle('select', {
+  fontFamily: 'inherit',
+})
