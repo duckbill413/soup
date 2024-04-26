@@ -3,7 +3,7 @@
 import Image from 'next/image'
 import { useState } from 'react'
 import Add from '#/assets/icons/outline/addButton.svg'
-import ToolTable from '@/containers/outline/components/addTool/toolTable'
+import ToolTable from '@/containers/outline/components/addTool/ToolTable'
 import * as styles from "@/containers/outline/styles/addTool/outlineAddTool.css"
 
 interface RoleTableType {

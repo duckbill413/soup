@@ -1,9 +1,9 @@
 import * as styles from "@/containers/outline/styles/outline.css"
 import { StepTitle } from '@/components/StepTitle/StepTitle'
-import OutlineIntro from '@/containers/outline/components/intro/main'
-import OutlineCalendar from '@/containers/outline/components/calendar/main'
-import OutlineAddTool from '@/containers/outline/components/addTool/main'
-import OutlineAddTeam from '@/containers/outline/components/addTeam/main'
+import OutlineIntro from '@/containers/outline/components/intro/Main'
+import OutlineCalendar from '@/containers/outline/components/calendar/Main'
+import OutlineAddTool from '@/containers/outline/components/addTool/Main'
+import OutlineAddTeam from '@/containers/outline/components/addTeam/Main'
 
 function Outline () {
   return (
