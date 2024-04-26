@@ -6,20 +6,20 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 
 @Schema(description = "프로젝트 관리툴")
-public record ProjectToolDto(
+public record GetProjectTool(
         @Schema(description = "tool_name")
         String toolName,
         @Schema(description = "tool_url")
         String toolUrl
 ) {
     @Builder
-    public ProjectToolDto {
+    public GetProjectTool {
         toolName = StringParserUtil.parseNullToEmpty(toolName);
         toolUrl = StringParserUtil.parseNullToEmpty(toolUrl);
     }
 
-    public static ProjectToolDto toProjectToolDto(Tool tool) {
-        return ProjectToolDto.builder()
+    public static GetProjectTool toProjectToolDto(Tool tool) {
+        return GetProjectTool.builder()
                 .toolName(tool.getToolName())
                 .toolUrl(tool.getUrl())
                 .build();
