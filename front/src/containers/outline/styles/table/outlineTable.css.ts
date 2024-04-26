@@ -1,11 +1,12 @@
-import { globalStyle, style } from '@vanilla-extract/css'
 import vars from '@/styles/variables.css'
+import { globalStyle, style } from '@vanilla-extract/css'
+import { container } from '@/containers/outline/styles/outline.css'
 
-globalStyle('table', {
+globalStyle(`${container} table`, {
   width: '80%'
 })
 
-globalStyle('td', {
+globalStyle(`${container} td`, {
   padding:'0.3rem',
   borderBottom: '1px solid #D9D9D9',
   textAlign:'center'
