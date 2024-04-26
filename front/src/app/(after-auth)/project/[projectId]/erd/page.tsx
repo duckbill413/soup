@@ -1,4 +1,4 @@
-import { StepTitleWithGuide } from '@/components/StepTitle/StepTitle'
+import { StepTitle, StepTitleWithGuide } from '@/components/StepTitle/StepTitle'
 import ERDDrawing from '@/containers/erd/ERDDrawing'
 import * as styles from '@/containers/erd/erd.css'
 
@@ -6,7 +6,7 @@ export default function ERD() {
   return (
     <>
       <div>
-        <StepTitleWithGuide
+        <StepTitle
           stepNum={5}
           title="ERD"
           desc="데이터베이스를 설계하세요"
