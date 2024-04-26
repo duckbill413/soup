@@ -37,7 +37,10 @@ const vars = createGlobalTheme(':root', {
     layout: '',
     black: '#363636',
   },
-
+  boxShadow: {
+    customInner :'inset 0 5px 5px 2px rgba(0, 0, 0, 0.2)',
+    customOuter : '3px 4px 8px 4px rgba(0, 0, 0, 0.25)'
+  },
 
 
 
