@@ -1,6 +1,7 @@
 package io.ssafy.soupapi.domain.project.usecase.application;
 
 import io.ssafy.soupapi.domain.project.mongodb.dto.request.UpdateProjectInfo;
+import io.ssafy.soupapi.domain.project.mongodb.dto.request.UpdateProjectJiraKey;
 import io.ssafy.soupapi.domain.project.mongodb.dto.request.UpdateProjectProposal;
 import io.ssafy.soupapi.domain.project.mongodb.dto.response.GetProjectInfo;
 import io.ssafy.soupapi.domain.project.mongodb.dto.response.GetProjectJiraKey;
@@ -24,4 +25,6 @@ public interface ProjectUsecase {
     GetProjectInfo updateProjectInfo(String projectId, UpdateProjectInfo updateProjectInfo, TemporalMember member);
 
     GetProjectJiraKey findProjectJiraKey(String projectId, TemporalMember member);
+
+    GetProjectJiraKey updateProjectJiraKey(String projectId, UpdateProjectJiraKey updateProjectJiraKey, TemporalMember member);
 }

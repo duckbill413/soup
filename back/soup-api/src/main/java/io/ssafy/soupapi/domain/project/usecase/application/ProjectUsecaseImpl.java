@@ -4,6 +4,7 @@ import io.ssafy.soupapi.domain.member.dao.MemberRepository;
 import io.ssafy.soupapi.domain.member.entity.Member;
 import io.ssafy.soupapi.domain.project.mongodb.application.MProjectService;
 import io.ssafy.soupapi.domain.project.mongodb.dto.request.UpdateProjectInfo;
+import io.ssafy.soupapi.domain.project.mongodb.dto.request.UpdateProjectJiraKey;
 import io.ssafy.soupapi.domain.project.mongodb.dto.request.UpdateProjectProposal;
 import io.ssafy.soupapi.domain.project.mongodb.dto.response.GetProjectInfo;
 import io.ssafy.soupapi.domain.project.mongodb.dto.response.GetProjectJiraKey;
@@ -150,6 +151,14 @@ public class ProjectUsecaseImpl implements ProjectUsecase {
         throw new BaseExceptionHandler(ErrorCode.FAILED_TO_UPDATE_PROJECT);
     }
 
+    /**
+     * 프로젝트 정보 업데이트
+     *
+     * @param projectId         프로젝트 ID
+     * @param updateProjectInfo 업데이트할 프로젝트 정보
+     * @param member            업데이트 하는 멤버
+     * @return
+     */
     @Override
     public GetProjectInfo updateProjectInfo(String projectId, UpdateProjectInfo updateProjectInfo, TemporalMember member) {
         // 프로젝트 권한 검사
@@ -161,11 +170,27 @@ public class ProjectUsecaseImpl implements ProjectUsecase {
         return mProjectService.updateProjectInfo(new ObjectId(projectId), updateProjectInfo); // TODO: security member
     }
 
+    /**
+     * 프로젝트 지라 키정보 조회
+     *
+     * @param projectId 프로젝트 ID
+     * @param member    키정보를 조회하는 멤버
+     * @return 지라 유저 이름 및 키 값
+     */
     @Override
     public GetProjectJiraKey findProjectJiraKey(String projectId, TemporalMember member) {
         var roles = pProjectService.getProjectRoles(projectId, member);
         if (roles.contains(ProjectRole.ADMIN) || roles.contains(ProjectRole.MAINTAINER)) {
             return mProjectService.findProjectJiraKey(new ObjectId(projectId));
+        }
+        throw new BaseExceptionHandler(ErrorCode.NOT_FOUND_PROJECT_AUTH);
+    }
+
+    @Override
+    public GetProjectJiraKey updateProjectJiraKey(String projectId, UpdateProjectJiraKey updateProjectJiraKey, TemporalMember member) {
+        var roles = pProjectService.getProjectRoles(projectId, member);
+        if (roles.contains(ProjectRole.ADMIN) || roles.contains(ProjectRole.MAINTAINER)) {
+            return mProjectService.updateProjectJiraKey(new ObjectId(projectId), updateProjectJiraKey);
         }
         throw new BaseExceptionHandler(ErrorCode.NOT_FOUND_PROJECT_AUTH);
     }

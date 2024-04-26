@@ -2,6 +2,7 @@ package io.ssafy.soupapi.domain.project.mongodb.application;
 
 import io.ssafy.soupapi.domain.project.mongodb.dao.MProjectRepository;
 import io.ssafy.soupapi.domain.project.mongodb.dto.request.UpdateProjectInfo;
+import io.ssafy.soupapi.domain.project.mongodb.dto.request.UpdateProjectJiraKey;
 import io.ssafy.soupapi.domain.project.mongodb.dto.request.UpdateProjectProposal;
 import io.ssafy.soupapi.domain.project.mongodb.dto.request.UpdateProjectTool;
 import io.ssafy.soupapi.domain.project.mongodb.dto.response.GetProjectInfo;
@@ -107,6 +108,13 @@ public class MProjectServiceImpl implements MProjectService {
         return findProjectProposal(projectId);
     }
 
+    /**
+     * MongoDB에 팀 정보 추가
+     * 유저 이름이 없다면 일단은 닉네임 정보는 없이 추가
+     *
+     * @param inviteTeammate 초대하는 팀원의 정보
+     * @param username       초대하는 팀원의 닉네임 정보
+     */
     @Transactional
     @Override
     public void addTeammate(InviteTeammate inviteTeammate, String username) {
@@ -122,6 +130,12 @@ public class MProjectServiceImpl implements MProjectService {
         project.getTeamMembers().add(InviteTeammate.toTeamMember(inviteTeammate, UUID.fromString(username)));
     }
 
+    /**
+     * 프로젝트 내 팀원 정보 조회
+     *
+     * @param projectId 프로젝트 Id
+     * @return 팀원들의 정보
+     */
     @Transactional(readOnly = true)
     @Override
     public List<TeamMember> findTeammateById(ObjectId projectId) {
@@ -130,6 +144,14 @@ public class MProjectServiceImpl implements MProjectService {
                 .getTeamMembers();
     }
 
+    /**
+     * 프로젝트 정보(개요) 업데이트
+     * - 이미지 정보, JIRA 정보는 업데이트 되지 않음
+     *
+     * @param projectId         업데이트 하는 프로젝트의 Id
+     * @param updateProjectInfo 업데이트할 프로젝트 정보
+     * @return 업데이트 완료 후 프로젝트 정보
+     */
     @Transactional
     @Override
     public GetProjectInfo updateProjectInfo(ObjectId projectId, UpdateProjectInfo updateProjectInfo) {
@@ -151,10 +173,33 @@ public class MProjectServiceImpl implements MProjectService {
         return GetProjectInfo.toProjectInfoDto(project);
     }
 
+    /**
+     * 프로젝트 지라 키 검색
+     *
+     * @param projectId 지라 키를 찾을 프로젝트 Id
+     * @return 지라 유저 이름 및 키 정보
+     */
     @Override
     public GetProjectJiraKey findProjectJiraKey(ObjectId projectId) {
         var project = mProjectRepository.findProjectJiraKey(projectId).orElseThrow(() ->
                 new BaseExceptionHandler(ErrorCode.NOT_FOUND_PROJECT));
+        return GetProjectJiraKey.toProjectInfoDto(project.getInfo());
+    }
+
+    /**
+     * 프로젝트 지라 키 정보 업데이트
+     *
+     * @param projectId            지라 키 정보를 업데이트할 프로젝트 Id
+     * @param updateProjectJiraKey 업데이트할 프로젝트 자라 정보
+     * @return 업데이트 완료된 프로젝트 지라 정보
+     */
+    @Override
+    public GetProjectJiraKey updateProjectJiraKey(ObjectId projectId, UpdateProjectJiraKey updateProjectJiraKey) {
+        var project = mProjectRepository.findProjectJiraKey(projectId).orElseThrow(() ->
+                new BaseExceptionHandler(ErrorCode.FAILED_TO_UPDATE_PROJECT));
+        project.getInfo().setJiraUsername(updateProjectJiraKey.username());
+        project.getInfo().setJiraKey(updateProjectJiraKey.key());
+        mProjectRepository.save(project);
         return GetProjectJiraKey.toProjectInfoDto(project.getInfo());
     }
 }

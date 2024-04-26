@@ -1,6 +1,7 @@
 package io.ssafy.soupapi.domain.project.mongodb.application;
 
 import io.ssafy.soupapi.domain.project.mongodb.dto.request.UpdateProjectInfo;
+import io.ssafy.soupapi.domain.project.mongodb.dto.request.UpdateProjectJiraKey;
 import io.ssafy.soupapi.domain.project.mongodb.dto.request.UpdateProjectProposal;
 import io.ssafy.soupapi.domain.project.mongodb.dto.response.GetProjectInfo;
 import io.ssafy.soupapi.domain.project.mongodb.dto.response.GetProjectJiraKey;
@@ -31,4 +32,6 @@ public interface MProjectService {
     GetProjectInfo updateProjectInfo(ObjectId projectId, UpdateProjectInfo updateProjectInfo);
 
     GetProjectJiraKey findProjectJiraKey(ObjectId objectId);
+
+    GetProjectJiraKey updateProjectJiraKey(ObjectId projectId, UpdateProjectJiraKey updateProjectJiraKey);
 }
