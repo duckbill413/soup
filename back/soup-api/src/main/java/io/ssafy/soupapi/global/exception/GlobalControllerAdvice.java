@@ -1,6 +1,6 @@
 package io.ssafy.soupapi.global.exception;
 
-import io.ssafy.soupapi.global.common.ErrorResponse;
+import io.ssafy.soupapi.global.common.response.ErrorResponse;
 import io.ssafy.soupapi.global.common.code.ErrorCode;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;
@@ -26,9 +26,11 @@ public class GlobalControllerAdvice {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> handleMethodValidation(MethodArgumentNotValidException e) {
         BindingResult bindingResult = e.getBindingResult();
+
         var response = ErrorResponse.fail(ErrorCode.NOT_VALID_ERROR,
                 Objects.requireNonNull(bindingResult).getFieldErrors(),
-                e.getMessage());
+                bindingResult.getAllErrors().stream().findFirst().orElseThrow().getDefaultMessage()
+        );
 
         return ResponseEntity.status(response.status()).body(response);
     }
@@ -43,7 +45,7 @@ public class GlobalControllerAdvice {
     @ExceptionHandler(RuntimeException.class)
     protected ResponseEntity<ErrorResponse> handleRuntimeExceptions(RuntimeException e) {
         e.printStackTrace();
-        var response = ErrorResponse.fail(ErrorCode.INTERNAL_SERVER_ERROR, e.getMessage());
+        var response = ErrorResponse.fail(ErrorCode.INTERNAL_SERVER_ERROR, e.getLocalizedMessage());
 
         return ResponseEntity.status(response.status()).body(response);
     }

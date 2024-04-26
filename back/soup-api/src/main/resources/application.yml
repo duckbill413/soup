@@ -41,6 +41,28 @@ spring:
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${GMAIL_USERNAME}
+    password: ${GMAIL_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          timeout: 5000
+          starttls:
+            enable: true
+
+logging:
+  level:
+    org:
+      springframework:
+        data:
+          mongodb:
+            core:
+              MongoTemplate: DEBUG
+
 
 ## Springdoc Configuration
 springdoc:
@@ -72,16 +94,34 @@ springdoc:
     - group: jwt-api
       paths-to-match:
         - /api/**
-  #  show-actuator: true
+  show-actuator: true
 
 
 ## AWS S3 Configuration
 cloud:
   aws:
     region:
-      static:ap-northeast-2
+      static: ap-northeast-2
     credentials:
-      accessKey:${AWS_ACCESS_KEY}
-      secretKey:${AWS_SECRET_KEY}
+      accessKey: ${AWS_ACCESS_KEY}
+      secretKey: ${AWS_SECRET_KEY}
     s3:
-      bucket:soup-bucket
+      bucket: soup-bucket
+
+management:
+  server:
+    port: 8080
+  health:
+    mail:
+      enabled: false
+  endpoints:
+    web:
+      base-path: /api/actuator
+  endpoint:
+    health:
+      show-details: always # 상세 정보 표시
+      status:
+        http-mapping:
+          down: 500 # server down 시 에러 정보
+          out_of_service: 503
+        order: DOWN, FATAL, OUT-OF-SERVICE, UNKNOWN, UP
