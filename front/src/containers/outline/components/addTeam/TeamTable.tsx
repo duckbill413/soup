@@ -18,7 +18,7 @@ function TeamTable ({ rows }: { rows: TableRow[] }) {
       </thead>
       <tbody>
       {rows.map((row) => (
-        <tr>
+        <tr key={row.email}>
           <td>{row.name}</td>
           <td>{row.role}</td>
           <td><a href={row.email}>{row.email}</a></td>

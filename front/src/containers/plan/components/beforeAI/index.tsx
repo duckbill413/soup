@@ -21,7 +21,6 @@ function PlanBeforeAI () {
     }
   };
 
-  // 해시태그 삭제
   const removeHashtag = (id: string) => {
     setPlantags((prev) => prev.filter((tag) => tag.id !== id));
   };
