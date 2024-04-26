@@ -54,7 +54,7 @@ export default function ChatContent({ isVisible }: Props) {
                   className={styles.chatModalContentList.layout}
                 >
                   <div className={styles.chatModalContentList.profile}>
-                    <img width={44} height={44} src={chat.memberProfileImage} alt="프로필" />
+                    <Image unoptimized width={44} height={44} src={chat.memberProfileImage} alt="프로필" />
                   </div>
                   <div className={styles.chatModalContentList.userArea}>
                     <p className={styles.chatModalContentList.nickname}>

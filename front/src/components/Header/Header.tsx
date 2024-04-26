@@ -22,7 +22,7 @@ export default function Header({theme,useVoice}:Props) {
       <div className={styles.assistant}>
         {useVoice && <Image src={voicechat} width={44} height={44} alt="음성 채팅" />}
         <Notification color={theme ==='white' ? 'black' : 'white'}/>
-        <img src={faker.image.avatar()} width={44} height={44} alt="프로필" />
+        <Image unoptimized src={faker.image.avatar()} width={44} height={44} alt="프로필" />
       </div>
     </div>
   )
