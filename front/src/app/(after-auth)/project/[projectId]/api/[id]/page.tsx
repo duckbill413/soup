@@ -3,9 +3,22 @@ import { Option } from '@/types/apiinput'
 import Link from 'next/link'
 import * as styles from '@/containers/api/detail/index.css'
 import { KeyboardDoubleArrowLeft } from '@mui/icons-material'
+import Badge from '@/containers/api/detail/Badge'
+import { PathTable, QueryTable } from '@/containers/api/detail'
 
 // TODO: 예시 데이터. 삭제 필
 const sampleData: Array<Option> = [
+  {
+    id: 1,
+    value: 'Member',
+  },
+  {
+    id: 2,
+    value: 'Board',
+  },
+]
+
+const sampleData2: Array<Option> = [
   {
     id: 1,
     value: 'Member',
@@ -49,6 +62,12 @@ export default function APIDetail() {
           isEssential={false}
           multiline
         />
+
+        <Badge name="Path Variable" />
+        <PathTable />
+
+        <Badge name="Query Parameter*" />
+        <QueryTable />
       </section>
     </div>
   )
