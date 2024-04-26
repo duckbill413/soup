@@ -1,8 +1,10 @@
 package io.ssafy.soupapi.domain.project.usecase.api;
 
+import io.ssafy.soupapi.domain.project.mongodb.dto.request.UpdateProjectInfo;
 import io.ssafy.soupapi.domain.project.mongodb.dto.request.UpdateProjectProposal;
+import io.ssafy.soupapi.domain.project.mongodb.dto.response.GetProjectInfo;
+import io.ssafy.soupapi.domain.project.mongodb.dto.response.GetProjectJiraKey;
 import io.ssafy.soupapi.domain.project.mongodb.dto.response.GetProjectProposal;
-import io.ssafy.soupapi.domain.project.mongodb.dto.response.ProjectInfoDto;
 import io.ssafy.soupapi.domain.project.usecase.application.ProjectUsecase;
 import io.ssafy.soupapi.domain.project.usecase.dto.request.CreateProjectDto;
 import io.ssafy.soupapi.domain.project.usecase.dto.request.InviteTeammate;
@@ -15,7 +17,6 @@ import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.bson.types.ObjectId;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -56,25 +57,52 @@ public class ProjectUsecaseController {
      */
     @Operation(summary = "프로젝트 정보 요청", description = "프로젝트 개요 화면의 프로젝트 정보 요청")
     @GetMapping("/{projectId}/info")
-    public ResponseEntity<BaseResponse<ProjectInfoDto>> findProjectInfo(
+    public ResponseEntity<BaseResponse<GetProjectInfo>> findProjectInfo(
             @PathVariable(name = "projectId") String projectId,
             @AuthenticationPrincipal TemporalMember member // TODO: security member
     ) {
         return BaseResponse.success(
                 SuccessCode.SELECT_SUCCESS,
-                projectUsecase.findProjectInfo(new ObjectId(projectId), member)
+                projectUsecase.findProjectInfo(projectId, member)
+        );
+    }
+
+    @Operation(summary = "프로젝트 지라 키 정보 요청", description = "프로젝트 Jira Key 정보 요청 (ADMIN, MAINTAINER)")
+    @GetMapping("/{projectId}/info/jira")
+    public ResponseEntity<BaseResponse<GetProjectJiraKey>> findProjectJiraKey(
+            @PathVariable(name = "projectId") String projectId,
+            @AuthenticationPrincipal TemporalMember member
+    ) {
+        return BaseResponse.success(
+                SuccessCode.SELECT_SUCCESS,
+                projectUsecase.findProjectJiraKey(projectId, member)
+        );
+    }
+
+
+    @Operation(summary = "프로젝트 정보 수정", description = "프로젝트 개요 화면 정보 수정")
+    @PutMapping("/{projectId}/info")
+    public ResponseEntity<BaseResponse<GetProjectInfo>> updateProjectInfo(
+            @PathVariable(name = "projectId") String projectId,
+            @RequestBody UpdateProjectInfo updateProjectInfo,
+            @AuthenticationPrincipal TemporalMember member
+    ) {
+        return BaseResponse.success(
+                SuccessCode.SELECT_SUCCESS,
+                projectUsecase.updateProjectInfo(projectId, updateProjectInfo, member)
         );
     }
 
     @Operation(summary = "프로젝트 제안서 업데이트")
     @PutMapping("/{projectId}/proposal")
     public ResponseEntity<BaseResponse<GetProjectProposal>> changeProjectProposal(
+            @PathVariable(name = "projectId") String projectId,
             @Valid @RequestBody UpdateProjectProposal updateProjectProposal,
             @AuthenticationPrincipal TemporalMember member // TODO: security member
     ) {
         return BaseResponse.success(
                 SuccessCode.UPDATE_SUCCESS,
-                projectUsecase.updateProjectProposal(updateProjectProposal, member)
+                projectUsecase.updateProjectProposal(projectId, updateProjectProposal, member)
         );
     }
 
@@ -86,7 +114,7 @@ public class ProjectUsecaseController {
     ) {
         return BaseResponse.success(
                 SuccessCode.SELECT_SUCCESS,
-                projectUsecase.findProjectProposal(new ObjectId(projectId), member)
+                projectUsecase.findProjectProposal(projectId, member)
         );
     }
 

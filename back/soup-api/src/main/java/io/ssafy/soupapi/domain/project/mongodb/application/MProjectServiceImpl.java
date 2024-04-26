@@ -1,9 +1,12 @@
 package io.ssafy.soupapi.domain.project.mongodb.application;
 
 import io.ssafy.soupapi.domain.project.mongodb.dao.MProjectRepository;
+import io.ssafy.soupapi.domain.project.mongodb.dto.request.UpdateProjectInfo;
 import io.ssafy.soupapi.domain.project.mongodb.dto.request.UpdateProjectProposal;
+import io.ssafy.soupapi.domain.project.mongodb.dto.request.UpdateProjectTool;
+import io.ssafy.soupapi.domain.project.mongodb.dto.response.GetProjectInfo;
+import io.ssafy.soupapi.domain.project.mongodb.dto.response.GetProjectJiraKey;
 import io.ssafy.soupapi.domain.project.mongodb.dto.response.GetProjectProposal;
-import io.ssafy.soupapi.domain.project.mongodb.dto.response.ProjectInfoDto;
 import io.ssafy.soupapi.domain.project.mongodb.entity.Info;
 import io.ssafy.soupapi.domain.project.mongodb.entity.Project;
 import io.ssafy.soupapi.domain.project.mongodb.entity.ProjectRole;
@@ -70,24 +73,10 @@ public class MProjectServiceImpl implements MProjectService {
      */
     @Transactional(readOnly = true)
     @Override
-    public ProjectInfoDto findProjectInfo(ObjectId projectId) {
+    public GetProjectInfo findProjectInfo(ObjectId projectId) {
         var project = mProjectRepository.findById(projectId).orElseThrow(() ->
                 new BaseExceptionHandler(ErrorCode.NOT_FOUND_PROJECT));
-        return ProjectInfoDto.toProjectInfoDto(project);
-    }
-
-    /**
-     * ProjectInfoDto 반환 (키 정보 O)
-     *
-     * @param projectId mongodb project id
-     * @return ProjectInfoDto that has key info
-     */
-    @Transactional(readOnly = true)
-    @Override
-    public ProjectInfoDto findProjectInfoWithKey(ObjectId projectId) {
-        var project = mProjectRepository.findById(projectId).orElseThrow(() ->
-                new BaseExceptionHandler(ErrorCode.NOT_FOUND_PROJECT));
-        return ProjectInfoDto.toProjectInfoWithKeyDto(project);
+        return GetProjectInfo.toProjectInfoDto(project);
     }
 
     /**
@@ -112,10 +101,10 @@ public class MProjectServiceImpl implements MProjectService {
      */
     @Transactional
     @Override
-    public GetProjectProposal updateProjectProposal(UpdateProjectProposal updateProjectProposal) {
-        mProjectRepository.updateProposal(new ObjectId(updateProjectProposal.projectId()),
+    public GetProjectProposal updateProjectProposal(ObjectId projectId, UpdateProjectProposal updateProjectProposal) {
+        mProjectRepository.updateProposal(projectId,
                 UpdateProjectProposal.toProjectProposal(updateProjectProposal));
-        return findProjectProposal(new ObjectId(updateProjectProposal.projectId()));
+        return findProjectProposal(projectId);
     }
 
     @Transactional
@@ -133,10 +122,39 @@ public class MProjectServiceImpl implements MProjectService {
         project.getTeamMembers().add(InviteTeammate.toTeamMember(inviteTeammate, UUID.fromString(username)));
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<TeamMember> findTeammateById(ObjectId projectId) {
         return mProjectRepository.findTeammateById(projectId).orElseThrow(() ->
                         new BaseExceptionHandler(ErrorCode.NOT_FOUND_PROJECT))
                 .getTeamMembers();
+    }
+
+    @Transactional
+    @Override
+    public GetProjectInfo updateProjectInfo(ObjectId projectId, UpdateProjectInfo updateProjectInfo) {
+        var project = mProjectRepository.findInfoAndToolsAndTeamMembersById(projectId).orElseThrow(() ->
+                new BaseExceptionHandler(ErrorCode.NOT_FOUND_PROJECT));
+
+        // update info
+        project.setInfo(Info.builder()
+                .name(updateProjectInfo.name())
+                .description(updateProjectInfo.description())
+                .startDate(updateProjectInfo.getStartDate())
+                .endDate(updateProjectInfo.getEndDate())
+                .build());
+        // update tools
+        var tools = updateProjectInfo.tools().stream().map(UpdateProjectTool::toTool).toList();
+        project.setTools(tools);
+
+        mProjectRepository.save(project);
+        return GetProjectInfo.toProjectInfoDto(project);
+    }
+
+    @Override
+    public GetProjectJiraKey findProjectJiraKey(ObjectId projectId) {
+        var project = mProjectRepository.findProjectJiraKey(projectId).orElseThrow(() ->
+                new BaseExceptionHandler(ErrorCode.NOT_FOUND_PROJECT));
+        return GetProjectJiraKey.toProjectInfoDto(project.getInfo());
     }
 }

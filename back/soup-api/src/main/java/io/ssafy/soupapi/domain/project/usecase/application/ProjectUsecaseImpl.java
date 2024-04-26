@@ -3,9 +3,11 @@ package io.ssafy.soupapi.domain.project.usecase.application;
 import io.ssafy.soupapi.domain.member.dao.MemberRepository;
 import io.ssafy.soupapi.domain.member.entity.Member;
 import io.ssafy.soupapi.domain.project.mongodb.application.MProjectService;
+import io.ssafy.soupapi.domain.project.mongodb.dto.request.UpdateProjectInfo;
 import io.ssafy.soupapi.domain.project.mongodb.dto.request.UpdateProjectProposal;
+import io.ssafy.soupapi.domain.project.mongodb.dto.response.GetProjectInfo;
+import io.ssafy.soupapi.domain.project.mongodb.dto.response.GetProjectJiraKey;
 import io.ssafy.soupapi.domain.project.mongodb.dto.response.GetProjectProposal;
-import io.ssafy.soupapi.domain.project.mongodb.dto.response.ProjectInfoDto;
 import io.ssafy.soupapi.domain.project.mongodb.entity.ProjectRole;
 import io.ssafy.soupapi.domain.project.postgresql.application.PProjectService;
 import io.ssafy.soupapi.domain.project.usecase.dto.request.CreateProjectDto;
@@ -61,15 +63,9 @@ public class ProjectUsecaseImpl implements ProjectUsecase {
      * @return ProjectInfoDto
      */
     @Override
-    public ProjectInfoDto findProjectInfo(ObjectId projectId, TemporalMember member) { // TODO: security member
-        var projectRoles = pProjectService.getProjectRoles(projectId.toHexString(), member);
-
-        // 상위 권한 유저의 경우 키 정보 같이 조회
-        if (projectRoles.contains(ProjectRole.MAINTAINER) || projectRoles.contains(ProjectRole.ADMIN)) {
-            return mProjectService.findProjectInfoWithKey(projectId);
-        }
-
-        return mProjectService.findProjectInfo(projectId);
+    public GetProjectInfo findProjectInfo(String projectId, TemporalMember member) { // TODO: security member
+        pProjectService.getProjectRoles(projectId, member);
+        return mProjectService.findProjectInfo(new ObjectId(projectId));
     }
 
     /**
@@ -80,8 +76,8 @@ public class ProjectUsecaseImpl implements ProjectUsecase {
      * @return ProjectInfoDto
      */
     @Override
-    public GetProjectProposal findProjectProposal(ObjectId projectId, TemporalMember member) {
-        var project = pProjectService.findById(projectId.toHexString());
+    public GetProjectProposal findProjectProposal(String projectId, TemporalMember member) {
+        var project = pProjectService.findById(projectId);
         // 최초 초대된 멤버인지 확인
         var projectAuth = projectAuthRepository.findByMemberAndProject(
                 Member.builder().id(member.getId()).build(),
@@ -89,7 +85,7 @@ public class ProjectUsecaseImpl implements ProjectUsecase {
 
         // mongodb에 있는지 확인하고 없으면 에러, 있으면 postgre에 추가
         if (projectAuth.isEmpty()) {
-            var teammates = mProjectService.findTeammateById(projectId);
+            var teammates = mProjectService.findTeammateById(new ObjectId(projectId));
 
             List<ProjectRole> roles = new ArrayList<>();
             for (var teammate : teammates) {
@@ -99,7 +95,7 @@ public class ProjectUsecaseImpl implements ProjectUsecase {
             }
 
             var inviteTeammateDto = InviteTeammate.builder()
-                    .projectId(projectId.toHexString())
+                    .projectId(projectId)
                     .email(member.getEmail())
                     .roles(roles)
                     .build();
@@ -107,20 +103,20 @@ public class ProjectUsecaseImpl implements ProjectUsecase {
             pProjectService.addTeammate(inviteTeammateDto, Member.builder().id(member.getId()).build(), project);
         }
         // 프로젝트 권한 검사
-        pProjectService.getProjectRoles(projectId.toHexString(), member);
+        pProjectService.getProjectRoles(projectId, member);
         // 프로젝트 기획서 데이터 조회
-        return mProjectService.findProjectProposal(projectId);
+        return mProjectService.findProjectProposal(new ObjectId(projectId));
     }
 
     @Override
-    public GetProjectProposal updateProjectProposal(UpdateProjectProposal updateProjectProposal, TemporalMember member) {
+    public GetProjectProposal updateProjectProposal(String projectId, UpdateProjectProposal updateProjectProposal, TemporalMember member) {
         // 프로젝트 제안서 수정 권한 검증
-        var roles = pProjectService.getProjectRoles(updateProjectProposal.projectId(), member);
+        var roles = pProjectService.getProjectRoles(projectId, member);
         if (roles.contains(ProjectRole.VIEWER)) {
             throw new BaseExceptionHandler(ErrorCode.FAILED_TO_UPDATE_PROJECT);
         }
         // 프로젝트 제안서 수정
-        return mProjectService.updateProjectProposal(updateProjectProposal);
+        return mProjectService.updateProjectProposal(new ObjectId(projectId), updateProjectProposal);
     }
 
     @Transactional
@@ -151,6 +147,26 @@ public class ProjectUsecaseImpl implements ProjectUsecase {
 //                            """);
             return "새로운 팀원을 초대 하였습니다.";
         }
-        throw new BaseExceptionHandler(ErrorCode.UNAUTHORIZED_USER_EXCEPTION);
+        throw new BaseExceptionHandler(ErrorCode.FAILED_TO_UPDATE_PROJECT);
+    }
+
+    @Override
+    public GetProjectInfo updateProjectInfo(String projectId, UpdateProjectInfo updateProjectInfo, TemporalMember member) {
+        // 프로젝트 권한 검사
+        var roles = pProjectService.getProjectRoles(projectId, member);
+        if (roles.contains(ProjectRole.VIEWER)) {
+            throw new BaseExceptionHandler(ErrorCode.FAILED_TO_UPDATE_PROJECT);
+        }
+
+        return mProjectService.updateProjectInfo(new ObjectId(projectId), updateProjectInfo); // TODO: security member
+    }
+
+    @Override
+    public GetProjectJiraKey findProjectJiraKey(String projectId, TemporalMember member) {
+        var roles = pProjectService.getProjectRoles(projectId, member);
+        if (roles.contains(ProjectRole.ADMIN) || roles.contains(ProjectRole.MAINTAINER)) {
+            return mProjectService.findProjectJiraKey(new ObjectId(projectId));
+        }
+        throw new BaseExceptionHandler(ErrorCode.NOT_FOUND_PROJECT_AUTH);
     }
 }

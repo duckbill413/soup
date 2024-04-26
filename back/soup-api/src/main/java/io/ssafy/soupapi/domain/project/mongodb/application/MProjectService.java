@@ -1,7 +1,9 @@
 package io.ssafy.soupapi.domain.project.mongodb.application;
 
+import io.ssafy.soupapi.domain.project.mongodb.dto.request.UpdateProjectInfo;
 import io.ssafy.soupapi.domain.project.mongodb.dto.request.UpdateProjectProposal;
-import io.ssafy.soupapi.domain.project.mongodb.dto.response.ProjectInfoDto;
+import io.ssafy.soupapi.domain.project.mongodb.dto.response.GetProjectInfo;
+import io.ssafy.soupapi.domain.project.mongodb.dto.response.GetProjectJiraKey;
 import io.ssafy.soupapi.domain.project.mongodb.dto.response.GetProjectProposal;
 import io.ssafy.soupapi.domain.project.mongodb.entity.TeamMember;
 import io.ssafy.soupapi.domain.project.usecase.dto.request.CreateProjectDto;
@@ -15,16 +17,18 @@ import java.util.List;
 public interface MProjectService {
     ObjectId createProject(CreateProjectDto createProjectDto, TemporalMember temporalMember); // TODO: member security 적용
 
-    ProjectInfoDto findProjectInfo(ObjectId projectId);
-
-    ProjectInfoDto findProjectInfoWithKey(ObjectId projectId);
+    GetProjectInfo findProjectInfo(ObjectId projectId);
 
     GetProjectProposal findProjectProposal(ObjectId projectId);
 
-    GetProjectProposal updateProjectProposal(UpdateProjectProposal updateProjectProposal);
+    GetProjectProposal updateProjectProposal(ObjectId projectId, UpdateProjectProposal updateProjectProposal);
 
     @Transactional
     void addTeammate(InviteTeammate inviteTeammate, String username);
 
     List<TeamMember> findTeammateById(ObjectId projectId);
+
+    GetProjectInfo updateProjectInfo(ObjectId projectId, UpdateProjectInfo updateProjectInfo);
+
+    GetProjectJiraKey findProjectJiraKey(ObjectId objectId);
 }
