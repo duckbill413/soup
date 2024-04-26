@@ -1,7 +1,6 @@
 package io.ssafy.soupapi.domain.project.mongodb.dto.response;
 
-import io.ssafy.soupapi.domain.project.mongodb.entity.ProjectRole;
-import io.ssafy.soupapi.domain.project.mongodb.entity.TeamMember;
+import io.ssafy.soupapi.domain.project.postgresql.entity.ProjectRole;
 import io.ssafy.soupapi.global.util.StringParserUtil;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
@@ -25,13 +24,5 @@ public record GetProjectTeamMember(
         if (Objects.isNull(roles) || roles.isEmpty()) {
             roles = List.of();
         }
-    }
-
-    public static GetProjectTeamMember toProjectTeamMember(TeamMember teamMember) {
-        return GetProjectTeamMember.builder()
-                .id(teamMember.getId())
-                .email(teamMember.getEmail())
-                .roles(teamMember.getRoles())
-                .build();
     }
 }

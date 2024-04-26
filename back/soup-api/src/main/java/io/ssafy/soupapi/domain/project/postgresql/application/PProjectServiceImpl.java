@@ -2,10 +2,10 @@ package io.ssafy.soupapi.domain.project.postgresql.application;
 
 
 import io.ssafy.soupapi.domain.member.entity.Member;
-import io.ssafy.soupapi.domain.project.mongodb.entity.ProjectRole;
 import io.ssafy.soupapi.domain.project.postgresql.dao.PProjectRepository;
 import io.ssafy.soupapi.domain.project.postgresql.dto.response.SimpleProjectDto;
 import io.ssafy.soupapi.domain.project.postgresql.entity.Project;
+import io.ssafy.soupapi.domain.project.postgresql.entity.ProjectRole;
 import io.ssafy.soupapi.domain.project.usecase.dto.request.CreateProjectDto;
 import io.ssafy.soupapi.domain.project.usecase.dto.request.InviteTeammate;
 import io.ssafy.soupapi.domain.projectauth.entity.ProjectAuth;
@@ -17,7 +17,6 @@ import io.ssafy.soupapi.global.exception.BaseExceptionHandler;
 import io.ssafy.soupapi.global.security.TemporalMember;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.bson.types.ObjectId;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

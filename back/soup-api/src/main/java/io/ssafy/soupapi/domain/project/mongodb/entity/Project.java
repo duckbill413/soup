@@ -24,9 +24,6 @@ public class Project {
     @Builder.Default
     @Field("project_tools")
     private List<Tool> tools = new ArrayList<>();
-    @Builder.Default
-    @Field("project_team_members")
-    private List<TeamMember> teamMembers = new ArrayList<>();
     @Field("project_proposal")
     private Proposal proposal;
 }

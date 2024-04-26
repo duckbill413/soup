@@ -13,15 +13,15 @@ public interface MProjectRepository extends MongoRepository<Project, ObjectId> {
     @Query(value = "{ _id: ?0 }", fields = "{ project_proposal: 1 }")
     Optional<Project> findProposalById(ObjectId projectId);
 
-    @Query(value = "{ _id:  ?0}", fields = "{ project_team_members:  1}")
-    Optional<Project> findTeammateById(ObjectId projectId);
+    @Query(value = "{_id: ?0}", fields = "{project_info: 1 }")
+    Optional<Project> findInfoById(ObjectId projectId);
 
     @Query(value = "{ _id: ?0 }", fields = "{ project_proposal: 1 }")
     @Update("{ '$set': { 'project_proposal':  ?1} }")
     void updateProposal(ObjectId projectId, Proposal proposal);
 
-    @Query(value = "{ _id:  ?0 }", fields = "{project_info:  1, project_tools:  1, project_team_members:  1}")
-    Optional<Project> findInfoAndToolsAndTeamMembersById(ObjectId projectId);
+    @Query(value = "{ _id:  ?0 }", fields = "{project_info:  1, project_tools:  1}")
+    Optional<Project> findInfoAndToolsById(ObjectId projectId);
 
     @Query(value = "{ _id:  ?0}", fields = "{project_info:  1}")
     Optional<Project> findProjectJiraKey(ObjectId projectId);

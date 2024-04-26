@@ -1,4 +1,4 @@
-package io.ssafy.soupapi.domain.project.mongodb.entity;
+package io.ssafy.soupapi.domain.project.postgresql.entity;
 
 public enum ProjectRole {
     ADMIN, MAINTAINER, DEVELOPER, VIEWER

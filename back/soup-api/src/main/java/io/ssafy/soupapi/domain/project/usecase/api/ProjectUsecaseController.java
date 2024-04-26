@@ -8,17 +8,16 @@ import io.ssafy.soupapi.domain.project.mongodb.dto.response.GetProjectJiraKey;
 import io.ssafy.soupapi.domain.project.mongodb.dto.response.GetProjectProposal;
 import io.ssafy.soupapi.domain.project.usecase.application.ProjectUsecase;
 import io.ssafy.soupapi.domain.project.usecase.dto.request.CreateProjectDto;
-import io.ssafy.soupapi.domain.project.usecase.dto.request.InviteTeammate;
 import io.ssafy.soupapi.global.common.code.SuccessCode;
 import io.ssafy.soupapi.global.common.response.BaseResponse;
 import io.ssafy.soupapi.global.security.TemporalMember;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -58,6 +57,7 @@ public class ProjectUsecaseController {
      */
     @Operation(summary = "프로젝트 정보 요청", description = "프로젝트 개요 화면의 프로젝트 정보 요청")
     @GetMapping("/{projectId}/info")
+    @PreAuthorize("@authService.hasProjectRoleMember(#projectId, #member.getId())")
     public ResponseEntity<BaseResponse<GetProjectInfo>> findProjectInfo(
             @PathVariable(name = "projectId") String projectId,
             @AuthenticationPrincipal TemporalMember member // TODO: security member
@@ -77,6 +77,7 @@ public class ProjectUsecaseController {
      */
     @Operation(summary = "프로젝트 지라 키 정보 요청", description = "프로젝트 Jira Key 정보 요청 (ADMIN, MAINTAINER)")
     @GetMapping("/{projectId}/info/jira")
+    @PreAuthorize("@authService.hasPrimaryProjectRoleMember(#projectId, #member.getId())")
     public ResponseEntity<BaseResponse<GetProjectJiraKey>> findProjectJiraKey(
             @PathVariable(name = "projectId") String projectId,
             @AuthenticationPrincipal TemporalMember member
@@ -97,6 +98,7 @@ public class ProjectUsecaseController {
      */
     @Operation(summary = "프로젝트 지라 키 정보 수정", description = "프로젝트 Jira Key 정보 수정 (ADMIN, MAINTAINER)")
     @PutMapping("/{projectId}/info/jira")
+    @PreAuthorize("@authService.hasPrimaryProjectRoleMember(#projectId, #member.getId())")
     public ResponseEntity<BaseResponse<GetProjectJiraKey>> updateProjectJiraKey(
             @PathVariable(name = "projectId") String projectId,
             @Valid @RequestBody UpdateProjectJiraKey updateProjectJiraKey,
@@ -120,6 +122,7 @@ public class ProjectUsecaseController {
 
     @Operation(summary = "프로젝트 정보 수정", description = "프로젝트 개요 화면 정보 수정 <br>Jira Key, 프로젝트 이미지, 팀원 정보는 수정 불가")
     @PutMapping("/{projectId}/info")
+    @PreAuthorize("!@authService.hasViewerProjectRoleMember(#projectId, #member.getId())")
     public ResponseEntity<BaseResponse<GetProjectInfo>> updateProjectInfo(
             @PathVariable(name = "projectId") String projectId,
             @RequestBody UpdateProjectInfo updateProjectInfo,
@@ -141,6 +144,7 @@ public class ProjectUsecaseController {
      */
     @Operation(summary = "프로젝트 제안서 업데이트", description = "프로젝트 기획서 정보 업데이트")
     @PutMapping("/{projectId}/proposal")
+    @PreAuthorize("!@authService.hasViewerProjectRoleMember(#projectId, #member.getId())")
     public ResponseEntity<BaseResponse<GetProjectProposal>> changeProjectProposal(
             @PathVariable(name = "projectId") String projectId,
             @Valid @RequestBody UpdateProjectProposal updateProjectProposal,
@@ -161,6 +165,7 @@ public class ProjectUsecaseController {
      */
     @Operation(summary = "프로젝트 제안서 조회")
     @GetMapping("/{projectId}/proposal")
+    @PreAuthorize("@authService.hasProjectRoleMember(#projectId, #member.getId())")
     public ResponseEntity<BaseResponse<GetProjectProposal>> findProjectProposal(
             @PathVariable(name = "projectId") String projectId,
             @AuthenticationPrincipal TemporalMember member // TODO: security member
@@ -168,26 +173,6 @@ public class ProjectUsecaseController {
         return BaseResponse.success(
                 SuccessCode.SELECT_SUCCESS,
                 projectUsecase.findProjectProposal(projectId, member)
-        );
-    }
-
-    /**
-     * 프로젝트 팀원 초대
-     *
-     * @param inviteTeammate 초대할 팀원의 정보
-     * @param member         초대하는 팀원 정보
-     * @return 초대 완료 멘트
-     * @throws MessagingException Gmail 전송 에러
-     */
-    @Operation(summary = "프로젝트 팀원 초대")
-    @PostMapping("/{projectId}/team")
-    public ResponseEntity<BaseResponse<String>> inviteProjectTeammate(
-            @RequestBody InviteTeammate inviteTeammate,
-            @AuthenticationPrincipal TemporalMember member // TODO: security member
-    ) throws MessagingException {
-        return BaseResponse.success(
-                SuccessCode.INSERT_SUCCESS,
-                projectUsecase.inviteProjectTeammate(inviteTeammate, member)
         );
     }
 }

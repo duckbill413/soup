@@ -9,8 +9,8 @@ import io.ssafy.soupapi.domain.project.mongodb.dto.request.UpdateProjectProposal
 import io.ssafy.soupapi.domain.project.mongodb.dto.response.GetProjectInfo;
 import io.ssafy.soupapi.domain.project.mongodb.dto.response.GetProjectJiraKey;
 import io.ssafy.soupapi.domain.project.mongodb.dto.response.GetProjectProposal;
-import io.ssafy.soupapi.domain.project.mongodb.entity.ProjectRole;
 import io.ssafy.soupapi.domain.project.postgresql.application.PProjectService;
+import io.ssafy.soupapi.domain.project.postgresql.entity.ProjectRole;
 import io.ssafy.soupapi.domain.project.usecase.dto.request.CreateProjectDto;
 import io.ssafy.soupapi.domain.project.usecase.dto.request.InviteTeammate;
 import io.ssafy.soupapi.domain.projectauth.dao.ProjectAuthRepository;
@@ -18,16 +18,11 @@ import io.ssafy.soupapi.global.common.code.ErrorCode;
 import io.ssafy.soupapi.global.exception.BaseExceptionHandler;
 import io.ssafy.soupapi.global.security.TemporalMember;
 import io.ssafy.soupapi.global.util.GmailUtil;
-import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.bson.types.ObjectId;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
 
 @Log4j2
 @Service
@@ -61,12 +56,11 @@ public class ProjectUsecaseImpl implements ProjectUsecase {
      *
      * @param projectId 조회할 mongodb project projectId
      * @param member    조회하는 member
-     * @return ProjectInfoDto
+     * @return GetProjectInfo
      */
     @Override
     public GetProjectInfo findProjectInfo(String projectId, TemporalMember member) { // TODO: security member
-        pProjectService.getProjectRoles(projectId, member);
-        return mProjectService.findProjectInfo(new ObjectId(projectId));
+        return mProjectService.findProjectInfoAndTools(new ObjectId(projectId));
     }
 
     /**
@@ -86,15 +80,6 @@ public class ProjectUsecaseImpl implements ProjectUsecase {
 
         // mongodb에 있는지 확인하고 없으면 에러, 있으면 postgre에 추가
         if (projectAuth.isEmpty()) {
-            var teammates = mProjectService.findTeammateById(new ObjectId(projectId));
-
-            List<ProjectRole> roles = new ArrayList<>();
-            for (var teammate : teammates) {
-                if (teammate.getEmail().equals(member.getEmail())) {
-                    roles.addAll(teammate.getRoles());
-                }
-            }
-
             var inviteTeammateDto = InviteTeammate.builder()
                     .projectId(projectId)
                     .email(member.getEmail())
@@ -118,37 +103,6 @@ public class ProjectUsecaseImpl implements ProjectUsecase {
         }
         // 프로젝트 제안서 수정
         return mProjectService.updateProjectProposal(new ObjectId(projectId), updateProjectProposal);
-    }
-
-    @Transactional
-    @Override
-    public String inviteProjectTeammate(InviteTeammate inviteTeammate, TemporalMember member) throws MessagingException {
-        var project = pProjectService.findById(inviteTeammate.projectId());
-        // 팀 멤버를 초대하는 사람의 권한 확인
-        var from = memberRepository.findById(member.getId()).orElseThrow(() ->
-                new BaseExceptionHandler(ErrorCode.NOT_FOUND_USER));
-        var roles = pProjectService.getProjectRoles(inviteTeammate.projectId(), member);
-        if (roles.contains(ProjectRole.MAINTAINER) || roles.contains(ProjectRole.ADMIN)) {
-            var to = memberRepository.findByEmail(inviteTeammate.email()).stream().findFirst().orElse(null);
-
-            // 몽고 DB에 팀원 정보 추가
-            mProjectService.addTeammate(inviteTeammate, Objects.isNull(to) ? null : to.getNickname());
-            // PostgreSQL 에 팀원 정보 추가
-            if (Objects.nonNull(to)) {
-                pProjectService.addTeammate(inviteTeammate, to, project);
-            }
-            // 초대 메일 전송
-            // TODO: 이메일 오류 환경을 바꾸어서 재실행
-            // FIX: Window 사용자명이 한글일 경우 오류 발생
-//            gmailUtil.sendMail(inviteTeammate.email(), from.getNickname(),
-//                    project.getName() + " Soup 프로젝트 초대",
-//                    project.getName() + """
-//                            Soup 프로젝트에 참가해 팀원과 함께 프로젝트를
-//                            만들어가 봐요!
-//                            """);
-            return "새로운 팀원을 초대 하였습니다.";
-        }
-        throw new BaseExceptionHandler(ErrorCode.FAILED_TO_UPDATE_PROJECT);
     }
 
     /**
