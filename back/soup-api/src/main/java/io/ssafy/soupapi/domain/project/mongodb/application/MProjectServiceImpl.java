@@ -132,4 +132,11 @@ public class MProjectServiceImpl implements MProjectService {
 
         project.getTeamMembers().add(InviteTeammate.toTeamMember(inviteTeammate, UUID.fromString(username)));
     }
+
+    @Override
+    public List<TeamMember> findTeammateById(ObjectId projectId) {
+        return mProjectRepository.findTeammateById(projectId).orElseThrow(() ->
+                        new BaseExceptionHandler(ErrorCode.NOT_FOUND_PROJECT))
+                .getTeamMembers();
+    }
 }

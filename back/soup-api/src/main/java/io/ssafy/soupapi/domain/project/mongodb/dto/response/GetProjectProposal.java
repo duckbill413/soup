@@ -6,6 +6,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import org.bson.types.ObjectId;
 
+import java.util.Objects;
+
 @Schema(description = "프로젝트 기획서 DTO")
 public record GetProjectProposal(
         String id,
@@ -24,6 +26,11 @@ public record GetProjectProposal(
     }
 
     public static GetProjectProposal toProjectProposalDto(ObjectId projectId, Proposal proposal) {
+        if (Objects.isNull(proposal)) {
+            return GetProjectProposal.builder()
+                    .id(projectId.toHexString())
+                    .build();
+        }
         return GetProjectProposal.builder()
                 .id(projectId.toHexString())
                 .background(proposal.getBackground())

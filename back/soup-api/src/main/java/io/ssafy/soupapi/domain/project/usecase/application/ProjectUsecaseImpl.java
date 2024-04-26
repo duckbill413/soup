@@ -1,6 +1,7 @@
 package io.ssafy.soupapi.domain.project.usecase.application;
 
 import io.ssafy.soupapi.domain.member.dao.MemberRepository;
+import io.ssafy.soupapi.domain.member.entity.Member;
 import io.ssafy.soupapi.domain.project.mongodb.application.MProjectService;
 import io.ssafy.soupapi.domain.project.mongodb.dto.request.UpdateProjectProposal;
 import io.ssafy.soupapi.domain.project.mongodb.dto.response.GetProjectProposal;
@@ -9,7 +10,7 @@ import io.ssafy.soupapi.domain.project.mongodb.entity.ProjectRole;
 import io.ssafy.soupapi.domain.project.postgresql.application.PProjectService;
 import io.ssafy.soupapi.domain.project.usecase.dto.request.CreateProjectDto;
 import io.ssafy.soupapi.domain.project.usecase.dto.request.InviteTeammate;
-import io.ssafy.soupapi.domain.projectauth.entity.ProjectAuth;
+import io.ssafy.soupapi.domain.projectauth.dao.ProjectAuthRepository;
 import io.ssafy.soupapi.global.common.code.ErrorCode;
 import io.ssafy.soupapi.global.exception.BaseExceptionHandler;
 import io.ssafy.soupapi.global.security.TemporalMember;
@@ -21,6 +22,8 @@ import org.bson.types.ObjectId;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Log4j2
@@ -30,6 +33,7 @@ public class ProjectUsecaseImpl implements ProjectUsecase {
     private final MProjectService mProjectService;
     private final PProjectService pProjectService;
     private final MemberRepository memberRepository;
+    private final ProjectAuthRepository projectAuthRepository;
     private final GmailUtil gmailUtil;
 
     /**
@@ -77,6 +81,31 @@ public class ProjectUsecaseImpl implements ProjectUsecase {
      */
     @Override
     public GetProjectProposal findProjectProposal(ObjectId projectId, TemporalMember member) {
+        var project = pProjectService.findById(projectId.toHexString());
+        // 최초 초대된 멤버인지 확인
+        var projectAuth = projectAuthRepository.findByMemberAndProject(
+                Member.builder().id(member.getId()).build(),
+                project); // TODO: security member
+
+        // mongodb에 있는지 확인하고 없으면 에러, 있으면 postgre에 추가
+        if (projectAuth.isEmpty()) {
+            var teammates = mProjectService.findTeammateById(projectId);
+
+            List<ProjectRole> roles = new ArrayList<>();
+            for (var teammate : teammates) {
+                if (teammate.getEmail().equals(member.getEmail())) {
+                    roles.addAll(teammate.getRoles());
+                }
+            }
+
+            var inviteTeammateDto = InviteTeammate.builder()
+                    .projectId(projectId.toHexString())
+                    .email(member.getEmail())
+                    .roles(roles)
+                    .build();
+
+            pProjectService.addTeammate(inviteTeammateDto, Member.builder().id(member.getId()).build(), project);
+        }
         // 프로젝트 권한 검사
         pProjectService.getProjectRoles(projectId.toHexString(), member);
         // 프로젝트 기획서 데이터 조회
@@ -108,14 +137,18 @@ public class ProjectUsecaseImpl implements ProjectUsecase {
             // 몽고 DB에 팀원 정보 추가
             mProjectService.addTeammate(inviteTeammate, Objects.isNull(to) ? null : to.getNickname());
             // PostgreSQL 에 팀원 정보 추가
-            pProjectService.addTeammate(inviteTeammate, to, project);
+            if (Objects.nonNull(to)) {
+                pProjectService.addTeammate(inviteTeammate, to, project);
+            }
             // 초대 메일 전송
-            gmailUtil.sendMail(inviteTeammate.email(), from.getNickname(),
-                    project.getName() + " Soup 프로젝트 초대",
-                    project.getName() + """
-                            Soup 프로젝트에 참가해 팀원과 함께 프로젝트를
-                            만들어가 봐요!
-                            """);
+            // TODO: 이메일 오류 환경을 바꾸어서 재실행
+            // FIX: Window 사용자명이 한글일 경우 오류 발생
+//            gmailUtil.sendMail(inviteTeammate.email(), from.getNickname(),
+//                    project.getName() + " Soup 프로젝트 초대",
+//                    project.getName() + """
+//                            Soup 프로젝트에 참가해 팀원과 함께 프로젝트를
+//                            만들어가 봐요!
+//                            """);
             return "새로운 팀원을 초대 하였습니다.";
         }
         throw new BaseExceptionHandler(ErrorCode.UNAUTHORIZED_USER_EXCEPTION);

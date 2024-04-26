@@ -66,7 +66,7 @@ public class ProjectUsecaseController {
         );
     }
 
-    @Operation(description = "프로젝트 제안서 업데이트")
+    @Operation(summary = "프로젝트 제안서 업데이트")
     @PutMapping("/{projectId}/proposal")
     public ResponseEntity<BaseResponse<GetProjectProposal>> changeProjectProposal(
             @Valid @RequestBody UpdateProjectProposal updateProjectProposal,
@@ -78,7 +78,7 @@ public class ProjectUsecaseController {
         );
     }
 
-    @Operation(description = "프로젝트 제안서 조회")
+    @Operation(summary = "프로젝트 제안서 조회")
     @GetMapping("/{projectId}/proposal")
     public ResponseEntity<BaseResponse<GetProjectProposal>> findProjectProposal(
             @PathVariable(name = "projectId") String projectId,
@@ -90,7 +90,7 @@ public class ProjectUsecaseController {
         );
     }
 
-    @Operation(description = "프로젝트 팀원 초대")
+    @Operation(summary = "프로젝트 팀원 초대")
     @PostMapping("/{projectId}/team")
     public ResponseEntity<BaseResponse<String>> inviteProjectTeammate(
             @RequestBody InviteTeammate inviteTeammate,
