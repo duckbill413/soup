@@ -35,6 +35,8 @@ public class Member extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "member_id")
     private UUID id;
+    @Column(name = "member_nickname", length = 20)
+    private String nickname;
     @Column(name = "member_phone", length = 20)
     private String phone;
     @Column(name = "member_email", length = 50, nullable = false)

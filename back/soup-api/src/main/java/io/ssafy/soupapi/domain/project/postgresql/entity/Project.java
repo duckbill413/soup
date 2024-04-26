@@ -35,10 +35,6 @@ public class Project extends BaseEntity {
     private String imgUrl;
     @Column(name = "project_file_uri")
     private String fileUri;
-    @Column(name = "project_jira_username")
-    private String jiraUsername;
-    @Column(name = "project_jira_key")
-    private String jiraKey;
     @Builder.Default
     @OneToMany(mappedBy = "project")
     private List<Chat> chatList = new ArrayList<>();

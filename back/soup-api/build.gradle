@@ -59,8 +59,14 @@ dependencies {
 	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.2'
 	implementation 'org.springdoc:springdoc-openapi-starter-common:2.0.2'
 	implementation 'org.springdoc:springdoc-openapi-ui:1.6.15'
+
+	implementation 'org.springframework.boot:spring-boot-starter-mail'
+
+	// https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-actuator
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+
 }
 
-tasks.named('test') {
-	useJUnitPlatform()
-}
+//tasks.named('test') {
+//	useJUnitPlatform()
+//}

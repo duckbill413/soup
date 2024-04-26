@@ -1,8 +1,11 @@
-package io.ssafy.soupapi.global.common;
+package io.ssafy.soupapi.global.common.response;
 
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Builder;
+import org.springframework.data.domain.Pageable;
 
+@Builder
 @Schema(description = "offset pagination")
 @JsonPropertyOrder({"page", "size", "total", "totalCount"})
 public record OffsetPagination(
@@ -15,4 +18,12 @@ public record OffsetPagination(
         @Schema(description = "전체 콘텐츠 개수")
         int totalCount
 ) {
+    public static OffsetPagination offset(int total, Long totalCount, Pageable pageable) {
+        return OffsetPagination.builder()
+                .page(pageable.getPageNumber() + 1)
+                .size(pageable.getPageSize())
+                .total(total)
+                .totalCount(totalCount.intValue())
+                .build();
+    }
 }

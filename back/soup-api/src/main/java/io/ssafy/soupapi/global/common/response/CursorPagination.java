@@ -1,8 +1,10 @@
-package io.ssafy.soupapi.global.common;
+package io.ssafy.soupapi.global.common.response;
 
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Builder;
 
+@Builder
 @Schema(description = "cursor pagination")
 @JsonPropertyOrder({"previousCursor", "currentCursor", "nextCursor", "hasBefore", "hasNext"})
 public record CursorPagination<T>(
