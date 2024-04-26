@@ -1,4 +1,4 @@
-import { StepTitle, StepTitleWithGuide } from '@/components/StepTitle/StepTitle'
+import { StepTitle } from '@/components/StepTitle/StepTitle'
 import ERDDrawing from '@/containers/erd/ERDDrawing'
 import * as styles from '@/containers/erd/erd.css'
 
