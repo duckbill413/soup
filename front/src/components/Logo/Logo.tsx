@@ -1,7 +1,5 @@
-'use client'
-
 import logo from '@/components/Logo/logo.css'
-import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 import Logosvg from '@/../public/assets/icons/logo'
 
 type Props = {
@@ -9,10 +7,9 @@ type Props = {
   leafColor: string
 }
 export default function Logo({ logoColor, leafColor }: Props) {
-  const router = useRouter()
   return (
-    <div onClick={() => router.push('/')} className={logo}>
+    <Link href="/" className={logo}>
       <Logosvg logoColor={logoColor} leafColor={leafColor} />
-    </div>
+    </Link>
   )
 }
