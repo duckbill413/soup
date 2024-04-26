@@ -18,7 +18,7 @@ const sampleData: Array<Option> = [
   },
 ]
 
-const sampleData2: Array<Option> = [
+const sampleData3: Array<Option> = [
   {
     id: 1,
     value: 'Member',
