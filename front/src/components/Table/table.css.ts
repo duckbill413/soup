@@ -1,39 +1,37 @@
 import vars from '@/styles/variables.css'
-import { globalStyle } from '@vanilla-extract/css'
+import { style, globalStyle } from '@vanilla-extract/css'
 
-globalStyle('table', {
+export const essential = style({
+  fontSize: vars.fontSize.medium,
+  color: 'red',
+})
+
+export const table = style({
   tableLayout: 'fixed',
   width: '100%',
   wordBreak: 'break-all',
   borderCollapse: 'collapse',
 })
 
-globalStyle('thead', {
+globalStyle(`${table} thead`, {
   width: '100%',
 })
 
-globalStyle('tr>th:first-of-type', {
+globalStyle(`${table} tr>th:first-of-type`, {
   borderRadius: '8px 0 0 0',
   borderLeft: 'none',
 })
 
-globalStyle('tr>th:last-of-type', {
+globalStyle(`${table} tr>th:last-of-type`, {
   borderRadius: '0 8px 0 0',
   borderRight: 'none',
 })
 
-globalStyle('tbody>tr:hover', {
+globalStyle(`${table} tbody>tr:hover`, {
   background: 'whitesmoke',
-  cursor: 'pointer',
 })
 
-globalStyle('tbody>tr:last-of-type>td', {
-  paddingInline: vars.space.base,
-  textAlign: 'start',
-  color: vars.color.deepGray,
-})
-
-globalStyle('th', {
+globalStyle(`${table} th`, {
   fontSize: vars.fontSize.small,
   fontWeight: 500,
   color: vars.color.black,
@@ -42,7 +40,7 @@ globalStyle('th', {
   padding: '6px 0',
 })
 
-globalStyle('td', {
+globalStyle(`${table} td`, {
   fontSize: vars.fontSize.caption,
   fontWeight: 500,
   color: vars.color.black,
@@ -50,4 +48,13 @@ globalStyle('td', {
   textAlign: 'center',
   padding: '12px 0',
   borderBottom: `2px solid ${vars.color.gray}`,
+})
+
+export const newLine = style({})
+
+globalStyle(`${table} tr ${newLine}`, {
+  paddingInline: vars.space.base,
+  textAlign: 'start',
+  color: vars.color.deepGray,
+  cursor: 'pointer',
 })

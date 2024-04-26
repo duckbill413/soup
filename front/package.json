@@ -7,14 +7,22 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "prepare": "husky install",
+    "prepare": "cd .. && husky front/.husky",
+    "postinstall": "cd .. && husky front/.husky",
     "lint:fix": "eslint ./**/*.{js,jsx,ts,tsx} --cache --fix",
     "mock": "npx tsx watch ./src/mocks/http.ts"
+  },
+  "lint-staged": {
+    "*.{tsx,ts}": [
+      "eslint --fix"
+    ]
   },
   "dependencies": {
     "@dineug/erd-editor": "^3.2.3",
     "@emotion/react": "^11.11.4",
     "@emotion/styled": "^11.11.5",
+    "@mui/icons-material": "^5.15.15",
+    "@mui/material": "^5.15.15",
     "@mui/x-date-pickers": "^7.2.0",
     "@stomp/stompjs": "^7.0.0",
     "@vanilla-extract/css": "^1.14.0",
@@ -52,16 +60,10 @@
     "event-source-polyfill": "^1.0.31",
     "express": "^4.18.3",
     "husky": "^9.0.11",
-    "lint-staged": "^13.3.0",
+    "lint-staged": "^13.1.4",
     "prettier": "^3.2.5",
     "tailwind-merge": "^1.13.2",
     "tailwindcss": "^3.3.2",
     "typescript": "^5.1.6"
-  },
-  "lint-staged": {
-    "*.{ts,tsx}": [
-      "prettier --write",
-      "eslint --fix"
-    ]
   }
 }
