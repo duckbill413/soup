@@ -8,7 +8,7 @@ import org.bson.types.ObjectId;
 
 import java.util.Objects;
 
-@Schema(description = "프로젝트 기획서 DTO")
+@Schema(description = "프로젝트 제안서 조회")
 public record GetProjectProposal(
         String id,
         String background,

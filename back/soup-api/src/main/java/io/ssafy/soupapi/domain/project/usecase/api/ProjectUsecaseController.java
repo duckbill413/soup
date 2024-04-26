@@ -132,14 +132,14 @@ public class ProjectUsecaseController {
     }
 
     /**
-     * 프로젝트 기획서 업데이트
+     * 프로젝트 제안서 업데이트
      *
      * @param projectId             업데이트하는 프로젝트의 Id
      * @param updateProjectProposal 업데이트하는 제안서 정보
      * @param member                업데이트하는 멤버 정보
-     * @return 업데이트 완료된 프로젝트 기획서 정보
+     * @return 업데이트 완료된 프로젝트 제안서 정보
      */
-    @Operation(summary = "프로젝트 기획서 업데이트", description = "프로젝트 기획서 정보 업데이트")
+    @Operation(summary = "프로젝트 제안서 업데이트", description = "프로젝트 기획서 정보 업데이트")
     @PutMapping("/{projectId}/proposal")
     public ResponseEntity<BaseResponse<GetProjectProposal>> changeProjectProposal(
             @PathVariable(name = "projectId") String projectId,

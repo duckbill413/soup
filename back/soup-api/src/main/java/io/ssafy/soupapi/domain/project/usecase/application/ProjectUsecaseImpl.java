@@ -105,7 +105,7 @@ public class ProjectUsecaseImpl implements ProjectUsecase {
         }
         // 프로젝트 권한 검사
         pProjectService.getProjectRoles(projectId, member);
-        // 프로젝트 기획서 데이터 조회
+        // 프로젝트 제안서 데이터 조회
         return mProjectService.findProjectProposal(new ObjectId(projectId));
     }
 
