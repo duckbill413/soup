@@ -1,6 +1,16 @@
 import * as styles from '@/components/Table/table.css'
 import { TableProps } from '@/types/table'
 
+/**
+ * ## 공통 Table Component입니다.
+ * @param TableProps
+ * headers - 테이블 (TableHead[])
+ *
+ * hasNewLine - 테이블 가장 아래에 추가하는 항목 있는지 여부 (boolean)
+ *
+ * children - 테이블 data (React.ReactNode)
+ *
+ */
 export default function Table({ headers, hasNewLine, children }: TableProps) {
   return (
     <table className={styles.table}>

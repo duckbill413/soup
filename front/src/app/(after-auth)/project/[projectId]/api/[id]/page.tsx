@@ -18,17 +18,6 @@ const sampleData: Array<Option> = [
   },
 ]
 
-const sampleData2: Array<Option> = [
-  {
-    id: 1,
-    value: 'Member',
-  },
-  {
-    id: 2,
-    value: 'Board',
-  },
-]
-
 export default function APIDetail() {
   return (
     <div>
@@ -66,7 +55,7 @@ export default function APIDetail() {
         <Badge name="Path Variable" />
         <PathTable />
 
-        <Badge name="Query Parameter*" />
+        <Badge name="Query Parameter" />
         <QueryTable />
       </section>
     </div>
