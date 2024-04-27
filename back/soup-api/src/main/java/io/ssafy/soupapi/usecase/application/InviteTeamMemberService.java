@@ -88,6 +88,13 @@ public class InviteTeamMemberService {
         return inviteMember.getNickname() + "님 초대 완료";
     }
 
+    /**
+     * 부여할 수 있는 권한 인지 확인
+     * @param roles 부여할 권한 목록
+     * @param project 프로젝트
+     * @param temporalMember 권한을 부여하는 유저
+     * @return 권한 부여 가능 여부
+     */
     private boolean validInviteRole(Set<ProjectRole> roles, Project project, TemporalMember temporalMember) {
         List<ProjectAuth> projectAuths = projectAuthRepository.findByMemberAndProject(
                 Member.builder().id(temporalMember.getId()).build(), project
@@ -128,9 +135,18 @@ public class InviteTeamMemberService {
                     <div style="max-width: 600px; margin: 20px auto; padding: 20px; background-color: #ffffff; border-radius: 5px; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);">
                         <h1 style="color: #333;">%s 프로젝트 초대</h1>
                         <p style="font-size: 16px; line-height: 1.5;">안녕하세요! 저희 프로젝트에 초대합니다.</p>
-                        <img style="max-width: 100%%; height: auto; margin-bottom: 20px;" src="%s" alt="프로젝트 대표 이미지">
+                        <div style="text-align: center;">
+                            <img style="display: block; margin: 0 auto; max-width: 100%%; height: auto; margin-bottom: 20px; margin-top: 20px" src="%s" alt="프로젝트 대표 이미지">
+                        </div>
                         <p style="font-size: 16px; line-height: 1.5;">아래의 초대 코드를 사용하여 프로젝트에 참여하세요:</p>
-                        <div style="font-size: 24px; font-weight: bold; color: #333; background-color: #f0f0f0; padding: 10px; border-radius: 5px; display: inline-block; margin-top: 20px;">%s</div>
+                        <div style="text-align: center;">
+                            <div style="font-size: 24px; font-weight: bold; color: #333; background-color: #f0f0f0; padding: 10px; border-radius: 5px; display: inline-block; margin-top: 20px;">%s</div>
+                        </div>
+                        <hr style="border: none; border-top: 1px solid #ccc; margin: 20px 0;">
+                        <div style="max-width: 600px; margin: 0 auto; text-align: center; font-size: 16px; color: #777676;">
+                            <p style="margin: 0;"><a href="https://so-up.store" style="color: #777676; text-decoration: none;">https://so-up.store</a></p>
+                            <p style="margin: 0;">Soup</p>
+                        </div>
                     </div>
                 </body>
                 </html>
