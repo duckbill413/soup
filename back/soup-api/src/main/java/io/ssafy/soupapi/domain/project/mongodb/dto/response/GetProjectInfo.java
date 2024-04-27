@@ -24,9 +24,7 @@ public record GetProjectInfo(
         @Schema(description = "프로젝트 종료일")
         LocalDate endDate,
         @Schema(description = "프로젝트 관리툴 목록")
-        List<GetProjectTool> tools,
-        @Schema(description = "프로젝트 팀 멤버 목록")
-        List<GetProjectTeamMember> teamMembers
+        List<GetProjectTool> tools
 ) {
     @Builder
     public GetProjectInfo {
@@ -36,9 +34,6 @@ public record GetProjectInfo(
         profileImgUrl = StringParserUtil.parseNullToEmpty(profileImgUrl);
         if (Objects.isNull(tools) || tools.isEmpty()) {
             tools = List.of();
-        }
-        if (Objects.isNull(teamMembers) || teamMembers.isEmpty()) {
-            teamMembers = List.of();
         }
     }
 
@@ -58,7 +53,6 @@ public record GetProjectInfo(
                 .startDate(project.getInfo().getStartDate())
                 .endDate(project.getInfo().getEndDate())
                 .tools(project.getTools().stream().map(GetProjectTool::toProjectToolDto).toList())
-                .teamMembers(project.getTeamMembers().stream().map(GetProjectTeamMember::toProjectTeamMember).toList())
                 .build();
     }
 }

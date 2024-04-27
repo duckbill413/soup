@@ -14,13 +14,22 @@ import org.springframework.stereotype.Component;
 public class GmailUtil {
     private final JavaMailSender mailSender;
 
-    public void sendMail(String to, String from, String subject, String body) throws MessagingException {
+    /**
+     * Gmail 발송
+     * @param to 수신자 이메일
+     * @param from 발신자 정보
+     * @param subject 이메일 제목
+     * @param body 이메일 본문
+     * @param html true: html code, false: text
+     * @throws MessagingException
+     */
+    public void sendMail(String to, String from, String subject, String body, boolean html) throws MessagingException {
         MimeMessage message = mailSender.createMimeMessage();
         MimeMessageHelper messageHelper = new MimeMessageHelper(message, true, "UTF-8");
         messageHelper.setFrom(from);
         messageHelper.setTo(to);
         messageHelper.setSubject(subject);
-        messageHelper.setText(body);
+        messageHelper.setText(body, html);
         mailSender.send(message);
     }
 }

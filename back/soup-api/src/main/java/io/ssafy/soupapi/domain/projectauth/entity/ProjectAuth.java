@@ -2,7 +2,7 @@ package io.ssafy.soupapi.domain.projectauth.entity;
 
 import io.ssafy.soupapi.domain.BaseEntity;
 import io.ssafy.soupapi.domain.member.entity.Member;
-import io.ssafy.soupapi.domain.project.mongodb.entity.ProjectRole;
+import io.ssafy.soupapi.domain.project.postgresql.entity.ProjectRole;
 import io.ssafy.soupapi.domain.project.postgresql.entity.Project;
 import jakarta.persistence.*;
 import lombok.*;

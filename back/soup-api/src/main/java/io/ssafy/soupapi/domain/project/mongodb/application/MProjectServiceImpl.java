@@ -10,10 +10,7 @@ import io.ssafy.soupapi.domain.project.mongodb.dto.response.GetProjectJiraKey;
 import io.ssafy.soupapi.domain.project.mongodb.dto.response.GetProjectProposal;
 import io.ssafy.soupapi.domain.project.mongodb.entity.Info;
 import io.ssafy.soupapi.domain.project.mongodb.entity.Project;
-import io.ssafy.soupapi.domain.project.mongodb.entity.ProjectRole;
-import io.ssafy.soupapi.domain.project.mongodb.entity.TeamMember;
 import io.ssafy.soupapi.domain.project.usecase.dto.request.CreateProjectDto;
-import io.ssafy.soupapi.domain.project.usecase.dto.request.InviteTeammate;
 import io.ssafy.soupapi.global.common.code.ErrorCode;
 import io.ssafy.soupapi.global.exception.BaseExceptionHandler;
 import io.ssafy.soupapi.global.security.TemporalMember;
@@ -22,10 +19,6 @@ import lombok.extern.log4j.Log4j2;
 import org.bson.types.ObjectId;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
 
 @Log4j2
 @Service
@@ -54,28 +47,20 @@ public class MProjectServiceImpl implements MProjectService {
                                 .endDate(createProjectDto.getEndDate())
                                 .build()
                 ).build();
-        // 프로젝트 팀 구성 설정 (프로젝트 생성자에게 ADMIN 권한 부여)
-        project.getTeamMembers().add(
-                TeamMember.builder()
-                        .id(temporalMember.getId()) // TODO: member security 적용
-                        .email(temporalMember.getEmail()) // TODO: member security 적용
-                        .roles(List.of(ProjectRole.ADMIN))
-                        .build()
-        );
 
         return mProjectRepository.save(project).getId();
     }
 
     /**
-     * ProjectInfoDto 반환 (키 정보 X)
+     * Project Info 정보 반환
      *
      * @param projectId mongodb project id
      * @return ProjectInfoDto that key info is null
      */
     @Transactional(readOnly = true)
     @Override
-    public GetProjectInfo findProjectInfo(ObjectId projectId) {
-        var project = mProjectRepository.findById(projectId).orElseThrow(() ->
+    public GetProjectInfo findProjectInfoAndTools(ObjectId projectId) {
+        var project = mProjectRepository.findInfoAndToolsById(projectId).orElseThrow(() ->
                 new BaseExceptionHandler(ErrorCode.NOT_FOUND_PROJECT));
         return GetProjectInfo.toProjectInfoDto(project);
     }
@@ -109,42 +94,6 @@ public class MProjectServiceImpl implements MProjectService {
     }
 
     /**
-     * MongoDB에 팀 정보 추가
-     * 유저 이름이 없다면 일단은 닉네임 정보는 없이 추가
-     *
-     * @param inviteTeammate 초대하는 팀원의 정보
-     * @param username       초대하는 팀원의 닉네임 정보
-     */
-    @Transactional
-    @Override
-    public void addTeammate(InviteTeammate inviteTeammate, String username) {
-        var project = mProjectRepository.findTeammateById(
-                new ObjectId(inviteTeammate.projectId())
-        ).orElseThrow(() -> new BaseExceptionHandler(ErrorCode.NOT_FOUND_PROJECT));
-
-        if (Objects.isNull(username)) {
-            project.getTeamMembers().add(InviteTeammate.toTeamMember(inviteTeammate));
-            return;
-        }
-
-        project.getTeamMembers().add(InviteTeammate.toTeamMember(inviteTeammate, UUID.fromString(username)));
-    }
-
-    /**
-     * 프로젝트 내 팀원 정보 조회
-     *
-     * @param projectId 프로젝트 Id
-     * @return 팀원들의 정보
-     */
-    @Transactional(readOnly = true)
-    @Override
-    public List<TeamMember> findTeammateById(ObjectId projectId) {
-        return mProjectRepository.findTeammateById(projectId).orElseThrow(() ->
-                        new BaseExceptionHandler(ErrorCode.NOT_FOUND_PROJECT))
-                .getTeamMembers();
-    }
-
-    /**
      * 프로젝트 정보(개요) 업데이트
      * - 이미지 정보, JIRA 정보는 업데이트 되지 않음
      *
@@ -155,7 +104,7 @@ public class MProjectServiceImpl implements MProjectService {
     @Transactional
     @Override
     public GetProjectInfo updateProjectInfo(ObjectId projectId, UpdateProjectInfo updateProjectInfo) {
-        var project = mProjectRepository.findInfoAndToolsAndTeamMembersById(projectId).orElseThrow(() ->
+        var project = mProjectRepository.findInfoAndToolsById(projectId).orElseThrow(() ->
                 new BaseExceptionHandler(ErrorCode.NOT_FOUND_PROJECT));
 
         // update info

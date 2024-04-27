@@ -14,9 +14,9 @@ public class TemporalMember extends User {
     private final String email;
 
     @Builder(builderMethodName = "temporal", buildMethodName = "create")
-    public TemporalMember(UUID id, String username, String password, Collection<? extends GrantedAuthority> authorities) {
-        super(username, password, authorities);
+    public TemporalMember(UUID id, String email, String password, Collection<? extends GrantedAuthority> authorities) {
+        super(email, password, authorities);
         this.id = id;
-        this.email = username;
+        this.email = email;
     }
 }

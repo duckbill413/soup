@@ -2,12 +2,12 @@ package io.ssafy.soupapi.domain.project.postgresql.application;
 
 
 import io.ssafy.soupapi.domain.member.entity.Member;
-import io.ssafy.soupapi.domain.project.mongodb.entity.ProjectRole;
 import io.ssafy.soupapi.domain.project.postgresql.dao.PProjectRepository;
 import io.ssafy.soupapi.domain.project.postgresql.dto.response.SimpleProjectDto;
 import io.ssafy.soupapi.domain.project.postgresql.entity.Project;
+import io.ssafy.soupapi.domain.project.postgresql.entity.ProjectRole;
 import io.ssafy.soupapi.domain.project.usecase.dto.request.CreateProjectDto;
-import io.ssafy.soupapi.domain.project.usecase.dto.request.InviteTeammate;
+import io.ssafy.soupapi.domain.project.usecase.dto.request.InviteTeamMember;
 import io.ssafy.soupapi.domain.projectauth.entity.ProjectAuth;
 import io.ssafy.soupapi.global.common.code.ErrorCode;
 import io.ssafy.soupapi.global.common.request.PageOffsetRequest;
@@ -17,7 +17,6 @@ import io.ssafy.soupapi.global.exception.BaseExceptionHandler;
 import io.ssafy.soupapi.global.security.TemporalMember;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.bson.types.ObjectId;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -70,28 +69,6 @@ public class PProjectServiceImpl implements PProjectService {
     }
 
     @Transactional(readOnly = true)
-    @Override
-    public List<ProjectRole> getProjectRoles(String projectId, TemporalMember member) { // TODO: security member
-        List<ProjectAuth> response = pProjectRepository.findProjectAuthByProjectIdAndMemberId(projectId, member.getId());
-        return response.stream().findFirst().orElseThrow(() -> new BaseExceptionHandler(ErrorCode.NOT_FOUND_PROJECT_AUTH))
-                .getRoles().stream().toList();
-    }
-
-    @Transactional
-    @Override
-    public void addTeammate(InviteTeammate inviteTeammate, Member teammate, Project project) {
-        ProjectAuth projectAuth = ProjectAuth.builder()
-                .roles(new HashSet<>(inviteTeammate.roles()))
-                .member(teammate)
-                .project(project)
-                .build();
-        project.addProjectAuth(projectAuth);
-
-        pProjectRepository.save(project);
-    }
-
-    @Transactional(readOnly = true)
-    @Override
     public Project findById(String projectId) {
         return pProjectRepository.findById(projectId).orElseThrow(() ->
                 new BaseExceptionHandler(ErrorCode.NOT_FOUND_PROJECT));

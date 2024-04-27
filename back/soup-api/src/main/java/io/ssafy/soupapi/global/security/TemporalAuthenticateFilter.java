@@ -26,7 +26,7 @@ public class TemporalAuthenticateFilter extends OncePerRequestFilter {
     private Authentication getTemporalMember() {
         var temporalMember = TemporalMember.temporal()
                 .id(UUID.fromString("4032b5ad-6068-461e-b169-088957523df8"))
-                .username("soup")
+                .email("uhyeon7399@daum.net")
                 .password("soup")
                 .authorities(getAdminRole())
                 .create();

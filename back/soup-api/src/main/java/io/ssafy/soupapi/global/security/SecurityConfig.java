@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
@@ -23,6 +24,7 @@ import java.util.UUID;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
 
@@ -49,7 +51,7 @@ public class SecurityConfig {
     public UserDetailsService users() {
         TemporalMember temporalMember = TemporalMember.temporal()
                 .id(UUID.fromString("4032b5ad-6068-461e-b169-088957523df8"))
-                .username("soup")
+                .email("soup")
                 .password("soup")
                 .authorities(getAdminRole())
                 .create();
