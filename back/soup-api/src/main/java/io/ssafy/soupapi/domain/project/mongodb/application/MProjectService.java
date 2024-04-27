@@ -24,4 +24,5 @@ public interface MProjectService {
     GetProjectJiraKey findProjectJiraKey(ObjectId objectId);
 
     GetProjectJiraKey updateProjectJiraKey(ObjectId projectId, UpdateProjectJiraKey updateProjectJiraKey);
+
 }
