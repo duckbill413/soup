@@ -51,7 +51,7 @@ public class SecurityConfig {
     public UserDetailsService users() {
         TemporalMember temporalMember = TemporalMember.temporal()
                 .id(UUID.fromString("4032b5ad-6068-461e-b169-088957523df8"))
-                .username("soup")
+                .email("soup")
                 .password("soup")
                 .authorities(getAdminRole())
                 .create();

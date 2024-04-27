@@ -31,9 +31,9 @@ public class Project extends BaseEntity {
     private String id;
     @Column(name = "project_name")
     private String name;
-    @Column(name = "project_img_url")
+    @Column(name = "project_img_url", length = 1000)
     private String imgUrl;
-    @Column(name = "project_file_uri")
+    @Column(name = "project_file_uri", length = 1000)
     private String fileUri;
     @Builder.Default
     @OneToMany(mappedBy = "project")
