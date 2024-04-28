@@ -130,7 +130,7 @@ public class MProjectServiceImpl implements MProjectService {
      */
     @Override
     public GetProjectJiraKey findProjectJiraKey(ObjectId projectId) {
-        var project = mProjectRepository.findProjectJiraKey(projectId).orElseThrow(() ->
+        var project = mProjectRepository.findProjectJiraInfo(projectId).orElseThrow(() ->
                 new BaseExceptionHandler(ErrorCode.NOT_FOUND_PROJECT));
         return GetProjectJiraKey.toProjectInfoDto(project.getInfo());
     }
@@ -144,8 +144,10 @@ public class MProjectServiceImpl implements MProjectService {
      */
     @Override
     public GetProjectJiraKey updateProjectJiraKey(ObjectId projectId, UpdateProjectJiraKey updateProjectJiraKey) {
-        var project = mProjectRepository.findProjectJiraKey(projectId).orElseThrow(() ->
+        var project = mProjectRepository.findProjectJiraInfo(projectId).orElseThrow(() ->
                 new BaseExceptionHandler(ErrorCode.FAILED_TO_UPDATE_PROJECT));
+        project.getInfo().setJiraHost(updateProjectJiraKey.host());
+        project.getInfo().setJiraProjectKey(updateProjectJiraKey.projectKey());
         project.getInfo().setJiraUsername(updateProjectJiraKey.username());
         project.getInfo().setJiraKey(updateProjectJiraKey.key());
         mProjectRepository.save(project);

@@ -50,6 +50,8 @@ public enum ErrorCode {
 
     // Header 가 유효하지 않은 경우
     NOT_VALID_HEADER_ERROR(400, "G012", "Header에 데이터가 존재하지 않는 경우 "),
+    // No resource founded 없는 경로로의 요청
+    NO_RESOUCE_FOUNDED(404, "G013", "잘못된 API 요청 입니다."),
     // 로컬 파일 업로드 실패,
     FAILED_TO_UPLOAD_LOCAL_FILE(404, "F001", "로컬 파일 업로드 실패"),
     // 로컬 파일 업로드 실패,
@@ -72,19 +74,21 @@ public enum ErrorCode {
     UNSUPPORTED_SOCIAL_PLATFORM(403, "B105", "지원하지 않는 소셜 로그인 플랫폼 입니다."),
     NO_SOCIAL_USER_ATTRIBUTES(403, "B106", "소셜 회원 정보를 불러오지 못하였습니다"),
 
-    NOT_FOUND_S3FILE(701, "B701", "S3 파일이 존재하지 않습니다"),
+    NOT_FOUND_S3FILE(404, "B701", "S3 파일이 존재하지 않습니다"),
     // 유저 에러 (CODE: 200)
-    // 유저가 존재하지 않음,
     NOT_FOUND_USER(404, "B200", "존재하지 않는 유저입니다."),
 
-    // 프로젝트 에러(CODE: 300)
+    // 프로젝트 에러 (CODE: 300)
     NOT_FOUND_PROJECT(404, "B300", "존재하지 않는 프로젝트 입니다."),
-    // 프로젝트 권한(CODE: 400)
+    // 프로젝트 권한 (CODE: 400)
     NOT_FOUND_PROJECT_AUTH(404, "B400", "프로젝트 권한이 존재하지 않습니다."),
     FAILED_TO_UPDATE_PROJECT(401, "B401", "프로젝트 업데이트 권한이 없습니다."),
     INVALID_INVITE_CODE(404, "B402", "확인되지 않는 초대 코드입니다."),
     ALREADY_EXISTS_PROJECT_MEMBER(404, "B403", "이미 프로젝트 회원입니다."),
     INVALID_INVITE_PROJECT_ROLE(404, "B404", "부여할 수 있는 프로젝트 권한이 아닙니다."),
+
+    // 지라 관련 에러 (CODE: 500)
+    FAILED_TO_REQUEST_JIRA_API(404, "B500", "지라 API 요청에 실패 하였습니다."),
     ; // End
 
     /**
