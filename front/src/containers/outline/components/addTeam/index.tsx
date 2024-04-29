@@ -5,7 +5,7 @@ import { useState } from 'react'
 import Add from '#/assets/icons/outline/addButton.svg'
 import TeamTable from '@/containers/outline/components/addTeam/TeamTable'
 import * as styles from "@/containers/outline/styles/addTeam/outlineAddTeam.css"
-import OutlineModal from '@/containers/outline/components/modals/addTeam'
+import OutlineTeamModal from '@/containers/outline/components/modals/addTeam'
 
 interface TeamTableType {
   name: string;
@@ -34,7 +34,7 @@ function OutlineAddTeam () {
         <Image src={Add} alt="add" width={32} height={32} onClick={addTeam} />
       </div>
       <TeamTable rows={teamRows} />
-      {showModal && <OutlineModal clickModal={clickModal}/>}
+      {showModal && <OutlineTeamModal clickModal={clickModal}/>}
     </div>
   )
 }

@@ -78,7 +78,7 @@ export const emailInput = style({
 })
 
 export const invite = style ({
-width:"15%",
+  width:"15%",
   height:'50%',
   borderRadius:'15px',
   backgroundColor:'#FF7E20',

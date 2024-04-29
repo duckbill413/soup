@@ -3,7 +3,7 @@ import closeIcon from "#/assets/icons/modals/closeIcon.svg"
 import * as styles from "@/containers/outline/styles/modals/outlineModal.css"
 import sample from "#/assets/icons/mainpage/sample1.jpg"
 
-function OutlineModal (props: { clickModal: () => void }) {
+function OutlineTeamModal (props: { clickModal: () => void }) {
   const { clickModal } = props;
   const handleOuterClick = (e: React.MouseEvent) => {
     if (e.target === e.currentTarget) {
@@ -50,4 +50,4 @@ function OutlineModal (props: { clickModal: () => void }) {
   );
 }
 
-export default OutlineModal;
+export default OutlineTeamModal;
