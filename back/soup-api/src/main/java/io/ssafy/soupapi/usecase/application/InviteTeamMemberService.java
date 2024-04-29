@@ -14,7 +14,6 @@ import io.ssafy.soupapi.global.exception.BaseExceptionHandler;
 import io.ssafy.soupapi.global.security.TemporalMember;
 import io.ssafy.soupapi.global.util.GmailUtil;
 import io.ssafy.soupapi.usecase.dao.TempTeamMember;
-import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -40,7 +39,7 @@ public class InviteTeamMemberService {
     private final GmailUtil gmailUtil;
 
     @Transactional
-    public String inviteTeamMember(String projectId, InviteTeamMember inviteTeamMember, TemporalMember temporalMember) throws MessagingException {
+    public String inviteTeamMember(String projectId, InviteTeamMember inviteTeamMember, TemporalMember temporalMember) {
         var project = projectRepository.findById(projectId).orElseThrow(() ->
                 new BaseExceptionHandler(ErrorCode.NOT_FOUND_PROJECT));
         var inviteMember = memberRepository.findByEmail(inviteTeamMember.email()).stream().findFirst().orElse(null);
@@ -71,13 +70,17 @@ public class InviteTeamMemberService {
                     10, TimeUnit.MINUTES);
 
             // Gmail 초대 메일 발송
-            gmailUtil.sendMail(
-                    inviteTeamMember.email(),
-                    project.getName(),
-                    project.getName() + " 프로젝트에서 초대",
-                    getEmailFormat(project, idempotent),
-                    true
-            );
+            try {
+                gmailUtil.sendMail(
+                        inviteTeamMember.email(),
+                        project.getName(),
+                        project.getName() + " 프로젝트에서 초대",
+                        getEmailFormat(project, idempotent),
+                        true
+                );
+            } catch (Exception e) {
+                throw new BaseExceptionHandler(ErrorCode.FAILED_TO_SEND_GMAIL, e.getMessage());
+            }
 
             return "프로젝트 초대 이메일 발송";
         }
@@ -90,8 +93,9 @@ public class InviteTeamMemberService {
 
     /**
      * 부여할 수 있는 권한 인지 확인
-     * @param roles 부여할 권한 목록
-     * @param project 프로젝트
+     *
+     * @param roles          부여할 권한 목록
+     * @param project        프로젝트
      * @param temporalMember 권한을 부여하는 유저
      * @return 권한 부여 가능 여부
      */

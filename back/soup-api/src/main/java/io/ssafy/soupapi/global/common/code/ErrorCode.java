@@ -56,6 +56,8 @@ public enum ErrorCode {
     FAILED_TO_UPLOAD_LOCAL_FILE(404, "F001", "로컬 파일 업로드 실패"),
     // 로컬 파일 업로드 실패,
     FAILED_TO_UPLOAD_S3_FILE(404, "F002", "S3 파일 업로드 실패"),
+    // GMAIL 전송 실패,
+    FAILED_TO_SEND_GMAIL(404, "F003", "GMAIL 전송 실패"),
     // 서버가 처리 할 방법을 모르는 경우 발생
     INTERNAL_SERVER_ERROR(500, "G999", "Internal Server Error Exception"),
 

@@ -7,7 +7,6 @@ import io.ssafy.soupapi.global.security.TemporalMember;
 import io.ssafy.soupapi.usecase.application.InviteTeamMemberService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -30,7 +29,7 @@ public class InviteTeamMemberController {
             @PathVariable(name = "projectId") String projectId,
             @RequestBody InviteTeamMember inviteTeamMember,
             @AuthenticationPrincipal TemporalMember member
-    ) throws MessagingException {
+    ) {
         return BaseResponse.success(
                 SuccessCode.INSERT_SUCCESS,
                 inviteTeamMemberService.inviteTeamMember(projectId, inviteTeamMember, member)
