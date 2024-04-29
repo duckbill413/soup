@@ -11,6 +11,7 @@ export const dependencies = style({
 export const section = style({
   flex: 1,
   display: 'flex',
+  alignItems: 'center',
   justifyContent: 'space-between',
 })
 
@@ -18,6 +19,7 @@ export const box = style({
   flex: 1,
   borderRadius: '10px',
   padding: '12px',
+  height: '100%',
 })
 
 export const whiteBox = style({
@@ -32,13 +34,24 @@ export const greenBox = style({
 export const list = style({
   width: '100%',
   padding: '16px 0',
+  fontSize: vars.fontSize.caption,
   fontWeight: 600,
+})
+
+export const name = style({
+  padding: '0 10px',
 })
 
 export const white = style({
   borderBottom: `2px solid ${vars.color.gray}`,
+  ':hover': {
+    background: vars.color.lightGray,
+  },
 })
 
 export const green = style({
   borderBottom: `2px solid ${vars.color.main}`,
+  ':hover': {
+    background: vars.color.main,
+  },
 })

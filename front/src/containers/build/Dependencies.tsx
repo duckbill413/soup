@@ -1,6 +1,7 @@
 'use client'
 
 import * as styles from '@/containers/build/dependencies.css'
+import { KeyboardArrowRight } from '@mui/icons-material'
 
 // TODO: sample Data 삭제 필
 const sampleData = [
@@ -59,7 +60,7 @@ const sampleData2 = [
 
 const listItem = (id: number, name: string, style: string) => (
   <div key={id} className={`${styles.list} ${style}`}>
-    {name}
+    <span className={styles.name}>{name}</span>
   </div>
 )
 
@@ -73,6 +74,7 @@ export default function Dependencies() {
             listItem(item.id, item.name, styles.white),
           )}
         </div>
+        <KeyboardArrowRight />
         <div className={`${styles.box} ${styles.greenBox}`}>
           {sampleData2.map((item: { id: number; name: string }) =>
             listItem(item.id, item.name, styles.green),
