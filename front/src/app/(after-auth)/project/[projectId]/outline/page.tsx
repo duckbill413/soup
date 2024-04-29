@@ -4,9 +4,12 @@ import OutlineIntro from '@/containers/outline/components/intro'
 import OutlineCalendar from '@/containers/outline/components/calendar'
 import OutlineAddTool from '@/containers/outline/components/addTool'
 import OutlineAddTeam from '@/containers/outline/components/addTeam'
+import Live from '@/components/cursor/Live'
 
 function Outline () {
   return (
+    <Live>
+
     <div>
       <StepTitle stepNum={1} title="프로젝트 개요" desc="프로젝트 정보를 입력하고, 팀을 구성해보세요."/>
       <div className={styles.container}>
@@ -28,6 +31,7 @@ function Outline () {
         </div>
       </div>
     </div>
+    </Live>
   )
 }
 
