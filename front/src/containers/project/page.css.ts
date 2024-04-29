@@ -1,14 +1,14 @@
-import { style } from '@vanilla-extract/css'
 import vars from '@/styles/variables.css'
+import { style } from '@vanilla-extract/css'
 
 export const container = style({
   width: '100%',
   height: '100%',
   overflow: 'auto',
-  '::-webkit-scrollbar':{
+  '::-webkit-scrollbar': {
     width: vars.space.tiny,
   },
-  '::-webkit-scrollbar-thumb':{
+  '::-webkit-scrollbar-thumb': {
     height: '5%',
     background: '#D3D3D3',
   },

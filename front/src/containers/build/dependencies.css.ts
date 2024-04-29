@@ -16,10 +16,26 @@ export const section = style({
 })
 
 export const box = style({
-  flex: 1,
+  flex: '1 0 0',
   borderRadius: '10px',
   padding: '12px',
-  height: '100%',
+  maxHeight: '400px',
+  minHeight: '100%',
+  overflowY: 'auto',
+
+  '::-webkit-scrollbar': {
+    width: vars.space.tiny,
+  },
+
+  '::-webkit-scrollbar-thumb': {
+    height: '5%',
+    background: '#D3D3D3',
+    backgroundClip: 'padding-box',
+    borderWidth: '5px 2px',
+    borderStyle: 'solid',
+    borderColor: 'transparent',
+    borderRadius: '15px',
+  },
 })
 
 export const whiteBox = style({
@@ -34,12 +50,22 @@ export const greenBox = style({
 export const list = style({
   width: '100%',
   padding: '16px 0',
-  fontSize: vars.fontSize.caption,
-  fontWeight: 600,
+
+  display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+
+  color: vars.color.deepGray,
 })
 
 export const name = style({
+  display: 'inline-block',
   padding: '0 10px',
+  wordBreak: 'break-all',
+
+  color: vars.color.black,
+  fontSize: vars.fontSize.caption,
+  fontWeight: 600,
 })
 
 export const white = style({
