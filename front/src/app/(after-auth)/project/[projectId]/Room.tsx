@@ -7,6 +7,7 @@ import { RoomProvider } from '@/../liveblocks.config'
 
 function Room({ children }: { children: ReactNode }) {
   const path = usePathname()
+
   return (
     <RoomProvider id={path} initialPresence={{}}>
       {/* Loading 페이지 추가해야 한다. */}

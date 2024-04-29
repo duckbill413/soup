@@ -56,4 +56,6 @@ export const cursorChatInput = style ({
 
 export const cursorMain = style ({
   position:'absolute',
+  width:'100vw',
+  height:'100vh'
 })
