@@ -1,6 +1,7 @@
 import { StepTitleWithGuide } from '@/components/StepTitle/StepTitle'
 import { Metadata, RadioSection } from '@/containers/build'
 import Dependencies from '@/containers/build/Dependencies'
+import Generate from '@/containers/build/Generate'
 import * as styles from '@/containers/build/page.css'
 
 export default function Build() {
@@ -20,6 +21,7 @@ export default function Build() {
           <Dependencies />
         </section>
       </div>
+      <Generate />
     </div>
   )
 }
