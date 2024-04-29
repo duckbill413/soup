@@ -7,11 +7,11 @@ export default function ProjectDetailLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <div className={styles.container}>
-      <Navigation />
-      <Header theme='black' useVoice/>
-      <div className={styles.content}>{children}</div>
-      <Chat />
-    </div>
+      <div className={styles.container}>
+        <Navigation />
+        <Header theme='black' useVoice/>
+        <div className={styles.content}>{children}</div>
+        <Chat />
+      </div>
   )
 }

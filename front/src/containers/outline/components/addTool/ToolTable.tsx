@@ -16,7 +16,7 @@ function ToolTable ({ rows }: { rows: TableRow[] }) {
       </thead>
       <tbody>
       {rows.map((row) => (
-        <tr>
+        <tr key={row.description}>
           <td>{row.name}</td>
           <td><a href={row.description}>{row.description}</a></td>
         </tr>

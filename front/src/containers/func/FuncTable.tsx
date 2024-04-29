@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { faker } from '@faker-js/faker';
+import Image from 'next/image'
 import * as styles from './funcTable.css';
 
 interface FuncData {
@@ -97,7 +98,7 @@ export default function FuncTable() {
             <td>
               <div className={styles.manager}>
                 <p>{dummy.manager.memberNickname}</p>
-                <img src={dummy.manager.memberProfileUri} alt="프로필 이미지" width={30} height={30} />
+                <Image unoptimized src={dummy.manager.memberProfileUri} alt="프로필 이미지" width={30} height={30} />
               </div>
             </td>
           </tr>
