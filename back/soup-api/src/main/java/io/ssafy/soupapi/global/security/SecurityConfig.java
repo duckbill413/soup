@@ -1,5 +1,10 @@
 package io.ssafy.soupapi.global.security;
 
+import io.ssafy.soupapi.global.security.filter.JwtAuthenticateFilter;
+import io.ssafy.soupapi.global.security.handler.CustomOAuth2FailHandler;
+import io.ssafy.soupapi.global.security.handler.CustomOAuth2SuccessHandler;
+import io.ssafy.soupapi.global.security.service.CustomOAuth2UserService;
+import io.ssafy.soupapi.global.security.service.JwtService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
@@ -7,20 +12,15 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.factory.PasswordEncoderFactories;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.UUID;
+import java.util.Collections;
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -28,64 +28,71 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
+    private static final String[] URL_WHITE_LIST = {
+            "/error", "/favicon.ico", "/login",
+            "/api/swagger-ui.html", "/api/swagger-ui/**", "/api/api-docs/**", "/api/swagger-resources/**",
+            "/api/actuator/**", "/api/actuator"
+    };
+
+    private final CustomOAuth2UserService customOAuth2UserService;
+    private final CustomOAuth2SuccessHandler customOAuth2SuccessHandler;
+    private final CustomOAuth2FailHandler customOAuth2FailHandler;
+
+    private final JwtService jwtService;
+
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+                .httpBasic(AbstractHttpConfigurer::disable) // JWT 인증 방식 사용하므로 httpBasic 인증은 막아두기
+                .formLogin(AbstractHttpConfigurer::disable) // JWT 인증 방식 사용하므로 httpBasic 인증은 막아두기
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // 세션 기반이 아님
+
+                .cors(corsConfig -> corsConfig.configurationSource(corsConfigurationSource()))
+
+                .csrf(AbstractHttpConfigurer::disable)
+
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/**").permitAll()
+                        .requestMatchers(URL_WHITE_LIST).permitAll()
+                        .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
+                        .requestMatchers(PathRequest.toH2Console()).permitAll()
                         .anyRequest().authenticated()
                 )
-                .csrf(AbstractHttpConfigurer::disable)
-                .addFilterBefore(temporalAuthenticateFilter(), UsernamePasswordAuthenticationFilter.class)
+
+                .oauth2Login(
+                        oauth2 -> oauth2
+                                .userInfoEndpoint(userInfo -> userInfo.userService(customOAuth2UserService))
+                                .successHandler(customOAuth2SuccessHandler)
+                                .failureHandler(customOAuth2FailHandler)
+                )
+
+                .addFilterBefore(jwtAuthenticateFilter(), UsernamePasswordAuthenticationFilter.class)
         ;
 
         return http.build();
     }
 
-    /**
-     * UserDetails 를 통해 user, admin 유저를 생성
-     *
-     * @return UserDetailsService
-     */
     @Bean
-    public UserDetailsService users() {
-        TemporalMember temporalMember = TemporalMember.temporal()
-                .id(UUID.fromString("4032b5ad-6068-461e-b169-088957523df8"))
-                .email("soup")
-                .password("soup")
-                .authorities(getAdminRole())
-                .create();
-
-        InMemoryUserDetailsManager userDetailsManager = new InMemoryUserDetailsManager();
-        userDetailsManager.createUser(temporalMember);
-        return userDetailsManager;
+    public JwtAuthenticateFilter jwtAuthenticateFilter() {
+        return new JwtAuthenticateFilter(jwtService, URL_WHITE_LIST);
     }
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-//        return new BCryptPasswordEncoder();
-        return PasswordEncoderFactories.createDelegatingPasswordEncoder(); // 내부적으로 안정성이 높다고 알려진 BCryptPasswordEncoder를 사용
-    }
+    // CORS 설정
+    CorsConfigurationSource corsConfigurationSource() {
+        final List<String> allowedHeaders = List.of("*");
+        final List<String> allowedOriginPatterns = List.of(
+                "http://localhost:8080",
+                "http://localhost:3000"
+        );
 
-    @Bean
-    public WebSecurityCustomizer webSecurityCustomizer() {
-        // 정적 리소스 spring security 대상에서 제외
-        return (web) -> {
-            web.ignoring()
-                    .requestMatchers(
-                            PathRequest.toStaticResources().atCommonLocations()
-                    ).requestMatchers("/favicon.ico", "/resources/**", "/error");
+        return request -> {
+            CorsConfiguration config = new CorsConfiguration();
+            config.setAllowedHeaders(allowedHeaders);
+            config.setAllowedMethods(Collections.singletonList("*"));
+            config.setAllowedOriginPatterns(allowedOriginPatterns); // 허용할 origin
+            config.setAllowCredentials(true);
+            return config;
         };
     }
 
-    @Bean
-    public TemporalAuthenticateFilter temporalAuthenticateFilter() {
-        return new TemporalAuthenticateFilter();
-    }
-
-    private static Collection<GrantedAuthority> getAdminRole() {
-        Collection<GrantedAuthority> authorities = new ArrayList<>();
-        authorities.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
-        return authorities;
-    }
 }
