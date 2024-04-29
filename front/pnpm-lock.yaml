@@ -14,6 +14,12 @@ dependencies:
   '@emotion/styled':
     specifier: ^11.11.5
     version: 11.11.5(@emotion/react@11.11.4)(@types/react@18.2.79)(react@18.2.0)
+  '@liveblocks/client':
+    specifier: ^1.11.3
+    version: 1.11.3
+  '@liveblocks/react':
+    specifier: ^1.11.3
+    version: 1.11.3(react@18.2.0)
   '@mui/icons-material':
     specifier: ^5.15.15
     version: 5.15.15(@mui/material@5.15.15)(@types/react@18.2.79)(react@18.2.0)
@@ -2268,6 +2274,28 @@ packages:
   /@kurkle/color@0.3.2:
     resolution: {integrity: sha512-fuscdXJ9G1qb7W8VdHi+IwRqij3lBkosAm4ydQtEmbY58OzHXqQhvlxqEkoz0yssNVn38bcpRWgA9PP+OGoisw==}
     dev: true
+
+  /@liveblocks/client@1.11.3:
+    resolution: {integrity: sha512-Vinzfrz/pBGN/l3XTDgYiUrBzs1xmzKzMtES/qHdIWxTVyVEBT5p8ilyi7kSCdRkdSe6bfmnJmkQljViTsX3vw==}
+    dependencies:
+      '@liveblocks/core': 1.11.3
+    dev: false
+
+  /@liveblocks/core@1.11.3:
+    resolution: {integrity: sha512-lai5o9nhgboocb+AQzL94syp8CZ4blTJFk6xWgUD+/L3qK110ADp7JSEH93k90pXqjf5zBOj5XWPMYehQ6I43w==}
+    dev: false
+
+  /@liveblocks/react@1.11.3(react@18.2.0):
+    resolution: {integrity: sha512-kli2rZjZkQ92+JXpZY308ljYsxU0upUGv7LZGEcjg2aCmZHHWeVWe5nzZzeSxI6NODNeEP3X6Ymlk+0uDaGlrA==}
+    peerDependencies:
+      react: ^16.14.0 || ^17 || ^18
+    dependencies:
+      '@liveblocks/client': 1.11.3
+      '@liveblocks/core': 1.11.3
+      nanoid: 3.3.7
+      react: 18.2.0
+      use-sync-external-store: 1.2.2(react@18.2.0)
+    dev: false
 
   /@mui/base@5.0.0-beta.40(@types/react@18.2.79)(react-dom@18.2.0)(react@18.2.0):
     resolution: {integrity: sha512-I/lGHztkCzvwlXpjD2+SNmvNQvB4227xBXhISPjEaJUXGImOQ9f3D2Yj/T3KasSI/h0MLWy74X0J6clhPmsRbQ==}
@@ -7543,6 +7571,14 @@ packages:
     dependencies:
       punycode: 2.3.1
     dev: true
+
+  /use-sync-external-store@1.2.2(react@18.2.0):
+    resolution: {integrity: sha512-PElTlVMwpblvbNqQ82d2n6RjStvdSoNe9FG28kNfz3WiXilJm4DdNkEzRhCZuIDwY8U08WVihhGR5iRqAwfDiw==}
+    peerDependencies:
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0
+    dependencies:
+      react: 18.2.0
+    dev: false
 
   /util-deprecate@1.0.2:
     resolution: {integrity: sha512-EPD5q1uXyFxJpCrLnCc1nHnq3gOa6DZBocAIiI2TaSCA7VCJ1UJDMagCzIkXNsUYfD1daK//LTEQ8xiIbrHtcw==}
