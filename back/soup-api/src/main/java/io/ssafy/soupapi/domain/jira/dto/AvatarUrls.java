@@ -1,24 +1,15 @@
 
 package io.ssafy.soupapi.domain.jira.dto;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import io.ssafy.soupapi.global.util.StringParserUtil;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Getter
+@Setter
+@Builder
+@ToString
 @NoArgsConstructor
-@JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder({
-        "16x16",
-        "24x24",
-        "32x32",
-        "48x48"
-})
 public class AvatarUrls {
 
     @JsonProperty("16x16")

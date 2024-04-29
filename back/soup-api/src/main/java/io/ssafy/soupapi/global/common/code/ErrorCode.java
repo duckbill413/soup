@@ -91,6 +91,8 @@ public enum ErrorCode {
 
     // 지라 관련 에러 (CODE: 500)
     FAILED_TO_REQUEST_JIRA_API(404, "B500", "지라 API 요청에 실패 하였습니다."),
+    NOT_FOUND_JIRA_INFO(404, "B501", "프로젝트 지라 정보를 찾을 수 없습니다"),
+    FAILED_TO_SYNC_JIRA(404, "B502", "프로젝트 이슈와 지라 이슈 동기화에 실패하였습니다."),
     ; // End
 
     /**
