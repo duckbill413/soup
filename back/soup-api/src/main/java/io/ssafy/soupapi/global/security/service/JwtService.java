@@ -5,7 +5,9 @@ import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.security.SignatureException;
+import io.ssafy.soupapi.global.security.dto.TokenDto;
 import io.ssafy.soupapi.global.security.exception.AccessTokenException;
+import io.ssafy.soupapi.global.security.exception.RefreshTokenException;
 import io.ssafy.soupapi.global.security.user.UserSecurityDTO;
 import io.ssafy.soupapi.global.util.JwtClaimsParser;
 import io.ssafy.soupapi.global.util.JwtUtil;
@@ -28,6 +30,7 @@ public class JwtService {
     private static final String TOKEN_PREFIX = "Bearer";
 
     private final JwtUtil jwtUtil;
+    private final CustomUserDetailsService userDetailsService;
 
     // access token 생성
     public String createAccessToken(UserSecurityDTO userSecurityDTO) {
@@ -97,6 +100,24 @@ public class JwtService {
         } catch (ExpiredJwtException expiredJwtException) {
             throw new AccessTokenException(AccessTokenException.ACCESS_TOKEN_ERROR.EXPIRED);
         }
+    }
+
+    // refreshToken을 기반으로 accessToken과 refreshToken을 재발급
+    public TokenDto regenerateJwtTokens(String refreshToken) throws RefreshTokenException{
+        Claims claims = verifyJwtToken(refreshToken);
+        String id = claims.getSubject();
+
+        // 서버에 저장된 refreshToken과 request로 주어진 refreshToken이 일치하는지 확인
+        boolean matchOrigin = jwtUtil.matchOrigin(UUID.fromString(id), refreshToken);
+        if (!matchOrigin) {
+            throw new RefreshTokenException(RefreshTokenException.REFRESH_TOKEN_ERROR.BAD_REFRESH);
+        }
+
+        UserSecurityDTO userSecurityDTO = userDetailsService.loadUserByUsername(id);
+        String newAccessToken = createAccessToken(userSecurityDTO);
+        String newRefreshToken = createRefreshToken(userSecurityDTO);
+
+        return new TokenDto(newAccessToken, newRefreshToken);
     }
 
 }

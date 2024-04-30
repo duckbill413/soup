@@ -26,4 +26,12 @@ public class TokenRedisDao {
         }
         return token;
     }
+
+    public boolean matchOrigin(UUID id, String refreshToken) {
+        var storedToken = redisTemplate.opsForValue().get(REFRESH_HASH + id);
+        if (Objects.isNull(storedToken)) {
+            throw new RefreshTokenException(RefreshTokenException.REFRESH_TOKEN_ERROR.NO_REFRESH);
+        }
+        return storedToken.equals(refreshToken);
+    }
 }

@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
+import java.util.UUID;
 
 @Log4j2
 @Component
@@ -24,6 +25,9 @@ public class JwtUtil {
     private final String issuer;
 
     private final TokenRedisDao tokenRedisDao;
+
+    private static final String JWT_TYPE = "JWT";
+    private static final String ALGORITHM = "HS256";
 
     public JwtUtil(
         @Value(value = "${jwt.secret.key}")
@@ -47,6 +51,11 @@ public class JwtUtil {
         Date expirationDate = new Date(new Date().getTime() + expireTime * 1000);
 
         return Jwts.builder()
+                .header()
+                    .type(JWT_TYPE)
+                    .add("alg", ALGORITHM)
+                    .add("generateDate", System.currentTimeMillis())
+                .and() // return to JwtBuilder calls
                 .signWith(secretKey, Jwts.SIG.HS256)
                 .issuer(issuer)
                 .expiration(expirationDate)
@@ -54,7 +63,6 @@ public class JwtUtil {
                 .claim("roles", userSecurityDTO.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList())
                 .compact();
     }
-
 
     public String generateAccessToken(UserSecurityDTO userSecurityDTO) {
         return generateToken(userSecurityDTO, accessTokenExpireTime);
@@ -72,6 +80,10 @@ public class JwtUtil {
                 .build()
                 .parseSignedClaims(token)
                 .getPayload();
+    }
+
+    public boolean matchOrigin(UUID id, String refreshToken) {
+        return tokenRedisDao.matchOrigin(id, refreshToken);
     }
 
 }

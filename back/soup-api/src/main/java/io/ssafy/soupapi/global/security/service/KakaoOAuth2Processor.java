@@ -14,8 +14,10 @@ public class KakaoOAuth2Processor extends OAuth2RequestProcessor {
         super(oAuth2UserRequest);
     }
 
-    // @param OAuth2User.getAttributes()
-    // @return kakao_account map을 반환
+    /**
+     * @param userAttributes OAuth2User.getAttributes()
+     * @return kakao_account map을 반환
+     */
     private Map<?, ?> getMapKakaoAccount(Map<?, ?> userAttributes) {
         Object mapKakaoAccount = userAttributes.get("kakao_account");
         if (mapKakaoAccount instanceof Map<?, ?>)
@@ -23,8 +25,10 @@ public class KakaoOAuth2Processor extends OAuth2RequestProcessor {
         throw new BaseExceptionHandler(ErrorCode.NO_SOCIAL_USER_ATTRIBUTES);
     }
 
-    // @param OAuth2User.getAttributes()
-    // @return kakao_account 안의 profile map을 반환
+    /**
+     * @param userAttributes OAuth2User.getAttributes()
+     * @return kakao_account 안의 profile map을 반환
+     */
     private Map<?, ?> getMapProfile(Map<?, ?> userAttributes) {
         Object mapProfile = getMapKakaoAccount(userAttributes).get("profile");
         if (mapProfile instanceof Map<?, ?>)
@@ -48,7 +52,7 @@ public class KakaoOAuth2Processor extends OAuth2RequestProcessor {
 
     @Override
     String getProfileImageUrl(Map<String, Object> userAttributes) {
-        Object profileImageUrl = getMapProfile(userAttributes).get("profileImageUrl");
+        Object profileImageUrl = getMapProfile(userAttributes).get("profile_image_url");
         if (profileImageUrl instanceof String) return (String) profileImageUrl;
         return null;
     }

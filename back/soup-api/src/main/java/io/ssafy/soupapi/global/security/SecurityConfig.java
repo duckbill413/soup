@@ -32,7 +32,7 @@ public class SecurityConfig {
     private static final String[] URL_WHITE_LIST = {
             "/error", "/login", "/favicon.ico**/**", "/h2-console**/**",
             "/api/swagger-ui**/**", "/api/api-docs/**", "/api/swagger-resources/**",
-            "/api/actuator**/**"
+            "/api/actuator**/**", "/api/auth/**"
     };
 
     private final CustomOAuth2UserService customOAuth2UserService;
