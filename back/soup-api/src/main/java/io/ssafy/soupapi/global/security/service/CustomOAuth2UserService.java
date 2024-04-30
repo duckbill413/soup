@@ -27,7 +27,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
     private final OAuth2RequestProcessorFactory oAuth2RequestProcessorFactory;
     private final MemberRepository memberRepository;
 
-    @Transactional(readOnly = true) // memberRepository로 DB 접근하니까
+    @Transactional // memberRepository로 DB 접근하니까
     @Override
     public OAuth2User loadUser(OAuth2UserRequest oAuth2UserRequest) throws OAuth2AuthenticationException {
 
@@ -75,7 +75,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 
         String email = (String) socialInfoMap.get("email");
         String nickname = (String) socialInfoMap.get("nickname");
-        String profileImageUrl = (String) socialInfoMap.get("profile_image_url");
+        String profileImageUrl = (String) socialInfoMap.get("profileImageUrl");
 
         Member member = Member.builder()
                 .email(email)
