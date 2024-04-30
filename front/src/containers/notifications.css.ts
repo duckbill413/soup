@@ -18,7 +18,7 @@ export const backdrop = style({
 export const container = style({
   position: 'absolute',
   zIndex: '1600',
-  top: 50,
+  top: `calc(${vars.space.xLarge} - 10px)`,
   right: 20,
 
   width: '480px',

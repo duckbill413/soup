@@ -113,7 +113,7 @@ export default function Notifications({ theme }: Props) {
       >
         <NotificationIcon
           color={(() => {
-            if (open) return `${vars.color.lightGray}`
+            if (open) return `${vars.color.lightGreen}`
             if (theme === 'white') return 'black'
             return 'white'
           })()}
