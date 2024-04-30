@@ -8,6 +8,8 @@ const notoSansKr = Noto_Sans_KR({ subsets: ['cyrillic'] })
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
+  console.log('env==', process.env.NEXT_PUBLIC_LIVEBLOCKS_PUBLIC_KEY)
+
   return (
     <html lang="en">
       <ThemeProvider theme={theme}>
