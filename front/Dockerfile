@@ -4,7 +4,7 @@ ENV NEXT_PUBLIC_LIVEBLOCKS_PUBLIC_KEY $NEXT_PUBLIC_LIVEBLOCKS_PUBLIC_KEY
 WORKDIR /app
 COPY package*.json pnpm-lock.yaml ./
 RUN npm install -g pnpm
-RUN pnpm install
+RUN rm -rf node_modules && pnpm install
 COPY . .
 RUN pnpm run build
 
