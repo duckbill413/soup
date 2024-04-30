@@ -10,7 +10,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.util.PatternMatchUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
@@ -20,7 +19,6 @@ import java.io.IOException;
 public class JwtAuthenticateFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
-    private final String[] URL_WHITE_LIST;
 
     @Override
     protected void doFilterInternal(
@@ -29,15 +27,10 @@ public class JwtAuthenticateFilter extends OncePerRequestFilter {
         @NonNull FilterChain filterChain
     ) throws ServletException, IOException {
 
-        log.trace("Request URI: {}", request.getRequestURI());
-        log.trace("Request Method: {}", request.getMethod());
-        log.trace("Request Params: {}", request.getParameterMap());
-        log.trace("Access-token: {}", request.getHeader("Authorization"));
-
-        if (PatternMatchUtils.simpleMatch(URL_WHITE_LIST, request.getRequestURI())) {
-            filterChain.doFilter(request, response);
-            return;
-        }
+        log.info("Request URI: {}", request.getRequestURI());
+        log.info("Request Method: {}", request.getMethod());
+        log.info("Request Params: {}", request.getParameterMap());
+        log.info("Access-token: {}", request.getHeader("Authorization"));
 
         Authentication authentication = jwtService.authenticateAccessToken(request);
         SecurityContextHolder.getContext().setAuthentication(authentication);

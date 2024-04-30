@@ -12,6 +12,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
@@ -29,9 +30,9 @@ import java.util.List;
 public class SecurityConfig {
 
     private static final String[] URL_WHITE_LIST = {
-            "/error", "/favicon.ico", "/login",
-            "/api/swagger-ui.html", "/api/swagger-ui/**", "/api/api-docs/**", "/api/swagger-resources/**",
-            "/api/actuator/**", "/api/actuator"
+            "/error", "/login", "/favicon.ico**/**", "/h2-console**/**",
+            "/api/swagger-ui**/**", "/api/api-docs/**", "/api/swagger-resources/**",
+            "/api/actuator**/**"
     };
 
     private final CustomOAuth2UserService customOAuth2UserService;
@@ -39,7 +40,6 @@ public class SecurityConfig {
     private final CustomOAuth2FailHandler customOAuth2FailHandler;
 
     private final JwtService jwtService;
-
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -53,9 +53,6 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
 
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers(URL_WHITE_LIST).permitAll()
-                        .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
-                        .requestMatchers(PathRequest.toH2Console()).permitAll()
                         .anyRequest().authenticated()
                 )
 
@@ -66,15 +63,13 @@ public class SecurityConfig {
                                 .failureHandler(customOAuth2FailHandler)
                 )
 
-                .addFilterBefore(jwtAuthenticateFilter(), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(
+                        new JwtAuthenticateFilter(jwtService),
+                        UsernamePasswordAuthenticationFilter.class
+                )
         ;
 
         return http.build();
-    }
-
-    @Bean
-    public JwtAuthenticateFilter jwtAuthenticateFilter() {
-        return new JwtAuthenticateFilter(jwtService, URL_WHITE_LIST);
     }
 
     // CORS 설정
@@ -93,6 +88,15 @@ public class SecurityConfig {
             config.setAllowCredentials(true);
             return config;
         };
+    }
+
+    // Spring Security 필터를 통과하지 않는다. (이때 필터를 @Bean이 아닌 new filter() 로 등록해야 한다.)
+    @Bean
+    public WebSecurityCustomizer configureH2ConsoleEnable() {
+        return web -> web.ignoring()
+                .requestMatchers(PathRequest.toH2Console())
+                .requestMatchers(PathRequest.toStaticResources().atCommonLocations())
+                .requestMatchers(URL_WHITE_LIST);
     }
 
 }
