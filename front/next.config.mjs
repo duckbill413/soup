@@ -35,11 +35,7 @@ const nextConfig = {
   images: {
     domains: ['placehold.co'],
   },
-
-  env: {
-    NEXT_PUBLIC_LIVEBLOCKS_PUBLIC_KEY:
-      process.env.NEXT_PUBLIC_LIVEBLOCKS_PUBLIC_KEY,
-  },
+  output: 'standalone',
 }
 
 export default withVanillaExtract(nextConfig)
