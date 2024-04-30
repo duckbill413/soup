@@ -71,7 +71,6 @@ public class JwtService {
 
     public String getAccessTokenFromRequestHeader(HttpServletRequest request) {
         String header = request.getHeader(ACCESS_HEADER_AUTHORIZATION);
-        log.info("[LSH] getAccessTokenFromRequestHeader() -> {}", header);
         if (Objects.isNull(header)) return null;
 
         // token type이 정의되지 않음

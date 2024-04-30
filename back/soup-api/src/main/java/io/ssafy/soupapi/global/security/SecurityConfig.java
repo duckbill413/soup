@@ -1,6 +1,7 @@
 package io.ssafy.soupapi.global.security;
 
 import io.ssafy.soupapi.global.security.filter.JwtAuthenticateFilter;
+import io.ssafy.soupapi.global.security.filter.JwtAuthenticationEntryPoint;
 import io.ssafy.soupapi.global.security.handler.CustomOAuth2FailHandler;
 import io.ssafy.soupapi.global.security.handler.CustomOAuth2SuccessHandler;
 import io.ssafy.soupapi.global.security.service.CustomOAuth2UserService;
@@ -35,6 +36,8 @@ public class SecurityConfig {
             "/api/actuator**/**", "/api/auth/**"
     };
 
+    private final JwtAuthenticationEntryPoint entryPoint;
+
     private final CustomOAuth2UserService customOAuth2UserService;
     private final CustomOAuth2SuccessHandler customOAuth2SuccessHandler;
     private final CustomOAuth2FailHandler customOAuth2FailHandler;
@@ -47,26 +50,17 @@ public class SecurityConfig {
                 .httpBasic(AbstractHttpConfigurer::disable) // JWT 인증 방식 사용하므로 httpBasic 인증은 막아두기
                 .formLogin(AbstractHttpConfigurer::disable) // JWT 인증 방식 사용하므로 httpBasic 인증은 막아두기
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // 세션 기반이 아님
-
                 .cors(corsConfig -> corsConfig.configurationSource(corsConfigurationSource()))
-
                 .csrf(AbstractHttpConfigurer::disable)
-
-                .authorizeHttpRequests(authorize -> authorize
-                        .anyRequest().authenticated()
-                )
-
+                .authorizeHttpRequests(authorize -> authorize.anyRequest().authenticated())
                 .oauth2Login(
                         oauth2 -> oauth2
                                 .userInfoEndpoint(userInfo -> userInfo.userService(customOAuth2UserService))
                                 .successHandler(customOAuth2SuccessHandler)
                                 .failureHandler(customOAuth2FailHandler)
                 )
-
-                .addFilterBefore(
-                        new JwtAuthenticateFilter(jwtService),
-                        UsernamePasswordAuthenticationFilter.class
-                )
+                .addFilterBefore(new JwtAuthenticateFilter(jwtService), UsernamePasswordAuthenticationFilter.class)
+                .exceptionHandling(handler -> handler.authenticationEntryPoint(entryPoint))
         ;
 
         return http.build();

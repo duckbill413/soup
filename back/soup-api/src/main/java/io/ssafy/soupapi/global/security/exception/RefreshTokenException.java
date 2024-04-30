@@ -5,10 +5,10 @@ import org.springframework.http.HttpStatus;
 
 @Getter
 public class RefreshTokenException extends RuntimeException {
-    private final REFRESH_TOKEN_ERROR error;
+    private final REFRESH_TOKEN_ERROR errorCode;
 
-    public RefreshTokenException(REFRESH_TOKEN_ERROR error) {
-        this.error = error;
+    public RefreshTokenException(REFRESH_TOKEN_ERROR errorCode) {
+        this.errorCode = errorCode;
     }
 
     @Getter
