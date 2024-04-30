@@ -20,7 +20,7 @@ public class Fields {
     public Object timespent;
     public Object customfield_10030;
     public Project project;
-    public Double customfield_10031;
+    public Long customfield_10031; // 지라 스토리 포인트
     @Builder.Default
     public List<Object> fixVersions = new ArrayList<>();
     public Object aggregatetimespent;
@@ -64,7 +64,7 @@ public class Fields {
     @Builder.Default
     public List<Object> components = new ArrayList<>();
     public Object timeoriginalestimate;
-    public Object description;
+    public String description;
     public Object customfield_10010;
     public String customfield_10014;
     public Object customfield_10015;

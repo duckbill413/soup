@@ -17,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.bson.types.ObjectId;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -124,7 +125,7 @@ public class MProjectController {
      */
     @Operation(summary = "프로젝트 지라 키 정보 요청", description = "프로젝트 Jira Key 정보 요청 (ADMIN, MAINTAINER)")
     @GetMapping("/{projectId}/info/jira")
-    @PreAuthorize("@authService.hasPrimaryProjectRoleMember(#projectId, #member.getId())")
+    @PostAuthorize("@authService.hasPrimaryProjectRoleMember(#projectId, #member.getId())")
     public ResponseEntity<BaseResponse<GetProjectJiraKey>> findProjectJiraKey(
             @PathVariable(name = "projectId") String projectId,
             @AuthenticationPrincipal TemporalMember member

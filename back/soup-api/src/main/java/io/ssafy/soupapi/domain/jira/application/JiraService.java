@@ -1,7 +1,10 @@
 package io.ssafy.soupapi.domain.jira.application;
 
-import io.ssafy.soupapi.domain.jira.dto.Issue;
 import io.ssafy.soupapi.domain.jira.dto.JiraUserDatum;
+import io.ssafy.soupapi.domain.jira.dto.response.GetJiraIssue;
+import io.ssafy.soupapi.domain.jira.dto.response.GetJiraIssueType;
+import io.ssafy.soupapi.global.common.request.PageOffsetRequest;
+import io.ssafy.soupapi.global.common.response.PageOffsetResponse;
 
 import java.util.List;
 
@@ -10,5 +13,7 @@ public interface JiraService {
 
     String syncJiraProjectByIssues(String projectId);
 
-    List<Issue> findJiraIssues(String projectId);
+    PageOffsetResponse<List<GetJiraIssue>> findJiraIssues(String projectId, PageOffsetRequest pageOffsetRequest);
+
+    List<GetJiraIssueType> findJiraIssueTypes(String projectId);
 }

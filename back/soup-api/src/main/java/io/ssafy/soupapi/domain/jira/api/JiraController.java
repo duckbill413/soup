@@ -1,10 +1,13 @@
 package io.ssafy.soupapi.domain.jira.api;
 
 import io.ssafy.soupapi.domain.jira.application.JiraService;
-import io.ssafy.soupapi.domain.jira.dto.Issue;
 import io.ssafy.soupapi.domain.jira.dto.JiraUserDatum;
+import io.ssafy.soupapi.domain.jira.dto.response.GetJiraIssue;
+import io.ssafy.soupapi.domain.jira.dto.response.GetJiraIssueType;
 import io.ssafy.soupapi.global.common.code.SuccessCode;
+import io.ssafy.soupapi.global.common.request.PageOffsetRequest;
 import io.ssafy.soupapi.global.common.response.BaseResponse;
+import io.ssafy.soupapi.global.common.response.PageOffsetResponse;
 import io.ssafy.soupapi.global.security.TemporalMember;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -54,13 +57,27 @@ public class JiraController {
     @Operation(summary = "지라 프로젝트 이슈 목록 조회")
     @GetMapping("/{projectId}/jira/issues")
     @PreAuthorize("@authService.hasProjectRoleMember(#projectId, #member.getId())")
-    public ResponseEntity<BaseResponse<List<Issue>>> findJiraIssues(
+    public ResponseEntity<BaseResponse<PageOffsetResponse<List<GetJiraIssue>>>> findJiraIssues(
+            @PathVariable("projectId") String projectId,
+            PageOffsetRequest pageOffsetRequest,
+            @AuthenticationPrincipal TemporalMember member
+    ) {
+        return BaseResponse.success(
+                SuccessCode.SELECT_SUCCESS,
+                jiraService.findJiraIssues(projectId, pageOffsetRequest)
+        );
+    }
+
+    @Operation(summary = "지라 프로젝트 사용 가능 Issue types 조회")
+    @GetMapping("/{projectId}/jira/issues/types")
+    @PreAuthorize("@authService.hasProjectRoleMember(#projectId, #member.getId())")
+    public ResponseEntity<BaseResponse<List<GetJiraIssueType>>> findJiraIssueTypes(
             @PathVariable("projectId") String projectId,
             @AuthenticationPrincipal TemporalMember member
     ) {
         return BaseResponse.success(
                 SuccessCode.SELECT_SUCCESS,
-                jiraService.findJiraIssues(projectId)
+                jiraService.findJiraIssueTypes(projectId)
         );
     }
 }

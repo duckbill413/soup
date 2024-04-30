@@ -1,11 +1,17 @@
 
 package io.ssafy.soupapi.domain.jira.dto;
 
-import lombok.Builder;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Getter
+@Setter
+@Builder
+@ToString
+@NoArgsConstructor
+@AllArgsConstructor
 public class JiraIssues {
 
     public String expand;

@@ -50,8 +50,8 @@ public class SecurityConfig {
     @Bean
     public UserDetailsService users() {
         TemporalMember temporalMember = TemporalMember.temporal()
-                .id(UUID.fromString("4032b5ad-6068-461e-b169-088957523df8"))
-                .email("soup")
+                .id(UUID.fromString("8a94715d-5515-467b-8e00-98c87194aeed"))
+                .email("uhyeon7399@daum.net")
                 .password("soup")
                 .authorities(getAdminRole())
                 .create();
