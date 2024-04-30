@@ -1,14 +1,6 @@
 import * as styles from '@/containers/api/input.css'
 import { APIInput } from '@/types/apiinput'
-import theme from '@/utils/theme'
-import {
-  MenuItem,
-  Select,
-  TextField,
-  ThemeProvider,
-  ButtonGroup,
-  Button,
-} from '@mui/material'
+import { MenuItem, Select, TextField, ButtonGroup, Button } from '@mui/material'
 
 interface LabelProps {
   title: string
@@ -41,14 +33,12 @@ export function InputText({
 }: APIInput) {
   return (
     <InputLabel title={title} isEssential={isEssential}>
-      <ThemeProvider theme={theme}>
-        <TextField
-          variant="outlined"
-          placeholder={placeholder}
-          sx={{ width: 'fit-content', minWidth: '480px' }}
-          multiline={multiline}
-        />
-      </ThemeProvider>
+      <TextField
+        variant="outlined"
+        placeholder={placeholder}
+        sx={{ width: 'fit-content', minWidth: '480px' }}
+        multiline={multiline}
+      />
     </InputLabel>
   )
 }
@@ -56,19 +46,17 @@ export function InputText({
 export function Dropbox({ title, isEssential, options }: APIInput) {
   return (
     <InputLabel title={title} isEssential={isEssential}>
-      <ThemeProvider theme={theme}>
-        <Select
-          value={options ? options[0].id : null}
-          displayEmpty
-          sx={{ width: 'fit-content', minWidth: '200px' }}
-        >
-          {options?.map((item) => (
-            <MenuItem value={item.id} key={item.id}>
-              {item.value}
-            </MenuItem>
-          ))}
-        </Select>
-      </ThemeProvider>
+      <Select
+        value={options ? options[0].id : null}
+        displayEmpty
+        sx={{ width: 'fit-content', minWidth: '200px' }}
+      >
+        {options?.map((item) => (
+          <MenuItem value={item.id} key={item.id}>
+            {item.value}
+          </MenuItem>
+        ))}
+      </Select>
     </InputLabel>
   )
 }
@@ -76,15 +64,13 @@ export function Dropbox({ title, isEssential, options }: APIInput) {
 export function MethodButton({ title, isEssential }: APIInput) {
   return (
     <InputLabel title={title} isEssential={isEssential}>
-      <ThemeProvider theme={theme}>
-        <ButtonGroup variant="outlined" color="secondary" size="large">
-          <Button>GET</Button>
-          <Button>POST</Button>
-          <Button>PUT</Button>
-          <Button>DELETE</Button>
-          <Button>PATCH</Button>
-        </ButtonGroup>
-      </ThemeProvider>
+      <ButtonGroup variant="outlined" color="secondary" size="large">
+        <Button>GET</Button>
+        <Button>POST</Button>
+        <Button>PUT</Button>
+        <Button>DELETE</Button>
+        <Button>PATCH</Button>
+      </ButtonGroup>
     </InputLabel>
   )
 }

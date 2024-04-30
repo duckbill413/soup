@@ -27,6 +27,8 @@
     "@mui/material": "^5.15.15",
     "@mui/x-date-pickers": "^7.2.0",
     "@stomp/stompjs": "^7.0.0",
+    "@uiw/codemirror-extensions-langs": "^4.22.0",
+    "@uiw/react-codemirror": "^4.22.0",
     "@toast-ui/editor": "^3.2.2",
     "@toast-ui/editor-plugin-code-syntax-highlight": "^3.1.0",
     "@toast-ui/editor-plugin-color-syntax": "^3.1.0",
