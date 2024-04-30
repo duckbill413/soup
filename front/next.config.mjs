@@ -1,19 +1,20 @@
-import { createVanillaExtractPlugin } from '@vanilla-extract/next-plugin';
-import path from 'path';
+import { createVanillaExtractPlugin } from '@vanilla-extract/next-plugin'
+import path from 'path'
 
-const withVanillaExtract = createVanillaExtractPlugin();
+const withVanillaExtract = createVanillaExtractPlugin()
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-
   reactStrictMode: false,
   webpack: (config) => {
-    const fileLoaderRule = config.module.rules.find((rule) => rule.test?.test?.('.svg'));
+    const fileLoaderRule = config.module.rules.find((rule) =>
+      rule.test?.test?.('.svg'),
+    )
 
     config.resolve.alias = {
       ...(config.resolve.alias || {}),
       '@': path.resolve(process.cwd(), 'src/'),
-    };
+    }
 
     config.module.rules.push(
       {
@@ -26,14 +27,19 @@ const nextConfig = {
         issuer: /\.[jt]sx?$/,
         resourceQuery: /components/,
         use: ['@svgr/webpack'],
-      }
-    );
+      },
+    )
 
-    return config;
+    return config
   },
   images: {
-    domains: ["placehold.co"]
+    domains: ['placehold.co'],
   },
-};
 
-export default withVanillaExtract(nextConfig);
+  env: {
+    NEXT_PUBLIC_LIVEBLOCKS_PUBLIC_KEY:
+      process.env.NEXT_PUBLIC_LIVEBLOCKS_PUBLIC_KEY,
+  },
+}
+
+export default withVanillaExtract(nextConfig)
