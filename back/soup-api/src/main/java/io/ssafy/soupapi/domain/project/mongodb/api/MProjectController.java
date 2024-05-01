@@ -60,7 +60,8 @@ public class MProjectController {
      * @return
      */
 
-    @Operation(summary = "프로젝트 정보 수정", description = "프로젝트 개요 화면 정보 수정 <br>Jira Key, 프로젝트 이미지, 팀원 정보는 수정 불가")
+    @Operation(summary = "프로젝트 정보 수정", description = "프로젝트 개요 화면 정보 수정 <br>Jira Key, 프로젝트 이미지, 팀원 정보는 수정 불가" +
+                                                     "<ul><li>프로젝트 이름</li><li>프로젝트 설명</li><li>프로젝트 시작일</li><li>프로젝트 종료일</li><li>프로젝트 사용툴</li></ul>")
     @PutMapping("/{projectId}/info")
     @PreAuthorize("!@authService.hasViewerProjectRoleMember(#projectId, #member.getId())")
     public ResponseEntity<BaseResponse<GetProjectInfo>> updateProjectInfo(

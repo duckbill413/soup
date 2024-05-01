@@ -5,6 +5,7 @@ import jakarta.validation.constraints.Pattern;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -20,8 +21,15 @@ public record UpdateProjectInfo(
         @Pattern(regexp = "^\\d{8}$", message = "날짜 형식이 잘못되었습니다. (yyyyMMdd)")
         @Schema(description = "프로젝트 종료일")
         String endDate,
+        @Schema(description = "프로젝트 사용툴")
         List<UpdateProjectTool> tools
 ) {
+    public UpdateProjectInfo {
+        if (Objects.isNull(tools)) {
+            tools = List.of();
+        }
+    }
+
     public LocalDate getStartDate() {
         if (Objects.isNull(startDate)) {
             return LocalDate.now();
