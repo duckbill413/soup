@@ -10,8 +10,12 @@ import io.ssafy.soupapi.domain.project.mongodb.dto.response.GetProjectJiraKey;
 import io.ssafy.soupapi.domain.project.mongodb.dto.response.GetProjectProposal;
 import io.ssafy.soupapi.domain.project.mongodb.entity.Info;
 import io.ssafy.soupapi.domain.project.mongodb.entity.Project;
+import io.ssafy.soupapi.domain.project.mongodb.entity.ProjectIssue;
 import io.ssafy.soupapi.domain.project.usecase.dto.request.CreateProjectDto;
 import io.ssafy.soupapi.global.common.code.ErrorCode;
+import io.ssafy.soupapi.global.common.request.PageOffsetRequest;
+import io.ssafy.soupapi.global.common.response.OffsetPagination;
+import io.ssafy.soupapi.global.common.response.PageOffsetResponse;
 import io.ssafy.soupapi.global.exception.BaseExceptionHandler;
 import io.ssafy.soupapi.global.security.TemporalMember;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +23,9 @@ import lombok.extern.log4j.Log4j2;
 import org.bson.types.ObjectId;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.Objects;
 
 @Log4j2
 @Service
@@ -152,5 +159,32 @@ public class MProjectServiceImpl implements MProjectService {
         project.getInfo().setJiraKey(updateProjectJiraKey.key());
         mProjectRepository.save(project);
         return GetProjectJiraKey.toProjectInfoDto(project.getInfo());
+    }
+
+    @Override
+    public PageOffsetResponse<List<ProjectIssue>> findProjectIssues(ObjectId projectId, PageOffsetRequest pageOffsetRequest) {
+        int offset = (pageOffsetRequest.page() - 1) * pageOffsetRequest.size();
+        int limit = pageOffsetRequest.size();
+        var projectIssues = mProjectRepository.findProjectIssues(projectId, offset, limit).orElseThrow(() ->
+                new BaseExceptionHandler(ErrorCode.FAILED_TO_UPDATE_PROJECT)).getIssues();
+
+        // 저장된 이슈가 없는 경우
+        if (Objects.isNull(projectIssues)) {
+            projectIssues = List.of();
+        }
+
+        var issueCount = mProjectRepository.findProjectIssuesCount(projectId).orElseThrow(() ->
+                new BaseExceptionHandler(ErrorCode.FAILED_TO_UPDATE_PROJECT)).getIssues().size();
+        return PageOffsetResponse.<List<ProjectIssue>>builder()
+                .content(projectIssues)
+                .pagination(OffsetPagination.builder()
+                        .page(pageOffsetRequest.page())
+                        .size(pageOffsetRequest.size())
+                        .total(issueCount % pageOffsetRequest.size() == 0 ?
+                                issueCount / pageOffsetRequest.size() :
+                                issueCount / pageOffsetRequest.size() + 1)
+                        .totalCount(issueCount)
+                        .build())
+                .build();
     }
 }

@@ -42,17 +42,7 @@ public class JiraServiceImpl implements JiraService {
 
     /**
      * 우리 프로젝트와 지라 프로젝트의 이슈를 동기화
-     * 0. 지라 이슈 목록 불러오기
-     * - 지라에 등록된 이슈들의 리스트를 가져온다.
-     * 1. 등록
-     * - 우리 프로젝트의 이슈 중 지라 ID가 없는 이슈에 대해서 지라에 이슈를 등록
-     * - updated 를 false 로 설정
-     * - 지라 이슈중 우리 프로젝트에 없는 경우 우리 프로젝트 이슈 목록에 등록
-     * 2. 업데이트
-     * - 우리 프로젝트의 이슈 중 지라 ID가 있으면서 updated가 true 인 경우 지라 이슈를 업데이트
-     * 3. 삭제
-     * - 우리 프로젝트 이슈 중에서 status가 false인 이슈들에 대하여 JIRA ID 값이 있지만 지라 issue 목록에는 ID가 없는 경우
-     * - 해당 이슈를 지라의 이슈에서 삭제 처리
+     *
      *
      * @param projectId
      * @return

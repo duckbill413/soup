@@ -7,8 +7,11 @@ import io.ssafy.soupapi.domain.project.mongodb.dto.request.UpdateProjectProposal
 import io.ssafy.soupapi.domain.project.mongodb.dto.response.GetProjectInfo;
 import io.ssafy.soupapi.domain.project.mongodb.dto.response.GetProjectJiraKey;
 import io.ssafy.soupapi.domain.project.mongodb.dto.response.GetProjectProposal;
+import io.ssafy.soupapi.domain.project.mongodb.entity.ProjectIssue;
 import io.ssafy.soupapi.global.common.code.SuccessCode;
+import io.ssafy.soupapi.global.common.request.PageOffsetRequest;
 import io.ssafy.soupapi.global.common.response.BaseResponse;
+import io.ssafy.soupapi.global.common.response.PageOffsetResponse;
 import io.ssafy.soupapi.global.security.TemporalMember;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -21,6 +24,8 @@ import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Log4j2
 @RestController
@@ -156,6 +161,19 @@ public class MProjectController {
         return BaseResponse.success(
                 SuccessCode.UPDATE_SUCCESS,
                 mProjectService.updateProjectJiraKey(new ObjectId(projectId), updateProjectJiraKey)
+        );
+    }
+
+    @Operation(summary = "프로젝트 이슈 목록 조회")
+    @GetMapping("/{projectId}/issues")
+    public ResponseEntity<BaseResponse<PageOffsetResponse<List<ProjectIssue>>>> findProjectIssues(
+            @PathVariable(name = "projectId") String projectId,
+            PageOffsetRequest pageOffsetRequest,
+            @AuthenticationPrincipal TemporalMember member
+    ) {
+        return BaseResponse.success(
+                SuccessCode.SELECT_SUCCESS,
+                mProjectService.findProjectIssues(new ObjectId(projectId), pageOffsetRequest)
         );
     }
 }
