@@ -21,4 +21,6 @@ public interface JiraRepository {
     int createJiraIssue(Info jiraInfo, JiraIssue jiraIssue) throws JsonProcessingException;
     void changeJiraIssue(Info jiraInfo, JiraIssue jiraIssue);
     void changeJiraIssueProgress(Info jiraInfo, JiraIssue jiraIssue);
+    void assignJiraIssue(Info jiraInfo, JiraIssue jiraIssue);
+    void deleteJiraIssue(Info jiraInfo, JiraIssue jiraIssue);
 }

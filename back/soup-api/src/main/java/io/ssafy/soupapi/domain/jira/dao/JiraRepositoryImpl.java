@@ -23,6 +23,7 @@ import org.springframework.stereotype.Repository;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 @Repository
 @RequiredArgsConstructor
@@ -46,9 +47,7 @@ public class JiraRepositoryImpl implements JiraRepository {
                 .asJson();
 
         // 요청에 실패
-        if (!(response.getStatus() == 200 || response.getStatus() == 201)) {
-            throw new BaseExceptionHandler(ErrorCode.FAILED_TO_REQUEST_JIRA_API, getErrorResponse(response));
-        }
+        checkResponseSuccess(response);
 
         JiraUserDatum[] jiraUserData = objectMapper.readValue(response.getBody().toString(), JiraUserDatum[].class);
         return Arrays.stream(jiraUserData).toList();
@@ -119,9 +118,7 @@ public class JiraRepositoryImpl implements JiraRepository {
                 .body(gson.toJson(requestBody))
                 .asJson();
 
-        if (!(response.getStatus() == 200 || response.getStatus() == 201)) {
-            throw new BaseExceptionHandler(ErrorCode.FAILED_TO_REQUEST_JIRA_API, getErrorResponse(response));
-        }
+        checkResponseSuccess(response);
 
         CreatedJiraIssues createJiraIssues = objectMapper.readValue(response.getBody().toString(), CreatedJiraIssues.class);
         return createJiraIssues.getIssues().size();
@@ -141,9 +138,7 @@ public class JiraRepositoryImpl implements JiraRepository {
                 .body(gson.toJson(requestBody))
                 .asJson();
 
-        if (!(response.getStatus() == 200 || response.getStatus() == 201)) {
-            throw new BaseExceptionHandler(ErrorCode.FAILED_TO_REQUEST_JIRA_API, getErrorResponse(response));
-        }
+        checkResponseSuccess(response);
 
         return 1;
     }
@@ -162,9 +157,7 @@ public class JiraRepositoryImpl implements JiraRepository {
                 .body(gson.toJson(requestBody))
                 .asJson();
 
-        if (!(response.getStatus() == 200 || response.getStatus() == 201)) {
-            throw new BaseExceptionHandler(ErrorCode.FAILED_TO_REQUEST_JIRA_API, getErrorResponse(response));
-        }
+        checkResponseSuccess(response);
     }
 
     @Override
@@ -173,17 +166,42 @@ public class JiraRepositoryImpl implements JiraRepository {
                 .transition(EditTransition.of(jiraIssue))
                 .build();
 
-        HttpResponse<JsonNode> response = Unirest.put(String.format("https://%s.atlassian.net/rest/api/2/issue/%s/transitions", jiraInfo.getJiraHost(), jiraIssue.issueKey()))
+        HttpResponse<JsonNode> response = Unirest.post(String.format("https://%s.atlassian.net/rest/api/2/issue/%s/transitions", jiraInfo.getJiraHost(), jiraIssue.issueKey()))
                 .basicAuth(jiraInfo.getJiraUsername(), jiraInfo.getJiraKey())
                 .header("Accept", "application/json")
                 .header("Content-Type", "application/json")
                 .body(gson.toJson(requestBody))
                 .asJson();
 
-        if (!(response.getStatus() == 200 || response.getStatus() == 201)) {
-            throw new BaseExceptionHandler(ErrorCode.FAILED_TO_REQUEST_JIRA_API, getErrorResponse(response));
-        }
+        checkResponseSuccess(response);
     }
+
+    @Override
+    public void assignJiraIssue(Info jiraInfo, JiraIssue jiraIssue) {
+        if (Objects.isNull(jiraIssue.assignee())) {
+            throw new BaseExceptionHandler(ErrorCode.FAILED_TO_UPDATE_JIRA_ISSUE);
+        }
+        var requestBody = AssignJiraIssue.builder()
+                .accountId(jiraIssue.assignee().id())
+                .build();
+
+        HttpResponse<JsonNode> response = Unirest.put(String.format("https://%s.atlassian.net/rest/api/2/issue/%s/assignee", jiraInfo.getJiraHost(), jiraIssue.issueKey()))
+                .basicAuth(jiraInfo.getJiraUsername(), jiraInfo.getJiraKey())
+                .header("Accept", "application/json")
+                .header("Content-Type", "application/json")
+                .body(gson.toJson(requestBody))
+                .asJson();
+
+        checkResponseSuccess(response);
+    }
+
+    @Override
+    public void deleteJiraIssue(Info jiraInfo, JiraIssue jiraIssue) {
+        Unirest.delete(String.format("https://%s.atlassian.net/rest/api/2/issue/%s", jiraInfo.getJiraHost(), jiraIssue.issueKey()))
+                .basicAuth(jiraInfo.getJiraUsername(), jiraInfo.getJiraKey())
+                .asString();
+    }
+
 
     private JiraIssueType getJiraIssueTypes(Info jiraInfo, long startAt) throws JsonProcessingException {
         HttpResponse<JsonNode> response = Unirest.get(String.format("https://%s.atlassian.net/rest/api/2/issue/createmeta/%s/issuetypes", jiraInfo.getJiraHost(), jiraInfo.getJiraProjectKey()))
@@ -193,11 +211,15 @@ public class JiraRepositoryImpl implements JiraRepository {
                 .queryString("maxResults", 100)
                 .asJson();
 
-        if (!(response.getStatus() == 200 || response.getStatus() == 201)) {
-            throw new BaseExceptionHandler(ErrorCode.FAILED_TO_REQUEST_JIRA_API, getErrorResponse(response));
-        }
+        checkResponseSuccess(response);
 
         return objectMapper.readValue(response.getBody().toString(), JiraIssueType.class);
+    }
+
+    private void checkResponseSuccess(HttpResponse<JsonNode> response) {
+        if (!(response.getStatus() == 200 || response.getStatus() == 201 || response.getStatus() == 204)) {
+            throw new BaseExceptionHandler(ErrorCode.FAILED_TO_REQUEST_JIRA_API, getErrorResponse(response));
+        }
     }
 
     /**
@@ -218,9 +240,7 @@ public class JiraRepositoryImpl implements JiraRepository {
                 .queryString("jql", "project = %s".formatted(projectInfo.getJiraProjectKey()))
                 .asJson();
 
-        if (!(response.getStatus() == 200 || response.getStatus() == 201)) {
-            throw new BaseExceptionHandler(ErrorCode.FAILED_TO_REQUEST_JIRA_API, getErrorResponse(response));
-        }
+        checkResponseSuccess(response);
 
         return objectMapper.readValue(response.getBody().toString(), JiraIssues.class);
     }

@@ -35,7 +35,10 @@ public record JiraIssue(
         JiraUser assignee,
         @Schema(description = "이슈 보고자")
         JiraUser reporter,
-        boolean updatedValue
+        @Schema(description = "이슈 정보 업데이트 여부")
+        boolean isUpdated,
+        @Schema(description = "이슈 정보 삭제 여부")
+        boolean isDeleted
 ) {
     @Builder
     public JiraIssue {
