@@ -26,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 @Log4j2
 @Service
@@ -173,8 +174,8 @@ public class MProjectServiceImpl implements MProjectService {
             projectIssues = List.of();
         }
 
-        var issueCount = mProjectRepository.findProjectIssuesCount(projectId).orElseThrow(() ->
-                new BaseExceptionHandler(ErrorCode.FAILED_TO_UPDATE_PROJECT)).getIssues().size();
+        var issueCount = Optional.ofNullable(mProjectRepository.findProjectIssuesCount(projectId).orElseThrow(() ->
+                new BaseExceptionHandler(ErrorCode.FAILED_TO_UPDATE_PROJECT)).getIssues()).orElse(List.of()).size();
         return PageOffsetResponse.<List<ProjectIssue>>builder()
                 .content(projectIssues)
                 .pagination(OffsetPagination.builder()
