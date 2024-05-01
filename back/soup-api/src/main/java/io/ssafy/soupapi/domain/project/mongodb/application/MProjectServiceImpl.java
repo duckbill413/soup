@@ -9,7 +9,6 @@ import io.ssafy.soupapi.domain.project.mongodb.dto.response.GetProjectInfo;
 import io.ssafy.soupapi.domain.project.mongodb.dto.response.GetProjectJiraKey;
 import io.ssafy.soupapi.domain.project.mongodb.dto.response.GetProjectProposal;
 import io.ssafy.soupapi.domain.project.mongodb.entity.Info;
-import io.ssafy.soupapi.domain.project.mongodb.entity.Project;
 import io.ssafy.soupapi.domain.project.mongodb.entity.ProjectIssue;
 import io.ssafy.soupapi.domain.project.usecase.dto.request.CreateProjectDto;
 import io.ssafy.soupapi.global.common.code.ErrorCode;
@@ -20,7 +19,14 @@ import io.ssafy.soupapi.global.exception.BaseExceptionHandler;
 import io.ssafy.soupapi.global.security.TemporalMember;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.bson.Document;
 import org.bson.types.ObjectId;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.aggregation.Aggregation;
+import org.springframework.data.mongodb.core.aggregation.AggregationResults;
+import org.springframework.data.mongodb.core.aggregation.ArrayOperators;
+import org.springframework.data.mongodb.core.aggregation.ConditionalOperators;
+import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,6 +39,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class MProjectServiceImpl implements MProjectService {
     private final MProjectRepository mProjectRepository;
+    private final MongoTemplate mongoTemplate;
 
     /**
      * 프로젝트 생성 및 최초 팀 구성 설정
@@ -187,5 +194,29 @@ public class MProjectServiceImpl implements MProjectService {
                         .totalCount(issueCount)
                         .build())
                 .build();
+    }
+
+    @Override
+    public PageOffsetResponse<List<ProjectIssue>> updateProjectIssues(String projectId, List<ProjectIssue> issues, PageOffsetRequest pageOffsetRequest, TemporalMember member) {
+        return null;
+    }
+
+    public long countTotalProjectIssues(ObjectId projectId) {
+        AggregationResults<Document> results = mongoTemplate.aggregate(
+                Aggregation.newAggregation(
+                        Aggregation.match(Criteria.where("_id").is(projectId)),
+                        Aggregation.project()
+                                .and(
+                                        ConditionalOperators.when(Criteria.where("project_issues").exists(true))
+                                                .then(ArrayOperators.Size.lengthOfArray("$project_issues"))
+                                                .otherwise(0)
+                                ).as("issueCount")
+                ),
+                "projects",
+                Document.class
+        );
+
+        Document result = results.getUniqueMappedResult();
+        return result != null ? result.getInteger("issueCount", 0) : 0;
     }
 }

@@ -176,4 +176,18 @@ public class MProjectController {
                 mProjectService.findProjectIssues(new ObjectId(projectId), pageOffsetRequest)
         );
     }
+
+    @Operation(summary = "프로젝트 이슈 업데이트")
+    @PutMapping("/{projectId}/issues")
+    public ResponseEntity<BaseResponse<PageOffsetResponse<List<ProjectIssue>>>> updateProjectIssues(
+            @PathVariable(name = "projectId") String projectId,
+            @RequestBody List<ProjectIssue> issues,
+            PageOffsetRequest pageOffsetRequest,
+            @AuthenticationPrincipal TemporalMember member
+    ) {
+        return BaseResponse.success(
+                SuccessCode.UPDATE_SUCCESS,
+                mProjectService.updateProjectIssues(projectId, issues, pageOffsetRequest, member)
+        );
+    }
 }

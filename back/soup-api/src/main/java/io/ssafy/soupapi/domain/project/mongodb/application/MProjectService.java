@@ -31,4 +31,6 @@ public interface MProjectService {
     GetProjectJiraKey updateProjectJiraKey(ObjectId projectId, UpdateProjectJiraKey updateProjectJiraKey);
 
     PageOffsetResponse<List<ProjectIssue>> findProjectIssues(ObjectId projectId, PageOffsetRequest pageOffsetRequest);
+
+    PageOffsetResponse<List<ProjectIssue>> updateProjectIssues(String projectId, List<ProjectIssue> issues, PageOffsetRequest pageOffsetRequest, TemporalMember member);
 }
