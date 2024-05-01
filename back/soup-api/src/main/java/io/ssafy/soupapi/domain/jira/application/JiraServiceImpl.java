@@ -3,7 +3,7 @@ package io.ssafy.soupapi.domain.jira.application;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import io.ssafy.soupapi.domain.jira.dao.JiraRepository;
 import io.ssafy.soupapi.domain.jira.dto.JiraUserDatum;
-import io.ssafy.soupapi.domain.jira.dto.response.GetJiraIssue;
+import io.ssafy.soupapi.domain.jira.dto.response.JiraIssue;
 import io.ssafy.soupapi.domain.jira.dto.response.GetJiraIssueType;
 import io.ssafy.soupapi.domain.project.mongodb.dao.MProjectRepository;
 import io.ssafy.soupapi.global.common.code.ErrorCode;
@@ -63,7 +63,7 @@ public class JiraServiceImpl implements JiraService {
     }
 
     @Override
-    public PageOffsetResponse<List<GetJiraIssue>> findJiraIssues(String projectId, PageOffsetRequest pageOffsetRequest) {
+    public PageOffsetResponse<List<JiraIssue>> findJiraIssues(String projectId, PageOffsetRequest pageOffsetRequest) {
         var jiraInfo = mProjectRepository.findProjectJiraInfo(new ObjectId(projectId)).orElseThrow(() ->
                 new BaseExceptionHandler(ErrorCode.NOT_FOUND_JIRA_INFO)).getInfo();
         try {

@@ -2,7 +2,7 @@ package io.ssafy.soupapi.domain.jira.api;
 
 import io.ssafy.soupapi.domain.jira.application.JiraService;
 import io.ssafy.soupapi.domain.jira.dto.JiraUserDatum;
-import io.ssafy.soupapi.domain.jira.dto.response.GetJiraIssue;
+import io.ssafy.soupapi.domain.jira.dto.response.JiraIssue;
 import io.ssafy.soupapi.domain.jira.dto.response.GetJiraIssueType;
 import io.ssafy.soupapi.global.common.code.SuccessCode;
 import io.ssafy.soupapi.global.common.request.PageOffsetRequest;
@@ -57,7 +57,7 @@ public class JiraController {
     @Operation(summary = "지라 프로젝트 이슈 목록 조회")
     @GetMapping("/{projectId}/jira/issues")
     @PreAuthorize("@authService.hasProjectRoleMember(#projectId, #member.getId())")
-    public ResponseEntity<BaseResponse<PageOffsetResponse<List<GetJiraIssue>>>> findJiraIssues(
+    public ResponseEntity<BaseResponse<PageOffsetResponse<List<JiraIssue>>>> findJiraIssues(
             @PathVariable("projectId") String projectId,
             PageOffsetRequest pageOffsetRequest,
             @AuthenticationPrincipal TemporalMember member

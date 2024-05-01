@@ -3,11 +3,11 @@ package io.ssafy.soupapi.domain.jira.dao;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.ssafy.soupapi.domain.jira.dto.JiraIssueType;
-import io.ssafy.soupapi.domain.jira.dto.JiraIssues;
-import io.ssafy.soupapi.domain.jira.dto.JiraUserDatum;
-import io.ssafy.soupapi.domain.jira.dto.response.GetJiraIssue;
+import com.google.gson.Gson;
+import io.ssafy.soupapi.domain.jira.dto.*;
+import io.ssafy.soupapi.domain.jira.dto.request.*;
 import io.ssafy.soupapi.domain.jira.dto.response.GetJiraIssueType;
+import io.ssafy.soupapi.domain.jira.dto.response.JiraIssue;
 import io.ssafy.soupapi.domain.project.mongodb.entity.Info;
 import io.ssafy.soupapi.global.common.code.ErrorCode;
 import io.ssafy.soupapi.global.common.request.PageOffsetRequest;
@@ -28,6 +28,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class JiraRepositoryImpl implements JiraRepository {
     private final ObjectMapper objectMapper;
+    private final Gson gson;
 
     /**
      * 지라에 등록된 팀원 정보 로딩
@@ -61,13 +62,13 @@ public class JiraRepositoryImpl implements JiraRepository {
      * @throws JsonProcessingException json 파싱 실패 에러
      */
     @Override
-    public PageOffsetResponse<List<GetJiraIssue>> findJiraIssues(Info projectInfo, PageOffsetRequest pageOffsetRequest) throws JsonProcessingException {
+    public PageOffsetResponse<List<JiraIssue>> findJiraIssues(Info projectInfo, PageOffsetRequest pageOffsetRequest) throws JsonProcessingException {
         int startAt = (pageOffsetRequest.page() - 1) * pageOffsetRequest.size();
         int maxResults = pageOffsetRequest.size();
         JiraIssues jiraIssues = getJiraIssues(projectInfo, startAt, maxResults);
 
-        return PageOffsetResponse.<List<GetJiraIssue>>builder()
-                .content(jiraIssues.getIssues().stream().map(GetJiraIssue::of).toList())
+        return PageOffsetResponse.<List<JiraIssue>>builder()
+                .content(jiraIssues.getIssues().stream().map(JiraIssue::of).toList())
                 .pagination(OffsetPagination.builder()
                         .page(pageOffsetRequest.page())
                         .size(pageOffsetRequest.size())
@@ -96,6 +97,94 @@ public class JiraRepositoryImpl implements JiraRepository {
         return issueTypes;
     }
 
+    @Override
+    public int createBulkJiraIssue(Info jiraInfo, List<JiraIssue> jiraIssues) throws JsonProcessingException {
+        List<EditIssueUpdate> issueUpdates = new ArrayList<>();
+
+        for (JiraIssue jiraIssue : jiraIssues) {
+            issueUpdates.add(EditIssueUpdate.builder()
+                    .fields(EditFields.of(jiraIssue))
+                    .transition(EditTransition.of(jiraIssue))
+                    .build());
+        }
+
+        var requestBody = CreateBulkJiraIssue.builder()
+                .issueUpdates(issueUpdates)
+                .build();
+
+        HttpResponse<JsonNode> response = Unirest.post(String.format("https://%s.atlassian.net/rest/api/2/issue/bulk", jiraInfo.getJiraHost()))
+                .basicAuth(jiraInfo.getJiraUsername(), jiraInfo.getJiraKey())
+                .header("Accept", "application/json")
+                .header("Content-Type", "application/json")
+                .body(gson.toJson(requestBody))
+                .asJson();
+
+        if (!(response.getStatus() == 200 || response.getStatus() == 201)) {
+            throw new BaseExceptionHandler(ErrorCode.FAILED_TO_REQUEST_JIRA_API, getErrorResponse(response));
+        }
+
+        CreatedJiraIssues createJiraIssues = objectMapper.readValue(response.getBody().toString(), CreatedJiraIssues.class);
+        return createJiraIssues.getIssues().size();
+    }
+
+    @Override
+    public int createJiraIssue(Info jiraInfo, JiraIssue jiraIssue) throws JsonProcessingException {
+        var requestBody = EditIssueUpdate.builder()
+                .fields(EditFields.of(jiraIssue))
+                .transition(EditTransition.of(jiraIssue))
+                .build();
+
+        HttpResponse<JsonNode> response = Unirest.post(String.format("https://%s.atlassian.net/rest/api/2/issue", jiraInfo.getJiraHost()))
+                .basicAuth(jiraInfo.getJiraUsername(), jiraInfo.getJiraKey())
+                .header("Accept", "application/json")
+                .header("Content-Type", "application/json")
+                .body(gson.toJson(requestBody))
+                .asJson();
+
+        if (!(response.getStatus() == 200 || response.getStatus() == 201)) {
+            throw new BaseExceptionHandler(ErrorCode.FAILED_TO_REQUEST_JIRA_API, getErrorResponse(response));
+        }
+
+        return 1;
+    }
+
+    @Override
+    public void changeJiraIssue(Info jiraInfo, JiraIssue jiraIssue) {
+        var requestBody = EditIssueUpdate.builder()
+                .fields(EditFields.of(jiraIssue))
+                .transition(EditTransition.of(jiraIssue))
+                .build();
+
+        HttpResponse<JsonNode> response = Unirest.put(String.format("https://%s.atlassian.net/rest/api/2/issue/%s", jiraInfo.getJiraHost(), jiraIssue.issueKey()))
+                .basicAuth(jiraInfo.getJiraUsername(), jiraInfo.getJiraKey())
+                .header("Accept", "application/json")
+                .header("Content-Type", "application/json")
+                .body(gson.toJson(requestBody))
+                .asJson();
+
+        if (!(response.getStatus() == 200 || response.getStatus() == 201)) {
+            throw new BaseExceptionHandler(ErrorCode.FAILED_TO_REQUEST_JIRA_API, getErrorResponse(response));
+        }
+    }
+
+    @Override
+    public void changeJiraIssueProgress(Info jiraInfo, JiraIssue jiraIssue) {
+        var requestBody = ChangeJiraIssueProgress.builder()
+                .transition(EditTransition.of(jiraIssue))
+                .build();
+
+        HttpResponse<JsonNode> response = Unirest.put(String.format("https://%s.atlassian.net/rest/api/2/issue/%s/transitions", jiraInfo.getJiraHost(), jiraIssue.issueKey()))
+                .basicAuth(jiraInfo.getJiraUsername(), jiraInfo.getJiraKey())
+                .header("Accept", "application/json")
+                .header("Content-Type", "application/json")
+                .body(gson.toJson(requestBody))
+                .asJson();
+
+        if (!(response.getStatus() == 200 || response.getStatus() == 201)) {
+            throw new BaseExceptionHandler(ErrorCode.FAILED_TO_REQUEST_JIRA_API, getErrorResponse(response));
+        }
+    }
+
     private JiraIssueType getJiraIssueTypes(Info jiraInfo, long startAt) throws JsonProcessingException {
         HttpResponse<JsonNode> response = Unirest.get(String.format("https://%s.atlassian.net/rest/api/2/issue/createmeta/%s/issuetypes", jiraInfo.getJiraHost(), jiraInfo.getJiraProjectKey()))
                 .basicAuth(jiraInfo.getJiraUsername(), jiraInfo.getJiraKey())
@@ -109,9 +198,6 @@ public class JiraRepositoryImpl implements JiraRepository {
         }
 
         return objectMapper.readValue(response.getBody().toString(), JiraIssueType.class);
-    }
-
-    private void createJiraIssue() {
     }
 
     /**

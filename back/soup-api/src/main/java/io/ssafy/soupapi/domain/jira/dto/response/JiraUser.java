@@ -5,7 +5,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 
 @Schema(description = "지라 Simple 회원 정보")
-public record GetJiraUser(
+public record JiraUser(
         @Schema(description = "지라 회원 Id")
         String id,
         @Schema(description = "지라 회원 이메일")
@@ -14,7 +14,7 @@ public record GetJiraUser(
         String name
 ) {
     @Builder
-    public GetJiraUser {
+    public JiraUser {
         id = StringParserUtil.parseNullToEmpty(id);
         email = StringParserUtil.parseNullToEmpty(email);
         name = StringParserUtil.parseNullToEmpty(name);

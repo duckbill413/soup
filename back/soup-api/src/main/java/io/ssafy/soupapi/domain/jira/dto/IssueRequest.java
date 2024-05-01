@@ -1,7 +1,5 @@
 package io.ssafy.soupapi.domain.jira.dto;
 
-import io.ssafy.soupapi.domain.jira.dto.response.JiraPriority;
-
 public record IssueRequest(
         String summary,
         String description,
@@ -9,7 +7,7 @@ public record IssueRequest(
         String projectKey,
         String issueTypeId,
         String parentId,
-        JiraPriority priority,
+        String priority,
         long storyPoint,
         String assigneeId,
         String reporterId
