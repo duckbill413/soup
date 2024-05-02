@@ -1,12 +1,9 @@
 package io.ssafy.soupapi.domain.project.usecase.application;
 
-import io.ssafy.soupapi.domain.member.dao.MemberRepository;
 import io.ssafy.soupapi.domain.project.mongodb.application.MProjectService;
 import io.ssafy.soupapi.domain.project.postgresql.application.PProjectService;
 import io.ssafy.soupapi.domain.project.usecase.dto.request.CreateProjectDto;
-import io.ssafy.soupapi.domain.projectauth.dao.ProjectAuthRepository;
 import io.ssafy.soupapi.global.security.TemporalMember;
-import io.ssafy.soupapi.global.util.GmailUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
