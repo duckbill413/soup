@@ -15,7 +15,8 @@ export const container = style({
 })
 
 export const content = style({
-  padding: `calc( ${vars.space.xLarge} + ${vars.space.base} ) ${vars.space.base} 0 calc( ${vars.space.xLarge} + ${vars.space.base} )`,
+  padding: `calc( ${vars.space.xLarge} + ${vars.space.base} ) ${vars.space.base} 0 calc( ${vars.space.base} + ${vars.space.base} )`,
+
 })
 
 export const projects = style({
