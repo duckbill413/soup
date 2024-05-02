@@ -9,6 +9,7 @@ import io.ssafy.soupapi.domain.project.mongodb.dto.response.GetProjectInfo;
 import io.ssafy.soupapi.domain.project.mongodb.dto.response.GetProjectJiraKey;
 import io.ssafy.soupapi.domain.project.mongodb.dto.response.GetProjectProposal;
 import io.ssafy.soupapi.domain.project.mongodb.entity.Info;
+import io.ssafy.soupapi.domain.project.mongodb.entity.Project;
 import io.ssafy.soupapi.domain.project.mongodb.entity.ProjectIssue;
 import io.ssafy.soupapi.domain.project.usecase.dto.request.CreateProjectDto;
 import io.ssafy.soupapi.global.common.code.ErrorCode;
@@ -27,12 +28,15 @@ import org.springframework.data.mongodb.core.aggregation.AggregationResults;
 import org.springframework.data.mongodb.core.aggregation.ArrayOperators;
 import org.springframework.data.mongodb.core.aggregation.ConditionalOperators;
 import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
 
 @Log4j2
 @Service
@@ -197,8 +201,51 @@ public class MProjectServiceImpl implements MProjectService {
     }
 
     @Override
-    public PageOffsetResponse<List<ProjectIssue>> updateProjectIssues(String projectId, List<ProjectIssue> issues, PageOffsetRequest pageOffsetRequest, TemporalMember member) {
-        return null;
+    public PageOffsetResponse<List<ProjectIssue>> updateProjectIssues(ObjectId projectId, List<ProjectIssue> issues, PageOffsetRequest pageOffsetRequest, TemporalMember member) {
+        for (ProjectIssue issue : issues) {
+            // 변경 사항이 없는 경우
+            if (!issue.isUpdated()) {
+                continue;
+            }
+
+            // 새로 저장되는 데이터의 경우
+            if (Objects.isNull(issue.getProjectIssueId())) {
+                issue.setProjectIssueId(UUID.randomUUID());
+                issue.setCreated(true);
+                continue;
+            }
+
+            // 업데이트 되는 데이터의 경우
+            updateProjectIssue(projectId, issue);
+        }
+        return findProjectIssues(projectId, pageOffsetRequest);
+    }
+
+    public void insertProjectIssue(ObjectId projectId, ProjectIssue projectIssue) {
+        Query query = new Query().addCriteria(Criteria.where("_id").is(projectId));
+        Update update = new Update().addToSet("project_issues", projectIssue);
+        mongoTemplate.updateFirst(query, update, Project.class);
+    }
+
+    public void updateProjectIssue(ObjectId projectId, ProjectIssue projectIssue) {
+        Query query = new Query(Criteria.where("_id").is(projectId)
+                .and("project_issues.project_issue_id").is(projectIssue.getProjectIssueId()));
+        Update update = new Update()
+                .set("project_issues.$.project_jira_issue_id", projectIssue.getIssueId())
+                .set("project_issues.$.project_jira_issue_key", projectIssue.getIssueKey())
+                .set("project_issues.$.project_issue_summary", projectIssue.getSummary())
+                .set("project_issues.$.project_issue_description", projectIssue.getDescription())
+                .set("project_issues.$.project_issue_type", projectIssue.getIssueType())
+                .set("project_issues.$.project_issue_status", projectIssue.getStatus())
+                .set("project_issues.$.project_issue_priority", projectIssue.getPriority())
+                .set("project_issues.$.project_issue_story_point", projectIssue.getStoryPoint())
+                .set("project_issues.$.project_issue_updated", projectIssue.getUpdated())
+                .set("project_issues.$.project_parent_issue_id", projectIssue.getParentId())
+                .set("project_issues.$.project_issue_assignee", projectIssue.getAssignee())
+                .set("project_issues.$.project_issue_reporter", projectIssue.getReporter())
+                .set("project_issues.$.project_issue_is_updated", true);
+
+        mongoTemplate.updateFirst(query, update, Project.class);
     }
 
     public long countTotalProjectIssues(ObjectId projectId) {

@@ -32,5 +32,5 @@ public interface MProjectService {
 
     PageOffsetResponse<List<ProjectIssue>> findProjectIssues(ObjectId projectId, PageOffsetRequest pageOffsetRequest);
 
-    PageOffsetResponse<List<ProjectIssue>> updateProjectIssues(String projectId, List<ProjectIssue> issues, PageOffsetRequest pageOffsetRequest, TemporalMember member);
+    PageOffsetResponse<List<ProjectIssue>> updateProjectIssues(ObjectId projectId, List<ProjectIssue> issues, PageOffsetRequest pageOffsetRequest, TemporalMember member);
 }

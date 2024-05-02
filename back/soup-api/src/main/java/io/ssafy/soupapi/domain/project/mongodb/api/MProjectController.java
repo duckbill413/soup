@@ -187,7 +187,7 @@ public class MProjectController {
     ) {
         return BaseResponse.success(
                 SuccessCode.UPDATE_SUCCESS,
-                mProjectService.updateProjectIssues(projectId, issues, pageOffsetRequest, member)
+                mProjectService.updateProjectIssues(new ObjectId(projectId), issues, pageOffsetRequest, member)
         );
     }
 }

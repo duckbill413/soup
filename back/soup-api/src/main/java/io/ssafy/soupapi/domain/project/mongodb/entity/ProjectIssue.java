@@ -37,6 +37,8 @@ public class ProjectIssue {
     private ProjectUser assignee;
     @Field("project_issue_reporter")
     private ProjectUser reporter;
+    @Field("project_issue_is_created")
+    private boolean isCreated;
     @Field("project_issue_is_updated")
     private boolean isUpdated;
     @Field("project_issue_is_deleted")
