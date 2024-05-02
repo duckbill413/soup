@@ -71,7 +71,9 @@ public class SecurityConfig {
         final List<String> allowedHeaders = List.of("*");
         final List<String> allowedOriginPatterns = List.of(
                 "http://localhost:8080",
-                "http://localhost:3000"
+                "http://localhost:3000",
+                "https://so-up.store",
+                "127.0.0.1"
         );
 
         return request -> {
