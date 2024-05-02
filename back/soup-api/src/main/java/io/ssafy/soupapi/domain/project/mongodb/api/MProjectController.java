@@ -7,9 +7,12 @@ import io.ssafy.soupapi.domain.project.mongodb.dto.request.UpdateProjectProposal
 import io.ssafy.soupapi.domain.project.mongodb.dto.response.GetProjectInfo;
 import io.ssafy.soupapi.domain.project.mongodb.dto.response.GetProjectJiraKey;
 import io.ssafy.soupapi.domain.project.mongodb.dto.response.GetProjectProposal;
+import io.ssafy.soupapi.domain.project.mongodb.entity.ProjectIssue;
 import io.ssafy.soupapi.global.common.code.SuccessCode;
+import io.ssafy.soupapi.global.common.request.PageOffsetRequest;
 import io.ssafy.soupapi.global.common.response.BaseResponse;
-import io.ssafy.soupapi.global.security.TemporalMember;
+import io.ssafy.soupapi.global.common.response.PageOffsetResponse;
+import io.ssafy.soupapi.global.security.user.UserSecurityDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -20,6 +23,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Log4j2
 @RestController
@@ -38,10 +43,10 @@ public class MProjectController {
      */
     @Operation(summary = "프로젝트 정보 요청", description = "프로젝트 개요 화면의 프로젝트 정보 요청")
     @GetMapping("/{projectId}/info")
-    @PreAuthorize("@authService.hasProjectRoleMember(#projectId, #member.getId())")
+    @PreAuthorize("@authService.hasProjectRoleMember(#projectId, #userSecurityDTO.getId())")
     public ResponseEntity<BaseResponse<GetProjectInfo>> findProjectInfo(
             @PathVariable(name = "projectId") String projectId,
-            @AuthenticationPrincipal TemporalMember member // TODO: security member
+            @AuthenticationPrincipal UserSecurityDTO userSecurityDTO
     ) {
         return BaseResponse.success(
                 SuccessCode.SELECT_SUCCESS,
@@ -59,13 +64,14 @@ public class MProjectController {
      * @return
      */
 
-    @Operation(summary = "프로젝트 정보 수정", description = "프로젝트 개요 화면 정보 수정 <br>Jira Key, 프로젝트 이미지, 팀원 정보는 수정 불가")
+    @Operation(summary = "프로젝트 정보 수정", description = "프로젝트 개요 화면 정보 수정 <br>Jira Key, 프로젝트 이미지, 팀원 정보는 수정 불가" +
+                                                     "<ul><li>프로젝트 이름</li><li>프로젝트 설명</li><li>프로젝트 시작일</li><li>프로젝트 종료일</li><li>프로젝트 사용툴</li></ul>")
     @PutMapping("/{projectId}/info")
-    @PreAuthorize("!@authService.hasViewerProjectRoleMember(#projectId, #member.getId())")
+    @PreAuthorize("!@authService.hasViewerProjectRoleMember(#projectId, #userSecurityDTO.getId())")
     public ResponseEntity<BaseResponse<GetProjectInfo>> updateProjectInfo(
             @PathVariable(name = "projectId") String projectId,
             @RequestBody UpdateProjectInfo updateProjectInfo,
-            @AuthenticationPrincipal TemporalMember member
+            @AuthenticationPrincipal UserSecurityDTO userSecurityDTO
     ) {
         return BaseResponse.success(
                 SuccessCode.SELECT_SUCCESS,
@@ -82,11 +88,11 @@ public class MProjectController {
      */
     @Operation(summary = "프로젝트 제안서 조회")
     @GetMapping("/{projectId}/proposal")
-    @PreAuthorize("@authService.hasProjectRoleMember(#projectId, #member.getId())")
+    @PreAuthorize("@authService.hasProjectRoleMember(#projectId, #userSecurityDTO.getId())")
     public ResponseEntity<BaseResponse<GetProjectProposal>> findProjectProposal(
             @PathVariable(name = "projectId") String projectId,
-            @AuthenticationPrincipal TemporalMember member // TODO: security member
-    ) {
+            @AuthenticationPrincipal UserSecurityDTO userSecurityDTO
+            ) {
         return BaseResponse.success(
                 SuccessCode.SELECT_SUCCESS,
                 mProjectService.findProjectProposal(new ObjectId(projectId))
@@ -103,11 +109,11 @@ public class MProjectController {
      */
     @Operation(summary = "프로젝트 제안서 업데이트", description = "프로젝트 기획서 정보 업데이트")
     @PutMapping("/{projectId}/proposal")
-    @PreAuthorize("!@authService.hasViewerProjectRoleMember(#projectId, #member.getId())")
+    @PreAuthorize("!@authService.hasViewerProjectRoleMember(#projectId, #userSecurityDTO.getId())")
     public ResponseEntity<BaseResponse<GetProjectProposal>> changeProjectProposal(
             @PathVariable(name = "projectId") String projectId,
             @Valid @RequestBody UpdateProjectProposal updateProjectProposal,
-            @AuthenticationPrincipal TemporalMember member // TODO: security member
+            @AuthenticationPrincipal UserSecurityDTO userSecurityDTO
     ) {
         return BaseResponse.success(
                 SuccessCode.UPDATE_SUCCESS,
@@ -124,10 +130,10 @@ public class MProjectController {
      */
     @Operation(summary = "프로젝트 지라 키 정보 요청", description = "프로젝트 Jira Key 정보 요청 (ADMIN, MAINTAINER)")
     @GetMapping("/{projectId}/info/jira")
-    @PreAuthorize("@authService.hasPrimaryProjectRoleMember(#projectId, #member.getId())")
+    @PreAuthorize("@authService.hasPrimaryProjectRoleMember(#projectId, #userSecurityDTO.getId())")
     public ResponseEntity<BaseResponse<GetProjectJiraKey>> findProjectJiraKey(
             @PathVariable(name = "projectId") String projectId,
-            @AuthenticationPrincipal TemporalMember member
+            @AuthenticationPrincipal UserSecurityDTO userSecurityDTO
     ) {
         return BaseResponse.success(
                 SuccessCode.SELECT_SUCCESS,
@@ -145,15 +151,44 @@ public class MProjectController {
      */
     @Operation(summary = "프로젝트 지라 키 정보 수정", description = "프로젝트 Jira Key 정보 수정 (ADMIN, MAINTAINER)")
     @PutMapping("/{projectId}/info/jira")
-    @PreAuthorize("@authService.hasPrimaryProjectRoleMember(#projectId, #member.getId())")
+    @PreAuthorize("@authService.hasPrimaryProjectRoleMember(#projectId, #userSecurityDTO.getId())")
     public ResponseEntity<BaseResponse<GetProjectJiraKey>> updateProjectJiraKey(
             @PathVariable(name = "projectId") String projectId,
             @Valid @RequestBody UpdateProjectJiraKey updateProjectJiraKey,
-            @AuthenticationPrincipal TemporalMember member
+            @AuthenticationPrincipal UserSecurityDTO userSecurityDTO
     ) {
         return BaseResponse.success(
                 SuccessCode.UPDATE_SUCCESS,
                 mProjectService.updateProjectJiraKey(new ObjectId(projectId), updateProjectJiraKey)
+        );
+    }
+
+    @Operation(summary = "프로젝트 이슈 목록 조회")
+    @GetMapping("/{projectId}/issues")
+    @PreAuthorize("@authService.hasProjectRoleMember(#projectId, #userSecurityDTO.getId())")
+    public ResponseEntity<BaseResponse<PageOffsetResponse<List<ProjectIssue>>>> findProjectIssues(
+            @PathVariable(name = "projectId") String projectId,
+            PageOffsetRequest pageOffsetRequest,
+            @AuthenticationPrincipal UserSecurityDTO userSecurityDTO
+    ) {
+        return BaseResponse.success(
+                SuccessCode.SELECT_SUCCESS,
+                mProjectService.findProjectIssues(new ObjectId(projectId), pageOffsetRequest)
+        );
+    }
+
+    @Operation(summary = "프로젝트 이슈 업데이트")
+    @PutMapping("/{projectId}/issues")
+    @PreAuthorize("@authService.hasProjectRoleMember(#projectId, #userSecurityDTO.getId())")
+    public ResponseEntity<BaseResponse<PageOffsetResponse<List<ProjectIssue>>>> updateProjectIssues(
+            @PathVariable(name = "projectId") String projectId,
+            @RequestBody List<ProjectIssue> issues,
+            PageOffsetRequest pageOffsetRequest,
+            @AuthenticationPrincipal UserSecurityDTO userSecurityDTO
+    ) {
+        return BaseResponse.success(
+                SuccessCode.UPDATE_SUCCESS,
+                mProjectService.updateProjectIssues(new ObjectId(projectId), issues, pageOffsetRequest, userSecurityDTO)
         );
     }
 }

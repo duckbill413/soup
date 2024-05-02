@@ -21,6 +21,10 @@ public class Info {
     private LocalDate startDate;
     @Field("project_end_date")
     private LocalDate endDate;
+    @Field("project_jira_host")
+    private String jiraHost;
+    @Field("project_jira_project_key")
+    private String jiraProjectKey;
     @Field("project_jira_username")
     private String jiraUsername;
     @Field("project_jira_key")

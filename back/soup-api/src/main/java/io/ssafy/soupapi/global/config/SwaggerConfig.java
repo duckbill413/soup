@@ -23,10 +23,14 @@ public class SwaggerConfig {
                 .contact(new Contact().name("soup").url(""))
                 .version("v0.0.1");
 
+        var webDomainServer = new Server().description("Default Domain Server").url("https://back.so-up.store");
+        var webSsafyServer = new Server().description("Web SSAFY Server").url("https://k10a201.p.ssafy.io");
         var localServer = new Server().description("local server").url("http://localhost:8080");
-        var webServer = new Server().description("web server").url("https://k10a201.p.ssafy.io");
 
-        String jwt = "JWT access token";
+//        return new OpenAPI()
+//                .info(info);
+
+        String jwt = "JWT";
         SecurityRequirement securityRequirement = new SecurityRequirement().addList(jwt);
         Components components = new Components().addSecuritySchemes(jwt, new SecurityScheme()
                 .name(jwt)
@@ -38,8 +42,9 @@ public class SwaggerConfig {
         return new OpenAPI()
                 .info(info)
                 .addSecurityItem(securityRequirement)
+                .addServersItem(webDomainServer)
+                .addServersItem(webSsafyServer)
                 .addServersItem(localServer)
-                .addServersItem(webServer)
                 .components(components);
     }
 }

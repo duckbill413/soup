@@ -2,7 +2,7 @@ package io.ssafy.soupapi.usecase.api;
 
 import io.ssafy.soupapi.global.common.code.SuccessCode;
 import io.ssafy.soupapi.global.common.response.BaseResponse;
-import io.ssafy.soupapi.global.security.TemporalMember;
+import io.ssafy.soupapi.global.security.user.UserSecurityDTO;
 import io.ssafy.soupapi.usecase.application.ParticipateTeamService;
 import io.ssafy.soupapi.usecase.dto.request.ParticipateTeam;
 import io.swagger.v3.oas.annotations.Operation;
@@ -23,14 +23,14 @@ public class ParticipateTeamController {
 
     @Operation(summary = "프로젝트 팀원 참가")
     @PostMapping("/api/projects/participation")
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    @PreAuthorize("permitAll()")
     public ResponseEntity<BaseResponse<String>> participateProject(
             @RequestBody ParticipateTeam participateTeam,
-            @AuthenticationPrincipal TemporalMember temporalMember
+            @AuthenticationPrincipal UserSecurityDTO userSecurityDTO
     ) {
         return BaseResponse.success(
                 SuccessCode.INSERT_SUCCESS,
-                participateTeamService.participateToTeam(participateTeam, temporalMember)
+                participateTeamService.participateToTeam(participateTeam, userSecurityDTO)
         );
     }
 }

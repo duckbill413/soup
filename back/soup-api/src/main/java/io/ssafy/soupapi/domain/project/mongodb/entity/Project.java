@@ -26,4 +26,7 @@ public class Project {
     private List<Tool> tools = new ArrayList<>();
     @Field("project_proposal")
     private Proposal proposal;
+    @Builder.Default
+    @Field("project_issues")
+    private List<ProjectIssue> issues = new ArrayList<>();
 }
