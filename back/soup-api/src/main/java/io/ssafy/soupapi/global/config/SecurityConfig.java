@@ -31,7 +31,7 @@ import java.util.List;
 public class SecurityConfig {
 
     private static final String[] URL_WHITE_LIST = {
-            "/error", "/login", "/login/**", "/favicon.ico**/**", "/h2-console**/**",
+            "/favicon.ico**/**",
             "/api/swagger-ui**/**", "/api/api-docs/**", "/api/swagger-resources/**",
             "/api/actuator**/**", "/api/auth/**"
     };
@@ -52,7 +52,10 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // 세션 기반이 아님
                 .cors(corsConfig -> corsConfig.configurationSource(corsConfigurationSource()))
                 .csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(authorize -> authorize.anyRequest().authenticated())
+                .authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers("/login", "/login/**", "/error").permitAll()
+                        .anyRequest().authenticated()
+                )
                 .oauth2Login(
                         oauth2 -> oauth2
                                 .userInfoEndpoint(userInfo -> userInfo.userService(customOAuth2UserService))
@@ -72,8 +75,7 @@ public class SecurityConfig {
         final List<String> allowedOriginPatterns = List.of(
                 "http://localhost:8080",
                 "http://localhost:3000",
-                "https://so-up.store",
-                "127.0.0.1"
+                "https://so-up.store"
         );
 
         return request -> {
