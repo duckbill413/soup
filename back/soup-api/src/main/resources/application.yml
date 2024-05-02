@@ -54,6 +54,42 @@ spring:
           starttls:
             enable: true
 
+  ## OAuth 2.0
+  security:
+    oauth2:
+      client:
+        registration: # 어떤 리소스 제공자의 클라이언트인가
+          kakao:
+            client-id: ${KAKAO_CLIENT_ID}
+            client-secret: ${KAKAO_CLIENT_SECRET}
+            scope: # 리소스 오너의 어떤 리소스(scope)가 필요한가
+              - profile_nickname
+              - account_email
+              - profile_image
+            client-name: kakao-login
+            authorization-grant-type: authorization_code # 고정 값
+            redirect-uri: ${KAKAO_BE_REDIRECT_URI} # BE로 redirect
+            client-authentication-method: client_secret_post # http method
+        provider: # 리소스 제공자(여기선 kakao)
+          kakao:
+            authorization-uri: https://kauth.kakao.com/oauth/authorize # 소셜 로그인 요청 시 여기로 redirect
+            token-uri: https://kauth.kakao.com/oauth/token # 카카오에 액세스 가능한 카카오 액세스 토큰을 받아오기 위한 주소
+            user-info-uri: https://kapi.kakao.com/v2/user/me # 유저 정보를 가져오기 위한 주소
+            user-name-attribute: id
+
+## social login
+social-login:
+  redirect-uri: ${SOCIAL_LOGIN_FE_REDIRECT_URI} # FE로 redirect (accessToken, refreshToken 붙여서)
+
+## JWT
+jwt:
+  secret:
+    key: ${JWT_SECRET_KEY}
+  expire-time:
+    access-token: ${ACCESS_TOKEN_DURATION}
+    refresh-token: ${REFRESH_TOKEN_DURATION}
+  issuer: ${JWT_ISSUER}
+
 logging:
   level:
     org:
@@ -62,7 +98,6 @@ logging:
           mongodb:
             core:
               MongoTemplate: DEBUG
-
 
 ## Springdoc Configuration
 springdoc:
