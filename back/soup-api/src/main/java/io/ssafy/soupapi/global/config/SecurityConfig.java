@@ -1,4 +1,4 @@
-package io.ssafy.soupapi.global.security;
+package io.ssafy.soupapi.global.config;
 
 import io.ssafy.soupapi.global.security.filter.JwtAuthenticateFilter;
 import io.ssafy.soupapi.global.security.filter.JwtAuthenticationEntryPoint;
