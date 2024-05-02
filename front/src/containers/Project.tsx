@@ -15,8 +15,11 @@ export default function Project({ projectId, projectImageUri, projectName, proje
     <div className={styles.container}>
       <button onClick={() => router.push(`/project/${projectId}/outline`)} type="button">
         {projectImageUri &&
+          <div>
           <Image unoptimized className={styles.projectImage} src={projectImageUri} alt="프로젝트 이미지" width={PROJECT_IMAGE_WIDTH}
-                 height={PROJECT_IMAGE_HIGHT} />}
+                 height={PROJECT_IMAGE_HIGHT} />
+          </div>
+          }
         <p className={styles.projectName}>{projectName}</p>
       </button>
       <div>

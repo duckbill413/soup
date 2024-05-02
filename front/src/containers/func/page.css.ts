@@ -4,17 +4,27 @@ import vars from '@/styles/variables.css'
 export const tableHeader = style({
   display: 'flex',
   justifyContent: 'space-between',
-  marginBottom:  vars.space.tiny
+  marginBottom:  vars.space.base
 })
 
 export const sortHeader = style({
-  height: '40%',
-  border: '1px solid black',
-  borderRadius: '40px',
-  padding: '7px',
-  fontSize: vars.fontSize.caption,
+  borderRadius: '30px',
+  border: `1px solid ${vars.color.deepGray}`,
+  background: 'white',
+  fontFamily: 'inherit',
   color: vars.color.deepGray,
+
+  display: 'flex',
+  gap: vars.space.tiny,
+  alignItems: 'center',
+  padding: `${vars.space.tiny} ${vars.space.small}`,
+
   cursor: 'pointer',
+
+  ':hover': {
+    background: vars.color.black,
+    color: 'white',
+  },
 })
 
 globalStyle(`${tableHeader} p`,{

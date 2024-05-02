@@ -1,9 +1,9 @@
 'use client'
 
-import { useState } from 'react';
-import { faker } from '@faker-js/faker';
+import { useState } from 'react'
+import { faker } from '@faker-js/faker'
 import Image from 'next/image'
-import * as styles from './funcTable.css';
+import * as styles from './funcTable.css'
 
 interface FuncData {
   category: string;
@@ -23,14 +23,14 @@ const Member = [
   {
     memberId: 1,
     memberProfileUri: faker.image.avatarGitHub(),
-    memberNickname: "최지우",
+    memberNickname: '최지우',
   },
   {
     memberId: 2,
     memberProfileUri: faker.image.avatarGitHub(),
-    memberNickname: "정승원",
-  }
-];
+    memberNickname: '정승원',
+  },
+]
 
 const DummyData: FuncData[] = [
   {
@@ -40,7 +40,7 @@ const DummyData: FuncData[] = [
     point: 3,
     priority: '넘높음',
     manager: Member[0],
-    id: 'func1'
+    id: 'func1',
   },
   {
     category: '게시물 등록',
@@ -49,22 +49,22 @@ const DummyData: FuncData[] = [
     point: 3,
     priority: '넘높음',
     manager: Member[1],
-    id: 'func2'
-  }
-];
+    id: 'func2',
+  },
+]
 
 export default function FuncTable() {
-  const [data, setData] = useState(DummyData);
+  const [data, setData] = useState(DummyData)
 
   const handleChange = (id: string, field: string, value: string) => {
     const newData = data.map(item => {
       if (item.id === id) {
-        return { ...item, [field]: value };
+        return { ...item, [field]: value }
       }
-      return item;
-    });
-    setData(newData);
-  };
+      return item
+    })
+    setData(newData)
+  }
 
   return (
     <div className={styles.container}>
@@ -81,27 +81,32 @@ export default function FuncTable() {
         </thead>
         <tbody>
         {data.map(dummy =>
-          <tr key={dummy.id}>
-            <td>{dummy.category}</td>
-            <td>
-              <input aria-label="input" type="text" value={dummy.functionName} onChange={(e) => handleChange(dummy.id, 'functionName', e.target.value)} />
-            </td>
-            <td>
-              <input aria-label="input" type="text" value={dummy.description} onChange={(e) => handleChange(dummy.id, 'description', e.target.value)} />
-            </td>
-            <td>
-              <input aria-label="input" type="text" value={dummy.point} onChange={(e) => handleChange(dummy.id, 'point', e.target.value)} />
-            </td>
-            <td>
-              <input aria-label="input" type="text" value={dummy.priority} onChange={(e) => handleChange(dummy.id, 'priority', e.target.value)} />
-            </td>
-            <td>
-              <div className={styles.manager}>
-                <p>{dummy.manager.memberNickname}</p>
-                <Image unoptimized src={dummy.manager.memberProfileUri} alt="프로필 이미지" width={30} height={30} />
-              </div>
-            </td>
-          </tr>
+            <tr key={dummy.id}>
+              <td>{dummy.category}</td>
+
+              <td>
+                <input aria-label="input" type="text" value={dummy.functionName}
+                       onChange={(e) => handleChange(dummy.id, 'functionName', e.target.value)} />
+              </td>
+              <td>
+                <input aria-label="input" type="text" value={dummy.description}
+                       onChange={(e) => handleChange(dummy.id, 'description', e.target.value)} />
+              </td>
+              <td>
+                <input aria-label="input" type="text" value={dummy.point}
+                       onChange={(e) => handleChange(dummy.id, 'point', e.target.value)} />
+              </td>
+              <td>
+                <input aria-label="input" type="text" value={dummy.priority}
+                       onChange={(e) => handleChange(dummy.id, 'priority', e.target.value)} />
+              </td>
+              <td>
+                <div className={styles.manager}>
+                  <p>{dummy.manager.memberNickname}</p>
+                  <Image unoptimized src={dummy.manager.memberProfileUri} alt="프로필 이미지" width={30} height={30} />
+                </div>
+              </td>
+            </tr>
         )}
 
         <tr className={styles.createNew}>
@@ -110,5 +115,5 @@ export default function FuncTable() {
         </tbody>
       </table>
     </div>
-  );
+  )
 }
