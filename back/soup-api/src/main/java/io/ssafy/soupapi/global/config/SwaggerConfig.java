@@ -19,6 +19,8 @@ public class SwaggerConfig {
                 .description("""
                         <h2>Start Organization, Upgrade Project!</h1>
                         <p style="text-align: right">by A201</p>
+                        <p><b>당신!</b>을 위한 <b>accessToken</b> (유효 기간: 약 365일) :</p>
+                        <p>eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiIsImdlbmVyYXRlRGF0ZSI6MTcxNDYzNTQ2Mjk4Nn0.eyJpc3MiOiJjdXRlLXNvdXAiLCJleHAiOjMxNzE0NjM1NDYyLCJzdWIiOiI2ZDA0NThlYy1iMjZmLTRiNjAtYWYzYi1hN2ZlMWUyMzYxY2MiLCJyb2xlcyI6WyJST0xFX1VTRVIiXX0.BUq8qirwzQS76BttwaqLuHYPhT9eVtbFunevsk1Z8wE</p>
                         """)
                 .contact(new Contact().name("soup").url(""))
                 .version("v0.0.1");

@@ -24,7 +24,12 @@ public class AuthController {
 
     private final JwtService jwtService;
 
-    @Operation(summary = "액세스 토큰 재발급 요청", description = "액세스 토큰 없거나 만료됐다면 리프레스 토큰을 통해 두 토큰 모두 재발급을 요청")
+    @Operation(summary = "accessToken 재발급 요청", description =
+        "accessToken이 만료되면 **\"code\": \"EXPIRED\"**라는 응답을 받는다.\n\n" +
+        "responseBody에 refreshToken을 보냄으로써 accessToken과 refreshToken을 재발급 받는다.\n\n" +
+        "이때, **Authorization에 accessToken을 보낼 필요는 없다.** (swagger에는 아직 반영 안 됨 - 수현)\n\n" +
+        "(참고) accessToken은 5분, refreshToken은 14일간 유효하다.\n\n"
+    )
     @PostMapping("/token/refresh")
     public ResponseEntity<BaseResponse<TokenDto>> regenerateJwtToken (
         @RequestBody RefreshTokenDto refreshTokenDto
