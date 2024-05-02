@@ -18,7 +18,7 @@ import io.ssafy.soupapi.global.common.request.PageOffsetRequest;
 import io.ssafy.soupapi.global.common.response.OffsetPagination;
 import io.ssafy.soupapi.global.common.response.PageOffsetResponse;
 import io.ssafy.soupapi.global.exception.BaseExceptionHandler;
-import io.ssafy.soupapi.global.security.TemporalMember;
+import io.ssafy.soupapi.global.security.user.UserSecurityDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.bson.types.ObjectId;
@@ -50,12 +50,12 @@ public class MProjectServiceImpl implements MProjectService {
      * 최초 생성자 권한을 ADMIN으로 지정
      *
      * @param createProjectDto new project's project data
-     * @param member           project maker
+     * @param userSecurityDTO           project maker
      * @return mongodb project object id
      */
     @Transactional
     @Override
-    public ObjectId createProject(CreateProjectDto createProjectDto, TemporalMember temporalMember) { // TODO: member security 적용
+    public ObjectId createProject(CreateProjectDto createProjectDto, UserSecurityDTO userSecurityDTO) { // TODO: member security 적용
         // 프로젝트 및 프로젝트 이름 설정
         var project = Project.builder()
                 .info(
@@ -200,7 +200,7 @@ public class MProjectServiceImpl implements MProjectService {
     }
 
     @Override
-    public PageOffsetResponse<List<ProjectIssue>> updateProjectIssues(ObjectId projectId, List<ProjectIssue> issues, PageOffsetRequest pageOffsetRequest, TemporalMember member) {
+    public PageOffsetResponse<List<ProjectIssue>> updateProjectIssues(ObjectId projectId, List<ProjectIssue> issues, PageOffsetRequest pageOffsetRequest, UserSecurityDTO userSecurityDTO) {
         for (ProjectIssue issue : issues) {
             // 변경 사항이 없는 경우
             if (!issue.isIssueUpdated()) {

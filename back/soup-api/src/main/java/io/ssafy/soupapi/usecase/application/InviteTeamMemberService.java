@@ -11,7 +11,7 @@ import io.ssafy.soupapi.domain.projectauth.dao.ProjectAuthRepository;
 import io.ssafy.soupapi.domain.projectauth.entity.ProjectAuth;
 import io.ssafy.soupapi.global.common.code.ErrorCode;
 import io.ssafy.soupapi.global.exception.BaseExceptionHandler;
-import io.ssafy.soupapi.global.security.TemporalMember;
+import io.ssafy.soupapi.global.security.user.UserSecurityDTO;
 import io.ssafy.soupapi.global.util.GmailUtil;
 import io.ssafy.soupapi.usecase.dao.TempTeamMember;
 import lombok.RequiredArgsConstructor;
@@ -39,7 +39,7 @@ public class InviteTeamMemberService {
     private final GmailUtil gmailUtil;
 
     @Transactional
-    public String inviteTeamMember(String projectId, InviteTeamMember inviteTeamMember, TemporalMember temporalMember) {
+    public String inviteTeamMember(String projectId, InviteTeamMember inviteTeamMember, UserSecurityDTO userSecurityDTO) {
         var project = projectRepository.findById(projectId).orElseThrow(() ->
                 new BaseExceptionHandler(ErrorCode.NOT_FOUND_PROJECT));
         var inviteMember = memberRepository.findByEmail(inviteTeamMember.email()).stream().findFirst().orElse(null);
@@ -50,7 +50,7 @@ public class InviteTeamMemberService {
             throw new BaseExceptionHandler(ErrorCode.ALREADY_EXISTS_PROJECT_MEMBER);
         }
 
-        if (!validInviteRole(inviteTeamMember.roles(), project, temporalMember)) {
+        if (!validInviteRole(inviteTeamMember.roles(), project, userSecurityDTO)) {
             throw new BaseExceptionHandler(ErrorCode.INVALID_INVITE_PROJECT_ROLE);
         }
 
@@ -96,12 +96,12 @@ public class InviteTeamMemberService {
      *
      * @param roles          부여할 권한 목록
      * @param project        프로젝트
-     * @param temporalMember 권한을 부여하는 유저
+     * @param userSecurityDTO 권한을 부여하는 유저
      * @return 권한 부여 가능 여부
      */
-    private boolean validInviteRole(Set<ProjectRole> roles, Project project, TemporalMember temporalMember) {
+    private boolean validInviteRole(Set<ProjectRole> roles, Project project, UserSecurityDTO userSecurityDTO) {
         List<ProjectAuth> projectAuths = projectAuthRepository.findByMemberAndProject(
-                Member.builder().id(temporalMember.getId()).build(), project
+                Member.builder().id(userSecurityDTO.getId()).build(), project
         );
         Set<ProjectRole> myRoles = projectAuths.stream().findFirst().orElseThrow(
                 () -> new BaseExceptionHandler(ErrorCode.NOT_FOUND_PROJECT_AUTH)

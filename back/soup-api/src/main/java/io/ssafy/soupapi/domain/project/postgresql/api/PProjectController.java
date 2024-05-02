@@ -6,7 +6,7 @@ import io.ssafy.soupapi.global.common.code.SuccessCode;
 import io.ssafy.soupapi.global.common.request.PageOffsetRequest;
 import io.ssafy.soupapi.global.common.response.BaseResponse;
 import io.ssafy.soupapi.global.common.response.PageOffsetResponse;
-import io.ssafy.soupapi.global.security.TemporalMember;
+import io.ssafy.soupapi.global.security.user.UserSecurityDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -32,18 +32,18 @@ public class PProjectController {
      * 간단한 프로젝트 정보 리스트 조회
      *
      * @param pageOffset offset page request
-     * @param member     login member
+     * @param userSecurityDTO     login member
      * @return simple project list with page info
      */
     @Operation(summary = "간단한 프로젝트 정보 리스트 조회")
     @GetMapping("")
     public ResponseEntity<BaseResponse<PageOffsetResponse<List<SimpleProjectDto>>>> findSimpleProjects(
             @Valid PageOffsetRequest pageOffset,
-            @AuthenticationPrincipal TemporalMember member // TODO: member security 적용
+            @AuthenticationPrincipal UserSecurityDTO userSecurityDTO
     ) {
         return BaseResponse.success(
                 SuccessCode.SELECT_SUCCESS,
-                pProjectService.findSimpleProjects(pageOffset, member) // TODO: member security 적용
+                pProjectService.findSimpleProjects(pageOffset, userSecurityDTO)
         );
     }
 }
