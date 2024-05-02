@@ -21,6 +21,7 @@ export const whiteTheme = style({
 export const assistant = style({
   display: 'flex',
   justifyContent: 'flex-end',
+
 });
 
 globalStyle(`${container} > div`, {
@@ -32,13 +33,22 @@ globalStyle(`${container} > div`, {
 });
 globalStyle(`${container} > div > p`, {
   marginLeft: vars.space.xLarge,
-
+  fontSize: vars.fontSize.small,
+  overflow: 'hidden',
+  whiteSpace: 'nowrap',
 });
 
 globalStyle(`${assistant} > *`, {
   marginRight: vars.space.small,
-  width: '12%',
-  aspectRatio: 1,
   borderRadius: '50%',
-  cursor: 'pointer'
+  cursor: 'pointer',
 });
+
+globalStyle(`${assistant} > img`, {
+  '@media': {
+    'screen and (max-width: 768px)': {
+      display:'none'
+    },
+  }
+});
+
