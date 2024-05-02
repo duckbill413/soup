@@ -8,6 +8,6 @@ export const container = style ({
 
 export const division = style ({
   display: 'flex',
-  width: '45%',
+  width: '50%',
   justifyContent: 'space-between'
 })
