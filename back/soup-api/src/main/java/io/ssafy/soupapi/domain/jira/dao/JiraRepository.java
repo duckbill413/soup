@@ -15,10 +15,11 @@ public interface JiraRepository {
     List<JiraUserDatum> findJiraTeamInfo(Info info) throws JsonProcessingException;
 
     PageOffsetResponse<List<JiraIssue>> findJiraIssues(Info jiraInfo, PageOffsetRequest pageOffsetRequest) throws JsonProcessingException;
+    List<JiraIssue> findAllJiraIssues(Info jiraInfo);
 
     List<GetJiraIssueType> findJiraIssueTypes(Info jiraInfo) throws JsonProcessingException;
     int createBulkJiraIssue(Info jiraInfo, List<JiraIssue> jiraIssues) throws JsonProcessingException;
-    int createJiraIssue(Info jiraInfo, JiraIssue jiraIssue) throws JsonProcessingException;
+    int createJiraIssue(Info jiraInfo, JiraIssue jiraIssue);
     void changeJiraIssue(Info jiraInfo, JiraIssue jiraIssue);
     void changeJiraIssueProgress(Info jiraInfo, JiraIssue jiraIssue);
     void assignJiraIssue(Info jiraInfo, JiraIssue jiraIssue);

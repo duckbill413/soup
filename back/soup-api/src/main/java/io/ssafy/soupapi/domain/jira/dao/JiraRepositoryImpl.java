@@ -4,7 +4,10 @@ package io.ssafy.soupapi.domain.jira.dao;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
-import io.ssafy.soupapi.domain.jira.dto.*;
+import io.ssafy.soupapi.domain.jira.dto.CreatedJiraIssues;
+import io.ssafy.soupapi.domain.jira.dto.JiraIssueType;
+import io.ssafy.soupapi.domain.jira.dto.JiraIssues;
+import io.ssafy.soupapi.domain.jira.dto.JiraUserDatum;
 import io.ssafy.soupapi.domain.jira.dto.request.*;
 import io.ssafy.soupapi.domain.jira.dto.response.GetJiraIssueType;
 import io.ssafy.soupapi.domain.jira.dto.response.JiraIssue;
@@ -80,6 +83,27 @@ public class JiraRepositoryImpl implements JiraRepository {
     }
 
     @Override
+    public List<JiraIssue> findAllJiraIssues(Info projectInfo) {
+        long startAt = 0;
+        long maxResults = 100;
+        long total = 100;
+
+        List<JiraIssue> issues = new ArrayList<>();
+        while (startAt < total) {
+            JiraIssues jiraIssues = null;
+            try {
+                jiraIssues = getJiraIssues(projectInfo, (int) startAt, (int) maxResults);
+            } catch (JsonProcessingException e) {
+                break;
+            }
+            startAt = jiraIssues.startAt + maxResults;
+            total = jiraIssues.getTotal();
+            issues.addAll(jiraIssues.getIssues().stream().map(JiraIssue::of).toList());
+        }
+        return issues;
+    }
+
+    @Override
     public List<GetJiraIssueType> findJiraIssueTypes(Info jiraInfo) throws JsonProcessingException {
         long startAt = 0;
         long total = 100;
@@ -125,7 +149,7 @@ public class JiraRepositoryImpl implements JiraRepository {
     }
 
     @Override
-    public int createJiraIssue(Info jiraInfo, JiraIssue jiraIssue) throws JsonProcessingException {
+    public int createJiraIssue(Info jiraInfo, JiraIssue jiraIssue) {
         var requestBody = EditIssueUpdate.builder()
                 .fields(EditFields.of(jiraIssue))
                 .transition(EditTransition.of(jiraIssue))

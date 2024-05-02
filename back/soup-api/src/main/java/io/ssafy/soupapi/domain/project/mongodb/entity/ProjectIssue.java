@@ -38,9 +38,9 @@ public class ProjectIssue {
     @Field("project_issue_reporter")
     private ProjectUser reporter;
     @Field("project_issue_is_created")
-    private boolean isCreated;
+    private boolean isIssueCreated;
     @Field("project_issue_is_updated")
-    private boolean isUpdated;
+    private boolean isIssueUpdated;
     @Field("project_issue_is_deleted")
-    private boolean isDeleted;
+    private boolean isIssueDeleted;
 }

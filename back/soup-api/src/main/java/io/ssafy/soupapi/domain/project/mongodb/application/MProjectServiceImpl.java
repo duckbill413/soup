@@ -8,6 +8,7 @@ import io.ssafy.soupapi.domain.project.mongodb.dto.request.UpdateProjectTool;
 import io.ssafy.soupapi.domain.project.mongodb.dto.response.GetProjectInfo;
 import io.ssafy.soupapi.domain.project.mongodb.dto.response.GetProjectJiraKey;
 import io.ssafy.soupapi.domain.project.mongodb.dto.response.GetProjectProposal;
+import io.ssafy.soupapi.domain.project.mongodb.dto.response.ProjectIssuesCount;
 import io.ssafy.soupapi.domain.project.mongodb.entity.Info;
 import io.ssafy.soupapi.domain.project.mongodb.entity.Project;
 import io.ssafy.soupapi.domain.project.mongodb.entity.ProjectIssue;
@@ -20,7 +21,6 @@ import io.ssafy.soupapi.global.exception.BaseExceptionHandler;
 import io.ssafy.soupapi.global.security.TemporalMember;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.bson.Document;
 import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
@@ -33,9 +33,9 @@ import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.UUID;
 
 @Log4j2
@@ -185,8 +185,7 @@ public class MProjectServiceImpl implements MProjectService {
             projectIssues = List.of();
         }
 
-        var issueCount = Optional.ofNullable(mProjectRepository.findProjectIssuesCount(projectId).orElseThrow(() ->
-                new BaseExceptionHandler(ErrorCode.FAILED_TO_UPDATE_PROJECT)).getIssues()).orElse(List.of()).size();
+        var issueCount = (int) countTotalProjectIssues(projectId);
         return PageOffsetResponse.<List<ProjectIssue>>builder()
                 .content(projectIssues)
                 .pagination(OffsetPagination.builder()
@@ -204,14 +203,15 @@ public class MProjectServiceImpl implements MProjectService {
     public PageOffsetResponse<List<ProjectIssue>> updateProjectIssues(ObjectId projectId, List<ProjectIssue> issues, PageOffsetRequest pageOffsetRequest, TemporalMember member) {
         for (ProjectIssue issue : issues) {
             // 변경 사항이 없는 경우
-            if (!issue.isUpdated()) {
+            if (!issue.isIssueUpdated()) {
                 continue;
             }
 
             // 새로 저장되는 데이터의 경우
             if (Objects.isNull(issue.getProjectIssueId())) {
                 issue.setProjectIssueId(UUID.randomUUID());
-                issue.setCreated(true);
+                issue.setIssueCreated(true);
+                insertProjectIssue(projectId, issue);
                 continue;
             }
 
@@ -221,7 +221,19 @@ public class MProjectServiceImpl implements MProjectService {
         return findProjectIssues(projectId, pageOffsetRequest);
     }
 
-    public void insertProjectIssue(ObjectId projectId, ProjectIssue projectIssue) {
+    private void deleteProjectIssue(ObjectId projectId, ProjectIssue issue) {
+        if (Objects.isNull(issue.getProjectIssueId())) {
+            return;
+        }
+        Query query = new Query(Criteria.where("_id").is(projectId)
+                .and("project_issues.project_issue_id").is(issue.getProjectIssueId()));
+
+        Update update = new Update().pull("project_issues", Query.query(Criteria.where("project_issue_id").is(issue.getProjectIssueId())));
+
+        mongoTemplate.updateFirst(query, update, Project.class);
+    }
+
+    private void insertProjectIssue(ObjectId projectId, ProjectIssue projectIssue) {
         Query query = new Query().addCriteria(Criteria.where("_id").is(projectId));
         Update update = new Update().addToSet("project_issues", projectIssue);
         mongoTemplate.updateFirst(query, update, Project.class);
@@ -249,21 +261,17 @@ public class MProjectServiceImpl implements MProjectService {
     }
 
     public long countTotalProjectIssues(ObjectId projectId) {
-        AggregationResults<Document> results = mongoTemplate.aggregate(
-                Aggregation.newAggregation(
-                        Aggregation.match(Criteria.where("_id").is(projectId)),
-                        Aggregation.project()
-                                .and(
-                                        ConditionalOperators.when(Criteria.where("project_issues").exists(true))
-                                                .then(ArrayOperators.Size.lengthOfArray("$project_issues"))
-                                                .otherwise(0)
-                                ).as("issueCount")
-                ),
-                "projects",
-                Document.class
+        Aggregation aggregation = Aggregation.newAggregation(
+                Aggregation.match(Criteria.where("_id").is(projectId)),
+                Aggregation.project().and(ArrayOperators.Size.lengthOfArray(
+                        ConditionalOperators.ifNull("project_issues").then(Collections.EMPTY_LIST)
+                )).as("count")
         );
 
-        Document result = results.getUniqueMappedResult();
-        return result != null ? result.getInteger("issueCount", 0) : 0;
+        AggregationResults<ProjectIssuesCount> results = mongoTemplate.aggregate(aggregation, "projects", ProjectIssuesCount.class);
+        if (results.getMappedResults().isEmpty()) {
+            return 0L;
+        }
+        return results.getMappedResults().get(0).count();
     }
 }

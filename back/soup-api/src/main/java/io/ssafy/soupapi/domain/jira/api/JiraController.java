@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.bson.types.ObjectId;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -50,7 +51,7 @@ public class JiraController {
     ) {
         return BaseResponse.success(
                 SuccessCode.UPDATE_SUCCESS,
-                jiraService.syncJiraProjectByIssues(projectId)
+                jiraService.syncJiraProjectByIssues(new ObjectId(projectId))
         );
     }
 

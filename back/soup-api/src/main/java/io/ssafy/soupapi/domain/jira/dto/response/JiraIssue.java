@@ -1,11 +1,14 @@
 package io.ssafy.soupapi.domain.jira.dto.response;
 
 import io.ssafy.soupapi.domain.jira.dto.Issue;
+import io.ssafy.soupapi.domain.project.mongodb.entity.ProjectIssue;
+import io.ssafy.soupapi.domain.project.mongodb.entity.ProjectUser;
 import io.ssafy.soupapi.global.util.StringParserUtil;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 
 import java.util.Objects;
+import java.util.UUID;
 
 @Schema(description = "지라 이슈 정보")
 public record JiraIssue(
@@ -34,11 +37,7 @@ public record JiraIssue(
         @Schema(description = "이슈 담당자")
         JiraUser assignee,
         @Schema(description = "이슈 보고자")
-        JiraUser reporter,
-        @Schema(description = "이슈 정보 업데이트 여부")
-        boolean isUpdated,
-        @Schema(description = "이슈 정보 삭제 여부")
-        boolean isDeleted
+        JiraUser reporter
 ) {
     @Builder
     public JiraIssue {
@@ -76,6 +75,64 @@ public record JiraIssue(
                         .email(issue.fields.reporter.emailAddress)
                         .name(issue.fields.reporter.displayName)
                         .build() : null)
+                .build();
+    }
+
+    public static JiraIssue of(String projectId, ProjectIssue issue) {
+        return JiraIssue.builder()
+                .issueId(issue.getIssueId())
+                .issueKey(issue.getIssueKey())
+                .projectKey(projectId)
+                .summary(issue.getSummary())
+                .description(issue.getDescription())
+                .issueType(getIssueType(issue.getIssueType()))
+                .updated(issue.getUpdated())
+                .parentId(issue.getParentId())
+                .storyPoint(issue.getStoryPoint())
+                .status(issue.getStatus())
+                .assignee(Objects.isNull(issue.getAssignee()) ? null :
+                        JiraUser.builder()
+                                .id(issue.getAssignee().getId())
+                                .email(issue.getAssignee().getEmail())
+                                .name(issue.getAssignee().getName())
+                                .build())
+                .reporter(Objects.isNull(issue.getReporter()) ? null :
+                        JiraUser.builder()
+                                .id(issue.getReporter().getId())
+                                .email(issue.getReporter().getEmail())
+                                .name(issue.getReporter().getName())
+                                .build())
+                .build();
+    }
+
+    public static ProjectIssue to(JiraIssue issue) {
+        return ProjectIssue.builder()
+                .projectIssueId(UUID.randomUUID())
+                .issueId(issue.issueId())
+                .issueKey(issue.issueKey())
+                .summary(issue.summary())
+                .description(issue.description())
+                .issueType(issue.issueType())
+                .status(issue.status())
+                .priority(issue.priority())
+                .storyPoint(issue.storyPoint())
+                .updated(issue.updated())
+                .parentId(issue.parentId())
+                .assignee(Objects.isNull(issue.assignee()) ? null :
+                        ProjectUser.builder()
+                                .id(issue.assignee().id())
+                                .name(issue.assignee().name())
+                                .email(issue.assignee().email())
+                                .build())
+                .reporter(Objects.isNull(issue.reporter()) ? null :
+                        ProjectUser.builder()
+                                .id(issue.reporter().id())
+                                .name(issue.reporter().name())
+                                .email(issue.reporter().email())
+                                .build())
+                .isIssueCreated(false)
+                .isIssueDeleted(false)
+                .isIssueUpdated(false)
                 .build();
     }
 
