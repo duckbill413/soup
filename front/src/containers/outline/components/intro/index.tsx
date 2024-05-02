@@ -1,8 +1,17 @@
+"use client"
+
 import * as styles from "@/containers/outline/styles/intro/outlineIntro.css"
 import sample from '#/assets/icons/mainpage/sample1.jpg'
+import { useEffect } from 'react'
+import { getOutlineInfoAPI } from '@/apis/outline/outlineAPI'
 
 function OutlineIntro () {
   const sampleSrc = sample.src
+
+  useEffect(() => {
+    const data = getOutlineInfoAPI('663345425249cc4b837d65ad')
+    console.log(data)
+  }, [])
   return (
     <div className={styles.container}>
       <div className={styles.photoDivision}>
