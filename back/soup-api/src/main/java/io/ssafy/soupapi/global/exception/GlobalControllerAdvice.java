@@ -1,7 +1,9 @@
 package io.ssafy.soupapi.global.exception;
 
-import io.ssafy.soupapi.global.common.response.ErrorResponse;
 import io.ssafy.soupapi.global.common.code.ErrorCode;
+import io.ssafy.soupapi.global.common.response.ErrorResponse;
+import io.ssafy.soupapi.global.security.exception.AccessTokenException;
+import io.ssafy.soupapi.global.security.exception.RefreshTokenException;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -19,7 +21,24 @@ public class GlobalControllerAdvice {
     @ExceptionHandler(BaseExceptionHandler.class)
     public ResponseEntity<ErrorResponse> handleCustomBaseExceptionHandler(BaseExceptionHandler e) {
         var response = ErrorResponse.fail(e.getErrorCode(), e.getMessage());
+        return ResponseEntity.status(response.status()).body(response);
+    }
 
+    /**
+     * accessToken 관련 에러 발생 시 처리
+     */
+    @ExceptionHandler(AccessTokenException.class)
+    public ResponseEntity<ErrorResponse> handleAccessTokenExceptionHandler(AccessTokenException e) {
+        var response = ErrorResponse.fail(e);
+        return ResponseEntity.status(response.status()).body(response);
+    }
+
+    /**
+     * refreshToken 관련 에러 발생 시 처리
+     */
+    @ExceptionHandler(RefreshTokenException.class)
+    public ResponseEntity<ErrorResponse> handleRefreshTokenExceptionHandler(RefreshTokenException e) {
+        var response = ErrorResponse.fail(e);
         return ResponseEntity.status(response.status()).body(response);
     }
 
