@@ -8,7 +8,7 @@ import io.ssafy.soupapi.global.common.code.SuccessCode;
 import io.ssafy.soupapi.global.common.request.PageOffsetRequest;
 import io.ssafy.soupapi.global.common.response.BaseResponse;
 import io.ssafy.soupapi.global.common.response.PageOffsetResponse;
-import io.ssafy.soupapi.global.security.TemporalMember;
+import io.ssafy.soupapi.global.security.user.UserSecurityDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -31,11 +31,11 @@ public class JiraController {
 
     @Operation(summary = "지라 프로젝트 유저 검색")
     @GetMapping("/{projectId}/jira")
-    @PreAuthorize("@authService.hasProjectRoleMember(#projectId, #member.getId())")
+    @PreAuthorize("@authService.hasProjectRoleMember(#projectId, #userSecurityDTO.getId())")
     public ResponseEntity<BaseResponse<List<JiraUserDatum>>> findJiraTeamMembers(
             @PathVariable("projectId") String projectId,
-            @AuthenticationPrincipal TemporalMember member
-    ) {
+            @AuthenticationPrincipal UserSecurityDTO userSecurityDTO
+            ) {
         return BaseResponse.success(
                 SuccessCode.SELECT_SUCCESS,
                 jiraService.findJiraTeamInfo(projectId)
@@ -44,10 +44,10 @@ public class JiraController {
 
     @Operation(summary = "지라 프로젝트 동기화")
     @PostMapping("/{projectId}/jira")
-    @PreAuthorize("@authService.hasPrimaryProjectRoleMember(#projectId, #member.getId())")
+    @PreAuthorize("@authService.hasPrimaryProjectRoleMember(#projectId, #userSecurityDTO.getId())")
     public ResponseEntity<BaseResponse<String>> syncJiraProjectByIssues(
             @PathVariable("projectId") String projectId,
-            @AuthenticationPrincipal TemporalMember member
+            @AuthenticationPrincipal UserSecurityDTO userSecurityDTO
     ) {
         return BaseResponse.success(
                 SuccessCode.UPDATE_SUCCESS,
@@ -57,11 +57,11 @@ public class JiraController {
 
     @Operation(summary = "지라 프로젝트 이슈 목록 조회")
     @GetMapping("/{projectId}/jira/issues")
-    @PreAuthorize("@authService.hasProjectRoleMember(#projectId, #member.getId())")
+    @PreAuthorize("@authService.hasProjectRoleMember(#projectId, #userSecurityDTO.getId())")
     public ResponseEntity<BaseResponse<PageOffsetResponse<List<JiraIssue>>>> findJiraIssues(
             @PathVariable("projectId") String projectId,
             PageOffsetRequest pageOffsetRequest,
-            @AuthenticationPrincipal TemporalMember member
+            @AuthenticationPrincipal UserSecurityDTO userSecurityDTO
     ) {
         return BaseResponse.success(
                 SuccessCode.SELECT_SUCCESS,
@@ -71,10 +71,10 @@ public class JiraController {
 
     @Operation(summary = "지라 프로젝트 사용 가능 Issue types 조회")
     @GetMapping("/{projectId}/jira/issues/types")
-    @PreAuthorize("@authService.hasProjectRoleMember(#projectId, #member.getId())")
+    @PreAuthorize("@authService.hasProjectRoleMember(#projectId, #userSecurityDTO.getId())")
     public ResponseEntity<BaseResponse<List<GetJiraIssueType>>> findJiraIssueTypes(
             @PathVariable("projectId") String projectId,
-            @AuthenticationPrincipal TemporalMember member
+            @AuthenticationPrincipal UserSecurityDTO userSecurityDTO
     ) {
         return BaseResponse.success(
                 SuccessCode.SELECT_SUCCESS,

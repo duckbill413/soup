@@ -3,7 +3,7 @@ package io.ssafy.soupapi.domain.member.application;
 import io.ssafy.soupapi.domain.member.dao.MemberRepository;
 import io.ssafy.soupapi.global.common.code.ErrorCode;
 import io.ssafy.soupapi.global.exception.BaseExceptionHandler;
-import io.ssafy.soupapi.global.security.TemporalMember;
+import io.ssafy.soupapi.global.security.user.UserSecurityDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
@@ -17,8 +17,8 @@ public class MemberServiceImpl implements MemberService {
 
     @Transactional
     @Override
-    public String updateNickname(String nickname, TemporalMember member) {
-        var m = memberRepository.findById(member.getId()).orElseThrow(() ->
+    public String updateNickname(String nickname, UserSecurityDTO userSecurityDTO) {
+        var m = memberRepository.findById(userSecurityDTO.getId()).orElseThrow(() ->
                 new BaseExceptionHandler(ErrorCode.NOT_FOUND_USER));
         m.setNickname(nickname);
         memberRepository.save(m);

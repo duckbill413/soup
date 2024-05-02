@@ -4,7 +4,7 @@ import io.ssafy.soupapi.domain.projectauth.application.ProjectAuthService;
 import io.ssafy.soupapi.domain.projectauth.dto.response.GetProjectTeamMember;
 import io.ssafy.soupapi.global.common.code.SuccessCode;
 import io.ssafy.soupapi.global.common.response.BaseResponse;
-import io.ssafy.soupapi.global.security.TemporalMember;
+import io.ssafy.soupapi.global.security.user.UserSecurityDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -29,11 +29,11 @@ public class ProjectAuthController {
 
     @Operation(summary = "프로젝트 팀원 정보 요청", description = "프로젝트 팀원들의 정보 및 권한 요청")
     @GetMapping
-    @PreAuthorize("@authService.hasProjectRoleMember(#projectId, #member.getId())")
+    @PreAuthorize("@authService.hasProjectRoleMember(#projectId, #userSecurityDTO.getId())")
     public ResponseEntity<BaseResponse<List<GetProjectTeamMember>>> findProjectTeamMembers(
             @PathVariable(name = "projectId") String projectId,
-            @AuthenticationPrincipal TemporalMember member
-    ) {
+            @AuthenticationPrincipal UserSecurityDTO userSecurityDTO
+            ) {
         return BaseResponse.success(
                 SuccessCode.SELECT_SUCCESS,
                 projectAuthService.findProjectTeamMembers(projectId)

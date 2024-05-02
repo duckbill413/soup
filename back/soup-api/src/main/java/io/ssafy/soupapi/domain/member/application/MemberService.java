@@ -1,7 +1,7 @@
 package io.ssafy.soupapi.domain.member.application;
 
-import io.ssafy.soupapi.global.security.TemporalMember;
+import io.ssafy.soupapi.global.security.user.UserSecurityDTO;
 
 public interface MemberService {
-    String updateNickname(String nickname, TemporalMember member); // TODO: security member
+    String updateNickname(String nickname, UserSecurityDTO userSecurityDTO); // TODO: security member
 }

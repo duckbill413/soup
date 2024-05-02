@@ -3,7 +3,7 @@ package io.ssafy.soupapi.domain.member.api;
 import io.ssafy.soupapi.domain.member.application.MemberService;
 import io.ssafy.soupapi.global.common.code.SuccessCode;
 import io.ssafy.soupapi.global.common.response.BaseResponse;
-import io.ssafy.soupapi.global.security.TemporalMember;
+import io.ssafy.soupapi.global.security.user.UserSecurityDTO;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -20,11 +20,11 @@ public class MemberController {
     public ResponseEntity<BaseResponse<String>> updateNickname(
             @NotEmpty(message = "닉네임을 확인해 주세요")
             @RequestParam("nickname") String nickname,
-            @AuthenticationPrincipal TemporalMember member
-    ) {
+            @AuthenticationPrincipal UserSecurityDTO userSecurityDTO
+            ) {
         return BaseResponse.success(
                 SuccessCode.UPDATE_SUCCESS,
-                memberService.updateNickname(nickname, member)
+                memberService.updateNickname(nickname, userSecurityDTO)
         );
     }
 }

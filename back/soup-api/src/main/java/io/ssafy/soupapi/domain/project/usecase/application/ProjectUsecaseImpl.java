@@ -3,7 +3,7 @@ package io.ssafy.soupapi.domain.project.usecase.application;
 import io.ssafy.soupapi.domain.project.mongodb.application.MProjectService;
 import io.ssafy.soupapi.domain.project.postgresql.application.PProjectService;
 import io.ssafy.soupapi.domain.project.usecase.dto.request.CreateProjectDto;
-import io.ssafy.soupapi.global.security.TemporalMember;
+import io.ssafy.soupapi.global.security.user.UserSecurityDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
@@ -21,15 +21,15 @@ public class ProjectUsecaseImpl implements ProjectUsecase {
      * 1. MongoDB 프로젝트 생성
      * 2. PostgreSQL 프로젝트 등록 및 접속 권한 부여
      *
-     * @param projectName projectName to make project
-     * @param member      project maker
+     * @param createProjectDto projectName to make project
+     * @param userSecurityDTO      project maker
      * @return mongodb project objectId
      */
     @Transactional
     @Override
-    public String createProject(CreateProjectDto createProjectDto, TemporalMember temporalMember) {
-        var projectId = mProjectService.createProject(createProjectDto, temporalMember); // TODO: member security 적용
-        pProjectService.registProject(projectId.toHexString(), createProjectDto, temporalMember); // TODO: member security 적용
+    public String createProject(CreateProjectDto createProjectDto, UserSecurityDTO userSecurityDTO) {
+        var projectId = mProjectService.createProject(createProjectDto, userSecurityDTO); // TODO: member security 적용
+        pProjectService.registProject(projectId.toHexString(), createProjectDto, userSecurityDTO); // TODO: member security 적용
         return projectId.toHexString();
     }
 }

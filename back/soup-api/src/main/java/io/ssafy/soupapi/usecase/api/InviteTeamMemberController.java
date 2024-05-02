@@ -3,7 +3,7 @@ package io.ssafy.soupapi.usecase.api;
 import io.ssafy.soupapi.domain.project.usecase.dto.request.InviteTeamMember;
 import io.ssafy.soupapi.global.common.code.SuccessCode;
 import io.ssafy.soupapi.global.common.response.BaseResponse;
-import io.ssafy.soupapi.global.security.TemporalMember;
+import io.ssafy.soupapi.global.security.user.UserSecurityDTO;
 import io.ssafy.soupapi.usecase.application.InviteTeamMemberService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -24,15 +24,15 @@ public class InviteTeamMemberController {
 
     @Operation(summary = "프로젝트 팀원 초대")
     @PostMapping("/api/projects/{projectId}/teams")
-    @PreAuthorize("@authService.hasPrimaryProjectRoleMember(#projectId, #member.getId())")
+    @PreAuthorize("@authService.hasPrimaryProjectRoleMember(#projectId, #userSecurityDTO.getId())")
     public ResponseEntity<BaseResponse<String>> inviteTeamMember(
             @PathVariable(name = "projectId") String projectId,
             @RequestBody InviteTeamMember inviteTeamMember,
-            @AuthenticationPrincipal TemporalMember member
-    ) {
+            @AuthenticationPrincipal UserSecurityDTO userSecurityDTO
+            ) {
         return BaseResponse.success(
                 SuccessCode.INSERT_SUCCESS,
-                inviteTeamMemberService.inviteTeamMember(projectId, inviteTeamMember, member)
+                inviteTeamMemberService.inviteTeamMember(projectId, inviteTeamMember, userSecurityDTO)
         );
     }
 }
