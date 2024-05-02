@@ -31,7 +31,7 @@ import java.util.List;
 public class SecurityConfig {
 
     private static final String[] URL_WHITE_LIST = {
-            "/error", "/login", "/favicon.ico**/**", "/h2-console**/**",
+            "/error", "/login", "/login/**", "/favicon.ico**/**", "/h2-console**/**",
             "/api/swagger-ui**/**", "/api/api-docs/**", "/api/swagger-resources/**",
             "/api/actuator**/**", "/api/auth/**"
     };
@@ -90,7 +90,6 @@ public class SecurityConfig {
     @Bean
     public WebSecurityCustomizer configureH2ConsoleEnable() {
         return web -> web.ignoring()
-                .requestMatchers(PathRequest.toH2Console())
                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations())
                 .requestMatchers(URL_WHITE_LIST);
     }
