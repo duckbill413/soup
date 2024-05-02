@@ -7,7 +7,6 @@ import io.ssafy.soupapi.domain.project.mongodb.dto.response.GetProjectInfo;
 import io.ssafy.soupapi.domain.project.mongodb.dto.response.GetProjectJiraKey;
 import io.ssafy.soupapi.domain.project.mongodb.dto.response.GetProjectProposal;
 import io.ssafy.soupapi.domain.project.mongodb.entity.ProjectIssue;
-import io.ssafy.soupapi.domain.project.usecase.dto.request.CreateProjectDto;
 import io.ssafy.soupapi.global.common.request.PageOffsetRequest;
 import io.ssafy.soupapi.global.common.response.PageOffsetResponse;
 import io.ssafy.soupapi.global.security.user.UserSecurityDTO;
@@ -16,7 +15,7 @@ import org.bson.types.ObjectId;
 import java.util.List;
 
 public interface MProjectService {
-    ObjectId createProject(CreateProjectDto createProjectDto, UserSecurityDTO userSecurityDTO);
+    ObjectId createProject(UserSecurityDTO userSecurityDTO);
 
     GetProjectInfo findProjectInfoAndTools(ObjectId projectId);
 

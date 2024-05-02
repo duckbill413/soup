@@ -40,6 +40,8 @@ public class InviteTeamMemberService {
 
     @Transactional
     public String inviteTeamMember(String projectId, InviteTeamMember inviteTeamMember, UserSecurityDTO userSecurityDTO) {
+        var member = memberRepository.findById(userSecurityDTO.getId()).orElseThrow(() ->
+                new BaseExceptionHandler(ErrorCode.NOT_FOUND_USER));
         var project = projectRepository.findById(projectId).orElseThrow(() ->
                 new BaseExceptionHandler(ErrorCode.NOT_FOUND_PROJECT));
         var inviteMember = memberRepository.findByEmail(inviteTeamMember.email()).stream().findFirst().orElse(null);
@@ -73,7 +75,7 @@ public class InviteTeamMemberService {
             try {
                 gmailUtil.sendMail(
                         inviteTeamMember.email(),
-                        project.getName(),
+                        Objects.nonNull(member.getEmail()) ? member.getEmail() : project.getName().replaceAll(" ", ""),
                         project.getName() + " 프로젝트에서 초대",
                         getEmailFormat(project, idempotent),
                         true
@@ -94,8 +96,8 @@ public class InviteTeamMemberService {
     /**
      * 부여할 수 있는 권한 인지 확인
      *
-     * @param roles          부여할 권한 목록
-     * @param project        프로젝트
+     * @param roles           부여할 권한 목록
+     * @param project         프로젝트
      * @param userSecurityDTO 권한을 부여하는 유저
      * @return 권한 부여 가능 여부
      */
