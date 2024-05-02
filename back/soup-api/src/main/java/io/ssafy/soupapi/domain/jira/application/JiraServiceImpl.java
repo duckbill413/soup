@@ -7,7 +7,7 @@ import io.ssafy.soupapi.domain.jira.dto.response.GetJiraIssueType;
 import io.ssafy.soupapi.domain.jira.dto.response.JiraIssue;
 import io.ssafy.soupapi.domain.project.mongodb.dao.MProjectRepository;
 import io.ssafy.soupapi.domain.project.mongodb.entity.Project;
-import io.ssafy.soupapi.domain.project.mongodb.entity.ProjectIssue;
+import io.ssafy.soupapi.domain.project.mongodb.entity.issue.ProjectIssue;
 import io.ssafy.soupapi.global.common.code.ErrorCode;
 import io.ssafy.soupapi.global.common.request.PageOffsetRequest;
 import io.ssafy.soupapi.global.common.response.PageOffsetResponse;
