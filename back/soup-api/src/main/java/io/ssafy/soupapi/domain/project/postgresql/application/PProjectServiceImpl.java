@@ -2,11 +2,11 @@ package io.ssafy.soupapi.domain.project.postgresql.application;
 
 
 import io.ssafy.soupapi.domain.member.entity.Member;
+import io.ssafy.soupapi.domain.project.mongodb.dto.request.UpdateProjectInfo;
 import io.ssafy.soupapi.domain.project.postgresql.dao.PProjectRepository;
 import io.ssafy.soupapi.domain.project.postgresql.dto.response.SimpleProjectDto;
 import io.ssafy.soupapi.domain.project.postgresql.entity.Project;
 import io.ssafy.soupapi.domain.project.postgresql.entity.ProjectRole;
-import io.ssafy.soupapi.domain.project.usecase.dto.request.CreateProjectDto;
 import io.ssafy.soupapi.domain.projectauth.entity.ProjectAuth;
 import io.ssafy.soupapi.global.common.code.ErrorCode;
 import io.ssafy.soupapi.global.common.request.PageOffsetRequest;
@@ -33,17 +33,14 @@ public class PProjectServiceImpl implements PProjectService {
      * mongodb에서 생성된 프로젝트를 postgresql project 객체로 연관 등록
      * project auth 등록
      *
-     * @param projectId        new mongodb project's project id
-     * @param createProjectDto new project's project data
-     * @param userSecurityDTO           new project maker
+     * @param projectId       new mongodb project's project id
+     * @param userSecurityDTO new project maker
      */
     @Override
-    public void registProject(String projectId, CreateProjectDto createProjectDto, UserSecurityDTO userSecurityDTO) {
+    public void registProject(String projectId, UserSecurityDTO userSecurityDTO) {
         // 프로젝트 등록
         var project = Project.builder()
                 .id(projectId)
-                .name(createProjectDto.name())
-                .imgUrl(createProjectDto.imgUrl())
                 .build();
         // 프로젝트 최초 권한 등록
         project.addProjectAuth(ProjectAuth.builder()
@@ -64,6 +61,15 @@ public class PProjectServiceImpl implements PProjectService {
                 .content(data.getContent())
                 .pagination(OffsetPagination.offset(data.getTotalPages(), data.getTotalElements(), data.getPageable()))
                 .build();
+    }
+
+    @Transactional
+    @Override
+    public void updateProjectInfo(String projectId, UpdateProjectInfo updateProjectInfo) {
+        var project = pProjectRepository.findById(projectId).orElseThrow(() ->
+                new BaseExceptionHandler(ErrorCode.NOT_FOUND_PROJECT));
+        project.setName(updateProjectInfo.name());
+        pProjectRepository.save(project);
     }
 
     @Transactional(readOnly = true)

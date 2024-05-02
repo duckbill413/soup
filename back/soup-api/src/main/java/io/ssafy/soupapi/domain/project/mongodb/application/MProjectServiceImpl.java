@@ -12,7 +12,6 @@ import io.ssafy.soupapi.domain.project.mongodb.dto.response.ProjectIssuesCount;
 import io.ssafy.soupapi.domain.project.mongodb.entity.Info;
 import io.ssafy.soupapi.domain.project.mongodb.entity.Project;
 import io.ssafy.soupapi.domain.project.mongodb.entity.ProjectIssue;
-import io.ssafy.soupapi.domain.project.usecase.dto.request.CreateProjectDto;
 import io.ssafy.soupapi.global.common.code.ErrorCode;
 import io.ssafy.soupapi.global.common.request.PageOffsetRequest;
 import io.ssafy.soupapi.global.common.response.OffsetPagination;
@@ -33,6 +32,7 @@ import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -49,21 +49,18 @@ public class MProjectServiceImpl implements MProjectService {
      * 프로젝트 생성 및 최초 팀 구성 설정
      * 최초 생성자 권한을 ADMIN으로 지정
      *
-     * @param createProjectDto new project's project data
-     * @param userSecurityDTO           project maker
+     * @param userSecurityDTO project maker
      * @return mongodb project object id
      */
     @Transactional
     @Override
-    public ObjectId createProject(CreateProjectDto createProjectDto, UserSecurityDTO userSecurityDTO) { // TODO: member security 적용
+    public ObjectId createProject(UserSecurityDTO userSecurityDTO) { // TODO: member security 적용
         // 프로젝트 및 프로젝트 이름 설정
         var project = Project.builder()
                 .info(
                         Info.builder()
-                                .name(createProjectDto.name())
-                                .imgUrl(createProjectDto.imgUrl())
-                                .startDate(createProjectDto.getStartDate())
-                                .endDate(createProjectDto.getEndDate())
+                                .startDate(LocalDate.now())
+                                .endDate(LocalDate.now())
                                 .build()
                 ).build();
 

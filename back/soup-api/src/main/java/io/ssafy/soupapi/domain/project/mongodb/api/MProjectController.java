@@ -1,7 +1,6 @@
 package io.ssafy.soupapi.domain.project.mongodb.api;
 
 import io.ssafy.soupapi.domain.project.mongodb.application.MProjectService;
-import io.ssafy.soupapi.domain.project.mongodb.dto.request.UpdateProjectInfo;
 import io.ssafy.soupapi.domain.project.mongodb.dto.request.UpdateProjectJiraKey;
 import io.ssafy.soupapi.domain.project.mongodb.dto.request.UpdateProjectProposal;
 import io.ssafy.soupapi.domain.project.mongodb.dto.response.GetProjectInfo;
@@ -38,7 +37,7 @@ public class MProjectController {
      * 프로젝트 정보(개요 페이지) 조회
      *
      * @param projectId 조회하는 Project의 Id
-     * @param member    Project를 조회하는 대상
+     * @param userSecurityDTO    Project를 조회하는 대상
      * @return ProjectInfoDto Object
      */
     @Operation(summary = "프로젝트 정보 요청", description = "프로젝트 개요 화면의 프로젝트 정보 요청")
@@ -55,35 +54,10 @@ public class MProjectController {
     }
 
     /**
-     * 프로젝트 정보(개요 페이지) 수정
-     * - 키, 프로젝트 이미지, 팀원 정보는 수정 안됨
-     *
-     * @param projectId
-     * @param updateProjectInfo
-     * @param member
-     * @return
-     */
-
-    @Operation(summary = "프로젝트 정보 수정", description = "프로젝트 개요 화면 정보 수정 <br>Jira Key, 프로젝트 이미지, 팀원 정보는 수정 불가" +
-                                                     "<ul><li>프로젝트 이름</li><li>프로젝트 설명</li><li>프로젝트 시작일</li><li>프로젝트 종료일</li><li>프로젝트 사용툴</li></ul>")
-    @PutMapping("/{projectId}/info")
-    @PreAuthorize("!@authService.hasViewerProjectRoleMember(#projectId, #userSecurityDTO.getId())")
-    public ResponseEntity<BaseResponse<GetProjectInfo>> updateProjectInfo(
-            @PathVariable(name = "projectId") String projectId,
-            @RequestBody UpdateProjectInfo updateProjectInfo,
-            @AuthenticationPrincipal UserSecurityDTO userSecurityDTO
-    ) {
-        return BaseResponse.success(
-                SuccessCode.SELECT_SUCCESS,
-                mProjectService.updateProjectInfo(new ObjectId(projectId), updateProjectInfo)
-        );
-    }
-
-    /**
      * 프로젝트 제안서 정보 조회
      *
      * @param projectId 제안서를 조회할 프로젝트 Id
-     * @param member    제안서를 조회하는 멤버
+     * @param userSecurityDTO    제안서를 조회하는 멤버
      * @return 프로젝트 제안서 정보
      */
     @Operation(summary = "프로젝트 제안서 조회")
@@ -104,7 +78,7 @@ public class MProjectController {
      *
      * @param projectId             업데이트하는 프로젝트의 Id
      * @param updateProjectProposal 업데이트하는 제안서 정보
-     * @param member                업데이트하는 멤버 정보
+     * @param userSecurityDTO                업데이트하는 멤버 정보
      * @return 업데이트 완료된 프로젝트 제안서 정보
      */
     @Operation(summary = "프로젝트 제안서 업데이트", description = "프로젝트 기획서 정보 업데이트")
@@ -125,7 +99,7 @@ public class MProjectController {
      * 프로젝트 지라 키 정보 요청
      *
      * @param projectId 키 정보를 요청할 프로젝트 아이디
-     * @param member    키 정보를 요청하는 멤버
+     * @param userSecurityDTO    키 정보를 요청하는 멤버
      * @return 지라 유저 이름 및 키 정보
      */
     @Operation(summary = "프로젝트 지라 키 정보 요청", description = "프로젝트 Jira Key 정보 요청 (ADMIN, MAINTAINER)")
@@ -146,7 +120,7 @@ public class MProjectController {
      *
      * @param projectId            업데이트할 프로젝트의 Id
      * @param updateProjectJiraKey 업데이트할 프로젝트 지라 정보
-     * @param member               키 정보를 업데이트하는 멤버 정보
+     * @param userSecurityDTO               키 정보를 업데이트하는 멤버 정보
      * @return 업데이트 된 지라 키 정보
      */
     @Operation(summary = "프로젝트 지라 키 정보 수정", description = "프로젝트 Jira Key 정보 수정 (ADMIN, MAINTAINER)")
