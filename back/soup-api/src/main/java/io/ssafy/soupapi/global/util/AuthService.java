@@ -1,6 +1,5 @@
 package io.ssafy.soupapi.global.util;
 
-import io.ssafy.soupapi.domain.member.dao.MemberRepository;
 import io.ssafy.soupapi.domain.member.entity.Member;
 import io.ssafy.soupapi.domain.project.postgresql.entity.Project;
 import io.ssafy.soupapi.domain.project.postgresql.entity.ProjectRole;
@@ -18,7 +17,6 @@ import java.util.UUID;
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class AuthService {
-    private final MemberRepository memberRepository;
     private final ProjectAuthRepository projectAuthRepository;
     private static final ProjectRole[] PRIMARY_PROJECT_ROLE = {ProjectRole.ADMIN, ProjectRole.MAINTAINER};
     private static final ProjectRole VIEWER_PROJECT_ROLE = ProjectRole.VIEWER;

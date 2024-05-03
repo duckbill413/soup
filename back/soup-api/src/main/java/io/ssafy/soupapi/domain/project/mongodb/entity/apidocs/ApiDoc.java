@@ -19,29 +19,29 @@ public class ApiDoc {
     private String domain;
     @Field
     private String name;
-    @Field("api_method_name")
+    @Field("method_name")
     private String methodName;
-    @Field("api_method_description")
+    @Field("method_description")
     private String description;
-    @Field("api_http_method_type")
+    @Field("http_method_type")
     private HttpMethodType methodType;
-    @Field("api_uri_path")
+    @Field("uri_path")
     private String apiUriPath;
     @Builder.Default
-    @Field("api_valid_path_variables")
+    @Field("valid_path_variables")
     private List<String> validPathVariableNames = new ArrayList<>();
     @Builder.Default
-    @Field("api_path_variables")
+    @Field("path_variables")
     private List<ApiVariable> pathVariables = new ArrayList<>();
     @Builder.Default
-    @Field("api_query_parameters")
+    @Field("query_parameters")
     private List<ApiVariable> queryParameters = new ArrayList<>();
-    @Field("api_request_body_name")
+    @Field("request_body_name")
     private String requestBodyName;
-    @Field("api_request_body")
+    @Field("request_body")
     private String requestBody;
-    @Field("api_response_body_name")
+    @Field("response_body_name")
     private String responseBodyName;
-    @Field("api_response_body")
+    @Field("response_body")
     private String responseBody;
 }
