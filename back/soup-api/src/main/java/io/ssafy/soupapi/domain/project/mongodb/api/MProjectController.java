@@ -193,4 +193,17 @@ public class MProjectController {
                 mProjectService.changeProjectVuerd(new ObjectId(projectId), vuerdDoc)
         );
     }
+
+    @Operation(summary = "프로젝트 API 문서")
+    @GetMapping("/{projectId}/api-docs")
+    @PreAuthorize("@authService.hasProjectRoleMember(#projectId, #userSecurityDTO.getId())")
+    public ResponseEntity<?> findProjectApiDocs(
+            @PathVariable String projectId,
+            @AuthenticationPrincipal UserSecurityDTO userSecurityDTO
+    ) {
+        return BaseResponse.success(
+                SuccessCode.SELECT_SUCCESS,
+                mProjectService.findProjectApiDocs(new ObjectId(projectId))
+        );
+    }
 }

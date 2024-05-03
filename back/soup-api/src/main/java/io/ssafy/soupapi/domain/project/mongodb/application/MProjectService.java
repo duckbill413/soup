@@ -37,4 +37,6 @@ public interface MProjectService {
     VuerdDoc findProjectVuerd(ObjectId projectId);
 
     VuerdDoc changeProjectVuerd(ObjectId projectId, VuerdDoc vuerdDoc);
+
+    Object findProjectApiDocs(ObjectId objectId);
 }
