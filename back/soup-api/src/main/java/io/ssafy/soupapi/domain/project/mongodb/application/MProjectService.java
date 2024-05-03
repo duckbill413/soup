@@ -43,4 +43,5 @@ public interface MProjectService {
 
     GetApiDoc findProjectSingleApiDocs(ObjectId projectId, String apiDocId);
 
+    List<String> findProjectValidDomainNames(ObjectId projectId);
 }

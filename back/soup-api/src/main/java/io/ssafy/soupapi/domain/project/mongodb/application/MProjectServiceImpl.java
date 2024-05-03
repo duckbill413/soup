@@ -11,6 +11,7 @@ import io.ssafy.soupapi.domain.project.mongodb.entity.Info;
 import io.ssafy.soupapi.domain.project.mongodb.entity.Project;
 import io.ssafy.soupapi.domain.project.mongodb.entity.apidocs.ApiDoc;
 import io.ssafy.soupapi.domain.project.mongodb.entity.issue.ProjectIssue;
+import io.ssafy.soupapi.domain.project.mongodb.entity.vuerd.SubTable;
 import io.ssafy.soupapi.domain.project.mongodb.entity.vuerd.VuerdDoc;
 import io.ssafy.soupapi.global.common.code.ErrorCode;
 import io.ssafy.soupapi.global.common.request.PageOffsetRequest;
@@ -33,10 +34,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
 @Log4j2
 @Service
@@ -275,6 +273,18 @@ public class MProjectServiceImpl implements MProjectService {
             throw new BaseExceptionHandler(ErrorCode.NOT_FOUND_API_DOC);
         }
         return GetApiDoc.of(apiDoc);
+    }
+
+    @Override
+    public List<String> findProjectValidDomainNames(ObjectId projectId) {
+        var project = mProjectRepository.findVuerdById(projectId).orElseThrow(() ->
+                new BaseExceptionHandler(ErrorCode.NOT_FOUND_PROJECT));
+        if (Objects.isNull(project.getVuerdDoc()) || Objects.isNull(project.getVuerdDoc().getTable())
+            || Objects.isNull(project.getVuerdDoc().getTable().getTables())) {
+            return List.of();
+        }
+
+        return project.getVuerdDoc().getTable().getTables().stream().map(SubTable::getName).toList();
     }
 
     private void deleteProjectIssue(ObjectId projectId, ProjectIssue issue) {

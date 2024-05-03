@@ -220,10 +220,10 @@ public class MProjectController {
         );
     }
 
-    @Operation(summary = "사용할 수 있는 PathVariable Name")
+    @Operation(summary = "사용할 수 있는 PathVariable Name 조회")
     @GetMapping("/{projectId}/api-docs/{apiDocId}/names")
     @PreAuthorize("@authService.hasProjectRoleMember(#projectId, #userSecurityDTO.getId())")
-    public ResponseEntity<?> findProjectValidPathVariableNames(
+    public ResponseEntity<BaseResponse<List<String>>> findProjectValidPathVariableNames(
             @PathVariable String projectId,
             @PathVariable String apiDocId,
             @AuthenticationPrincipal UserSecurityDTO userSecurityDTO
@@ -231,6 +231,19 @@ public class MProjectController {
         return BaseResponse.success(
                 SuccessCode.SELECT_SUCCESS,
                 mProjectService.findProjectValidPathVariableNames(new ObjectId(projectId), UUID.fromString(apiDocId))
+        );
+    }
+
+    @Operation(summary = "사용할 수 있는 도메인 Name 조회")
+    @GetMapping("/{projectId}/api-docs/domain/names")
+    @PreAuthorize("@authService.hasProjectRoleMember(#projectId, #userSecurityDTO.getId())")
+    public ResponseEntity<BaseResponse<List<String>>> findProjectValidDomainNames(
+            @PathVariable String projectId,
+            @AuthenticationPrincipal UserSecurityDTO userSecurityDTO
+    ) {
+        return BaseResponse.success(
+                SuccessCode.SELECT_SUCCESS,
+                mProjectService.findProjectValidDomainNames(new ObjectId(projectId))
         );
     }
 }
