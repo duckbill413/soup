@@ -10,6 +10,8 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   console.log('env==', process.env.NEXT_PUBLIC_LIVEBLOCKS_PUBLIC_KEY)
+  console.log('host==', process.env.NEXT_PUBLIC_SERVER_HOST)
+  console.log('baseURL==', process.env.NEXT_PUBLIC_BACKEND_BASE_URL)
 
   return (
     <html lang="en">
