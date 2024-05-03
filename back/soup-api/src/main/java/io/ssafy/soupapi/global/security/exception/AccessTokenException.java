@@ -19,7 +19,7 @@ public class AccessTokenException extends RuntimeException {
         BAD_TYPE(HttpStatus.UNAUTHORIZED, "토큰 유형은 Bearer Token이어야 합니다."),
         MAL_FORMED(HttpStatus.FORBIDDEN, "토큰의 형식이 잘못되었습니다."),
         BAD_SIGN(HttpStatus.FORBIDDEN, "토큰의 signature가 잘못되었습니다."),
-        EXPIRED(HttpStatus.FORBIDDEN, "만료된 ACCESS TOKEN 입니다."),
+        EXPIRED(HttpStatus.UNAUTHORIZED, "만료된 ACCESS TOKEN 입니다."),
         ;
 
         private final HttpStatus httpStatus;
