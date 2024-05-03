@@ -2,14 +2,16 @@ import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-// import dayjs from 'dayjs'
+import dayjs, { Dayjs } from 'dayjs'
+import { useMutation, useStorage } from '../../../../../liveblocks.config'
 
 function StartCalendar () {
-  // const datePickerFormat = "YYYY-MM-DD";
-  // const datePickerUtils = {
-  //   format: datePickerFormat,
-  //   parse: (value:any) => dayjs(value, datePickerFormat, true).toDate(),
-  // };
+  const initialProject = useStorage((root) => root.outline)
+  const updateProject = useMutation(({ storage }, key , newValue:Dayjs | null) => {
+    const outline = storage.get("outline");
+    outline.set(key, newValue);
+  }, []);
+
   return (
     <LocalizationProvider
       dateAdapter={AdapterDayjs}
@@ -26,12 +28,8 @@ function StartCalendar () {
             },
           }}
           format="YYYY / MM / DD"
-          // value={startDate}
-          // onChange={(newValue) => {
-          //   startDateChange(
-          //     newValue
-          //   );
-          // }}
+          value={initialProject.project_startDate ? dayjs(initialProject.project_startDate) : null}
+          onChange={(newValue)=>updateProject('project_startDate', newValue)}
         />
       </DemoContainer>
     </LocalizationProvider>
