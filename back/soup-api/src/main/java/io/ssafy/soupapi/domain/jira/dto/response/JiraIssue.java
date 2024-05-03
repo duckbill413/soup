@@ -1,8 +1,8 @@
 package io.ssafy.soupapi.domain.jira.dto.response;
 
 import io.ssafy.soupapi.domain.jira.dto.Issue;
-import io.ssafy.soupapi.domain.project.mongodb.entity.ProjectIssue;
-import io.ssafy.soupapi.domain.project.mongodb.entity.ProjectUser;
+import io.ssafy.soupapi.domain.project.mongodb.entity.issue.ProjectIssue;
+import io.ssafy.soupapi.domain.project.mongodb.entity.issue.ProjectUser;
 import io.ssafy.soupapi.global.util.StringParserUtil;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;

@@ -1,4 +1,4 @@
-package io.ssafy.soupapi.domain.project.mongodb.entity;
+package io.ssafy.soupapi.domain.project.mongodb.entity.issue;
 
 import lombok.Builder;
 import lombok.Getter;
