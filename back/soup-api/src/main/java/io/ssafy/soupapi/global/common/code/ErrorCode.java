@@ -94,6 +94,9 @@ public enum ErrorCode {
     NOT_FOUND_JIRA_INFO(404, "B501", "프로젝트 지라 정보를 찾을 수 없습니다"),
     FAILED_TO_SYNC_JIRA(404, "B502", "프로젝트 이슈와 지라 이슈 동기화에 실패하였습니다."),
     FAILED_TO_UPDATE_JIRA_ISSUE(404, "B503", "지라 이슈 업데이트 실패"),
+
+    // Vuerd 관련 에러 (CODE: 600)
+    NOT_FOUND_PROJECT_VUERD(404, "B600", "프로젝트 VUERD를 찾을 수 없습니다."),
     ; // End
 
     /**

@@ -6,7 +6,8 @@ import io.ssafy.soupapi.domain.project.mongodb.dto.request.UpdateProjectProposal
 import io.ssafy.soupapi.domain.project.mongodb.dto.response.GetProjectInfo;
 import io.ssafy.soupapi.domain.project.mongodb.dto.response.GetProjectJiraKey;
 import io.ssafy.soupapi.domain.project.mongodb.dto.response.GetProjectProposal;
-import io.ssafy.soupapi.domain.project.mongodb.entity.ProjectIssue;
+import io.ssafy.soupapi.domain.project.mongodb.entity.issue.ProjectIssue;
+import io.ssafy.soupapi.domain.project.mongodb.entity.vuerd.VuerdDoc;
 import io.ssafy.soupapi.global.common.code.SuccessCode;
 import io.ssafy.soupapi.global.common.request.PageOffsetRequest;
 import io.ssafy.soupapi.global.common.response.BaseResponse;
@@ -36,8 +37,8 @@ public class MProjectController {
     /**
      * 프로젝트 정보(개요 페이지) 조회
      *
-     * @param projectId 조회하는 Project의 Id
-     * @param userSecurityDTO    Project를 조회하는 대상
+     * @param projectId       조회하는 Project의 Id
+     * @param userSecurityDTO Project를 조회하는 대상
      * @return ProjectInfoDto Object
      */
     @Operation(summary = "프로젝트 정보 요청", description = "프로젝트 개요 화면의 프로젝트 정보 요청")
@@ -56,8 +57,8 @@ public class MProjectController {
     /**
      * 프로젝트 제안서 정보 조회
      *
-     * @param projectId 제안서를 조회할 프로젝트 Id
-     * @param userSecurityDTO    제안서를 조회하는 멤버
+     * @param projectId       제안서를 조회할 프로젝트 Id
+     * @param userSecurityDTO 제안서를 조회하는 멤버
      * @return 프로젝트 제안서 정보
      */
     @Operation(summary = "프로젝트 제안서 조회")
@@ -66,7 +67,7 @@ public class MProjectController {
     public ResponseEntity<BaseResponse<GetProjectProposal>> findProjectProposal(
             @PathVariable(name = "projectId") String projectId,
             @AuthenticationPrincipal UserSecurityDTO userSecurityDTO
-            ) {
+    ) {
         return BaseResponse.success(
                 SuccessCode.SELECT_SUCCESS,
                 mProjectService.findProjectProposal(new ObjectId(projectId))
@@ -78,7 +79,7 @@ public class MProjectController {
      *
      * @param projectId             업데이트하는 프로젝트의 Id
      * @param updateProjectProposal 업데이트하는 제안서 정보
-     * @param userSecurityDTO                업데이트하는 멤버 정보
+     * @param userSecurityDTO       업데이트하는 멤버 정보
      * @return 업데이트 완료된 프로젝트 제안서 정보
      */
     @Operation(summary = "프로젝트 제안서 업데이트", description = "프로젝트 기획서 정보 업데이트")
@@ -98,8 +99,8 @@ public class MProjectController {
     /**
      * 프로젝트 지라 키 정보 요청
      *
-     * @param projectId 키 정보를 요청할 프로젝트 아이디
-     * @param userSecurityDTO    키 정보를 요청하는 멤버
+     * @param projectId       키 정보를 요청할 프로젝트 아이디
+     * @param userSecurityDTO 키 정보를 요청하는 멤버
      * @return 지라 유저 이름 및 키 정보
      */
     @Operation(summary = "프로젝트 지라 키 정보 요청", description = "프로젝트 Jira Key 정보 요청 (ADMIN, MAINTAINER)")
@@ -120,7 +121,7 @@ public class MProjectController {
      *
      * @param projectId            업데이트할 프로젝트의 Id
      * @param updateProjectJiraKey 업데이트할 프로젝트 지라 정보
-     * @param userSecurityDTO               키 정보를 업데이트하는 멤버 정보
+     * @param userSecurityDTO      키 정보를 업데이트하는 멤버 정보
      * @return 업데이트 된 지라 키 정보
      */
     @Operation(summary = "프로젝트 지라 키 정보 수정", description = "프로젝트 Jira Key 정보 수정 (ADMIN, MAINTAINER)")
@@ -163,6 +164,33 @@ public class MProjectController {
         return BaseResponse.success(
                 SuccessCode.UPDATE_SUCCESS,
                 mProjectService.updateProjectIssues(new ObjectId(projectId), issues, pageOffsetRequest, userSecurityDTO)
+        );
+    }
+
+    @Operation(summary = "프로젝트 ERD 조회")
+    @GetMapping("/{projectId}/vuerd")
+    @PreAuthorize("@authService.hasProjectRoleMember(#projectId, #userSecurityDTO.getId())")
+    public ResponseEntity<BaseResponse<VuerdDoc>> findProjectVuerd(
+            @PathVariable(name = "projectId") String projectId,
+            @AuthenticationPrincipal UserSecurityDTO userSecurityDTO
+    ) {
+        return BaseResponse.success(
+                SuccessCode.SELECT_SUCCESS,
+                mProjectService.findProjectVuerd(new ObjectId(projectId))
+        );
+    }
+
+    @Operation(summary = "프로젝트 ERD 수정")
+    @PutMapping("/{projectId}/vuerd")
+    @PreAuthorize("!@authService.hasViewerProjectRoleMember(#projectId, #userSecurityDTO.getId())")
+    public ResponseEntity<BaseResponse<VuerdDoc>> changeProjectVuerd(
+            @PathVariable(name = "projectId") String projectId,
+            @RequestBody VuerdDoc vuerdDoc,
+            @AuthenticationPrincipal UserSecurityDTO userSecurityDTO
+    ) {
+        return BaseResponse.success(
+                SuccessCode.UPDATE_SUCCESS,
+                mProjectService.changeProjectVuerd(new ObjectId(projectId), vuerdDoc)
         );
     }
 }
