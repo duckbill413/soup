@@ -11,7 +11,11 @@ function Room({ children }: { children: ReactNode }) {
   const path = usePathname()
 
   return (
-    <RoomProvider id={path} initialPresence={{}} initialStorage={{outline : new LiveObject({name:'', description:''})}}>
+    <RoomProvider id={path}
+                  initialPresence={{}}
+                  initialStorage={{outline : new LiveObject({
+        project_name:'', project_description:'',project_startDate:'', project_endDate:''
+    })}}>
       {/* Loading 페이지 추가해야 한다. */}
       <ClientSideSuspense fallback={<div><Loading/></div>}>
         {() => children}

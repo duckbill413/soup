@@ -2,31 +2,30 @@
 
 import * as styles from "@/containers/outline/styles/intro/outlineIntro.css"
 import sample from '#/assets/icons/mainpage/sample1.jpg'
-import { useEffect } from 'react'
-import getOutlineInfoAPI from '@/apis/outline/outlineAPI'
+// import { useEffect } from 'react'
+// import getOutlineInfoAPI from '@/apis/outline/outlineAPI'
 import { useMutation, useStorage } from '../../../../../liveblocks.config'
 
 function OutlineIntro () {
   const initialProject =useStorage((root)=>root.outline)
   const sampleSrc = sample.src
 
-  const updateProjectName = useMutation(({ storage }, newName: string) => {
-    // eslint-disable-next-line @typescript-eslint/no-shadow
-    const newProName = storage.get("outline");
-    newProName.set("name", newName);
+  const updateProject = useMutation(({ storage }, key , newValue) => {
+    const outline = storage.get("outline");
+    outline.set(key, newValue);
   }, []);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const data = await getOutlineInfoAPI('663345425249cc4b837d65ad');
-        console.log(data);
-      } catch (error) {
-        console.error('Error fetching data', error);
-      }
-    };
-    fetchData();
-  }, [])
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     try {
+  //       const data = await getOutlineInfoAPI('663345425249cc4b837d65ad');
+  //       console.log(data);
+  //     } catch (error) {
+  //       console.error('Error fetching data', error);
+  //     }
+  //   };
+  //   fetchData();
+  // }, [])
   return (
     <div className={styles.container}>
       <div className={styles.photoDivision}>
@@ -36,13 +35,15 @@ function OutlineIntro () {
       <div className={styles.introDivision}>
         <p>프로젝트 이름</p>
         <input placeholder="프로젝트 이름"
-               value={initialProject.name}
+               value={initialProject.project_name}
                className={styles.input}
-               onChange={(e) => updateProjectName(e.target.value)}
+               onChange={(e) => updateProject('project_name',e.target.value)}
         />
         <p>프로젝트 설명</p>
         <textarea placeholder="프로젝트 설명"
                   className={styles.textarea}
+                  value={initialProject.project_description}
+                  onChange={(e) => updateProject('project_description',e.target.value)}
         />
       </div>
     </div>

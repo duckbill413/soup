@@ -20,7 +20,7 @@ type Presence = {
 type Storage = {
   // author: LiveObject<{ firstName: string, lastName: string }>,
   // ...
-  outline : LiveObject<{name: string, description: string}>
+  outline : LiveObject<{project_name: string, project_description: string, project_startDate:string, project_endDate:string}>
 };
 
 // Optionally, UserMeta represents static/readonly metadata on each user, as
