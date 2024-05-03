@@ -97,6 +97,9 @@ public enum ErrorCode {
 
     // Vuerd 관련 에러 (CODE: 600)
     NOT_FOUND_PROJECT_VUERD(404, "B600", "프로젝트 VUERD를 찾을 수 없습니다."),
+
+    // API DOCS 관련 에러 (CODE: 700)
+    NOT_FOUND_API_DOC(404, "B700", "찾을 수 없는 API 문서 입니다."),
     ; // End
 
     /**

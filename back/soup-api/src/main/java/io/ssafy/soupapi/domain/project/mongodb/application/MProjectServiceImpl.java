@@ -6,12 +6,10 @@ import io.ssafy.soupapi.domain.project.mongodb.dto.request.UpdateProjectInfo;
 import io.ssafy.soupapi.domain.project.mongodb.dto.request.UpdateProjectJiraKey;
 import io.ssafy.soupapi.domain.project.mongodb.dto.request.UpdateProjectProposal;
 import io.ssafy.soupapi.domain.project.mongodb.dto.request.UpdateProjectTool;
-import io.ssafy.soupapi.domain.project.mongodb.dto.response.GetProjectInfo;
-import io.ssafy.soupapi.domain.project.mongodb.dto.response.GetProjectJiraKey;
-import io.ssafy.soupapi.domain.project.mongodb.dto.response.GetProjectProposal;
-import io.ssafy.soupapi.domain.project.mongodb.dto.response.ProjectIssuesCount;
+import io.ssafy.soupapi.domain.project.mongodb.dto.response.*;
 import io.ssafy.soupapi.domain.project.mongodb.entity.Info;
 import io.ssafy.soupapi.domain.project.mongodb.entity.Project;
+import io.ssafy.soupapi.domain.project.mongodb.entity.apidocs.ApiDoc;
 import io.ssafy.soupapi.domain.project.mongodb.entity.issue.ProjectIssue;
 import io.ssafy.soupapi.domain.project.mongodb.entity.vuerd.VuerdDoc;
 import io.ssafy.soupapi.global.common.code.ErrorCode;
@@ -241,6 +239,42 @@ public class MProjectServiceImpl implements MProjectService {
 
         mProjectRepository.changeVuerdById(projectId, vuerdDoc);
         return vuerdDoc;
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public List<GetSimpleApiDoc> findProjectApiDocs(ObjectId projectId) {
+        var project = mProjectRepository.findProjectApiDocs(projectId).orElseThrow(() ->
+                new BaseExceptionHandler(ErrorCode.NOT_FOUND_PROJECT));
+
+        if (Objects.isNull(project.getApiDocs()) || Objects.isNull(project.getApiDocs().getApiDocList())) {
+            return List.of();
+        }
+
+        var apiDocs = project.getApiDocs().getApiDocList();
+        return apiDocs.stream().map(GetSimpleApiDoc::of).toList();
+    }
+
+    @Override
+    public List<String> findProjectValidPathVariableNames(ObjectId projectId, UUID apiDocId) {
+        Query query = new Query().addCriteria(Criteria.where("_id").is(projectId)
+                .and("project_api_doc.api_docs.id").is(apiDocId));
+        var apiDoc = mongoTemplate.findOne(query, ApiDoc.class);
+        if (Objects.isNull(apiDoc)) {
+            throw new BaseExceptionHandler(ErrorCode.NOT_FOUND_API_DOC);
+        }
+        return apiDoc.getValidPathVariableNames();
+    }
+
+    @Override
+    public GetApiDoc findProjectSingleApiDocs(ObjectId projectId, String apiDocId) {
+        Query query = new Query().addCriteria(Criteria.where("_id").is(projectId)
+                .and("project_api_doc.api_docs.id").is(apiDocId));
+        var apiDoc = mongoTemplate.findOne(query, ApiDoc.class);
+        if (Objects.isNull(apiDoc)) {
+            throw new BaseExceptionHandler(ErrorCode.NOT_FOUND_API_DOC);
+        }
+        return GetApiDoc.of(apiDoc);
     }
 
     private void deleteProjectIssue(ObjectId projectId, ProjectIssue issue) {

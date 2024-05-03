@@ -1,5 +1,6 @@
 package io.ssafy.soupapi.domain.project.mongodb.entity;
 
+import io.ssafy.soupapi.domain.project.mongodb.entity.apidocs.ApiDocs;
 import io.ssafy.soupapi.domain.project.mongodb.entity.issue.ProjectIssue;
 import io.ssafy.soupapi.domain.project.mongodb.entity.vuerd.VuerdDoc;
 import lombok.Builder;
@@ -33,4 +34,6 @@ public class Project {
     private List<ProjectIssue> issues = new ArrayList<>();
     @Field("project_vuerd")
     private VuerdDoc vuerdDoc;
+    @Field("project_api_doc")
+    private ApiDocs apiDocs;
 }

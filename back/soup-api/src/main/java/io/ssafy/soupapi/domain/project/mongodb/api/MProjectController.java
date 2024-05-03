@@ -3,9 +3,7 @@ package io.ssafy.soupapi.domain.project.mongodb.api;
 import io.ssafy.soupapi.domain.project.mongodb.application.MProjectService;
 import io.ssafy.soupapi.domain.project.mongodb.dto.request.UpdateProjectJiraKey;
 import io.ssafy.soupapi.domain.project.mongodb.dto.request.UpdateProjectProposal;
-import io.ssafy.soupapi.domain.project.mongodb.dto.response.GetProjectInfo;
-import io.ssafy.soupapi.domain.project.mongodb.dto.response.GetProjectJiraKey;
-import io.ssafy.soupapi.domain.project.mongodb.dto.response.GetProjectProposal;
+import io.ssafy.soupapi.domain.project.mongodb.dto.response.*;
 import io.ssafy.soupapi.domain.project.mongodb.entity.issue.ProjectIssue;
 import io.ssafy.soupapi.domain.project.mongodb.entity.vuerd.VuerdDoc;
 import io.ssafy.soupapi.global.common.code.SuccessCode;
@@ -25,6 +23,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @Log4j2
 @RestController
@@ -194,16 +193,44 @@ public class MProjectController {
         );
     }
 
-    @Operation(summary = "프로젝트 API 문서")
+    @Operation(summary = "API 상세 문서 조회")
+    @GetMapping("/{projectId}/api-docs/{apiDocId}")
+    @PreAuthorize("@authService.hasProjectRoleMember(#projectId, #userSecurityDTO.getId())")
+    public ResponseEntity<BaseResponse<GetApiDoc>> findProjectSingleApiDoc(
+            @PathVariable String projectId,
+            @PathVariable String apiDocId,
+            @AuthenticationPrincipal UserSecurityDTO userSecurityDTO
+    ) {
+        return BaseResponse.success(
+                SuccessCode.SELECT_SUCCESS,
+                mProjectService.findProjectSingleApiDocs(new ObjectId(projectId), apiDocId)
+        );
+    }
+
+    @Operation(summary = "프로젝트 API 문서 리스트 조회")
     @GetMapping("/{projectId}/api-docs")
     @PreAuthorize("@authService.hasProjectRoleMember(#projectId, #userSecurityDTO.getId())")
-    public ResponseEntity<?> findProjectApiDocs(
+    public ResponseEntity<BaseResponse<List<GetSimpleApiDoc>>> findProjectApiDocs(
             @PathVariable String projectId,
             @AuthenticationPrincipal UserSecurityDTO userSecurityDTO
     ) {
         return BaseResponse.success(
                 SuccessCode.SELECT_SUCCESS,
                 mProjectService.findProjectApiDocs(new ObjectId(projectId))
+        );
+    }
+
+    @Operation(summary = "사용할 수 있는 PathVariable Name")
+    @GetMapping("/{projectId}/api-docs/{apiDocId}/names")
+    @PreAuthorize("@authService.hasProjectRoleMember(#projectId, #userSecurityDTO.getId())")
+    public ResponseEntity<?> findProjectValidPathVariableNames(
+            @PathVariable String projectId,
+            @PathVariable String apiDocId,
+            @AuthenticationPrincipal UserSecurityDTO userSecurityDTO
+    ) {
+        return BaseResponse.success(
+                SuccessCode.SELECT_SUCCESS,
+                mProjectService.findProjectValidPathVariableNames(new ObjectId(projectId), UUID.fromString(apiDocId))
         );
     }
 }

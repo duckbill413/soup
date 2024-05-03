@@ -3,6 +3,7 @@ package io.ssafy.soupapi.domain.project.mongodb.entity.apidocs;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,6 +12,11 @@ import java.util.List;
 @Setter
 @Builder
 public class ApiDocs {
+    @Field("api_base_request_body")
+    private ApiBaseRequestBody baseRequestBody;
+    @Field("api_base_response_body")
+    private ApiBaseResponseBody baseResponseBody;
     @Builder.Default
-    private List<ApiDoc> apiDocs = new ArrayList<>();
+    @Field("api_docs")
+    private List<ApiDoc> apiDocList = new ArrayList<>();
 }

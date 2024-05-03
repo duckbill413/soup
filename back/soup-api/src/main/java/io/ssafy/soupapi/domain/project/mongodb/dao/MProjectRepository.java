@@ -34,6 +34,9 @@ public interface MProjectRepository extends MongoRepository<Project, ObjectId> {
     @Query(value = "{ _id: ?0 }", fields = "{project_info: 1}")
     Optional<Project> findProjectJiraInfo(ObjectId projectId);
 
+    @Query(value = "{ _id: ?0}", fields = "{project_api_doc:  1}")
+    Optional<Project> findProjectApiDocs(ObjectId projectId);
+
     @Query(value = "{ _id:  ?0}", fields = "{project_issues:  1}")
     Optional<Project> findAllProjectIssues(ObjectId projectId);
 
