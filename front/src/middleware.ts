@@ -12,7 +12,8 @@ export default function middleware(request: NextRequest) {
   // [로컬] 로그인 페이지
   if (pathname.startsWith('/local-login')) {
     const newAccessToken = process.env.TOKEN
-    const newRefreshToken = process.env.TOKEN
+    const newRefreshToken =
+      'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiIsImdlbmVyYXRlRGF0ZSI6MTcxNDcxNjgyNDMzOH0.eyJpc3MiOiJjdXRlLXNvdXAiLCJleHAiOjE3MTU5MjY0MjQsInN1YiI6IjQyZjQ3NWIwLTA3NDgtNGM0ZS04NDZmLWE0N2JiNzU4YWQwYyIsInJvbGVzIjpbIlJPTEVfVVNFUiJdfQ.Xa4lm-sP5u3ZIThBg--cdsMwjFXDYOpwanRISkxwur4'
     if (newAccessToken && newRefreshToken) {
       const response = NextResponse.redirect(new URL('/', origin))
       response.cookies.set(ACCESS_TOKEN, newAccessToken)
