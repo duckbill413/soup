@@ -1,7 +1,6 @@
 package io.ssafy.soupapi.domain.project.mongodb.dto.response;
 
 import io.ssafy.soupapi.domain.project.mongodb.entity.Project;
-import io.ssafy.soupapi.global.util.StringParserUtil;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 
@@ -23,16 +22,13 @@ public record GetProjectInfo(
         LocalDate startDate,
         @Schema(description = "프로젝트 종료일")
         LocalDate endDate,
+        @Builder.Default
         @Schema(description = "프로젝트 관리툴 목록")
         List<GetProjectTool> tools
 ) {
     @Builder
     public GetProjectInfo {
-        id = StringParserUtil.parseNullToEmpty(id);
-        name = StringParserUtil.parseNullToEmpty(name);
-        description = StringParserUtil.parseNullToEmpty(description);
-        profileImgUrl = StringParserUtil.parseNullToEmpty(profileImgUrl);
-        if (Objects.isNull(tools) || tools.isEmpty()) {
+        if (Objects.isNull(tools)) {
             tools = List.of();
         }
     }
