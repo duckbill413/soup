@@ -1,22 +1,34 @@
 // middleware.ts
 import { NextResponse, type NextRequest } from 'next/server'
+import { ACCESS_TOKEN, REFRESH_TOKEN } from './constants/token'
 
 const AUTH_PAGES = ['/main']
 
 export default function middleware(request: NextRequest) {
   const { nextUrl, cookies } = request
   const { origin, pathname, searchParams } = nextUrl
-  const accessToken = cookies.get('accessToken')
+  const accessToken = cookies.get(ACCESS_TOKEN)
+
+  // [로컬] 로그인 페이지
+  if (pathname.startsWith('/local-login')) {
+    const newAccessToken = process.env.TOKEN
+    const newRefreshToken = process.env.TOKEN
+    if (newAccessToken && newRefreshToken) {
+      const response = NextResponse.redirect(new URL('/', origin))
+      response.cookies.set(ACCESS_TOKEN, newAccessToken)
+      response.cookies.set(REFRESH_TOKEN, newRefreshToken)
+      return response
+    }
+  }
 
   // 로그인 페이지
   if (pathname.startsWith('/oauth')) {
     const newAccessToken = searchParams.get('access-token')
     const newRefreshToken = searchParams.get('refresh-token')
     if (newAccessToken && newRefreshToken) {
-      // const response = NextResponse.redirect(new URL('/', origin))
       const response = NextResponse.next()
-      response.cookies.set('accessToken', newAccessToken)
-      response.cookies.set('refreshToken', newRefreshToken)
+      response.cookies.set(ACCESS_TOKEN, newAccessToken)
+      response.cookies.set(REFRESH_TOKEN, newRefreshToken)
       return response
     }
   }
