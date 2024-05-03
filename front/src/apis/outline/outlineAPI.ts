@@ -1,14 +1,19 @@
 import baseAxios from '@/apis/baseAxios'
 
-const getOutlineInfoAPI = async(projectId:string)=> {
+// 에러 처리
+const handleApiError = (message:any, error:any) => {
+  console.error(`${message}: `, error);
+  throw new Error(message);
+};
+
+// 아래 수정해야한다.
+const getOutlineInfoAPI = async(projectId:string) => {
   try{
-    const response = baseAxios.get(`projects/${projectId}/info`)
-    return await response
+    const response = await baseAxios.get(`projects/${projectId}/info`)
+    return response.data
   } catch(error) {
-    console.error('Failed to fetch data', error);
-    throw error
+    return handleApiError('개요 API를 가져오는 중 오류 발생: ', error)
   }
 }
 
 export default getOutlineInfoAPI
-
