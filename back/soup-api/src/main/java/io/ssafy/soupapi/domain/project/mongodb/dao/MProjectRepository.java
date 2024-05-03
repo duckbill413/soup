@@ -2,6 +2,7 @@ package io.ssafy.soupapi.domain.project.mongodb.dao;
 
 import io.ssafy.soupapi.domain.project.mongodb.entity.Project;
 import io.ssafy.soupapi.domain.project.mongodb.entity.Proposal;
+import io.ssafy.soupapi.domain.project.mongodb.entity.vuerd.VuerdDoc;
 import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
@@ -19,6 +20,13 @@ public interface MProjectRepository extends MongoRepository<Project, ObjectId> {
     @Query(value = "{ _id: ?0 }", fields = "{ project_proposal: 1 }")
     @Update("{ '$set': { 'project_proposal':  ?1} }")
     void updateProposal(ObjectId projectId, Proposal proposal);
+
+    @Query(value = "{ _id: ?0}", fields = "{ project_vuerd:  1}")
+    Optional<Project> findVuerdById(ObjectId projectId);
+
+    @Query(value = "{ _id: ?0 }", fields = "{ project_vuerd: 1 }")
+    @Update("{ '$set': { project_vuerd:  ?1} }")
+    void changeVuerdById(ObjectId projectId, VuerdDoc vuerdDoc);
 
     @Query(value = "{ _id:  ?0 }", fields = "{project_info:  1, project_tools:  1}")
     Optional<Project> findInfoAndToolsById(ObjectId projectId);

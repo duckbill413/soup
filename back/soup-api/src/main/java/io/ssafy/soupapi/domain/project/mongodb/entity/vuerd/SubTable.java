@@ -11,7 +11,17 @@ import java.util.List;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public class Memo {
+public class SubTable {
     @Field
-    public List<SubMemo> memos;
+    public String id;
+    @Field
+    public String name;
+    @Field
+    public String comment;
+    @Field
+    public List<Column> columns;
+    @Field
+    public Ui ui;
+    @Field
+    public boolean visible;
 }

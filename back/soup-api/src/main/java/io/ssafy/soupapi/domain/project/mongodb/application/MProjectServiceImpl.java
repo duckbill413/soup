@@ -1,5 +1,6 @@
 package io.ssafy.soupapi.domain.project.mongodb.application;
 
+import com.google.gson.Gson;
 import io.ssafy.soupapi.domain.project.mongodb.dao.MProjectRepository;
 import io.ssafy.soupapi.domain.project.mongodb.dto.request.UpdateProjectInfo;
 import io.ssafy.soupapi.domain.project.mongodb.dto.request.UpdateProjectJiraKey;
@@ -12,6 +13,7 @@ import io.ssafy.soupapi.domain.project.mongodb.dto.response.ProjectIssuesCount;
 import io.ssafy.soupapi.domain.project.mongodb.entity.Info;
 import io.ssafy.soupapi.domain.project.mongodb.entity.Project;
 import io.ssafy.soupapi.domain.project.mongodb.entity.issue.ProjectIssue;
+import io.ssafy.soupapi.domain.project.mongodb.entity.vuerd.VuerdDoc;
 import io.ssafy.soupapi.global.common.code.ErrorCode;
 import io.ssafy.soupapi.global.common.request.PageOffsetRequest;
 import io.ssafy.soupapi.global.common.response.OffsetPagination;
@@ -44,6 +46,7 @@ import java.util.UUID;
 public class MProjectServiceImpl implements MProjectService {
     private final MProjectRepository mProjectRepository;
     private final MongoTemplate mongoTemplate;
+    private final Gson gson;
 
     /**
      * 프로젝트 생성 및 최초 팀 구성 설정
@@ -218,6 +221,28 @@ public class MProjectServiceImpl implements MProjectService {
         return findProjectIssues(projectId, pageOffsetRequest);
     }
 
+    @Override
+    public VuerdDoc findProjectVuerd(ObjectId projectId) {
+        var project = mProjectRepository.findVuerdById(projectId).orElseThrow(() ->
+                new BaseExceptionHandler(ErrorCode.NOT_FOUND_PROJECT));
+        if (Objects.isNull(project.getVuerdDoc())) {
+            VuerdDoc sampleVuerd = getSampleVuerdDoc();
+            mProjectRepository.changeVuerdById(projectId, sampleVuerd);
+            return sampleVuerd;
+        }
+
+        return project.getVuerdDoc();
+    }
+
+    @Override
+    public VuerdDoc changeProjectVuerd(ObjectId projectId, VuerdDoc vuerdDoc) {
+        var project = mProjectRepository.findVuerdById(projectId).orElseThrow(() ->
+                new BaseExceptionHandler(ErrorCode.NOT_FOUND_PROJECT));
+
+        mProjectRepository.changeVuerdById(projectId, vuerdDoc);
+        return vuerdDoc;
+    }
+
     private void deleteProjectIssue(ObjectId projectId, ProjectIssue issue) {
         if (Objects.isNull(issue.getProjectIssueId())) {
             return;
@@ -270,5 +295,64 @@ public class MProjectServiceImpl implements MProjectService {
             return 0L;
         }
         return results.getMappedResults().get(0).count();
+    }
+
+    private VuerdDoc getSampleVuerdDoc() {
+        String json = """
+                {
+                  "canvas": {
+                    "version": "2.2.13",
+                    "width": 2000,
+                    "height": 2000,
+                    "scrollTop": -1,
+                    "scrollLeft": 0,
+                    "zoomLevel": 1,
+                    "show": {
+                      "tableComment": true,
+                      "columnComment": true,
+                      "columnDataType": true,
+                      "columnDefault": true,
+                      "columnAutoIncrement": false,
+                      "columnPrimaryKey": true,
+                      "columnUnique": false,
+                      "columnNotNull": true,
+                      "relationship": true
+                    },
+                    "database": "MySQL",
+                    "databaseName": "",
+                    "canvasType": "ERD",
+                    "language": "GraphQL",
+                    "tableCase": "pascalCase",
+                    "columnCase": "camelCase",
+                    "highlightTheme": "VS2015",
+                    "bracketType": "none",
+                    "setting": {
+                      "relationshipDataTypeSync": true,
+                      "relationshipOptimization": false,
+                      "columnOrder": [
+                        "columnName",
+                        "columnDataType",
+                        "columnNotNull",
+                        "columnUnique",
+                        "columnAutoIncrement",
+                        "columnDefault",
+                        "columnComment"
+                      ]
+                    },
+                    "pluginSerializationMap": {}
+                  },
+                  "table": {
+                    "tables": [],
+                    "indexes": []
+                  },
+                  "memo": {
+                    "memos": []
+                  },
+                  "relationship": {
+                    "relationships": []
+                  }
+                }
+                """;
+        return gson.fromJson(json, VuerdDoc.class);
     }
 }
