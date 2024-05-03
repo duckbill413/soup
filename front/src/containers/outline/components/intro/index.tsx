@@ -3,14 +3,21 @@
 import * as styles from "@/containers/outline/styles/intro/outlineIntro.css"
 import sample from '#/assets/icons/mainpage/sample1.jpg'
 import { useEffect } from 'react'
-import { getOutlineInfoAPI } from '@/apis/outline/outlineAPI'
+import getOutlineInfoAPI from '@/apis/outline/outlineAPI'
 
 function OutlineIntro () {
   const sampleSrc = sample.src
 
   useEffect(() => {
-    const data = getOutlineInfoAPI('663345425249cc4b837d65ad')
-    console.log(data)
+    const fetchData = async () => {
+      try {
+        const data = await getOutlineInfoAPI('663345425249cc4b837d65ad');
+        console.log(data);
+      } catch (error) {
+        console.error('Error fetching data', error);
+      }
+    };
+    fetchData();
   }, [])
   return (
     <div className={styles.container}>
