@@ -1,9 +1,12 @@
 package io.ssafy.soupapi.domain.project.mongodb.entity.apidocs;
 
+import lombok.Getter;
+
+@Getter
 public class ApiVariable {
-    String name;
-    ApiVariableType type;
-    String description;
-    String defaultVariable;
-    boolean require;
+    private String name;
+    private ApiVariableType type;
+    private String description;
+    private String defaultVariable;
+    private boolean require;
 }
