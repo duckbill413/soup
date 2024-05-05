@@ -2,6 +2,10 @@ package io.ssafy.soupapi.domain.project.usecase.application;
 
 import io.ssafy.soupapi.domain.project.mongodb.application.MProjectService;
 import io.ssafy.soupapi.domain.project.postgresql.application.PProjectService;
+import io.ssafy.soupapi.domain.project.usecase.dto.CreateAiProposal;
+import io.ssafy.soupapi.external.client.ClaudeFeignClient;
+import io.ssafy.soupapi.external.dto.CreateClaudeMessageReq;
+import io.ssafy.soupapi.external.dto.CreateClaudeMessageRes;
 import io.ssafy.soupapi.global.security.user.UserSecurityDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -14,6 +18,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class ProjectUsecaseImpl implements ProjectUsecase {
     private final MProjectService mProjectService;
     private final PProjectService pProjectService;
+
+    private final ClaudeFeignClient claudeFeignClient;
 
     /**
      * 프로젝트 생성
@@ -30,4 +36,15 @@ public class ProjectUsecaseImpl implements ProjectUsecase {
         pProjectService.registProject(projectId.toHexString(), userSecurityDTO); // TODO: member security 적용
         return projectId.toHexString();
     }
+
+    @Override
+    public CreateAiProposal createAiProposal(CreateAiProposal createAiProposal) {
+        CreateClaudeMessageReq createClaudeMessageReq = new CreateClaudeMessageReq(createAiProposal);
+//        log.info(createClaudeMessageReq);
+        CreateClaudeMessageRes claudeRes = claudeFeignClient.getClaudeMessage(createClaudeMessageReq);
+//        log.info(claudeRes);
+
+        return claudeRes.toResponse();
+    }
+
 }
