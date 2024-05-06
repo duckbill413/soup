@@ -1,8 +1,8 @@
-package io.ssafy.soupapi.external.client;
+package io.ssafy.soupapi.external.claude;
 
 import io.ssafy.soupapi.external.config.ClaudeFeignConfig;
-import io.ssafy.soupapi.external.dto.CreateClaudeMessageReq;
-import io.ssafy.soupapi.external.dto.CreateClaudeMessageRes;
+import io.ssafy.soupapi.external.claude.dto.CreateClaudeMessageReq;
+import io.ssafy.soupapi.external.claude.dto.CreateClaudeMessageRes;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;

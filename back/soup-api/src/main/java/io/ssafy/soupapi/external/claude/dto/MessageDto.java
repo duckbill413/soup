@@ -1,4 +1,4 @@
-package io.ssafy.soupapi.external.dto;
+package io.ssafy.soupapi.external.claude.dto;
 
 import io.ssafy.soupapi.domain.project.usecase.dto.CreateAiProposal;
 import lombok.Getter;

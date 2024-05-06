@@ -3,9 +3,9 @@ package io.ssafy.soupapi.domain.project.usecase.application;
 import io.ssafy.soupapi.domain.project.mongodb.application.MProjectService;
 import io.ssafy.soupapi.domain.project.postgresql.application.PProjectService;
 import io.ssafy.soupapi.domain.project.usecase.dto.CreateAiProposal;
-import io.ssafy.soupapi.external.client.ClaudeFeignClient;
-import io.ssafy.soupapi.external.dto.CreateClaudeMessageReq;
-import io.ssafy.soupapi.external.dto.CreateClaudeMessageRes;
+import io.ssafy.soupapi.external.claude.ClaudeFeignClient;
+import io.ssafy.soupapi.external.claude.dto.CreateClaudeMessageReq;
+import io.ssafy.soupapi.external.claude.dto.CreateClaudeMessageRes;
 import io.ssafy.soupapi.global.security.user.UserSecurityDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -32,17 +32,17 @@ public class ProjectUsecaseImpl implements ProjectUsecase {
     @Transactional
     @Override
     public String createProject(UserSecurityDTO userSecurityDTO) {
-        var projectId = mProjectService.createProject(userSecurityDTO); // TODO: member security 적용
-        pProjectService.registProject(projectId.toHexString(), userSecurityDTO); // TODO: member security 적용
+        var projectId = mProjectService.createProject(userSecurityDTO);
+        pProjectService.registProject(projectId.toHexString(), userSecurityDTO);
         return projectId.toHexString();
     }
 
     @Override
     public CreateAiProposal createAiProposal(CreateAiProposal createAiProposal) {
         CreateClaudeMessageReq createClaudeMessageReq = new CreateClaudeMessageReq(createAiProposal);
-//        log.info(createClaudeMessageReq);
+        log.info(createClaudeMessageReq);
         CreateClaudeMessageRes claudeRes = claudeFeignClient.getClaudeMessage(createClaudeMessageReq);
-//        log.info(claudeRes);
+        log.info(claudeRes);
 
         return claudeRes.toResponse();
     }
