@@ -25,4 +25,24 @@ public class StringParserUtil {
 
         return result;
     }
+
+    public static String upperFirst(String data) {
+        if (Objects.isNull(data)) {
+            return "";
+        }
+        if (data.length() == 1) {
+            return data.toUpperCase();
+        }
+        return Character.toUpperCase(data.charAt(0)) + data.substring(1);
+    }
+
+    public static String lowerFirst(String data) {
+        if (Objects.isNull(data)) {
+            return "";
+        }
+        if (data.length() == 1) {
+            return data.toLowerCase();
+        }
+        return Character.toLowerCase(data.charAt(0)) + data.substring(1);
+    }
 }

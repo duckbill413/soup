@@ -28,4 +28,12 @@ public class MapStringReplace {
         }
         return replaced;
     }
+
+    public void addAllValues(Map<String, String> names) {
+        keyMap.putAll(names);
+    }
+
+    public String get(String key) {
+        return keyMap.get(key);
+    }
 }
