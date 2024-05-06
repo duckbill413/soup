@@ -77,6 +77,11 @@ spring:
             user-info-uri: https://kapi.kakao.com/v2/user/me # 유저 정보를 가져오기 위한 주소
             user-name-attribute: id
 
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
+
 ## social login
 social-login:
   redirect-uri: ${SOCIAL_LOGIN_FE_REDIRECT_URI} # FE로 redirect (accessToken, refreshToken 붙여서)
@@ -131,7 +136,6 @@ springdoc:
         - /api/**
   show-actuator: true
 
-
 ## AWS S3 Configuration
 cloud:
   aws:
@@ -160,3 +164,14 @@ management:
           down: 500 # server down 시 에러 정보
           out_of_service: 503
         order: DOWN, FATAL, OUT-OF-SERVICE, UNKNOWN, UP
+
+# Claude
+claude:
+  api-key: ${CLAUDE_API_KEY}
+  anthropic-version: 2023-06-01
+
+# Feign
+feign:
+  claude:
+    name: claude
+    url: https://api.anthropic.com
