@@ -60,27 +60,31 @@ function ToolTable() {
         <tr key={row.id}>
           <td>
             {editingId === row.id ? (
-              <input type="text" value={newName} onChange={(e) => setNewName(e.target.value)} />
+              <input type="text" value={newName} onChange={(e) => setNewName(e.target.value)} style={{textAlign:'center'}}/>
             ) : (
               row.name
             )}
           </td>
           <td>
             {editingId === row.id ? (
-              <>
-              <input type="text" value={newURL} onChange={(e) => setNewURL(e.target.value)} />
-              <button type="button" onClick={() => handleSave(row.id)}>저장</button>
-              </>
+              <div style={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'center', width: '100%' }}>
+                <input type="text" value={newURL} onChange={(e) => setNewURL(e.target.value)} style={{ textAlign:'center', flexGrow: 1, marginRight: '3%' }}/>
+                <button type="button" onClick={() => handleSave(row.id)} style={{ marginLeft: 'auto' }}>저장</button>
+              </div>
             ) : (
-              <>
-              <a href={normalizeUrl(row.url)} target="_blank" rel="noopener noreferrer">{row.url}</a>
-              <button type="button" onClick={() => handleEdit(row.id, row.name, row.url)}>
-                <Image src={editIcon} alt="delete" width={30} height={30}/>
-              </button>
-              <button type="button" onClick={() => updateTool("delete", row.id, row.name, row.url)}>
-                <Image src={deleteIcon} alt="delete" width={30} height={30}/>
-              </button>
-              </>
+              <div style={{display:'flex', justifyContent:'space-between', alignItems: 'center'}}>
+                <div style={{display:'flex', width:'100%',justifyContent:'center'}}>
+                <a href={normalizeUrl(row.url)} target="_blank" rel="noopener noreferrer"style={{ textAlign: 'center', marginRight: '10px' }}>{row.url}</a>
+                </div>
+                <div style={{display:'flex', justifyContent:'flex-end'}}>
+                  <button type="button" onClick={() => handleEdit(row.id, row.name, row.url)}style={{ marginLeft: 'auto', marginRight: '3%' }}>
+                    <Image src={editIcon} alt="delete" width={30} height={30}/>
+                  </button>
+                  <button type="button" onClick={() => updateTool("delete", row.id, row.name, row.url)}>
+                    <Image src={deleteIcon} alt="delete" width={30} height={30}/>
+                  </button>
+                </div>
+              </div>
             )}
           </td>
         </tr>
