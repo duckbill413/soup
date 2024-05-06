@@ -12,7 +12,7 @@ function OutlineIntro () {
 
   const updateProject = useMutation(({ storage }, key , newValue) => {
     const outline = storage.get("outline");
-    outline.set(key, newValue);
+    outline?.set(key, newValue);
   }, []);
 
   // useEffect(() => {
@@ -35,14 +35,14 @@ function OutlineIntro () {
       <div className={styles.introDivision}>
         <p>프로젝트 이름</p>
         <input placeholder="프로젝트 이름"
-               value={initialProject.project_name}
+               value={initialProject?.project_name}
                className={styles.input}
                onChange={(e) => updateProject('project_name',e.target.value)}
         />
         <p>프로젝트 설명</p>
         <textarea placeholder="프로젝트 설명"
                   className={styles.textarea}
-                  value={initialProject.project_description}
+                  value={initialProject?.project_description}
                   onChange={(e) => updateProject('project_description',e.target.value)}
         />
       </div>

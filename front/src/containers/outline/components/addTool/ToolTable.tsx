@@ -3,32 +3,48 @@ import React, { useState } from 'react';
 import Image from 'next/image'
 import deleteIcon from "#/assets/icons/outline/delete.svg"
 import editIcon from "#/assets/icons/outline/edit.svg"
+import { useMutation, useStorage } from '../../../../../liveblocks.config'
 
-interface TableRow {
-  name: string;
-  description: string;
-}
+function ToolTable() {
+  const initialProject = useStorage((root) => root.outline)
 
-interface ToolTableProps {
-  rows: TableRow[];
-  deleteTool: (index: number) => void;
-  updateTool: (index: number, newName: string, newDescription: string) => void;
-}
+  const updateTool = useMutation(({ storage }, action:string, id, updatedName, updatedURL) => {
+    const outline = storage.get("outline");
+    const tools = outline?.get("project_tools")
+    const tool = tools?.find((t)=>t.get("id")===id)
+    if (action === "update" && tool) { // 수정하기
+      tool.set("name", updatedName)
+      tool.set("url", updatedURL);
+    } else { // 삭제하기
+      const index = tools?.findIndex((t) => t.get("id") === id);
+      if (tools && index !== undefined && index !== -1) {
+        tools.delete(index);
+      }
+    }
+  }, []);
 
-function ToolTable({ rows, deleteTool, updateTool }: ToolTableProps) {
-  const [editingIndex, setEditingIndex] = useState<number | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
   const [newName, setNewName] = useState<string>('');
-  const [newDescription, setNewDescription] = useState<string>('');
+  const [newURL, setNewURL] = useState<string>('');
 
-  const handleEdit = (index: number) => {
-    setEditingIndex(index);
-    setNewName(rows[index].name);
-    setNewDescription(rows[index].description);
+  const handleEdit = (id: string, name: string, url?: string) => {
+    setEditingId(id);
+    setNewName(name);
+    setNewURL(url || '');
   };
 
-  const handleSave = (index: number) => {
-    updateTool(index, newName, newDescription);
-    setEditingIndex(null);
+  const handleSave = (id: string) => {
+    updateTool("update", id, newName, newURL);
+    setEditingId(null);
+  };
+
+  // 따로 함수로 빼둘거
+  const normalizeUrl = (url?: string) => {
+    const urlString = url ?? "";
+    if (!/^https?:\/\//i.test(urlString)) {
+      return `https://${urlString}`;
+    }
+    return urlString;
   };
 
   return (
@@ -40,28 +56,28 @@ function ToolTable({ rows, deleteTool, updateTool }: ToolTableProps) {
       </tr>
       </thead>
       <tbody>
-      {rows.map((row, index) => (
-        <tr key={index}>
+      {initialProject?.project_tools.map((row) => (
+        <tr key={row.id}>
           <td>
-            {editingIndex === index ? (
+            {editingId === row.id ? (
               <input type="text" value={newName} onChange={(e) => setNewName(e.target.value)} />
             ) : (
               row.name
             )}
           </td>
           <td>
-            {editingIndex === index ? (
+            {editingId === row.id ? (
               <>
-              <input type="text" value={newDescription} onChange={(e) => setNewDescription(e.target.value)} />
-              <button type="button" onClick={() => handleSave(index)}>저장</button>
+              <input type="text" value={newURL} onChange={(e) => setNewURL(e.target.value)} />
+              <button type="button" onClick={() => handleSave(row.id)}>저장</button>
               </>
             ) : (
               <>
-              <a href={row.description}>{row.description}</a>
-              <button type="button" onClick={() => handleEdit(index)}>
+              <a href={normalizeUrl(row.url)} target="_blank" rel="noopener noreferrer">{row.url}</a>
+              <button type="button" onClick={() => handleEdit(row.id, row.name, row.url)}>
                 <Image src={editIcon} alt="delete" width={30} height={30}/>
               </button>
-              <button type="button" onClick={() => deleteTool(index)}>
+              <button type="button" onClick={() => updateTool("delete", row.id, row.name, row.url)}>
                 <Image src={deleteIcon} alt="delete" width={30} height={30}/>
               </button>
               </>
