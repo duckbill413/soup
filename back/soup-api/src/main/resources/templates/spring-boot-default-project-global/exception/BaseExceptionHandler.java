@@ -1,6 +1,6 @@
 package :springboot-project_package.global.exception;
 
-import io.ssafy.soupapi.global.common.code.ErrorCode;
+import :springboot-project_package.global.common.code.ErrorCode;
 import lombok.Getter;
 
 @Getter
