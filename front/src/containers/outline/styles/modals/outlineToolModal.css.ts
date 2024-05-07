@@ -18,7 +18,7 @@ export const modalSubContainer = style ({
   backgroundColor:'white',
   borderRadius:'10px',
   width:'30%',
-  height:'60%',
+  height:'40%',
   overflowY:'auto',
   '::-webkit-scrollbar':{
     width: vars.space.tiny,
@@ -56,10 +56,9 @@ export const button = style({
 
 export const toolInput = style ({
   width:'47%',
-  height:'50%',
+  height:'12%',
   padding:'0.1rem',
-  paddingLeft:'0.6rem',
-  marginTop:'20%',
+  paddingLeft:'0.8rem',
   border:'none',
   borderRadius:'5px',
   borderBottom:'1px solid #F4F4F4',
@@ -68,14 +67,30 @@ export const toolInput = style ({
 })
 
 export const urlInput = style ({
-  width:'80%',
-  height:'50%',
+  width:'90%',
+  height:'12%',
   padding:'0.1rem',
-  paddingLeft:'0.6rem',
-  marginTop:'3%',
+  paddingLeft:'0.8rem',
   border:'none',
   borderRadius:'5px',
   borderBottom:'1px solid #F4F4F4',
   boxShadow:vars.boxShadow.customInner,
   backgroundColor:'#F4F4F4', outline: 'none'
+})
+
+export const inputMainDiv = style ({
+  width:'95%',
+  height:'80%',
+  display:'flex',
+  flexDirection:'column',
+  justifyContent : 'space-evenly',
+  marginLeft:'5%',
+
+})
+
+export const inputSubDiv = style ({
+  height:'15%',
+  display:'flex',
+  justifyContent:'center',
+  marginTop:'10%'
 })

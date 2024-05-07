@@ -3,6 +3,8 @@ import React, { useState } from 'react';
 import Image from 'next/image'
 import deleteIcon from "#/assets/icons/outline/delete.svg"
 import editIcon from "#/assets/icons/outline/edit.svg"
+import saveIcon from "#/assets/icons/outline/saveIcon.svg"
+import normalizeUrl from '@/containers/outline/utils/outline'
 import { useMutation, useStorage } from '../../../../../liveblocks.config'
 
 function ToolTable() {
@@ -38,15 +40,6 @@ function ToolTable() {
     setEditingId(null);
   };
 
-  // 따로 함수로 빼둘거
-  const normalizeUrl = (url?: string) => {
-    const urlString = url ?? "";
-    if (!/^https?:\/\//i.test(urlString)) {
-      return `https://${urlString}`;
-    }
-    return urlString;
-  };
-
   return (
     <table>
       <thead>
@@ -60,24 +53,26 @@ function ToolTable() {
         <tr key={row.id}>
           <td>
             {editingId === row.id ? (
-              <input type="text" value={newName} onChange={(e) => setNewName(e.target.value)} style={{textAlign:'center'}}/>
+              <input className={styles.toolInput} type="text" value={newName} onChange={(e) => setNewName(e.target.value)}/>
             ) : (
               row.name
             )}
           </td>
           <td>
             {editingId === row.id ? (
-              <div style={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'center', width: '100%' }}>
-                <input type="text" value={newURL} onChange={(e) => setNewURL(e.target.value)} style={{ textAlign:'center', flexGrow: 1, marginRight: '3%' }}/>
-                <button type="button" onClick={() => handleSave(row.id)} style={{ marginLeft: 'auto' }}>저장</button>
+              <div className={styles.saveDiv}>
+                <input className={styles.saveInput} type="text" value={newURL} onChange={(e) => setNewURL(e.target.value)} />
+                <button className={styles.saveButton} type="button" onClick={() => handleSave(row.id)}>
+                  <Image src={saveIcon} alt="save" width={30} height={30}/>
+                </button>
               </div>
             ) : (
-              <div style={{display:'flex', justifyContent:'space-between', alignItems: 'center'}}>
-                <div style={{display:'flex', width:'100%',justifyContent:'center'}}>
-                <a href={normalizeUrl(row.url)} target="_blank" rel="noopener noreferrer"style={{ textAlign: 'center', marginRight: '10px' }}>{row.url}</a>
+              <div className={styles.urlMainDiv}>
+                <div className={styles.urlURLDiv}>
+                  <a href={normalizeUrl(row.url)} target="_blank" rel="noopener noreferrer" className={styles.aTag}>{row.url}</a>
                 </div>
-                <div style={{display:'flex', justifyContent:'flex-end'}}>
-                  <button type="button" onClick={() => handleEdit(row.id, row.name, row.url)}style={{ marginLeft: 'auto', marginRight: '3%' }}>
+                <div className={styles.urlIconDiv}>
+                  <button type="button" onClick={() => handleEdit(row.id, row.name, row.url)} className={styles.editButton}>
                     <Image src={editIcon} alt="delete" width={30} height={30}/>
                   </button>
                   <button type="button" onClick={() => updateTool("delete", row.id, row.name, row.url)}>
