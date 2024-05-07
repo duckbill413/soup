@@ -35,11 +35,15 @@ public class JwtAuthenticateFilter extends OncePerRequestFilter {
         log.info("Request Params: {}", request.getParameterMap());
         log.info("Access Token: {}", request.getHeader("Authorization"));
 
+        log.info("Header Names: {}", request.getHeaderNames());
+
         log.info("Servlet Path: {}", request.getServletPath());
         log.info("Context Path: {}", request.getContextPath());
 
         log.info("Http Servlet Mapping: {}", request.getHttpServletMapping());
         log.info("Path Info: {}", request.getPathInfo());
+
+        log.info("Http origin: {}", request.getHeader(org.springframework.http.HttpHeaders.ORIGIN));
 
         try {
             Authentication authentication = jwtService.authenticateAccessToken(request);
