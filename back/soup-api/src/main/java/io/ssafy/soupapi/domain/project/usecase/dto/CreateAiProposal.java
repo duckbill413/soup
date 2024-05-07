@@ -7,8 +7,8 @@ import java.util.List;
 @Builder
 public record CreateAiProposal(
     List<String> background,
-    String intro,
-    String target,
-    String result
+    List<String> intro,
+    List<String> target,
+    List<String> result
 ) {
 }

@@ -51,9 +51,9 @@ public class CreateClaudeMessageRes {
 
         return CreateAiProposal.builder()
                 .background(List.of(background))
-                .intro(intro)
-                .target(target)
-                .result(result)
+                .intro(List.of(intro))
+                .target(List.of(target))
+                .result(List.of(result))
                 .build();
     }
 }

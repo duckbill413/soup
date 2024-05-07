@@ -15,7 +15,7 @@ public class CreateClaudeMessageReq {
     String model = "claude-3-opus-20240229";
     @JsonProperty("max_tokens")
     Integer maxTokens = 1024;
-    String system = "Flesh out an idea for an IT service development project.Answer four things each in a bullet point. 기획 배경, 서비스 소개, 서비스 타겟, 기대 효과. Write ONLY CONTENTS after the bullet point. No titles. Answer each in one Korean sentence.";
+    String system = "Flesh out an idea for an IT service development project. Answer four things each in a bullet point. 기획 배경, 서비스 소개, 서비스 타겟, 기대 효과. Write ONLY CONTENTS after the bullet point. No titles. Answer each in one Korean sentence.";
     List<MessageDto> messages = new ArrayList<>();
 
     public CreateClaudeMessageReq(CreateAiProposal req) {
