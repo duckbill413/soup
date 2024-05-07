@@ -1,5 +1,6 @@
-import { createClient, LiveObject } from '@liveblocks/client'
+import { createClient, LiveObject,LiveList } from '@liveblocks/client'
 import { createRoomContext, createLiveblocksContext } from "@liveblocks/react";
+import {FuncDescResWithColor} from "@/types/functionDesc";
   
 const client = createClient({
   publicApiKey: process.env.NEXT_PUBLIC_LIVEBLOCKS_PUBLIC_KEY!,
@@ -9,7 +10,7 @@ const client = createClient({
 // and that will automatically be kept in sync. Accessible through the
 // `user.presence` property. Must be JSON-serializable.
 type Presence = {
-  // cursor: { x: number, y: number } | null,
+   // cursor: { x: number, y: number } | null,
   // ...
 };
 
@@ -17,10 +18,13 @@ type Presence = {
 // Room, even after all users leave. Fields under Storage typically are
 // LiveList, LiveMap, LiveObject instances, for which updates are
 // automatically persisted and synced to all connected clients.
+
 type Storage = {
   // author: LiveObject<{ firstName: string, lastName: string }>,
   // ...
+
   outline : LiveObject<{name: string, description: string}>
+  func?: LiveList<FuncDescResWithColor>
 };
 
 // Optionally, UserMeta represents static/readonly metadata on each user, as
