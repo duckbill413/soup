@@ -5,7 +5,13 @@ import { usePathname } from 'next/navigation'
 import { ReactNode } from 'react'
 import { RoomProvider } from '@/../liveblocks.config'
 import Loading from '@/app/loading'
-import { LiveObject } from '@liveblocks/client'
+import { LiveList, LiveObject } from '@liveblocks/client'
+
+type ProjectTool = {
+  id: string;
+  name : string;
+  url? : string;
+}
 
 function Room({ children }: { children: ReactNode }) {
   const path = usePathname()
@@ -13,10 +19,10 @@ function Room({ children }: { children: ReactNode }) {
   return (
     <RoomProvider id={path}
                   initialPresence={{}}
-                  initialStorage={{outline : new LiveObject({
-        project_name:'', project_description:'',project_startDate:'', project_endDate:''
-    })}}>
-      {/* Loading 페이지 추가해야 한다. */}
+                  initialStorage={{
+                    outline : new LiveObject({
+                      project_name:'', project_description:'',project_startDate:'', project_endDate:'', project_tools:new LiveList<LiveObject<ProjectTool>>()}),
+    }}>
       <ClientSideSuspense fallback={<div><Loading/></div>}>
         {() => children}
       </ClientSideSuspense>

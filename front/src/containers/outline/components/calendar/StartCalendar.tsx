@@ -9,7 +9,7 @@ function StartCalendar () {
   const initialProject = useStorage((root) => root.outline)
   const updateProject = useMutation(({ storage }, key , newValue:Dayjs | null) => {
     const outline = storage.get("outline");
-    outline.set(key, newValue);
+    outline?.set(key, newValue);
   }, []);
 
   return (
@@ -28,7 +28,7 @@ function StartCalendar () {
             },
           }}
           format="YYYY / MM / DD"
-          value={initialProject.project_startDate ? dayjs(initialProject.project_startDate) : null}
+          value={initialProject?.project_startDate ? dayjs(initialProject.project_startDate) : null}
           onChange={(newValue)=>updateProject('project_startDate', newValue)}
         />
       </DemoContainer>
