@@ -1,6 +1,7 @@
 package io.ssafy.soupapi.domain.projectbuilder.dto.response;
 
 import io.ssafy.soupapi.domain.project.mongodb.entity.builder.ProjectBuilderInfo;
+import io.ssafy.soupapi.domain.project.mongodb.entity.builder.SpringPackaging;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 
@@ -15,6 +16,8 @@ public record GetProjectBuilderInfo(
         String languageVersion,
         @Schema(description = "springboot_version")
         String version,
+        @Schema(description = "springboot_packaging")
+        SpringPackaging packaging,
         @Schema(description = "springboot_group")
         String group,
         @Schema(description = "springboot_artifact")
@@ -34,6 +37,7 @@ public record GetProjectBuilderInfo(
                 .version(builderInfo.getVersion())
                 .group(builderInfo.getGroup())
                 .artifact(builderInfo.getArtifact())
+                .packaging(builderInfo.getPackaging())
                 .name(builderInfo.getName())
                 .description(builderInfo.getDescription())
                 .packageName(builderInfo.getPackageName())

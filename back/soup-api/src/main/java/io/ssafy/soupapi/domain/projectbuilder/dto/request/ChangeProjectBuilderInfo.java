@@ -1,6 +1,7 @@
 package io.ssafy.soupapi.domain.projectbuilder.dto.request;
 
 import io.ssafy.soupapi.domain.project.mongodb.entity.builder.ProjectBuilderInfo;
+import io.ssafy.soupapi.domain.project.mongodb.entity.builder.SpringPackaging;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -23,6 +24,9 @@ public record ChangeProjectBuilderInfo(
         @NotEmpty(message = "version 값이 공백 입니다.")
         @Schema(description = "springboot_version", defaultValue = "3.2.5")
         String version,
+        @NotNull(message = "packaging 정보를 확인해 주세요.")
+        @Schema(description = "spring boot packaging 정보", defaultValue = "Jar")
+        SpringPackaging packaging,
         @NotNull(message = "group 값이 null일 수 없습니다.")
         @NotEmpty(message = "group 값이 공백 입니다.")
         @Schema(description = "springboot_group", defaultValue = "com.example")
@@ -52,6 +56,7 @@ public record ChangeProjectBuilderInfo(
                 .version(builderInfo.version())
                 .group(builderInfo.group())
                 .artifact(builderInfo.artifact())
+                .packaging(builderInfo.packaging())
                 .name(builderInfo.name())
                 .description(builderInfo.description())
                 .packageName(builderInfo.packageName())

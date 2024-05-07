@@ -17,6 +17,8 @@ public class ProjectBuilderInfo {
     private String languageVersion;
     @Field("springboot_version")
     private String version;
+    @Field("springboot_build_packaging")
+    private SpringPackaging packaging;
     @Field("springboot_group")
     private String group;
     @Field("springboot_artifact")
