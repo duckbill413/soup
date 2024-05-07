@@ -1,7 +1,6 @@
 package io.ssafy.soupapi.domain.projectauth.dto.response;
 
 import io.ssafy.soupapi.domain.project.postgresql.entity.ProjectRole;
-import io.ssafy.soupapi.global.util.StringParserUtil;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 
@@ -26,10 +25,7 @@ public record GetProjectTeamMember(
 ) {
     @Builder
     public GetProjectTeamMember {
-        email = StringParserUtil.parseNullToEmpty(email);
-        nickname = StringParserUtil.parseNullToEmpty(nickname);
-        phone = StringParserUtil.parseNullToEmpty(phone);
-        if (Objects.isNull(roles) || roles.isEmpty()) {
+        if (Objects.isNull(roles)) {
             roles = List.of();
         }
     }
