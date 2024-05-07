@@ -17,6 +17,9 @@ export const manager = style({
   justifyContent: 'center',
   alignItems: 'center'
 })
+
+
+
 globalStyle(`${manager}>p`, {
   margin: `0 ${vars.space.tiny} 0 0`
 })
@@ -75,26 +78,31 @@ globalStyle(`${table} > tbody > tr > td:nth-child(1)`, {
 });
 
 
+
 globalStyle(`${table}>tbody>tr>td`, {
   fontSize: vars.fontSize.caption,
   color: vars.color.black,
-  textAlign: 'center',
   padding: '12px 12px',
   borderBottom: `2px solid ${vars.color.gray}`,
   fontWeight: 500,
-  cursor:'pointer',
+  textAlign: 'center',
+
 })
 
 globalStyle(`${table} > tbody > tr > td input:focus`,{
   outline: 'none',
 });
-globalStyle(`${table} > tbody > tr > td input`,{
+globalStyle(`${table} > tbody > tr > td > input`,{
   border: 'none',
   cursor: 'pointer',
   fontWeight: 600,
   textAlign: 'center',
 });
+
 globalStyle(`${table} > tbody > tr > td input`,{
   width: '100%',
   height: '100%'
 });
+
+
+

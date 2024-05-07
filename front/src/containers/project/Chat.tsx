@@ -1,7 +1,7 @@
 'use client'
 
-import chatSvg from '#/assets/icons/chat.svg'
-import chatXSvg from '#/assets/icons/chatX.svg'
+import chatSvg from '#/assets/icons/chat/chat.svg'
+import chatXSvg from '#/assets/icons/chat/chatX.svg'
 import Image from 'next/image'
 import styles from '@/containers/project/chat.css'
 import { useState } from 'react'
