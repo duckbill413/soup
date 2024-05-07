@@ -6,6 +6,7 @@ import io.ssafy.soupapi.domain.projectbuilder.dto.response.GetProjectBuilderInfo
 import io.ssafy.soupapi.global.common.code.SuccessCode;
 import io.ssafy.soupapi.global.common.response.BaseResponse;
 import io.ssafy.soupapi.global.security.user.UserSecurityDTO;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
 public class ProjectBuilderController {
     private final ProjectBuilderService projectBuilderService;
 
+    @Operation(description = "프로젝트 빌드")
     @PostMapping("/{projectId}/builder")
     @PreAuthorize("!@authService.hasViewerProjectRoleMember(#projectId, #userSecurityDTO.getId())")
     public void buildProject(
@@ -31,7 +33,7 @@ public class ProjectBuilderController {
     ) {
         projectBuilderService.buildProject(projectId);
     }
-
+    @Operation(description = "프로젝트 빌드 관련 정보 업데이트")
     @PutMapping("/{projectId}/builder")
     @PreAuthorize("!@authService.hasViewerProjectRoleMember(#projectId, #userSecurityDTO.getId())")
     public ResponseEntity<BaseResponse<GetProjectBuilderInfo>> changeProjectBuilderInfo(
@@ -44,7 +46,7 @@ public class ProjectBuilderController {
                 projectBuilderService.changeBuilderInfo(projectId, changeProjectBuilderInfo)
         );
     }
-
+    @Operation(description = "프로젝트 빌드 관련 정보 조회")
     @GetMapping("/{projectId}/builder")
     @PreAuthorize("@authService.hasProjectRoleMember(#projectId, #userSecurityDTO.getId())")
     public ResponseEntity<BaseResponse<GetProjectBuilderInfo>> findProjectBuilderInfo(

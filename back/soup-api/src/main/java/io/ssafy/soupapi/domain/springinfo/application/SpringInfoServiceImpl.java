@@ -26,6 +26,6 @@ public class SpringInfoServiceImpl implements SpringInfoService {
     @Override
     public List<GetDependency> usableDependencies() {
         var dependencies = dependencyRepository.findAll();
-        return dependencies.stream().map(d -> new GetDependency(d.getName(), d.getDescription(), d.getCategory())).toList();
+        return dependencies.stream().map(GetDependency::of).toList();
     }
 }

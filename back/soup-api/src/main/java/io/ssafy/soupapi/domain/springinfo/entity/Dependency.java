@@ -24,4 +24,6 @@ public class Dependency {
     private String category;
     @Column(name = "dependency_code", length = 2000, nullable = false)
     private String code;
+    @Column(name = "basic_dependency", nullable = false)
+    private boolean basic;
 }

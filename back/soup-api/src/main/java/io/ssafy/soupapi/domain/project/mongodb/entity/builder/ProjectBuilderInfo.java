@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.mongodb.core.mapping.Field;
 
+import java.util.List;
+
 @Getter
 @Setter
 @Builder
@@ -29,4 +31,6 @@ public class ProjectBuilderInfo {
     private String description;
     @Field("springboot_package_name")
     private String packageName;
+    @Field("springboot_dependencies")
+    private List<ProjectBuilderDependency> dependencies;
 }

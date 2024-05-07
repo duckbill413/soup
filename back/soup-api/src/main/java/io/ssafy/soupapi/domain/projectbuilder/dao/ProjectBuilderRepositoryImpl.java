@@ -20,8 +20,8 @@ import java.util.Objects;
 @Repository
 @RequiredArgsConstructor
 public class ProjectBuilderRepositoryImpl implements ProjectBuilderRepository {
-    String sourcePath = "src/main/resources/templates/springboot-default-project";
-    String destinationPath = "C:\\util\\%s"; // TODO: 환경 변수를 이용하여 경로 변경
+    final String sourcePath = "src/main/resources/templates/springboot-default-project";
+    final String destinationPath = "C:\\util\\%s"; // TODO: 환경 변수를 이용하여 경로 변경
 
     @Override
     public void packageBuilder(Project project) {

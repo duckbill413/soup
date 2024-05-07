@@ -5,6 +5,8 @@ import io.ssafy.soupapi.domain.project.mongodb.entity.builder.SpringPackaging;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 
+import java.util.List;
+
 @Builder
 @Schema(description = "프로젝트 빌드 정보")
 public record GetProjectBuilderInfo(
@@ -27,7 +29,9 @@ public record GetProjectBuilderInfo(
         @Schema(description = "springboot_description")
         String description,
         @Schema(description = "springboot_package_name")
-        String packageName
+        String packageName,
+        @Schema(description = "springboot_dependencies")
+        List<GetDependency> dependencies
 ) {
     public static GetProjectBuilderInfo of(ProjectBuilderInfo builderInfo) {
         return GetProjectBuilderInfo.builder()
@@ -39,6 +43,7 @@ public record GetProjectBuilderInfo(
                 .artifact(builderInfo.getArtifact())
                 .packaging(builderInfo.getPackaging())
                 .name(builderInfo.getName())
+                .dependencies(builderInfo.getDependencies().stream().map(GetDependency::of).toList())
                 .description(builderInfo.getDescription())
                 .packageName(builderInfo.getPackageName())
                 .build();

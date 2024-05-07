@@ -1,16 +1,20 @@
 package io.ssafy.soupapi.domain.projectbuilder.dto.request;
 
+import io.ssafy.soupapi.domain.project.mongodb.entity.builder.ProjectBuilderDependency;
 import io.ssafy.soupapi.domain.project.mongodb.entity.builder.ProjectBuilderInfo;
 import io.ssafy.soupapi.domain.project.mongodb.entity.builder.SpringPackaging;
+import io.ssafy.soupapi.domain.springinfo.entity.Dependency;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
+
+import java.util.List;
 
 @Schema(description = "프로젝트 빌드 정보 변경")
 public record ChangeProjectBuilderInfo(
         @NotNull(message = "type 값이 null일 수 없습니다.")
         @NotEmpty(message = "type 값이 공백 입니다.")
-        @Schema(description = "springboot_type", defaultValue = "Gradle - Groovy")
+        @Schema(description = "springboot_type", defaultValue = "Gradle-Groovy")
         String type,
         @NotNull(message = "language 값이 null일 수 없습니다.")
         @NotEmpty(message = "language 값이 공백 입니다.")
@@ -46,9 +50,11 @@ public record ChangeProjectBuilderInfo(
         @NotNull(message = "package name 값이 null일 수 없습니다.")
         @NotEmpty(message = "package name 값이 공백 입니다.")
         @Schema(description = "springboot_package_name", defaultValue = "com.example.demo")
-        String packageName
+        String packageName,
+        @Schema(description = "springboot_dependency_ids")
+        List<Long> dependencies
 ) {
-    public static ProjectBuilderInfo to(ChangeProjectBuilderInfo builderInfo) {
+    public static ProjectBuilderInfo to(ChangeProjectBuilderInfo builderInfo, List<Dependency> dependencies) {
         return ProjectBuilderInfo.builder()
                 .type(builderInfo.type())
                 .language(builderInfo.language())
@@ -58,6 +64,15 @@ public record ChangeProjectBuilderInfo(
                 .artifact(builderInfo.artifact())
                 .packaging(builderInfo.packaging())
                 .name(builderInfo.name())
+                .dependencies(dependencies.stream().map(d -> ProjectBuilderDependency.builder()
+                        .id(d.getId())
+                        .name(d.getName())
+                        .description(d.getDescription())
+                        .code(d.getCode())
+                        .category(d.getCategory())
+                        .basic(d.isBasic())
+                        .build()).toList()
+                )
                 .description(builderInfo.description())
                 .packageName(builderInfo.packageName())
                 .build();
