@@ -20,11 +20,8 @@ baseAxios.interceptors.response.use(
   (res) => res.data,
   async (err) => {
     if (err.response?.status !== 401) return Promise.reject(err)
-    console.log('401 error')
     const refreshToken = getRefreshToken()
-    console.log('rt==', refreshToken)
-    if (!getRefreshToken()) {
-      console.log('refreshToken이 없네요')
+    if (!refreshToken) {
       tokenClear()
       window.location.href = '/main'
     }

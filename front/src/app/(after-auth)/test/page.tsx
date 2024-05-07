@@ -10,6 +10,7 @@ export default function Test() {
 
   const handleClick2 = async () => {
     tokenClear()
+    window.location.href = '/main'
   }
 
   return (

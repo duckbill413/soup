@@ -13,7 +13,7 @@ export default function middleware(request: NextRequest) {
   if (pathname.startsWith('/local-login')) {
     const newAccessToken = process.env.TOKEN
     const newRefreshToken =
-      'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiIsImdlbmVyYXRlRGF0ZSI6MTcxNDcxNjgyNDMzOH0.eyJpc3MiOiJjdXRlLXNvdXAiLCJleHAiOjE3MTU5MjY0MjQsInN1YiI6IjQyZjQ3NWIwLTA3NDgtNGM0ZS04NDZmLWE0N2JiNzU4YWQwYyIsInJvbGVzIjpbIlJPTEVfVVNFUiJdfQ.Xa4lm-sP5u3ZIThBg--cdsMwjFXDYOpwanRISkxwur4'
+      'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiIsImdlbmVyYXRlRGF0ZSI6MTcxNTA0NDk3MTQyOX0.eyJpc3MiOiJjdXRlLXNvdXAiLCJleHAiOjE3MTYyNTQ1NzEsInN1YiI6IjQyZjQ3NWIwLTA3NDgtNGM0ZS04NDZmLWE0N2JiNzU4YWQwYyIsInJvbGVzIjpbIlJPTEVfVVNFUiJdfQ.GAyeGMMTjnFPAbilXAE6444jOhYej-O_tx_eRwTuohU'
     if (newAccessToken && newRefreshToken) {
       const response = NextResponse.redirect(new URL('/', origin))
       response.cookies.set(ACCESS_TOKEN, newAccessToken)
