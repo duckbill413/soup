@@ -1,9 +1,9 @@
+import { ErrorIcon, FilterIcon } from '@/../public/assets/icons'
 import { StepTitleWithGuide } from '@/components/StepTitle/StepTitle'
-import IconButton from '@/containers/api/IconButton'
 import APITable from '@/containers/api/APITable'
+import IconButton from '@/containers/api/IconButton'
 import * as style from '@/containers/api/index.css'
 import { APITableRow } from '@/types/apitable'
-import { ErrorIcon, FilterIcon, SettingIcon } from '@/../public/assets/icons'
 
 // TODO: 샘플데이터, api 연결 후 삭제 필
 
@@ -42,9 +42,6 @@ export default function ApiSpecification() {
           <FilterIcon color="currentColor" />
         </IconButton>
         <div className={style.right}>
-          <IconButton name="DTO 관리" eventHandler="api/dto">
-            <SettingIcon color="currentColor" />
-          </IconButton>
           <IconButton name="에러 처리" eventHandler="api/error">
             <ErrorIcon color="currentColor" />
           </IconButton>
