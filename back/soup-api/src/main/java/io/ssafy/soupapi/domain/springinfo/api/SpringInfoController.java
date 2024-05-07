@@ -22,7 +22,7 @@ import java.util.List;
 public class SpringInfoController {
     private final SpringInfoService springInfoService;
 
-    @Operation(description = "빌드 가능한 스프링 버전 정보")
+    @Operation(summary = "빌드 가능한 스프링 버전 정보")
     @GetMapping("/versions")
     public ResponseEntity<BaseResponse<List<GetVersion>>> usableVersions() {
         return BaseResponse.success(
@@ -31,7 +31,7 @@ public class SpringInfoController {
         );
     }
 
-    @Operation(description = "빌드 가능한 spring boot dependency 정보")
+    @Operation(summary = "빌드 가능한 spring boot dependency 정보")
     @GetMapping("/dependencies")
     public ResponseEntity<BaseResponse<List<GetDependency>>> usableDependencies() {
         return BaseResponse.success(
@@ -39,6 +39,4 @@ public class SpringInfoController {
                 springInfoService.usableDependencies()
         );
     }
-
-
 }

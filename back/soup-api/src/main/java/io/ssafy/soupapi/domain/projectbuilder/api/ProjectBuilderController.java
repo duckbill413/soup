@@ -24,16 +24,17 @@ import org.springframework.web.bind.annotation.*;
 public class ProjectBuilderController {
     private final ProjectBuilderService projectBuilderService;
 
-//    @Operation(description = "프로젝트 빌드")
-//    @PostMapping("/{projectId}/builder")
-//    @PreAuthorize("!@authService.hasViewerProjectRoleMember(#projectId, #userSecurityDTO.getId())")
-//    public void buildProject(
-//            @PathVariable String projectId,
-//            @AuthenticationPrincipal UserSecurityDTO userSecurityDTO
-//    ) {
-//        projectBuilderService.buildProject(projectId);
-//    }
-    @Operation(description = "프로젝트 빌드 관련 정보 업데이트")
+    @Operation(summary = "프로젝트 빌드")
+    @PostMapping("/{projectId}/builder")
+    @PreAuthorize("!@authService.hasViewerProjectRoleMember(#projectId, #userSecurityDTO.getId())")
+    public void buildProject(
+            @PathVariable String projectId,
+            @AuthenticationPrincipal UserSecurityDTO userSecurityDTO
+    ) {
+        projectBuilderService.buildProject(projectId);
+    }
+
+    @Operation(summary = "프로젝트 빌드 관련 정보 업데이트")
     @PutMapping("/{projectId}/builder")
     @PreAuthorize("!@authService.hasViewerProjectRoleMember(#projectId, #userSecurityDTO.getId())")
     public ResponseEntity<BaseResponse<GetProjectBuilderInfo>> changeProjectBuilderInfo(
@@ -46,7 +47,8 @@ public class ProjectBuilderController {
                 projectBuilderService.changeBuilderInfo(projectId, changeProjectBuilderInfo)
         );
     }
-    @Operation(description = "프로젝트 빌드 관련 정보 조회")
+
+    @Operation(summary = "프로젝트 빌드 관련 정보 조회")
     @GetMapping("/{projectId}/builder")
     @PreAuthorize("@authService.hasProjectRoleMember(#projectId, #userSecurityDTO.getId())")
     public ResponseEntity<BaseResponse<GetProjectBuilderInfo>> findProjectBuilderInfo(

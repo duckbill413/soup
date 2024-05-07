@@ -30,22 +30,38 @@ public class ProjectBuilderServiceImpl implements ProjectBuilderService {
         var project = mProjectRepository.findById(new ObjectId(projectId)).orElseThrow(() ->
                 new BaseExceptionHandler(ErrorCode.NOT_FOUND_PROJECT));
         // Copy Default Project
-//        if (Objects.isNull(project.getInfo()) || Objects.isNull(project.getApiDocs())) {
-//            throw new BaseExceptionHandler(ErrorCode.NEED_MORE_PROJECT_BUILD_DATA);
-//        }
-        // default project 복사
-        projectBuilderRepository.copyDefaultProject(project);
-        // Package Builder
-//        projectBuilderRepository.packageBuilder(project);
-        // Controller Builder
+        if (Objects.isNull(project.getInfo()) ||
+//            Objects.isNull(project.getApiDocs()) ||
+            Objects.isNull(project.getProjectBuilderInfo())) {
+            throw new BaseExceptionHandler(ErrorCode.NEED_MORE_PROJECT_BUILD_DATA);
+        }
+
+        try {
+
+            // default project 복사
+            projectBuilderRepository.copyDefaultProject(project);
+            // Package Builder
+            projectBuilderRepository.packageBuilder(project);
+            // global 폴더 복사
+
+            // Controller Builder
 
 
-        // Service Builder
-        // Repository Builder
-        // Entity Builder
-        // DTO Builder
+            // Service Builder
+            // Repository Builder
+            // Entity Builder
+            // DTO Builder
+        } catch (Exception e) {
+            throw new BaseExceptionHandler(ErrorCode.FAILED_TO_BUILD_PROJECT);
+        }
     }
 
+    /**
+     * 프로젝트 빌드 정보 요청
+     *
+     * @param projectId 프로젝트 ID
+     * @return 프로젝트 빌드 정보
+     */
     @Transactional
     @Override
     public GetProjectBuilderInfo findBuilderInfo(String projectId) {
@@ -59,6 +75,13 @@ public class ProjectBuilderServiceImpl implements ProjectBuilderService {
         return GetProjectBuilderInfo.of(project.getProjectBuilderInfo());
     }
 
+    /**
+     * 프로젝트 빌드 정보가 없을 경우 기본 빌드 정보를 생성
+     * isBasic이 True인 경우 반드시 선택되는 의존성 정보
+     *
+     * @param projectId 프로젝트 ID
+     * @return 프로젝트 최초 빌드 정보
+     */
     private GetProjectBuilderInfo getDefaultProjectBuilderInfo(String projectId) {
         var dependencies = dependencyRepository.findByIdIsInOrBasicIsTrue(List.of());
         var buildInfo = ProjectBuilderInfo.builder()
@@ -86,6 +109,14 @@ public class ProjectBuilderServiceImpl implements ProjectBuilderService {
         return GetProjectBuilderInfo.of(buildInfo);
     }
 
+    /**
+     * 프로젝트 빌드 정보 업데이트
+     * Dependency의 basic 칼럼값이 true인 경우 선택되지 않더라도 기본적으로 선택됩니다.
+     *
+     * @param projectId                프로젝트 ID
+     * @param changeProjectBuilderInfo 수정된 프로젝트 빌드 정보
+     * @return 수정 완료된 프로젝트 빌드 정보
+     */
     @Transactional
     @Override
     public GetProjectBuilderInfo changeBuilderInfo(String projectId, ChangeProjectBuilderInfo changeProjectBuilderInfo) {

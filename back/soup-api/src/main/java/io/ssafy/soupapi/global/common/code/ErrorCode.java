@@ -103,7 +103,7 @@ public enum ErrorCode {
 
     // Project Build 관련 에러 (CODE: 800)
     NEED_MORE_PROJECT_BUILD_DATA(404, "B800", "빌드를 위한 프로젝트 정보가 더 필요합니다."),
-
+    FAILED_TO_BUILD_PROJECT(404, "B801", "프로젝트 빌드에 실패하였습니다."),
     ; // End
 
     /**

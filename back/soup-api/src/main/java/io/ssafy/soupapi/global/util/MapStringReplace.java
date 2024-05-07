@@ -23,8 +23,10 @@ public class MapStringReplace {
             return replaced;
         }
         isReplaced = true;
+
+        replaced = origin;
         for (String key : keyMap.keySet()) {
-            replaced = origin.replaceAll(":" + key, keyMap.get(key));
+            replaced = replaced.replaceAll(":" + key, keyMap.get(key));
         }
         return replaced;
     }

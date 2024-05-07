@@ -3,6 +3,7 @@ package io.ssafy.soupapi.domain.projectbuilder.dao;
 import io.ssafy.soupapi.domain.project.mongodb.entity.Project;
 import io.ssafy.soupapi.domain.project.mongodb.entity.apidocs.ApiDoc;
 import io.ssafy.soupapi.domain.project.mongodb.entity.apidocs.ApiVariable;
+import io.ssafy.soupapi.domain.project.mongodb.entity.builder.ProjectBuilderInfo;
 import io.ssafy.soupapi.global.util.MapStringReplace;
 import io.ssafy.soupapi.global.util.StringParserUtil;
 import lombok.RequiredArgsConstructor;
@@ -10,7 +11,9 @@ import lombok.extern.log4j.Log4j2;
 import org.apache.commons.io.FileUtils;
 import org.springframework.stereotype.Repository;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,13 +27,28 @@ public class ProjectBuilderRepositoryImpl implements ProjectBuilderRepository {
     final String destinationPath = "C:\\util\\%s"; // TODO: 환경 변수를 이용하여 경로 변경
 
     @Override
-    public void packageBuilder(Project project) {
+    public void packageBuilder(Project project) throws IOException {
         String destination = String.format(destinationPath, project.getProjectBuilderInfo().getName());
         // package name을 기반으로 폴더 생성
-//        createDefaultFolders(destination, project.getProjectBuilderInfo().getPackageName());
+        createDefaultPackage(destination, project.getProjectBuilderInfo());
+    }
+
+    private void createDefaultPackage(String destination, ProjectBuilderInfo projectBuilderInfo) throws IOException {
+        String basicPath = destination + "\\src\\main\\java";
+        String[] path = projectBuilderInfo.getPackageName().split("\\.");
+        StringBuilder folderPath = new StringBuilder(basicPath);
+
+        for (String p : path) {
+            folderPath.append(File.separator).append(p);
+            File folder = new File(folderPath.toString());
+            if (!folder.exists()) {
+                folder.mkdir();
+            }
+        }
+
         // start class 생성
         String application = """
-                package com.example.demo;
+                package :springboot-project_package;
                                 
                 import org.springframework.boot.SpringApplication;
                 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -44,14 +62,19 @@ public class ProjectBuilderRepositoryImpl implements ProjectBuilderRepository {
                                 
                 }
                 """;
+
+        folderPath.append(File.separator).append(projectBuilderInfo.getName()).append("Application.java");
         var mapUtil = new MapStringReplace(application);
-
+        mapUtil.addValue("springboot-project_package", projectBuilderInfo.getPackageName());
+        mapUtil.addValue("springboot-project-name", projectBuilderInfo.getName() + "Application");
         String replaced = mapUtil.replace();
-    }
 
-    private void createDefaultFolders(String destination, String packageName) {
-        String[] packageParts = packageName.split("\\.");
-        StringBuilder folderPath = new StringBuilder(destination);
+        File defaultClass = new File(folderPath.toString());
+        FileWriter writer = new FileWriter(defaultClass);
+        BufferedWriter bw = new BufferedWriter(writer);
+        bw.write(replaced);
+        bw.flush();
+        bw.close();
     }
 
     @Override
