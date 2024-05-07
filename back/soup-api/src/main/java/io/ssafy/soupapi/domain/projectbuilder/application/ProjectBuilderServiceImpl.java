@@ -29,11 +29,14 @@ public class ProjectBuilderServiceImpl implements ProjectBuilderService {
     public void buildProject(String projectId) {
         var project = mProjectRepository.findById(new ObjectId(projectId)).orElseThrow(() ->
                 new BaseExceptionHandler(ErrorCode.NOT_FOUND_PROJECT));
-        // Copy Default Project
-        if (Objects.isNull(project.getInfo()) ||
-//            Objects.isNull(project.getApiDocs()) ||
-            Objects.isNull(project.getProjectBuilderInfo())) {
-            throw new BaseExceptionHandler(ErrorCode.NEED_MORE_PROJECT_BUILD_DATA);
+        if (Objects.isNull(project.getInfo())) {
+            throw new BaseExceptionHandler(ErrorCode.NEED_PROJECT_BUILD_INFO);
+        }
+//        if (Objects.isNull(project.getApiDocs())) {
+//            throw new BaseExceptionHandler(ErrorCode.NEED_PROJECT_BUILD_APIDOC);
+//        }
+        if (Objects.isNull(project.getProjectBuilderInfo())) {
+            throw new BaseExceptionHandler(ErrorCode.NEED_PROJECT_BUILD_BUILDINFO);
         }
 
         try {
@@ -42,8 +45,8 @@ public class ProjectBuilderServiceImpl implements ProjectBuilderService {
             projectBuilderRepository.copyDefaultProject(project);
             // Package Builder
             projectBuilderRepository.packageBuilder(project);
-            // global 폴더 복사
-
+            // global 폴더 복사 및 variable 치환
+            projectBuilderRepository.createGlobalGroup(project);
             // Controller Builder
 
 
@@ -52,6 +55,7 @@ public class ProjectBuilderServiceImpl implements ProjectBuilderService {
             // Entity Builder
             // DTO Builder
         } catch (Exception e) {
+            e.printStackTrace();
             throw new BaseExceptionHandler(ErrorCode.FAILED_TO_BUILD_PROJECT);
         }
     }

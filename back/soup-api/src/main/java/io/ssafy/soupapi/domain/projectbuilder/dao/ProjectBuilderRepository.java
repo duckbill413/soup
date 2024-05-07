@@ -10,5 +10,7 @@ public interface ProjectBuilderRepository {
 
     String ControllerBuilder(ApiDoc apiDoc);
 
-    void copyDefaultProject(Project project);
+    void copyDefaultProject(Project project) throws IOException;
+
+    void createGlobalGroup(Project project) throws IOException;
 }

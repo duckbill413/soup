@@ -23,14 +23,19 @@ import java.util.Objects;
 @Repository
 @RequiredArgsConstructor
 public class ProjectBuilderRepositoryImpl implements ProjectBuilderRepository {
+    final String globalPath = "src/main/resources/templates/springboot-default-project-global";
     final String sourcePath = "src/main/resources/templates/springboot-default-project";
-    final String destinationPath = "C:\\util\\%s"; // TODO: 환경 변수를 이용하여 경로 변경
+    final String destinationPath = "C:\\util\\%s\\%s"; // TODO: 환경 변수를 이용하여 경로 변경
 
     @Override
     public void packageBuilder(Project project) throws IOException {
-        String destination = String.format(destinationPath, project.getProjectBuilderInfo().getName());
+        String destination = getDestination(project);
         // package name을 기반으로 폴더 생성
         createDefaultPackage(destination, project.getProjectBuilderInfo());
+    }
+
+    private String getDestination(Project project) {
+        return String.format(destinationPath, project.getId(), project.getProjectBuilderInfo().getName());
     }
 
     private void createDefaultPackage(String destination, ProjectBuilderInfo projectBuilderInfo) throws IOException {
@@ -114,22 +119,76 @@ public class ProjectBuilderRepositoryImpl implements ProjectBuilderRepository {
         return mapUtil.replace();
     }
 
-    @Override
-    public void copyDefaultProject(Project project) {
-        String destination = String.format(destinationPath, project.getProjectBuilderInfo().getName());
+    public void copyDefaultProject(Project project) throws IOException {
+        String destination = getDestination(project);
         File sourceFolder = new File(sourcePath);
         File destinationFolder = new File(destination);
 
-        try {
-            if (destinationFolder.exists()) {
-                FileUtils.deleteDirectory(destinationFolder);
-            }
-
-            FileUtils.copyDirectory(sourceFolder, destinationFolder);
-            log.info("Folder copied successfully!");
-        } catch (IOException e) {
-            e.printStackTrace();
+        if (destinationFolder.exists()) {
+            FileUtils.deleteDirectory(destinationFolder);
         }
+
+        FileUtils.copyDirectory(sourceFolder, destinationFolder);
+        log.info("Default Folder copied successfully!");
+    }
+
+    @Override
+    public void createGlobalGroup(Project project) throws IOException {
+        String[] path = project.getProjectBuilderInfo().getPackageName().split("\\.");
+        StringBuilder destination = new StringBuilder(getDestination(project));
+        destination.append("\\src\\main\\java\\");
+        destination.append(String.join("\\", path));
+        destination.append(File.separator).append("global");
+        // Step 1. copy global folder
+        copyGlobalGroup(project, destination.toString());
+        // Step 2. replace global folder variables
+        replaceGlobalGroupVariables(project, destination.toString());
+    }
+
+    private void replaceGlobalGroupVariables(Project project, String destination) {
+        File destinationFolder = new File(destination);
+
+        // 최하위 노드의 파일 목록을 얻기 위해 재귀 함수 호출
+        List<File> leafFiles = getLeafFiles(destinationFolder);
+
+        // 최하위 노드의 파일 목록 출력
+        for (File file : leafFiles) {
+            System.out.println(file.getAbsolutePath());
+        }
+    }
+    private List<File> getLeafFiles(File folder) {
+        List<File> leafFiles = new ArrayList<>();
+
+        // 폴더 내의 모든 파일과 하위 폴더 얻기
+        File[] files = folder.listFiles();
+        if (Objects.isNull(files)) {
+            return leafFiles;
+        }
+        // 파일과 하위 폴더 순회
+        for (File file : files) {
+            if (file.isDirectory()) {
+                // 하위 폴더인 경우 재귀 호출
+                leafFiles.addAll(getLeafFiles(file));
+            } else {
+                // 파일인 경우 리스트에 추가
+                leafFiles.add(file);
+            }
+        }
+
+        return leafFiles;
+    }
+
+    private void copyGlobalGroup(Project project, String destination) throws IOException {
+        // global 폴더 생성
+        File destinationFolder = new File(destination);
+        if (!destinationFolder.exists()) {
+            destinationFolder.mkdir();
+        }
+
+        File sourceFolder = new File(globalPath);
+
+        FileUtils.copyDirectory(sourceFolder, destinationFolder);
+        log.info("Global Folder copied successfully");
     }
 
     private String addServiceMethod(ApiDoc apiDoc) {
