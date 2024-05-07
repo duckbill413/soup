@@ -24,15 +24,15 @@ import org.springframework.web.bind.annotation.*;
 public class ProjectBuilderController {
     private final ProjectBuilderService projectBuilderService;
 
-    @Operation(description = "프로젝트 빌드")
-    @PostMapping("/{projectId}/builder")
-    @PreAuthorize("!@authService.hasViewerProjectRoleMember(#projectId, #userSecurityDTO.getId())")
-    public void buildProject(
-            @PathVariable String projectId,
-            @AuthenticationPrincipal UserSecurityDTO userSecurityDTO
-    ) {
-        projectBuilderService.buildProject(projectId);
-    }
+//    @Operation(description = "프로젝트 빌드")
+//    @PostMapping("/{projectId}/builder")
+//    @PreAuthorize("!@authService.hasViewerProjectRoleMember(#projectId, #userSecurityDTO.getId())")
+//    public void buildProject(
+//            @PathVariable String projectId,
+//            @AuthenticationPrincipal UserSecurityDTO userSecurityDTO
+//    ) {
+//        projectBuilderService.buildProject(projectId);
+//    }
     @Operation(description = "프로젝트 빌드 관련 정보 업데이트")
     @PutMapping("/{projectId}/builder")
     @PreAuthorize("!@authService.hasViewerProjectRoleMember(#projectId, #userSecurityDTO.getId())")
