@@ -1,7 +1,8 @@
 import Link from 'next/link'
 
 export default function LoginButton() {
-  const isDev = process.env.NODE_ENV === 'development' ?? false
+  // const isDev = process.env.NODE_ENV === 'development' ?? false
+  const isDev = true
 
   const loginURL = isDev
     ? `${process.env.NEXT_PUBLIC_CLIENT_HOST}/local-login`

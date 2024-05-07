@@ -1,10 +1,10 @@
 import { Dropbox, InputText, MethodButton } from '@/containers/api/Input'
-import { Option } from '@/types/apiinput'
-import Link from 'next/link'
-import * as styles from '@/containers/api/detail/index.css'
-import { KeyboardDoubleArrowLeft } from '@mui/icons-material'
-import Badge from '@/containers/api/detail/Badge'
 import { PathTable, QueryTable } from '@/containers/api/detail'
+import Badge from '@/containers/api/detail/Badge'
+import * as styles from '@/containers/api/detail/index.css'
+import { Option } from '@/types/apiinput'
+import { KeyboardDoubleArrowLeft } from '@mui/icons-material'
+import Link from 'next/link'
 
 // TODO: 예시 데이터. 삭제 필
 const sampleData: Array<Option> = [
@@ -57,6 +57,8 @@ export default function APIDetail() {
 
         <Badge name="Query Parameter" />
         <QueryTable />
+
+        <Badge name="Request Body" />
       </section>
     </div>
   )

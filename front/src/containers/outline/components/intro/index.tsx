@@ -1,4 +1,4 @@
-"use client"
+'use client'
 
 import * as styles from "@/containers/outline/styles/intro/outlineIntro.css"
 import basic from '#/assets/icons/outline/basicPhoto.svg'
@@ -12,10 +12,10 @@ function OutlineIntro () {
   const initialProject =useStorage((root)=>root.outline)
   const basicSrc = basic.src
 
-  const updateProject = useMutation(({ storage }, key , newValue) => {
-    const outline = storage.get("outline");
-    outline?.set(key, newValue);
-  }, []);
+  const updateProject = useMutation(({ storage }, key, newValue) => {
+    const outline = storage.get('outline')
+    outline?.set(key, newValue)
+  }, [])
 
   const imgRef = useRef<HTMLInputElement>(null);
   const handlePhoto  = () => {
@@ -67,16 +67,18 @@ function OutlineIntro () {
       </div>
       <div className={styles.introDivision}>
         <p>프로젝트 이름</p>
-        <input placeholder="프로젝트 이름"
-               value={initialProject?.project_name}
-               className={styles.input}
-               onChange={(e) => updateProject('project_name',e.target.value)}
+        <input
+          placeholder="프로젝트 이름"
+          value={initialProject?.project_name}
+          className={styles.input}
+          onChange={(e) => updateProject('project_name', e.target.value)}
         />
         <p>프로젝트 설명</p>
-        <textarea placeholder="프로젝트 설명"
-                  className={styles.textarea}
-                  value={initialProject?.project_description}
-                  onChange={(e) => updateProject('project_description',e.target.value)}
+        <textarea
+          placeholder="프로젝트 설명"
+          className={styles.textarea}
+          value={initialProject?.project_description}
+          onChange={(e) => updateProject('project_description', e.target.value)}
         />
       </div>
     </div>
