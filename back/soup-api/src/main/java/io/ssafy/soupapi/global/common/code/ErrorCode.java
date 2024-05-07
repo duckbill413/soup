@@ -101,6 +101,8 @@ public enum ErrorCode {
 
     FAILED_TO_UPLOAD_LOCAL_FILE(404, "F001", "로컬 파일 업로드 실패"),
     FAILED_TO_UPLOAD_S3_FILE(404, "F002", "S3 파일 업로드 실패"),
+    // OpenVidu 관련 에러 (CODE: 700)
+    NOT_FOUND_SESSION(404, "B700", "존재하지 않는 세션입니다.");
 
     ; // End
 

@@ -175,3 +175,8 @@ feign:
   claude:
     name: claude
     url: https://api.anthropic.com
+
+# Openvidu Configuration
+openvidu:
+  url: ${OPENVIDU_SERVER_URL} #https://your-openvidu-server.com
+  secret: ${OPENVIDU_SECRET_KEY}
