@@ -23,6 +23,7 @@ type Storage = {
   outline? : LiveObject<{
       project_name: string,
       project_description: string,
+      project_photo: string,
       project_startDate:string,
       project_endDate:string,
       project_tools: LiveList<LiveObject<ProjectTool>>
