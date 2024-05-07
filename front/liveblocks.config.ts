@@ -1,4 +1,4 @@
-import { createClient } from "@liveblocks/client";
+import { createClient, LiveList, LiveObject } from '@liveblocks/client'
 import { createRoomContext, createLiveblocksContext } from "@liveblocks/react";
   
 const client = createClient({
@@ -20,8 +20,19 @@ type Presence = {
 type Storage = {
   // author: LiveObject<{ firstName: string, lastName: string }>,
   // ...
+  outline? : LiveObject<{
+      project_name: string,
+      project_description: string,
+      project_startDate:string,
+      project_endDate:string,
+      project_tools: LiveList<LiveObject<ProjectTool>>
+  }>,
 };
-
+type ProjectTool = {
+  id: string;
+  name : string;
+  url? : string;
+}
 // Optionally, UserMeta represents static/readonly metadata on each user, as
 // provided by your own custom auth back end (if used). Useful for data that
 // will not change during a session, like a user's name or avatar.

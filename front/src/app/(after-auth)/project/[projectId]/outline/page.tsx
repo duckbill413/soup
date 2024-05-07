@@ -5,7 +5,7 @@ import OutlineCalendar from '@/containers/outline/components/calendar'
 import OutlineAddTool from '@/containers/outline/components/addTool'
 import OutlineAddTeam from '@/containers/outline/components/addTeam'
 import Live from '@/components/cursor/Live'
-import Room from '@/app/(after-auth)/project/[projectId]/Room'
+import Room from '@/app/(after-auth)/project/[projectId]/outline/Room'
 
 function Outline () {
   return (
