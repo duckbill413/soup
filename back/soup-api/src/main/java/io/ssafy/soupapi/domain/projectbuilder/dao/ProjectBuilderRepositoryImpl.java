@@ -1,32 +1,34 @@
 package io.ssafy.soupapi.domain.projectbuilder.dao;
 
+import io.ssafy.soupapi.domain.project.mongodb.entity.Project;
 import io.ssafy.soupapi.domain.project.mongodb.entity.apidocs.ApiDoc;
-import io.ssafy.soupapi.domain.project.mongodb.entity.apidocs.ApiDocs;
 import io.ssafy.soupapi.domain.project.mongodb.entity.apidocs.ApiVariable;
 import io.ssafy.soupapi.global.util.MapStringReplace;
 import io.ssafy.soupapi.global.util.StringParserUtil;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
+import org.apache.commons.io.FileUtils;
 import org.springframework.stereotype.Repository;
 
-import java.util.*;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
+@Log4j2
 @Repository
-public class ProjectBuilderRepositoryImpl {
-    public void ProjectBuild(ApiDocs apiDocs) {
-        Map<String, String> names = new HashMap<>();
-//        names.put("springboot-project-name", );
+@RequiredArgsConstructor
+public class ProjectBuilderRepositoryImpl implements ProjectBuilderRepository {
+    String sourcePath = "src/main/resources/templates/springboot-default-project";
+    String destinationPath = "C:\\util\\%s"; // TODO: 환경 변수를 이용하여 경로 변경
 
-        // Package Builder
-        packageBuilder(names);
-        // Controller Builder
-
-
-        // Service Builder
-        // Repository Builder
-        // Entity Builder
-        // DTO Builder
-    }
-
-    private void packageBuilder(Map<String, String> names) {
+    @Override
+    public void packageBuilder(Project project) {
+        String destination = String.format(destinationPath, project.getProjectBuilderInfo().getName());
+        // package name을 기반으로 폴더 생성
+//        createDefaultFolders(destination, project.getProjectBuilderInfo().getPackageName());
+        // start class 생성
         String application = """
                 package com.example.demo;
                                 
@@ -43,11 +45,16 @@ public class ProjectBuilderRepositoryImpl {
                 }
                 """;
         var mapUtil = new MapStringReplace(application);
-        mapUtil.addAllValues(names);
 
         String replaced = mapUtil.replace();
     }
 
+    private void createDefaultFolders(String destination, String packageName) {
+        String[] packageParts = packageName.split("\\.");
+        StringBuilder folderPath = new StringBuilder(destination);
+    }
+
+    @Override
     public String ControllerBuilder(ApiDoc apiDoc) {
         String controller = """
                 @Operation(summary = ":description")
@@ -82,6 +89,24 @@ public class ProjectBuilderRepositoryImpl {
         mapUtil.addValue(":serviceMethodName", addServiceMethod(apiDoc));
 
         return mapUtil.replace();
+    }
+
+    @Override
+    public void copyDefaultProject(Project project) {
+        String destination = String.format(destinationPath, project.getProjectBuilderInfo().getName());
+        File sourceFolder = new File(sourcePath);
+        File destinationFolder = new File(destination);
+
+        try {
+            if (destinationFolder.exists()) {
+                FileUtils.deleteDirectory(destinationFolder);
+            }
+
+            FileUtils.copyDirectory(sourceFolder, destinationFolder);
+            log.info("Folder copied successfully!");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private String addServiceMethod(ApiDoc apiDoc) {

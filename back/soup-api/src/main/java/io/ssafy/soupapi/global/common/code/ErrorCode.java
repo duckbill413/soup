@@ -100,6 +100,10 @@ public enum ErrorCode {
 
     // API DOCS 관련 에러 (CODE: 700)
     NOT_FOUND_API_DOC(404, "B700", "찾을 수 없는 API 문서 입니다."),
+
+    // Project Build 관련 에러 (CODE: 800)
+    NEED_MORE_PROJECT_BUILD_DATA(404, "B800", "빌드를 위한 프로젝트 정보가 더 필요합니다."),
+
     ; // End
 
     /**

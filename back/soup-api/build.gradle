@@ -68,6 +68,8 @@ dependencies {
     // https://mvnrepository.com/artifact/com.konghq/unirest-java
     implementation 'com.konghq:unirest-java:3.14.5'
 
+    implementation 'commons-io:commons-io:2.11.0'
+
 }
 
 tasks.named('test') {

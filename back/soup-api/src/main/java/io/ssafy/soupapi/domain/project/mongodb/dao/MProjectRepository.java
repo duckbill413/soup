@@ -2,6 +2,7 @@ package io.ssafy.soupapi.domain.project.mongodb.dao;
 
 import io.ssafy.soupapi.domain.project.mongodb.entity.Project;
 import io.ssafy.soupapi.domain.project.mongodb.entity.Proposal;
+import io.ssafy.soupapi.domain.project.mongodb.entity.builder.ProjectBuilderInfo;
 import io.ssafy.soupapi.domain.project.mongodb.entity.vuerd.VuerdDoc;
 import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.repository.MongoRepository;
@@ -43,6 +44,9 @@ public interface MProjectRepository extends MongoRepository<Project, ObjectId> {
     @Query(value = "{ _id: ?0 }", fields = "{project_issues: {$slice: [?1, ?2]}}")
     Optional<Project> findProjectIssues(ObjectId projectId, int offset, int limit);
 
-    @Query(value = "{ _id: ?0 }", fields = "{ project_issues: 0 }")
-    Optional<Project> findProjectIssuesCount(ObjectId projectId);
+    @Query(value = "{ _id:  ?0}", fields = "{project_builder_info:  1}")
+    Optional<Project> findProjectBuildInfo(ObjectId projectId);
+    @Query(value = "{ _id: ?0 }", fields = "{ project_builder_info: 1 }")
+    @Update("{ '$set': { project_builder_info:  ?1} }")
+    void changeProjectBuildInfo(ObjectId projectId, ProjectBuilderInfo builderInfo);
 }
