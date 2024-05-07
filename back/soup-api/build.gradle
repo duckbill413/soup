@@ -68,6 +68,12 @@ dependencies {
     // https://mvnrepository.com/artifact/com.konghq/unirest-java
     implementation 'com.konghq:unirest-java:3.14.5'
 
+    // openFeign
+    implementation 'org.springframework.cloud:spring-cloud-starter-openfeign:4.1.1'
+
+    // AWS s3
+    implementation 'com.amazonaws:aws-java-sdk-s3:1.12.681'
+
 }
 
 tasks.named('test') {
