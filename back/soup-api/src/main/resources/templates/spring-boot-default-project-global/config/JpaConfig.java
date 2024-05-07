@@ -1,4 +1,4 @@
-package io.ssafy.soupapi.global.config;
+package :springboot-project_package.global.config;
 
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 

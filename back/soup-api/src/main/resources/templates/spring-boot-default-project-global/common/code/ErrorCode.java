@@ -1,4 +1,4 @@
-package io.ssafy.soupapi.global.common.code;
+package :springboot-project_package.global.common.code;
 
 import lombok.Getter;
 

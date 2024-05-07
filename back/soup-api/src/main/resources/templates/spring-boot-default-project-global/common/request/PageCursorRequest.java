@@ -1,4 +1,4 @@
-package io.ssafy.soupapi.global.common.request;
+package :springboot-project_package.global.common.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 

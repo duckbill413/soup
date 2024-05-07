@@ -1,4 +1,4 @@
-package io.ssafy.soupapi.global.common.response;
+package :springboot-project_package.global.common.response;
 
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import io.swagger.v3.oas.annotations.media.Schema;

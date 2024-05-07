@@ -1,4 +1,4 @@
-package io.ssafy.soupapi.global.exception;
+package :springboot-project_package.global.exception;
 
 import io.ssafy.soupapi.global.common.code.ErrorCode;
 import lombok.Getter;

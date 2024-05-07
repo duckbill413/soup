@@ -1,4 +1,4 @@
-package io.ssafy.soupapi.global.common.response;
+package :springboot-project_package.soupapi.global.common.response;
 
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import io.ssafy.soupapi.global.common.code.SuccessCode;
