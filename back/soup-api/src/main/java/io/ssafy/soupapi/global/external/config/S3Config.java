@@ -1,4 +1,4 @@
-package io.ssafy.soupapi.external.config;
+package io.ssafy.soupapi.global.external.config;
 
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;

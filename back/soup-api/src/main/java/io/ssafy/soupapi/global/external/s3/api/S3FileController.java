@@ -1,6 +1,6 @@
-package io.ssafy.soupapi.external.s3.api;
+package io.ssafy.soupapi.global.external.s3.api;
 
-import io.ssafy.soupapi.external.s3.application.S3FileService;
+import io.ssafy.soupapi.global.external.s3.application.S3FileService;
 import io.ssafy.soupapi.global.common.code.SuccessCode;
 import io.ssafy.soupapi.global.common.response.BaseResponse;
 import io.swagger.v3.oas.annotations.Operation;

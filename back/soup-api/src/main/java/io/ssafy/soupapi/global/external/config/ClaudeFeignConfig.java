@@ -1,4 +1,4 @@
-package io.ssafy.soupapi.external.config;
+package io.ssafy.soupapi.global.external.config;
 
 import feign.RequestInterceptor;
 import org.springframework.beans.factory.annotation.Value;

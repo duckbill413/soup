@@ -1,6 +1,6 @@
 package io.ssafy.soupapi.domain.project.usecase.dto;
 
-import io.ssafy.soupapi.external.claude.dto.MessageDto;
+import io.ssafy.soupapi.global.external.claude.dto.MessageDto;
 import lombok.Builder;
 
 import java.util.List;
