@@ -11,9 +11,12 @@ type Store = {
     searchCategory: (query: string) => void;
     isCategoryModalVisible: string;
     setIsCategoryModalVisible: (isVisible: string) => void;
+    priorities: 'Low' | 'Medium' | 'High' | 'Highest'
+    isPriorityModalVisible: string;
+    setIsPriorityModalVisible: (isVisible: string) => void;
 };
 
-const useFuncDescCategoryStore = create<Store>((set) => ({
+const useFuncDescStore = create<Store>((set) => ({
     funcDescData: [],
     setFuncDescData: (funcDescData) => set({ funcDescData }),
     uniqueCategories: [],
@@ -42,12 +45,15 @@ const useFuncDescCategoryStore = create<Store>((set) => ({
         });
     },
     isCategoryModalVisible: 'none',
+    priorities: 'Medium',
     setIsCategoryModalVisible: (isVisible) => set({ isCategoryModalVisible: isVisible }),
+    isPriorityModalVisible: 'none',
+    setIsPriorityModalVisible: (isVisible) => set({ isPriorityModalVisible: isVisible }),
 
 }));
 
 // eslint-disable-next-line no-param-reassign
-useFuncDescCategoryStore.subscribe(
+useFuncDescStore.subscribe(
     (state) => {
         state.uniqueCategories = Array.from(
             new Set(
@@ -62,4 +68,4 @@ useFuncDescCategoryStore.subscribe(
         }));
     }
 );
-export default useFuncDescCategoryStore;
+export default useFuncDescStore;

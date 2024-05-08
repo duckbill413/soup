@@ -2,7 +2,7 @@
 
 import {useEffect} from 'react';
 import {FuncDescResWithColor} from '@/types/functionDesc';
-import useFuncDescCategoryStore from "@/stores/useFuncDescCategoryStore";
+import useFuncDescStore from "@/stores/useFuncDescStore";
 import FuncTableColumn from '@/containers/func/FuncTableColumn/FuncTableColumn';
 import {LiveObject} from "@liveblocks/client";
 import * as styles from './funcTable.css';
@@ -12,7 +12,7 @@ import {useMutation, useStorage} from "../../../liveblocks.config";
 export default function FuncTable() {
 
     const init:FuncDescResWithColor[] =useStorage((root)=>root.func) as FuncDescResWithColor[];
-    const {funcDescData,filteredCategories,setIsCategoryModalVisible,setFuncDescData} = useFuncDescCategoryStore();
+    const {funcDescData,filteredCategories,setIsPriorityModalVisible,setIsCategoryModalVisible,setFuncDescData} = useFuncDescStore();
 
     useEffect(() => {
         setFuncDescData(init);
@@ -30,7 +30,7 @@ export default function FuncTable() {
                 description: "",
                 point: 0,
                 color: "",
-                priority: "",
+                priority: "Medium",
                 functionName: "",
                 reporter: {    memberId: "",
                     memberNickname: "",
@@ -50,6 +50,7 @@ export default function FuncTable() {
             return;
         }
         if(attribute==='priority'){
+            setIsPriorityModalVisible('none');
             currData?.set('priority',changeId);
             return;
         }

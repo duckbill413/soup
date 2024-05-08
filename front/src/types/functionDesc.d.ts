@@ -33,5 +33,13 @@ export type CategoryModalProps ={
     setSelected: (id:string)=>void;
     handleKey: (event: React.KeyboardEvent<HTMLInputElement>) => void;
     updateElement: (currId,changeId,attribute)=>void;
+}
 
+export type PriorityModalProps ={
+    funcCurrData: FuncDescResWithColor;
+    updateElement: (currId,changeId,attribute)=>void;
+}
+
+export interface PriorityIcons {
+    [key: string]: string;
 }
