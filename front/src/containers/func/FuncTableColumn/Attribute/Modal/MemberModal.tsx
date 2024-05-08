@@ -36,12 +36,12 @@ export default function MemberModal({setSelected,updateElement,selected,handleKe
 
                 <div className={styles.btnGroup}>
                     <div className={`${styles.elementGroup}`}>
-                        {funcCurrData.reporter.memberId!=="" ?
+                        {funcCurrData.reporter?.memberId!=="" ?
                             <div className={styles.currCategory}
                                  >
                                 <div>
-                                    <Image unoptimized src={funcCurrData.reporter.memberProfileUri} alt="프로필 이미지" width={30} height={30}/>
-                                    {`${funcCurrData.reporter.memberNickname}`}
+                                    <Image unoptimized src={funcCurrData.reporter?.memberProfileUri} alt="프로필 이미지" width={30} height={30}/>
+                                    {`${funcCurrData.reporter?.memberNickname}`}
                                 </div>
                                 <p onClick={() => updateElement(funcCurrData.functionId, 'none','reporter')} aria-hidden="true" role="presentation">×</p>
                             </div>
