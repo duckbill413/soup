@@ -21,6 +21,13 @@ public class ProjectBuilderRepositoryImpl implements ProjectBuilderRepository {
     final String globalPath = "src/main/resources/templates/springboot-default-project-global";
     final String sourcePath = "src/main/resources/templates/springboot-default-project";
     final String destinationPath = "C:\\util\\%s\\%s"; // TODO: 환경 변수를 이용하여 경로 변경
+    final Map<String, String> domainSubFolders = new HashMap<>() {{
+        put("api", "Controller");
+        put("application", "Service");
+        put("dao", "Repository");
+        put("dto", "");
+        put("entity", "");
+    }};
 
     @Override
     public void packageBuilder(Project project) throws IOException {
@@ -172,7 +179,56 @@ public class ProjectBuilderRepositoryImpl implements ProjectBuilderRepository {
 
     @Override
     public void createDomainPackages(Project project) {
+        // 도메인 폴더 생성
+        String[] path = project.getProjectBuilderInfo().getPackageName().split("\\.");
+        StringBuilder destination = new StringBuilder(getDestination(project));
+        destination.append("\\src\\main\\java\\");
+        destination.append(String.join("\\", path));
+        destination.append(File.separator).append("domain");
 
+        File destinationFolder = new File(destination.toString());
+        if (!destinationFolder.exists()) {
+            destinationFolder.mkdir();
+        }
+
+        // 도메인 리스트에 대한 각각의 폴더 생성 및 하위 폴더 생성
+        var domains = project.getApiDocs().getDomains();
+        for (String domain : domains) {
+            createDomainSubPackages(domain, destination);
+        }
+    }
+
+    private void createDomainSubPackages(String domain, StringBuilder destination) {
+        domain = StringParserUtil.convertToSnakeCase(domain);
+        StringBuilder domainDestination = new StringBuilder(destination.toString());
+        domainDestination.append(File.separator).append(domain);
+
+        // 도메인 폴더 생성
+        File domainFolder = new File(domainDestination.toString());
+        if (!domainFolder.exists()) {
+            domainFolder.mkdir();
+        }
+
+        // 도메인 하위 폴더 생성
+        // api, application, dao, dto, entity
+        domainDestination.append(File.separator);
+        for (String domainSubFolderName : domainSubFolders.keySet()) {
+            File domainSubFolder = new File(domainDestination + domainSubFolderName);
+            if (!domainSubFolder.exists()) {
+                domainSubFolder.mkdir();
+            }
+
+            if (domainSubFolderName.equals("dto")) {
+                File dtoRequestFolder = new File(domainDestination + domainSubFolderName + File.separator + "request");
+                if (!dtoRequestFolder.exists()) {
+                    dtoRequestFolder.mkdir();
+                }
+                File dtoResponseFolder = new File(domainDestination + domainSubFolderName + File.separator + "response");
+                if (!dtoResponseFolder.exists()) {
+                    dtoResponseFolder.mkdir();
+                }
+            }
+        }
     }
 
     private void replaceGlobalGroupVariables(Project project, String destination) throws IOException {

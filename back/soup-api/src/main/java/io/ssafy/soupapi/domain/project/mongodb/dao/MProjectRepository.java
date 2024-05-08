@@ -36,7 +36,6 @@ public interface MProjectRepository extends MongoRepository<Project, ObjectId> {
 
     @Query(value = "{ _id: ?0}", fields = "{project_api_doc:  1}")
     Optional<Project> findProjectApiDocs(ObjectId projectId);
-
     @Query(value = "{ _id:  ?0}", fields = "{project_issues:  1}")
     Optional<Project> findAllProjectIssues(ObjectId projectId);
 
@@ -48,4 +47,7 @@ public interface MProjectRepository extends MongoRepository<Project, ObjectId> {
     @Query(value = "{ _id: ?0 }", fields = "{ project_builder_info: 1 }")
     @Update("{ '$set': { project_builder_info:  ?1} }")
     void changeProjectBuildInfo(ObjectId projectId, ProjectBuilderInfo builderInfo);
+
+    @Query(value = "{ _id: ?0}", fields = "{ project_api_doc.usable_domains:  1}")
+    Optional<Project> findProjectUsableDomains(ObjectId projectId);
 }

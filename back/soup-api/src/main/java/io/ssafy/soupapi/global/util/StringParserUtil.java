@@ -27,7 +27,7 @@ public class StringParserUtil {
     }
 
     public static String upperFirst(String data) {
-        if (Objects.isNull(data)) {
+        if (data.isBlank()) {
             return "";
         }
         if (data.length() == 1) {
@@ -37,7 +37,7 @@ public class StringParserUtil {
     }
 
     public static String lowerFirst(String data) {
-        if (Objects.isNull(data)) {
+        if (data.isBlank()) {
             return "";
         }
         if (data.length() == 1) {
@@ -45,4 +45,36 @@ public class StringParserUtil {
         }
         return Character.toLowerCase(data.charAt(0)) + data.substring(1);
     }
+
+    public static String convertToSnakeCase(String data) {
+        String[] parts = data.split("(?=[A-Z])|_");
+        StringBuilder result = new StringBuilder();
+        for (int i = 0; i < parts.length; i++) {
+            if (parts[i].isEmpty()) {
+                continue; // 빈 문자열인 경우 건너뜁니다.
+            }
+            String part = parts[i].toLowerCase();
+            if (i > 0) {
+                result.append("_");
+            }
+            result.append(part);
+        }
+
+        return result.toString();
+    }
+
+    public static String convertToPascalCase(String data) {
+        String[] parts = data.split("(?=[A-Z])|_");
+        StringBuilder result = new StringBuilder();
+        for (String s : parts) {
+            if (s.isEmpty()) {
+                continue; // 빈 문자열인 경우 건너뜁니다.
+            }
+            String part = upperFirst(s);
+            result.append(part);
+        }
+
+        return result.toString();
+    }
+
 }
