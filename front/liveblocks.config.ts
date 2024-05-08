@@ -24,7 +24,7 @@ type Storage = {
   // ...
 
   outline : LiveObject<{name: string, description: string}>
-  func?: LiveList<FuncDescResWithColor>
+  func?: LiveList<LiveObject<FuncDescResWithColor>>
 };
 
 // Optionally, UserMeta represents static/readonly metadata on each user, as

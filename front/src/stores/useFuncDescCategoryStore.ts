@@ -21,13 +21,12 @@ const useFuncDescCategoryStore = create<Store>((set) => ({
     setFilteredCategories: (categories) => set({ filteredCategories: categories }),
     searchCategory: (query) => {
         set((state) => {
-            const newState = { ...state }; // Create a new object
-            const currInput = newState.filteredCategories.find((category) => category.functionId === 'temp');
-            let searchedCategories = newState.uniqueCategories.filter((category) =>
+            let currInput = state.filteredCategories.find((category) => category.functionId === 'temp');
+            let searchedCategories = state.uniqueCategories.filter((category) =>
                 category.category.toLowerCase().includes(query.toLowerCase())
             );
             if (!currInput) {
-                const newColor = getLowestIndexMissingColor(newState.filteredCategories.map(category => category.color));
+                const newColor = getLowestIndexMissingColor(state.filteredCategories.map(category => category.color));
                 const newCategory = {
                     functionId: 'temp',
                     category: query,
@@ -36,11 +35,10 @@ const useFuncDescCategoryStore = create<Store>((set) => ({
                 searchedCategories = [...searchedCategories, newCategory];
             }
             else if (currInput) {
-                currInput.category = query; // Modify the property directly
+                currInput = { ...currInput, category: query };
                 searchedCategories = [...searchedCategories, currInput];
             }
-            newState.filteredCategories = searchedCategories;
-            return newState;
+            return { filteredCategories: searchedCategories };
         });
     },
     isCategoryModalVisible: 'none',
@@ -48,6 +46,7 @@ const useFuncDescCategoryStore = create<Store>((set) => ({
 
 }));
 
+// eslint-disable-next-line no-param-reassign
 useFuncDescCategoryStore.subscribe(
     (state) => {
         state.uniqueCategories = Array.from(

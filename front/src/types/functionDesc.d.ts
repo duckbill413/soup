@@ -29,8 +29,9 @@ export type FuncTableColumnProps = {
 
 export type CategoryModalProps ={
     funcCurrData: FuncDescResWithColor;
-    updateElement: (currId,changeId,attribute)=>void;
     selected: string;
     setSelected: (id:string)=>void;
     handleKey: (event: React.KeyboardEvent<HTMLInputElement>) => void;
+    updateElement: (currId,changeId,attribute)=>void;
+
 }

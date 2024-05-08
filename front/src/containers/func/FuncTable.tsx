@@ -1,131 +1,78 @@
 'use client';
 
-import {faker} from "@faker-js/faker";
-
 import {useEffect} from 'react';
 import {FuncDescResWithColor} from '@/types/functionDesc';
 import useFuncDescCategoryStore from "@/stores/useFuncDescCategoryStore";
 import FuncTableColumn from '@/containers/func/FuncTableColumn/FuncTableColumn';
+import {LiveObject} from "@liveblocks/client";
 import * as styles from './funcTable.css';
 import {useMutation, useStorage} from "../../../liveblocks.config";
 
-const Member = [
-    {
-        memberId: crypto.randomUUID(),
-        memberProfileUri: faker.image.avatarGitHub(),
-        memberNickname: '최지우',
-    },
-    {
-        memberId: crypto.randomUUID(),
-        memberProfileUri: faker.image.avatarGitHub(),
-        memberNickname: '정승원',
-    },
-    {
-        memberId: crypto.randomUUID(),
-        memberProfileUri: faker.image.avatarGitHub(),
-        memberNickname: '정승원',
-    },
-];
-// 가짜 기능 데이터
-const DummyData: FuncDescResWithColor[] = [
-    {
-        functionId: crypto.randomUUID(),
-        category: '회원관리',
-        functionName: '소셜 로그인',
-        description: '구글 소셜로그인을 적용합니다.',
-        point: 3,
-        priority: '넘높음',
-        reporter: Member[0],
-        color:'#F6CECE',
-    },
-    {
-        functionId: crypto.randomUUID(),
-        category: '게시물 등록',
-        functionName: '카테고리 검색',
-        description: '사용자가 입력한 제목 기반',
-        point: 3,
-        priority: '넘높음',
-        reporter: Member[1],
-        color:'#F8ECE0'
-    },
-    {
-        functionId: crypto.randomUUID(),
-        category: '게시물 ',
-        functionName: '카테고리 검색',
-        description: '사용자가 입력한 제목 기반',
-        point: 3,
-        priority: '넘높음',
-        reporter: Member[2],
-        color: '#F5F6CE'
-    },
-
-];
 
 export default function FuncTable() {
+
     const init:FuncDescResWithColor[] =useStorage((root)=>root.func) as FuncDescResWithColor[];
-    const {funcDescData,filteredCategories,setFuncDescData} = useFuncDescCategoryStore();
-
-
-    useEffect(() => {
-        // 초기 데이터 세팅
-        setFuncDescData(DummyData);
-    }, [setFuncDescData]);
+    const {funcDescData,filteredCategories,setIsCategoryModalVisible,setFuncDescData} = useFuncDescCategoryStore();
 
     useEffect(() => {
         setFuncDescData(init);
+
     }, [init, setFuncDescData]);
 
-    const update = useMutation(({ storage }, newFuncData: FuncDescResWithColor[]) => {
-        const funcList = storage.get("func");
-        if (funcList) {
-            funcList.clear();
-            newFuncData.forEach(data => {
-                funcList.push(data);
-            });
+    const updateElement = useMutation(({ storage },currId: string, changeId: string,attribute: string) => {
+        const currData = storage.get("func")?.find(data=>data.get("functionId")===currId);
+        const changeData = filteredCategories.find(data=>data.functionId===changeId);
+
+        if(attribute==='add'){
+            storage.get('func')?.push(new LiveObject<FuncDescResWithColor>({
+                functionId: crypto.randomUUID(),
+                category: "",
+                description: "",
+                point: 0,
+                color: "",
+                priority: "",
+                functionName: "",
+                reporter: {    memberId: "",
+                    memberNickname: "",
+                    memberProfileUri: ""},}));
+            return;
         }
-    }, []);
-    const updateElement = (currId: string, changeId: string,attribute: string) => {
-        let updatedData = funcDescData;
-        if (attribute === 'category') {
-            if (changeId === 'none') {
-                updatedData = funcDescData.map(item => ({
-                    ...item,
-                    category: item.functionId === currId ? '' : item.category,
-                    color: item.functionId === currId ? '' : item.color,
-                }));
-            } else {
-                const changeData = filteredCategories.find(item => item.functionId === changeId);
-                if (changeData) {
-                    updatedData = funcDescData.map(item => {
-                        if (changeId !== 'temp' && item.functionId === currId) {
-                            return {
-                                ...item,
-                                category: changeData.category,
-                                color: changeData.color,
-                            };
-                        } if (item.category === '' || item.category === changeData.category) {
-                            return {
-                                ...item,
-                                category: changeData.category,
-                                color: changeData.color,
-                            };
-                        } 
-                            return item;
-                        
-                    });
-                }
+        if(attribute==='functionName'){
+            currData?.set('functionName',changeId);
+            return;
+        }
+        if(attribute==='description'){
+            currData?.set('description',changeId);
+            return;
+        }
+        if(attribute==='point'){
+            currData?.set('point',Number(changeId));
+            return;
+        }
+        if(attribute==='priority'){
+            currData?.set('priority',changeId);
+            return;
+        }
+        if(attribute==='category') {
+            if(changeId==='none') {
+                currData?.set('category','');
+                currData?.set('color','');
+            }
+            else if(changeId==='temp'){
+                if(!changeData) return;
+                currData?.set('category',changeData.category);
+                currData?.set('color',changeData.color);
+                setIsCategoryModalVisible('none');
+            }
+            else{
+                if(!changeData) return;
+                currData?.set('category',changeData.category);
+                currData?.set('color',changeData.color);
+                setIsCategoryModalVisible('none');
             }
         }
 
-        if(attribute==="functionName"){
-            updatedData = funcDescData.map(item=>({
-                ...item,
-                functionName: (currId===item.functionId) ? changeId : item.functionName
-            }))
-        }
-        update(updatedData);
-    }
-
+    }, [filteredCategories]);
 
 
     return (
@@ -150,9 +97,9 @@ export default function FuncTable() {
                         funcCurrData={item}
                     />
                 ))}
-                <tr className={styles.createNew}>
+                <tr className={styles.createNew} onClick={()=>updateElement("","","add")}>
                     <td colSpan={6}>
-                        <button type="button">+ 새로 만들기</button>
+                        <button type="button" >+ 새로 만들기</button>
                     </td>
                 </tr>
                 </tbody>
