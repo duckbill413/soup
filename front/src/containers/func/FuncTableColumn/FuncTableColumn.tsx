@@ -1,9 +1,8 @@
 import {FuncTableColumnProps} from "@/types/functionDesc";
 import Category from "@/containers/func/FuncTableColumn/Attribute/Category";
-import Image from "next/image";
 import Priority from "@/containers/func/FuncTableColumn/Attribute/Priority";
 import Point from "@/containers/func/FuncTableColumn/Attribute/Point";
-import * as styles from "./funcTableColumn.css";
+import Member from "@/containers/func/FuncTableColumn/Attribute/Member";
 
 
 export default function FuncTableColumn({funcCurrData,updateElement}: FuncTableColumnProps) {
@@ -20,14 +19,7 @@ export default function FuncTableColumn({funcCurrData,updateElement}: FuncTableC
             </td>
             <Point funcCurrData={funcCurrData} updateElement={updateElement}/>
             <Priority funcCurrData={funcCurrData} updateElement={updateElement}/>
-            <td>
-                {funcCurrData.reporter.memberNickname && funcCurrData.reporter.memberNickname.length>0 &&
-                <div className={styles.manager}>
-                     <p>{funcCurrData.reporter.memberNickname}</p>
-                     <Image unoptimized src={funcCurrData.reporter.memberNickname} alt="프로필 이미지" width={30} height={30}/>
-                </div>
-                }
-            </td>
+            <Member funcCurrData={funcCurrData} updateElement={updateElement}/>
         </tr>
             );
 }

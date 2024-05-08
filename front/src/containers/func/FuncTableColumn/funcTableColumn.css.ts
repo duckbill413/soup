@@ -11,20 +11,7 @@ export const category = style({
     padding:'4px',
     borderRadius:'5px'
 });
-export const btnGroupContainer = style({
-    width: '30%',
-    maxWidth:'50%',
-    position: 'absolute',
-    backgroundColor:'white',
-    borderRadius: '5px',
-    boxShadow: 'rgba(50, 50, 93, 0.25) 0px 13px 27px -5px, rgba(0, 0, 0, 0.3) 0px 8px 16px -8px',
-    marginTop:'-3%',
-    marginLeft: '2%',
-    textAlign:'start',
-    float: 'left',
-    zIndex:3,
 
-})
 export const btnGroup = style({
 
 })
@@ -42,22 +29,8 @@ export const elementGroup = style({
     backgroundColor: vars.color.lightGray,
 
 })
-export const option = style({
-    display:'flex',
-    backgroundColor:'transparent',
-    fontWeight: 500,
-    border: 'none',
-});
-
-export const currCategory = style({
-
-    display:'flex',
-    borderRadius:'5px',
-    padding: '2px',
-    justifyContent: 'space-around',
 
 
-})
 globalStyle(`${elementGroup} > div > p`,{
     margin:0,
     cursor:'pointer'
@@ -79,28 +52,18 @@ export const select = style({
         backgroundColor: 'whitesmoke'
     }
 })
-export const whitesmoke = style({
-    backgroundColor: 'whitesmoke'
-})
 
 export const button = style({
     borderRadius:'4px',
     padding:'3px',
 
 })
-export const manager = style({
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center'
-})
+
 
 export const createCategory = style({
     display:'flex',
     alignItems: 'center',
 })
-
-
-
 
 
 globalStyle(`${select}>span`, {
@@ -113,14 +76,4 @@ globalStyle(`${select}>span`, {
 globalStyle(`${createCategory}>p`, {
     margin: `0 ${vars.space.tiny} 0 0`,
     fontWeight: 400
-})
-
-globalStyle(`${manager}>p`, {
-    width:'100%',
-    margin: `0 ${vars.space.tiny} 0 0`
-})
-
-globalStyle(`${manager}>img`, {
-    borderRadius: '50%',
-    aspectRatio: 1
 })

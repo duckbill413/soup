@@ -12,18 +12,7 @@ function Room({ children }: { children: ReactNode }) {
   const path = usePathname()
   return (
       <RoomProvider id={path} initialPresence={{}} initialStorage={{
-          func: new LiveList<LiveObject<FuncDescResWithColor>>([new LiveObject({
-              functionId: crypto.randomUUID(),
-              category: "",
-              description: "",
-              point: 0,
-              color: "",
-              priority: "",
-              functionName: "",
-              reporter: {    memberId: "",
-                  memberNickname: "",
-                  memberProfileUri: ""},
-          })])}}
+          func: new LiveList<LiveObject<FuncDescResWithColor>>}}
       >
       {/* Loading 페이지 추가해야 한다. */}
       <ClientSideSuspense fallback={<div><Loading/></div>}>
