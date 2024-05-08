@@ -95,17 +95,18 @@ public enum ErrorCode {
     // Vuerd 관련 에러 (CODE: 600)
     NOT_FOUND_PROJECT_VUERD(404, "B600", "프로젝트 VUERD를 찾을 수 없습니다."),
 
-    // S3 파일 업로드
+    // S3 파일 업로드 (CODE: 700)
     NOT_FOUND_S3FILE(404, "B701", "S3 파일이 존재하지 않습니다"),
     FILE_NOT_EXISTS(400, "B702", "업로드할 파일이 비어있습니다."),
 
-    FAILED_TO_UPLOAD_LOCAL_FILE(404, "F001", "로컬 파일 업로드 실패"),
-    FAILED_TO_UPLOAD_S3_FILE(404, "F002", "S3 파일 업로드 실패"),
-    // OpenVidu 관련 에러 (CODE: 700)
-    NOT_FOUND_SESSION(404, "B700", "존재하지 않는 세션입니다.");
+    FAILED_TO_UPLOAD_LOCAL_FILE(404, "B703", "로컬 파일 업로드 실패"),
+    FAILED_TO_UPLOAD_S3_FILE(404, "B704", "S3 파일 업로드 실패"),
 
+    // OpenVidu 관련 에러 (CODE: 800)
+    NOT_FOUND_SESSION(404, "B800", "존재하지 않는 세션입니다."),
+    // API DOCS 관련 에러 (CODE: 900)
+    NOT_FOUND_API_DOC(404, "B900", "찾을 수 없는 API 문서 입니다."),
     ; // End
-
 
     /**
      * ******************************* Error Code Constructor ***************************************

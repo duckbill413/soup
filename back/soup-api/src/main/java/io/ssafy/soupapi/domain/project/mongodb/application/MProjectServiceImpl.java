@@ -2,16 +2,11 @@ package io.ssafy.soupapi.domain.project.mongodb.application;
 
 import com.google.gson.Gson;
 import io.ssafy.soupapi.domain.project.mongodb.dao.MProjectRepository;
-import io.ssafy.soupapi.domain.project.mongodb.dto.request.UpdateProjectInfo;
-import io.ssafy.soupapi.domain.project.mongodb.dto.request.UpdateProjectJiraKey;
-import io.ssafy.soupapi.domain.project.mongodb.dto.request.UpdateProjectProposal;
-import io.ssafy.soupapi.domain.project.mongodb.dto.request.UpdateProjectTool;
-import io.ssafy.soupapi.domain.project.mongodb.dto.response.GetProjectInfo;
-import io.ssafy.soupapi.domain.project.mongodb.dto.response.GetProjectJiraKey;
-import io.ssafy.soupapi.domain.project.mongodb.dto.response.GetProjectProposal;
-import io.ssafy.soupapi.domain.project.mongodb.dto.response.ProjectIssuesCount;
+import io.ssafy.soupapi.domain.project.mongodb.dto.request.*;
+import io.ssafy.soupapi.domain.project.mongodb.dto.response.*;
 import io.ssafy.soupapi.domain.project.mongodb.entity.Info;
 import io.ssafy.soupapi.domain.project.mongodb.entity.Project;
+import io.ssafy.soupapi.domain.project.mongodb.entity.apidocs.ApiDoc;
 import io.ssafy.soupapi.domain.project.mongodb.entity.issue.ProjectIssue;
 import io.ssafy.soupapi.global.common.code.ErrorCode;
 import io.ssafy.soupapi.global.common.request.PageOffsetRequest;
@@ -19,6 +14,7 @@ import io.ssafy.soupapi.global.common.response.OffsetPagination;
 import io.ssafy.soupapi.global.common.response.PageOffsetResponse;
 import io.ssafy.soupapi.global.exception.BaseExceptionHandler;
 import io.ssafy.soupapi.global.security.user.UserSecurityDTO;
+import io.ssafy.soupapi.global.util.StringParserUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.bson.types.ObjectId;
@@ -34,10 +30,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
 @Log4j2
 @Service
@@ -172,6 +165,14 @@ public class MProjectServiceImpl implements MProjectService {
         return GetProjectJiraKey.toProjectInfoDto(project.getInfo());
     }
 
+    /**
+     * 프로젝트 이슈 리스트 조회
+     * Offset 기반 페이지네이션 적용
+     *
+     * @param projectId         이슈를 조회할 프로젝트 ID
+     * @param pageOffsetRequest Offset Paging 정보
+     * @return 이슈 리스트
+     */
     @Override
     public PageOffsetResponse<List<ProjectIssue>> findProjectIssues(ObjectId projectId, PageOffsetRequest pageOffsetRequest) {
         int offset = (pageOffsetRequest.page() - 1) * pageOffsetRequest.size();
@@ -198,8 +199,16 @@ public class MProjectServiceImpl implements MProjectService {
                 .build();
     }
 
+    /**
+     * 프로젝트 이슈 정보 업데이트
+     *
+     * @param projectId         이슈를 업데이트할 프로젝트 ID
+     * @param issues            업데이트할 이슈 정보 리스트
+     * @param pageOffsetRequest Offset Paging 정보
+     * @return 이슈 리스트
+     */
     @Override
-    public PageOffsetResponse<List<ProjectIssue>> updateProjectIssues(ObjectId projectId, List<ProjectIssue> issues, PageOffsetRequest pageOffsetRequest, UserSecurityDTO userSecurityDTO) {
+    public PageOffsetResponse<List<ProjectIssue>> updateProjectIssues(ObjectId projectId, List<ProjectIssue> issues, PageOffsetRequest pageOffsetRequest) {
         for (ProjectIssue issue : issues) {
             // 변경 사항이 없는 경우
             if (!issue.isIssueUpdated()) {
@@ -220,6 +229,12 @@ public class MProjectServiceImpl implements MProjectService {
         return findProjectIssues(projectId, pageOffsetRequest);
     }
 
+    /**
+     * 프로젝트 ERD 정보
+     *
+     * @param projectId ERD를 조회할 프로젝트 ID
+     * @return ERD 정보
+     */
     @Override
     public Object findProjectVuerd(ObjectId projectId) {
         var project = mProjectRepository.findVuerdById(projectId).orElseThrow(() ->
@@ -233,6 +248,13 @@ public class MProjectServiceImpl implements MProjectService {
         return project.getVuerd();
     }
 
+    /**
+     * 프로젝트 ERD 업데이트
+     *
+     * @param projectId ERD를 업데이트할 프로젝트 ID
+     * @param vuerdDoc  업데이트 VUERD 정보
+     * @return 프로젝트 ERD 정보
+     */
     @Transactional
     @Override
     public Object changeProjectVuerd(ObjectId projectId, Object vuerdDoc) {
@@ -243,18 +265,174 @@ public class MProjectServiceImpl implements MProjectService {
         return vuerdDoc;
     }
 
-    private void deleteProjectIssue(ObjectId projectId, ProjectIssue issue) {
-        if (Objects.isNull(issue.getProjectIssueId())) {
-            return;
+    /**
+     * 간단한 프로젝트 이슈 리스트 정보
+     *
+     * @param projectId 이슈 리스트를 조회할 프로젝트 ID
+     * @return 간단한 프로젝트 이슈 리스트
+     */
+    @Transactional(readOnly = true)
+    @Override
+    public List<GetSimpleApiDoc> findProjectApiDocs(ObjectId projectId) {
+        var project = mProjectRepository.findProjectApiDocs(projectId).orElseThrow(() ->
+                new BaseExceptionHandler(ErrorCode.NOT_FOUND_PROJECT));
+
+        if (Objects.isNull(project.getApiDocs()) || Objects.isNull(project.getApiDocs().getApiDocList())) {
+            return List.of();
         }
-        Query query = new Query(Criteria.where("_id").is(projectId)
-                .and("project_issues.project_issue_id").is(issue.getProjectIssueId()));
 
-        Update update = new Update().pull("project_issues", Query.query(Criteria.where("project_issue_id").is(issue.getProjectIssueId())));
-
-        mongoTemplate.updateFirst(query, update, Project.class);
+        var apiDocs = project.getApiDocs().getApiDocList();
+        return apiDocs.stream().map(GetSimpleApiDoc::of).toList();
     }
 
+    /**
+     * 사용 가능한 PathVariable 이름 리스트
+     *
+     * @param projectId 프로젝트 ID
+     * @param apiDocId  프로젝트 API DOC ID
+     * @return API DOC에서 사용 가능한 PathVariable 이름 리스트
+     */
+    @Override
+    public List<String> findProjectValidPathVariableNames(ObjectId projectId, UUID apiDocId) {
+        ApiDoc apiDoc = getProjectApiDoc(projectId, apiDocId);
+        if (Objects.isNull(apiDoc.getApiUriPath())) {
+            return List.of();
+        }
+
+        return new ArrayList<>(StringParserUtil.extractBracketsContent(apiDoc.getApiUriPath()));
+    }
+
+    /**
+     * API DOC 조회
+     * - API DOC에서 사용 가능한 PathVariable 리스트를 함께 조회
+     *
+     * @param projectId 프로젝트 ID
+     * @param apiDocId  API DOC ID
+     * @return 프로젝트 API DOC 정보
+     */
+    @Override
+    public GetApiDoc findProjectSingleApiDocs(ObjectId projectId, UUID apiDocId) {
+        ApiDoc apiDoc = getProjectApiDoc(projectId, apiDocId);
+
+        return GetApiDoc.of(apiDoc, new ArrayList<>(StringParserUtil.extractBracketsContent(apiDoc.getApiUriPath())));
+    }
+
+    /**
+     * API DOC 조회
+     *
+     * @param projectId 프로젝트 ID
+     * @param apiDocId  API DOC ID
+     * @return 프로젝트 API DOC 정보
+     */
+    private ApiDoc getProjectApiDoc(ObjectId projectId, UUID apiDocId) {
+        Query query = new Query().addCriteria(Criteria.where("_id").is(projectId));
+        query.fields().include("project_api_doc.api_docs.$");
+        query.addCriteria(Criteria.where("project_api_doc.api_docs.api_doc_id").is(apiDocId));
+
+        Project project = mongoTemplate.findOne(query, Project.class);
+
+        if (project == null || project.getApiDocs() == null || project.getApiDocs().getApiDocList().isEmpty()) {
+            throw new BaseExceptionHandler(ErrorCode.NOT_FOUND_API_DOC);
+        }
+
+        return project.getApiDocs().getApiDocList().get(0);
+    }
+
+    /**
+     * 사용 가능한 Domain 이름 목록
+     * ERD를 기준으로 Domain 리스트 조회
+     *
+     * @param projectId 프로젝트 ID
+     * @return ERD 기반 Domain 리스트 조회
+     */
+    @Override
+    public List<String> findProjectValidDomainNames(ObjectId projectId) {
+        var project = mProjectRepository.findVuerdById(projectId).orElseThrow(() ->
+                new BaseExceptionHandler(ErrorCode.NOT_FOUND_PROJECT));
+
+        if (Objects.isNull(project.getVuerd())) {
+            return List.of();
+        }
+
+        return getProjectDomainsFromERD(project);
+    }
+
+    /**
+     * 프로젝트 API DOC 정보 업데이트
+     *
+     * @param projectId    프로젝트 ID
+     * @param updateApiDoc 업데이트할 API DOC 정보
+     * @return 업데이트를 완료한 API DOC ID
+     */
+    @Override
+    public String updateProjectApiDoc(String projectId, UpdateApiDoc updateApiDoc) {
+        ApiDoc apiDoc = UpdateApiDoc.toApiDoc(updateApiDoc);
+        Query query = new Query(Criteria.where("_id").is(new ObjectId(projectId)));
+
+        // id가 없으면 save 수행
+        if (Objects.isNull(apiDoc.getId())) {
+            apiDoc.setId(UUID.randomUUID()); // id setting
+            Update update = new Update().addToSet("project_api_doc.api_docs", apiDoc);
+            mongoTemplate.updateFirst(query, update, Project.class);
+            return apiDoc.getId().toString();
+        }
+        // update 수행
+        query.addCriteria(Criteria.where("project_api_doc.api_docs.api_doc_id").is(apiDoc.getId()));
+        Update update = new Update().set("project_api_doc.api_docs.$", apiDoc);
+        mongoTemplate.updateFirst(query, update, Project.class);
+        return updateApiDoc.id().toString();
+    }
+
+    /**
+     * 프로젝트 도메인 리스트 정보
+     *
+     * @param project 프로젝트 ID
+     * @return 프로젝트 도메인 리스트
+     */
+    private List<String> getProjectDomainsFromERD(Project project) {
+        var vuerdObj = project.getVuerd();
+        var domains = new ArrayList<String>();
+        if (vuerdObj instanceof LinkedHashMap<?, ?>) {
+            vuerdObj = ((LinkedHashMap<?, ?>) vuerdObj).get("$set");
+
+            if (vuerdObj instanceof LinkedHashMap<?, ?>) {
+                var doc = ((LinkedHashMap<?, ?>) vuerdObj).get("doc");
+                var collections = ((LinkedHashMap<?, ?>) vuerdObj).get("collections");
+
+                if (doc instanceof LinkedHashMap<?, ?>) {
+                    var tableIdsObj = ((LinkedHashMap<?, ?>) doc).get("tableIds");
+
+                    List<String> tableIds = new ArrayList<>();
+                    if (tableIdsObj instanceof List<?>) {
+                        ((List<?>) tableIdsObj).forEach(tableId -> tableIds.add(tableId.toString()));
+                    }
+
+                    if (collections instanceof LinkedHashMap<?, ?>) {
+                        var tableEntities = ((LinkedHashMap<?, ?>) collections).get("tableEntities");
+
+                        if (tableEntities instanceof LinkedHashMap<?, ?>) {
+
+                            for (String tableId : tableIds) {
+                                var table = ((LinkedHashMap<?, ?>) tableEntities).get(tableId);
+                                if (table instanceof LinkedHashMap<?, ?>) {
+                                    domains.add((((LinkedHashMap<?, ?>) table).get("name")).toString().toLowerCase());
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return domains;
+    }
+
+    /**
+     * 프로젝트 이슈 삽입
+     *
+     * @param projectId    프로젝트 ID
+     * @param projectIssue 추가할 프로젝트 이슈 정보
+     */
     private void insertProjectIssue(ObjectId projectId, ProjectIssue projectIssue) {
         Query query = new Query().addCriteria(Criteria.where("_id").is(projectId));
         Update update = new Update().addToSet("project_issues", projectIssue);
@@ -282,6 +460,12 @@ public class MProjectServiceImpl implements MProjectService {
         mongoTemplate.updateFirst(query, update, Project.class);
     }
 
+    /**
+     * 프로젝트 이슈 개수 조회
+     *
+     * @param projectId 프로젝트 ID
+     * @return 프로젝트 이슈 개수
+     */
     public long countTotalProjectIssues(ObjectId projectId) {
         Aggregation aggregation = Aggregation.newAggregation(
                 Aggregation.match(Criteria.where("_id").is(projectId)),
@@ -297,6 +481,11 @@ public class MProjectServiceImpl implements MProjectService {
         return results.getMappedResults().get(0).count();
     }
 
+    /**
+     * Vuerd 기본 Schema 정보
+     *
+     * @return Vuerd Default Schema
+     */
     private Object getSampleVuerdDoc() {
         String json = """
                 {
