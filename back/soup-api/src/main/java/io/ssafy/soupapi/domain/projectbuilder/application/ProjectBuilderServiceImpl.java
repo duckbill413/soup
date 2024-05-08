@@ -32,7 +32,7 @@ public class ProjectBuilderServiceImpl implements ProjectBuilderService {
         if (Objects.isNull(project.getInfo())) {
             throw new BaseExceptionHandler(ErrorCode.NEED_PROJECT_BUILD_INFO);
         }
-        if (Objects.isNull(project.getVuerdDoc())) {
+        if (Objects.isNull(project.getVuerd())) {
             throw new BaseExceptionHandler(ErrorCode.NEED_PROJECT_BUILD_ERD);
         }
 //        if (Objects.isNull(project.getApiDocs())) {

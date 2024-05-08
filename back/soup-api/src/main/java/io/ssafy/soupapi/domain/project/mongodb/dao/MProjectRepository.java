@@ -3,7 +3,6 @@ package io.ssafy.soupapi.domain.project.mongodb.dao;
 import io.ssafy.soupapi.domain.project.mongodb.entity.Project;
 import io.ssafy.soupapi.domain.project.mongodb.entity.Proposal;
 import io.ssafy.soupapi.domain.project.mongodb.entity.builder.ProjectBuilderInfo;
-import io.ssafy.soupapi.domain.project.mongodb.entity.vuerd.VuerdDoc;
 import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
