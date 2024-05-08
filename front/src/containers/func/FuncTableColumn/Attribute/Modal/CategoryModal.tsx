@@ -2,18 +2,18 @@
 
 import {CategoryModalProps} from "@/types/functionDesc";
 import {useEffect, useRef} from "react";
-import useFuncDescCategoryStore from "@/stores/useFuncDescCategoryStore";
+import useFuncDescStore from "@/stores/useFuncDescStore";
 import * as styles from "./categoryModal.css";
 
 export default function CategoryModal({setSelected,updateElement,selected,handleKey,funcCurrData}: CategoryModalProps){
 
     const { searchCategory,uniqueCategories,setFilteredCategories,filteredCategories,
-        isCategoryModalVisible,setIsCategoryModalVisible} = useFuncDescCategoryStore();
+        isCategoryModalVisible,setIsCategoryModalVisible} = useFuncDescStore();
     const inputRef = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
-        // eslint-disable-next-line react-hooks/exhaustive-deps
         setFilteredCategories(uniqueCategories);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [funcCurrData,setFilteredCategories]);
 
 
@@ -34,6 +34,7 @@ export default function CategoryModal({setSelected,updateElement,selected,handle
         {isCategoryModalVisible === funcCurrData.functionId &&
 
             <div className={styles.btnGroupContainer}>
+
                 <div className={styles.btnGroup}>
                     <div className={`${styles.elementGroup}`}>
                         {funcCurrData.category.length > 0 ?

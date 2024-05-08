@@ -2,23 +2,26 @@ import { globalStyle, style } from '@vanilla-extract/css'
 import vars from '@/styles/variables.css'
 
 
-export const container = style({
-    cursor:'pointer'
-})
-export const category = style({
-    width:'100%',
-    minWidth:'40%',
-    padding:'4px',
-    borderRadius:'5px'
-});
+export const btnGroupContainer = style({
+    width: '15%',
+    maxWidth:'50%',
+    position: 'absolute',
+    backgroundColor:'white',
+    borderRadius: '5px',
+    boxShadow: 'rgba(50, 50, 93, 0.25) 0px 13px 27px -5px, rgba(0, 0, 0, 0.3) 0px 8px 16px -8px',
+    marginTop:'-3%',
+    marginLeft: '2%',
+    textAlign:'start',
+    float: 'left',
+    zIndex:3,
 
+})
 export const btnGroup = style({
 
 })
 
 globalStyle(`${btnGroup} div`,{
     padding: '2%'
-
 });
 export const elementGroup = style({
     display:'flex',
@@ -29,8 +32,6 @@ export const elementGroup = style({
     backgroundColor: vars.color.lightGray,
 
 })
-
-
 globalStyle(`${elementGroup} > div > p`,{
     margin:0,
     cursor:'pointer'
@@ -42,15 +43,23 @@ globalStyle(`${btnGroup} > div > p`,{
     color: vars.color.deepGray
 
 });
+export const bar = style({
+    display:'flex',
 
+    // backgroundColor:'blue'
+})
 export const select = style({
+    display:'flex',
+    alignItems:'center',
     borderRadius:'4px',
     cursor:'pointer',
-    padding: '3px',
-    margin: '0 0 3px 0',
+    marginBottom: '5px',
     ':hover':{
         backgroundColor: 'whitesmoke'
     }
+})
+export const whitesmoke = style({
+    backgroundColor: 'whitesmoke'
 })
 
 export const button = style({
@@ -59,21 +68,22 @@ export const button = style({
 
 })
 
+export const clickBackground=style({
 
-export const createCategory = style({
-    display:'flex',
-    alignItems: 'center',
+    width:'96vw',
+    height:'90vh',
+    position:'absolute',
+    top:0,
+    right:0,
+    bottom:0,
+    left:0,
+    zIndex:1,
 })
 
 
-globalStyle(`${select}>span`, {
+globalStyle(`${select}> img`, {
     marginRight: vars.space.tiny,
     color: vars.color.deepGray,
     fontWeight: 700
 })
 
-
-globalStyle(`${createCategory}>p`, {
-    margin: `0 ${vars.space.tiny} 0 0`,
-    fontWeight: 400
-})

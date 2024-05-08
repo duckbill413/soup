@@ -1,6 +1,6 @@
 'use client'
 
-import useFuncDescCategoryStore from "@/stores/useFuncDescCategoryStore";
+import useFuncDescStore from "@/stores/useFuncDescStore";
 import useHandleKeys from "@/hooks/useHandleKeys";
 import {FuncTableColumnProps} from "@/types/functionDesc";
 import CategoryModal from "@/containers/func/FuncTableColumn/Attribute/Modal/CategoryModal";
@@ -8,7 +8,7 @@ import {useEffect} from "react";
 import * as styles from "./category.css";
 
 export default function Category({funcCurrData,updateElement}: FuncTableColumnProps){
-    const { filteredCategories,setIsCategoryModalVisible} = useFuncDescCategoryStore();
+    const { filteredCategories,setIsCategoryModalVisible} = useFuncDescStore();
     const { selected,setSelected, handleKey,action,setAction } = useHandleKeys(filteredCategories,
         filteredCategories.length > 0 ? filteredCategories[0].functionId : "");
 
