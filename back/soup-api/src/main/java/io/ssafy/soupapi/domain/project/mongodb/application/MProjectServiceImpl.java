@@ -13,7 +13,6 @@ import io.ssafy.soupapi.domain.project.mongodb.dto.response.ProjectIssuesCount;
 import io.ssafy.soupapi.domain.project.mongodb.entity.Info;
 import io.ssafy.soupapi.domain.project.mongodb.entity.Project;
 import io.ssafy.soupapi.domain.project.mongodb.entity.issue.ProjectIssue;
-import io.ssafy.soupapi.domain.project.mongodb.entity.vuerd.VuerdDoc;
 import io.ssafy.soupapi.global.common.code.ErrorCode;
 import io.ssafy.soupapi.global.common.request.PageOffsetRequest;
 import io.ssafy.soupapi.global.common.response.OffsetPagination;
@@ -222,20 +221,21 @@ public class MProjectServiceImpl implements MProjectService {
     }
 
     @Override
-    public VuerdDoc findProjectVuerd(ObjectId projectId) {
+    public Object findProjectVuerd(ObjectId projectId) {
         var project = mProjectRepository.findVuerdById(projectId).orElseThrow(() ->
                 new BaseExceptionHandler(ErrorCode.NOT_FOUND_PROJECT));
-        if (Objects.isNull(project.getVuerdDoc())) {
-            VuerdDoc sampleVuerd = getSampleVuerdDoc();
+        if (Objects.isNull(project.getVuerd())) {
+            Object sampleVuerd = getSampleVuerdDoc();
             mProjectRepository.changeVuerdById(projectId, sampleVuerd);
             return sampleVuerd;
         }
 
-        return project.getVuerdDoc();
+        return project.getVuerd();
     }
 
+    @Transactional
     @Override
-    public VuerdDoc changeProjectVuerd(ObjectId projectId, VuerdDoc vuerdDoc) {
+    public Object changeProjectVuerd(ObjectId projectId, Object vuerdDoc) {
         var project = mProjectRepository.findVuerdById(projectId).orElseThrow(() ->
                 new BaseExceptionHandler(ErrorCode.NOT_FOUND_PROJECT));
 
@@ -297,62 +297,56 @@ public class MProjectServiceImpl implements MProjectService {
         return results.getMappedResults().get(0).count();
     }
 
-    private VuerdDoc getSampleVuerdDoc() {
+    private Object getSampleVuerdDoc() {
         String json = """
                 {
-                  "canvas": {
-                    "version": "2.2.13",
-                    "width": 2000,
-                    "height": 2000,
-                    "scrollTop": -1,
-                    "scrollLeft": 0,
-                    "zoomLevel": 1,
-                    "show": {
-                      "tableComment": true,
-                      "columnComment": true,
-                      "columnDataType": true,
-                      "columnDefault": true,
-                      "columnAutoIncrement": false,
-                      "columnPrimaryKey": true,
-                      "columnUnique": false,
-                      "columnNotNull": true,
-                      "relationship": true
-                    },
-                    "database": "MySQL",
-                    "databaseName": "",
-                    "canvasType": "ERD",
-                    "language": "GraphQL",
-                    "tableCase": "pascalCase",
-                    "columnCase": "camelCase",
-                    "highlightTheme": "VS2015",
-                    "bracketType": "none",
-                    "setting": {
-                      "relationshipDataTypeSync": true,
-                      "relationshipOptimization": false,
-                      "columnOrder": [
-                        "columnName",
-                        "columnDataType",
-                        "columnNotNull",
-                        "columnUnique",
-                        "columnAutoIncrement",
-                        "columnDefault",
-                        "columnComment"
-                      ]
-                    },
-                    "pluginSerializationMap": {}
-                  },
-                  "table": {
-                    "tables": [],
-                    "indexes": []
-                  },
-                  "memo": {
-                    "memos": []
-                  },
-                  "relationship": {
-                    "relationships": []
-                  }
+                   "$schema": "https://raw.githubusercontent.com/dineug/erd-editor/main/json-schema/schema.json",
+                   "version": "3.0.0",
+                   "settings": {
+                     "width": 2000,
+                     "height": 2000,
+                     "scrollTop": 0,
+                     "scrollLeft": 0,
+                     "zoomLevel": 1,
+                     "show": 431,
+                     "database": 4,
+                     "databaseName": "",
+                     "canvasType": "ERD",
+                     "language": 1,
+                     "tableNameCase": 4,
+                     "columnNameCase": 2,
+                     "bracketType": 1,
+                     "relationshipDataTypeSync": true,
+                     "relationshipOptimization": false,
+                     "columnOrder": [
+                       1,
+                       2,
+                       4,
+                       8,
+                       16,
+                       32,
+                       64
+                     ],
+                     "maxWidthComment": -1,
+                     "ignoreSaveSettings": 0
+                   },
+                   "doc": {
+                     "tableIds": [],
+                     "relationshipIds": [],
+                     "indexIds": [],
+                     "memoIds": []
+                   },
+                   "collections": {
+                     "tableEntities": {},
+                     "tableColumnEntities": {},
+                     "relationshipEntities": {},
+                     "indexEntities": {},
+                     "indexColumnEntities": {},
+                     "memoEntities": {}
+                   },
+                   "lww": {}
                 }
                 """;
-        return gson.fromJson(json, VuerdDoc.class);
+        return gson.fromJson(json, Object.class);
     }
 }

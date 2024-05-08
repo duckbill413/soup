@@ -1,7 +1,6 @@
 package io.ssafy.soupapi.domain.project.mongodb.entity;
 
 import io.ssafy.soupapi.domain.project.mongodb.entity.issue.ProjectIssue;
-import io.ssafy.soupapi.domain.project.mongodb.entity.vuerd.VuerdDoc;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -32,5 +31,5 @@ public class Project {
     @Field("project_issues")
     private List<ProjectIssue> issues = new ArrayList<>();
     @Field("project_vuerd")
-    private VuerdDoc vuerdDoc;
+    private Object vuerd;
 }
