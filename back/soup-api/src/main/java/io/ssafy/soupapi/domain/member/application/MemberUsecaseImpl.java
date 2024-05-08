@@ -18,8 +18,10 @@ import java.util.UUID;
 public class MemberUsecaseImpl implements MemberUsecase {
 
     private final MemberService memberService;
+
     private final LiveblocksFeignClient liveblocksFeignClient;
 
+    // Liveblocks에 유저(id: userId)를 등록하고 ID token을 얻는다
     @Override
     public GetLiveblocksTokenRes getLiveblocksUserIdToken(UUID memberId) {
         Member member = memberService.findById(memberId);

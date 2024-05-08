@@ -6,6 +6,7 @@ import io.ssafy.soupapi.domain.project.usecase.dto.CreateAiProposal;
 import io.ssafy.soupapi.global.external.claude.ClaudeFeignClient;
 import io.ssafy.soupapi.global.external.claude.dto.CreateClaudeMessageReq;
 import io.ssafy.soupapi.global.external.claude.dto.CreateClaudeMessageRes;
+import io.ssafy.soupapi.global.external.liveblocks.application.LiveblocksService;
 import io.ssafy.soupapi.global.security.user.UserSecurityDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -20,11 +21,13 @@ public class ProjectUsecaseImpl implements ProjectUsecase {
     private final PProjectService pProjectService;
 
     private final ClaudeFeignClient claudeFeignClient;
+    private final LiveblocksService liveblocksService;
 
     /**
      * 프로젝트 생성
      * 1. MongoDB 프로젝트 생성
      * 2. PostgreSQL 프로젝트 등록 및 접속 권한 부여
+     * 3. Liveblocks Room 생성
      *
      * @param userSecurityDTO project maker
      * @return mongodb project objectId
@@ -33,8 +36,10 @@ public class ProjectUsecaseImpl implements ProjectUsecase {
     @Override
     public String createProject(UserSecurityDTO userSecurityDTO) {
         var projectId = mProjectService.createProject(userSecurityDTO);
-        pProjectService.registProject(projectId.toHexString(), userSecurityDTO);
-        return projectId.toHexString();
+        String projectIdStr = projectId.toHexString();
+        pProjectService.registProject(projectIdStr, userSecurityDTO);
+        liveblocksService.createAllStepRooms(userSecurityDTO.getId().toString(), projectIdStr);
+        return projectIdStr;
     }
 
     @Override
