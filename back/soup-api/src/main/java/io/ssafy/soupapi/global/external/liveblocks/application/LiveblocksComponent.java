@@ -38,13 +38,13 @@ public class LiveblocksComponent {
     }
 
     public void addMemberToAllStepRooms(String memberId, String projectId) {
-        String roomId = "%2Fproject%2F" + projectId + "%2F"; // pathVariable로 사용하므로 '/'를 %2F로 변환 필요
-
         for (StepName stepName : StepName.values()) {
             UpdateRoomReq updateRoomReq = UpdateRoomReq.builder().build();
             updateRoomReq.usersAccesses().put(memberId, List.of("room:write"));
 
-            ChangeRoomRes changeRoomRes = liveblocksFeignClient.updateRoom(roomId + stepName, updateRoomReq);
+            ChangeRoomRes changeRoomRes = liveblocksFeignClient.updateRoom(
+                projectId, stepName.name(), updateRoomReq
+            );
 
             // TODO: 성공 실패 처리하면 될 듯
         }

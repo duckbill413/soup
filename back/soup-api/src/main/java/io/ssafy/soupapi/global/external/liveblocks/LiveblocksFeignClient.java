@@ -31,9 +31,12 @@ public interface LiveblocksFeignClient {
     );
 
     // update room
-    @PostMapping(value = "/rooms/{roomId}", consumes = "application/json")
+    // roomId가 /project/{projectId}/outline 같은 형식인데, 이를 PathVariable로 받으면 %2F -> / 로 자동 인코딩이 돼버린다
+    // 그래서 (일단) 이렇게 하드 코딩하는 수밖에..
+    @PostMapping(value = "/rooms/%2Fproject%2F{projectId}%2F{stepName}", consumes = "application/json")
     ChangeRoomRes updateRoom(
-        @PathVariable String roomId,
+        @PathVariable("projectId") String projectId,
+        @PathVariable("stepName") String stepName,
         @RequestBody UpdateRoomReq updateRoomReq
     );
 
