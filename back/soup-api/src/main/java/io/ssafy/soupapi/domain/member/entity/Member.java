@@ -2,6 +2,7 @@ package io.ssafy.soupapi.domain.member.entity;
 
 import io.ssafy.soupapi.domain.BaseEntity;
 import io.ssafy.soupapi.domain.chat.entity.Chat;
+import io.ssafy.soupapi.domain.member.dto.MemberInfoDto;
 import io.ssafy.soupapi.domain.noti.entity.Noti;
 import io.ssafy.soupapi.domain.projectauth.entity.ProjectAuth;
 import jakarta.persistence.*;
@@ -105,5 +106,15 @@ public class Member extends BaseEntity {
         if (projectAuth.getMember() != this) {
             projectAuth.setMember(this);
         }
+    }
+
+    public MemberInfoDto toMemberInfoDto() {
+        return MemberInfoDto.builder()
+                .memberId(this.id)
+                .email(this.email)
+                .nickname(this.nickname)
+                .phone(this.phone)
+                .profileImageUrl(this.profileImageUrl)
+                .build();
     }
 }

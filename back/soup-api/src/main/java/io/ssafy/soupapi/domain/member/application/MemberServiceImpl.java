@@ -1,6 +1,7 @@
 package io.ssafy.soupapi.domain.member.application;
 
 import io.ssafy.soupapi.domain.member.dao.MemberRepository;
+import io.ssafy.soupapi.domain.member.entity.Member;
 import io.ssafy.soupapi.global.common.code.ErrorCode;
 import io.ssafy.soupapi.global.exception.BaseExceptionHandler;
 import io.ssafy.soupapi.global.security.user.UserSecurityDTO;
@@ -9,11 +10,20 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.UUID;
+
 @Log4j2
 @Service
 @RequiredArgsConstructor
 public class MemberServiceImpl implements MemberService {
+
     private final MemberRepository memberRepository;
+
+    @Transactional(readOnly = true)
+    public Member findById(UUID memberId) {
+        return memberRepository.findById(memberId).orElseThrow(() ->
+                new BaseExceptionHandler(ErrorCode.NOT_FOUND_USER));
+    }
 
     @Transactional
     @Override
