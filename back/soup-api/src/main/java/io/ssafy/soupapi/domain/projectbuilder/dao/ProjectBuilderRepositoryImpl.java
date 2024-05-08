@@ -109,7 +109,7 @@ public class ProjectBuilderRepositoryImpl implements ProjectBuilderRepository {
         mapUtil.addValue("queryParameters", addQueryParameters(apiDoc.getQueryParameters()));
         mapUtil.addValue("requestBody", addRequestBody(apiDoc.getRequestBodyName()));
         mapUtil.addValue("serviceClassName", StringParserUtil.lowerFirst(apiDoc.getDomain()) + "Service");
-        mapUtil.addValue(":serviceMethodName", addServiceMethod(apiDoc));
+        mapUtil.addValue("serviceMethodName", addServiceMethod(apiDoc));
 
         return mapUtil.replace();
     }

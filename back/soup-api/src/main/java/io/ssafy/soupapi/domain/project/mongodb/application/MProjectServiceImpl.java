@@ -262,7 +262,18 @@ public class MProjectServiceImpl implements MProjectService {
                 new BaseExceptionHandler(ErrorCode.NOT_FOUND_PROJECT));
 
         mProjectRepository.changeVuerdById(projectId, vuerdDoc);
+
+        // 프로젝트 도메인 정보 업데이트
+        saveProjectDomainsByERD(projectId, project);
         return vuerdDoc;
+    }
+
+    private void saveProjectDomainsByERD(ObjectId projectId, Project project) {
+        Query query = new Query(Criteria.where("_id").is(projectId));
+        // update 수행
+        Update update = new Update().set("project_api_doc.usable_domains", getProjectDomainsFromERD(project));
+        var result = mongoTemplate.updateFirst(query, update, Project.class);
+        System.out.println(result);
     }
 
     /**
@@ -347,14 +358,16 @@ public class MProjectServiceImpl implements MProjectService {
      */
     @Override
     public List<String> findProjectValidDomainNames(ObjectId projectId) {
-        var project = mProjectRepository.findVuerdById(projectId).orElseThrow(() ->
-                new BaseExceptionHandler(ErrorCode.NOT_FOUND_PROJECT));
+        Query query = new Query().addCriteria(Criteria.where("_id").is(projectId));
+        query.fields().include("project_api_doc.usable_domains");
 
-        if (Objects.isNull(project.getVuerd())) {
+        Project project = mongoTemplate.findOne(query, Project.class);
+
+        if (project == null || project.getApiDocs() == null || project.getApiDocs().getDomains() == null) {
             return List.of();
         }
 
-        return getProjectDomainsFromERD(project);
+        return project.getApiDocs().getDomains();
     }
 
     /**
