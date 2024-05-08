@@ -20,13 +20,21 @@ type Presence = {
 // automatically persisted and synced to all connected clients.
 
 type Storage = {
-  // author: LiveObject<{ firstName: string, lastName: string }>,
-  // ...
-
-  outline : LiveObject<{name: string, description: string}>
+  outline? : LiveObject<{
+    project_name: string,
+    project_description: string,
+    project_photo: string,
+    project_startDate:string,
+    project_endDate:string,
+    project_tools: LiveList<LiveObject<ProjectTool>>
+  }>,
   func?: LiveList<LiveObject<FuncDescResWithColor>>
 };
-
+type ProjectTool = {
+  id: string;
+  name : string;
+  url? : string;
+}
 // Optionally, UserMeta represents static/readonly metadata on each user, as
 // provided by your own custom auth back end (if used). Useful for data that
 // will not change during a session, like a user's name or avatar.
