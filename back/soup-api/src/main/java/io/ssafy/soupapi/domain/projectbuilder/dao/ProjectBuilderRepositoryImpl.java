@@ -11,13 +11,8 @@ import lombok.extern.log4j.Log4j2;
 import org.apache.commons.io.FileUtils;
 import org.springframework.stereotype.Repository;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.io.*;
+import java.util.*;
 
 @Log4j2
 @Repository
@@ -76,14 +71,14 @@ public class ProjectBuilderRepositoryImpl implements ProjectBuilderRepository {
 
         File defaultClass = new File(folderPath.toString());
         FileWriter writer = new FileWriter(defaultClass);
-        BufferedWriter bw = new BufferedWriter(writer);
-        bw.write(replaced);
-        bw.flush();
-        bw.close();
+        try (BufferedWriter bw = new BufferedWriter(writer)) {
+            bw.write(replaced);
+            bw.flush();
+        }
     }
 
     @Override
-    public String ControllerBuilder(ApiDoc apiDoc) {
+    public String controllerBuilder(ApiDoc apiDoc) {
         String controller = """
                 @Operation(summary = ":description")
                 :methodType(":apiUriPath")
@@ -119,7 +114,36 @@ public class ProjectBuilderRepositoryImpl implements ProjectBuilderRepository {
         return mapUtil.replace();
     }
 
-    public void copyDefaultProject(Project project) throws IOException {
+    public void createDefaultProject(Project project) throws IOException {
+        // Step1. 폴더 복사 하기
+        File destinationFolder = copyDefaultProject(project);
+
+        // Step2. 폴더 변수 설정
+        setDefaultProjectVariables(project, destinationFolder);
+    }
+
+    private void setDefaultProjectVariables(Project project, File destinationFolder) throws IOException {
+        // 기본 변수 설정
+        Map<String, String> variables = new HashMap<>();
+        variables.put("springboot-project-name", project.getProjectBuilderInfo().getName());
+        variables.put("springboot-version", project.getProjectBuilderInfo().getVersion());
+        variables.put("springboot-group", project.getProjectBuilderInfo().getGroup());
+        variables.put("springboot-java-version", project.getProjectBuilderInfo().getLanguageVersion());
+
+        // dependency 변수 설정
+        var dependencies = project.getProjectBuilderInfo().getDependencies();
+        StringBuilder sb = new StringBuilder();
+        dependencies.forEach(v -> sb.append("\t").append(v.getCode()).append("\n"));
+        variables.put("springboot-dependencies", sb.toString());
+
+
+        List<File> leafFiles = getLeafFiles(destinationFolder);
+        for (File file : leafFiles) {
+            replaceFileVariables(file, variables);
+        }
+    }
+
+    private File copyDefaultProject(Project project) throws IOException {
         String destination = getDestination(project);
         File sourceFolder = new File(sourcePath);
         File destinationFolder = new File(destination);
@@ -130,6 +154,7 @@ public class ProjectBuilderRepositoryImpl implements ProjectBuilderRepository {
 
         FileUtils.copyDirectory(sourceFolder, destinationFolder);
         log.info("Default Folder copied successfully!");
+        return destinationFolder;
     }
 
     @Override
@@ -145,17 +170,46 @@ public class ProjectBuilderRepositoryImpl implements ProjectBuilderRepository {
         replaceGlobalGroupVariables(project, destination.toString());
     }
 
-    private void replaceGlobalGroupVariables(Project project, String destination) {
+    @Override
+    public void createDomainPackages(Project project) {
+
+    }
+
+    private void replaceGlobalGroupVariables(Project project, String destination) throws IOException {
         File destinationFolder = new File(destination);
 
         // 최하위 노드의 파일 목록을 얻기 위해 재귀 함수 호출
         List<File> leafFiles = getLeafFiles(destinationFolder);
 
+        Map<String, String> variables = new HashMap<>();
+        variables.put("springboot-project_package", project.getProjectBuilderInfo().getPackageName());
+
         // 최하위 노드의 파일 목록 출력
         for (File file : leafFiles) {
-            System.out.println(file.getAbsolutePath());
+            replaceFileVariables(file, variables);
         }
     }
+
+    private static void replaceFileVariables(File file, Map<String, String> variables) throws IOException {
+        FileReader fileReader = new FileReader(file.getAbsolutePath());
+        try (BufferedReader br = new BufferedReader(fileReader)) {
+            StringBuilder sb = new StringBuilder();
+            String line;
+            while ((line = br.readLine()) != null) {
+                sb.append(line).append('\n');
+            }
+            var mapUtil = new MapStringReplace(sb.toString());
+            mapUtil.addAllValues(variables);
+
+            File newFile = new File(file.getAbsolutePath());
+            FileWriter writer = new FileWriter(newFile);
+            try (BufferedWriter bw = new BufferedWriter(writer)) {
+                bw.write(mapUtil.replace());
+                bw.flush();
+            }
+        }
+    }
+
     private List<File> getLeafFiles(File folder) {
         List<File> leafFiles = new ArrayList<>();
 

@@ -107,6 +107,7 @@ public enum ErrorCode {
     NEED_PROJECT_BUILD_APIDOC(404, "B802", "프로젝트 API DOC가 필요합니다."),
     NEED_PROJECT_BUILD_BUILDINFO(404, "B803", "프로젝트 BUILD 정보가 필요합니다."),
     FAILED_TO_BUILD_PROJECT(404, "B804", "프로젝트 빌드에 실패하였습니다."),
+    NEED_PROJECT_BUILD_ERD(404, "B805", "프로젝트 ERD 정보가 필요합니다.");
     ; // End
 
     /**

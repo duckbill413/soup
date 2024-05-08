@@ -8,9 +8,11 @@ import java.io.IOException;
 public interface ProjectBuilderRepository {
     void packageBuilder(Project project) throws IOException;
 
-    String ControllerBuilder(ApiDoc apiDoc);
+    String controllerBuilder(ApiDoc apiDoc);
 
-    void copyDefaultProject(Project project) throws IOException;
+    void createDefaultProject(Project project) throws IOException;
 
     void createGlobalGroup(Project project) throws IOException;
+
+    void createDomainPackages(Project project);
 }

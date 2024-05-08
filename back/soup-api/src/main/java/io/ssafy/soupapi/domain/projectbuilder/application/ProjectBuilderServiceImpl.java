@@ -32,6 +32,9 @@ public class ProjectBuilderServiceImpl implements ProjectBuilderService {
         if (Objects.isNull(project.getInfo())) {
             throw new BaseExceptionHandler(ErrorCode.NEED_PROJECT_BUILD_INFO);
         }
+        if (Objects.isNull(project.getVuerdDoc())) {
+            throw new BaseExceptionHandler(ErrorCode.NEED_PROJECT_BUILD_ERD);
+        }
 //        if (Objects.isNull(project.getApiDocs())) {
 //            throw new BaseExceptionHandler(ErrorCode.NEED_PROJECT_BUILD_APIDOC);
 //        }
@@ -42,11 +45,13 @@ public class ProjectBuilderServiceImpl implements ProjectBuilderService {
         try {
 
             // default project 복사
-            projectBuilderRepository.copyDefaultProject(project);
+            projectBuilderRepository.createDefaultProject(project);
             // Package Builder
             projectBuilderRepository.packageBuilder(project);
             // global 폴더 복사 및 variable 치환
             projectBuilderRepository.createGlobalGroup(project);
+            // domain package 생성
+            projectBuilderRepository.createDomainPackages(project);
             // Controller Builder
 
 
