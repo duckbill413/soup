@@ -1,6 +1,8 @@
 import { createClient, LiveObject,LiveList } from '@liveblocks/client'
 import { createRoomContext, createLiveblocksContext } from "@liveblocks/react";
 import {FuncDescResWithColor} from "@/types/functionDesc";
+import { ProjectTool } from '@/containers/outline/types/outlineStorage'
+import { PlanStorage } from '@/containers/plan/types/planStorage'
 
 const client = createClient({
   publicApiKey: process.env.NEXT_PUBLIC_LIVEBLOCKS_PUBLIC_KEY!,
@@ -28,13 +30,10 @@ type Storage = {
     project_endDate:string,
     project_tools: LiveList<LiveObject<ProjectTool>>
   }>,
+  plan? : LiveObject<PlanStorage>,
   func?: LiveList<LiveObject<FuncDescResWithColor>>
 };
-type ProjectTool = {
-  id: string;
-  name : string;
-  url? : string;
-}
+
 // Optionally, UserMeta represents static/readonly metadata on each user, as
 // provided by your own custom auth back end (if used). Useful for data that
 // will not change during a session, like a user's name or avatar.

@@ -3,13 +3,8 @@ import closeIcon from '#/assets/icons/modals/closeIcon.svg'
 import Image from 'next/image'
 import { useState } from 'react'
 import { LiveObject } from '@liveblocks/client'
+import { ProjectTool } from '@/containers/outline/types/outlineStorage'
 import { useMutation } from '../../../../../../liveblocks.config'
-
-type ProjectTool = {
-  id: string;
-  name : string;
-  url? : string;
-}
 
 function OutlineToolModal (props: { clickModal: () => void }) {
   const { clickModal } = props;
