@@ -10,13 +10,7 @@ import Medium from "#/assets/icons/func/medium.svg";
 import High from "#/assets/icons/func/up.svg";
 import Highest from "#/assets/icons/func/doubleUp.svg";
 
-const priorityIcons: PriorityIcons = {
-    Lowest,
-    Low,
-    Medium,
-    High,
-    Highest,
-};
+const priorityIcons: PriorityIcons = {Lowest, Low, Medium, High, Highest};
 
 export default function Priority({ funcCurrData, updateElement }: FuncTableColumnProps) {
     const { setIsPriorityModalVisible } = useFuncDescStore();
@@ -24,15 +18,17 @@ export default function Priority({ funcCurrData, updateElement }: FuncTableColum
 
     return (
         <td>
+            <div
+                onClick={() => setIsPriorityModalVisible(funcCurrData.functionId)} role="presentation" aria-hidden="true">
             {priorityIcon && (
                 <Image
-                    onClick={() => setIsPriorityModalVisible(funcCurrData.functionId)}
                     src={priorityIcon}
                     alt={funcCurrData.priority}
                     width={20}
                     height={20}
                 />
             )}
+                ㅤ</div>
             <PriorityModal funcCurrData={funcCurrData} updateElement={updateElement} />
         </td>
     );

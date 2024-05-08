@@ -30,10 +30,10 @@ export default function Category({funcCurrData,updateElement}: FuncTableColumnPr
     return (
         <td>
             <div className={styles.manager} onClick={()=>setIsMemberModalVisible(funcCurrData.functionId)} role="presentation" aria-hidden="true" >
-                {funcCurrData.reporter.memberId!=="" ?
+                {funcCurrData.reporter?.memberId!=="" && funcCurrData.reporter ?
                     <>
-                        <Image unoptimized src={funcCurrData.reporter.memberProfileUri} alt="프로필 이미지" width={30} height={30}/>
-                        <p>{funcCurrData.reporter.memberNickname}</p>
+                        <Image unoptimized src={funcCurrData.reporter?.memberProfileUri} alt="프로필 이미지" width={30} height={30}/>
+                        <p>{funcCurrData.reporter?.memberNickname}</p>
                     </> : <div/>
             }
                 ㅤ
