@@ -1,4 +1,4 @@
-package io.ssafy.soupapi.external.claude.dto;
+package io.ssafy.soupapi.global.external.claude.dto;
 
 import lombok.Builder;
 

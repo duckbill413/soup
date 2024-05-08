@@ -19,6 +19,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class ProjectAuthServiceImpl implements ProjectAuthService {
+
     private final ProjectAuthRepository projectAuthRepository;
 
     @Transactional

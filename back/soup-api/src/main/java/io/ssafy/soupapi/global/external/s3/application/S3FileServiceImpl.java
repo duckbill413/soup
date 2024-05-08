@@ -1,4 +1,4 @@
-package io.ssafy.soupapi.external.s3.application;
+package io.ssafy.soupapi.global.external.s3.application;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectMetadata;

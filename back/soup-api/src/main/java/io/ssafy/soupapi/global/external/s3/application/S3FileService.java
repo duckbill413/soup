@@ -1,4 +1,4 @@
-package io.ssafy.soupapi.external.s3.application;
+package io.ssafy.soupapi.global.external.s3.application;
 
 import org.springframework.web.multipart.MultipartFile;
 
