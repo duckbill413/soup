@@ -73,11 +73,11 @@ public class JwtService {
         String header = request.getHeader(ACCESS_HEADER_AUTHORIZATION);
         if (Objects.isNull(header)) return null;
 
-        // token type이 정의되지 않음
         String[] separatedToken = header.split(" ");
-        if (separatedToken.length != 2) {
-            throw new AccessTokenException(AccessTokenException.ACCESS_TOKEN_ERROR.TOO_SHORT);
-        }
+
+//        if (separatedToken.length != 2) {
+//            throw new AccessTokenException(AccessTokenException.ACCESS_TOKEN_ERROR.EMPTY);
+//        }
 
         // 토큰이 Bearer 토큰 유형이 아님
         if (!separatedToken[0].equalsIgnoreCase(TOKEN_PREFIX)) {
@@ -98,6 +98,8 @@ public class JwtService {
             throw new AccessTokenException(AccessTokenException.ACCESS_TOKEN_ERROR.BAD_TYPE);
         } catch (ExpiredJwtException expiredJwtException) {
             throw new AccessTokenException(AccessTokenException.ACCESS_TOKEN_ERROR.EXPIRED);
+        } catch (IllegalArgumentException illegalArgumentException) {
+            throw new AccessTokenException(AccessTokenException.ACCESS_TOKEN_ERROR.EMPTY);
         }
     }
 
