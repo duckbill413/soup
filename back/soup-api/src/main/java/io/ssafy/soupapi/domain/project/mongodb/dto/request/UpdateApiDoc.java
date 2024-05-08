@@ -1,32 +1,37 @@
-package io.ssafy.soupapi.domain.project.mongodb.dto.response;
+package io.ssafy.soupapi.domain.project.mongodb.dto.request;
 
 import io.ssafy.soupapi.domain.project.mongodb.entity.apidocs.ApiDoc;
 import io.ssafy.soupapi.domain.project.mongodb.entity.apidocs.ApiVariable;
 import io.ssafy.soupapi.domain.project.mongodb.entity.apidocs.HttpMethodType;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 
 import java.util.List;
 import java.util.UUID;
 
 @Builder
-public record GetApiDoc(
+public record UpdateApiDoc(
         @Schema(description = "id")
         UUID id,
+        @NotBlank
         @Schema(description = "domain")
         String domain,
+        @NotBlank
         @Schema(description = "name")
         String name,
+        @NotBlank
         @Schema(description = "method_name")
         String methodName,
         @Schema(description = "method_description")
         String description,
+        @NotNull
         @Schema(description = "http_method_type")
         HttpMethodType methodType,
+        @NotBlank
         @Schema(description = "uri_path")
         String apiUriPath,
-        @Schema(description = "valid_path_variables")
-        List<String> validPathVariables,
         @Schema(description = "path_variables")
         List<ApiVariable> pathVariables,
         @Schema(description = "query_parameters")
@@ -40,23 +45,21 @@ public record GetApiDoc(
         @Schema(description = "response_body")
         String responseBody
 ) {
-
-    public static GetApiDoc of(ApiDoc apiDoc, List<String> validPathVariables) {
-        return GetApiDoc.builder()
-                .id(apiDoc.getId())
-                .domain(apiDoc.getDomain())
-                .name(apiDoc.getName())
-                .validPathVariables(validPathVariables)
-                .methodName(apiDoc.getMethodName())
-                .description(apiDoc.getDescription())
-                .methodType(apiDoc.getMethodType())
-                .apiUriPath(apiDoc.getApiUriPath())
-                .pathVariables(apiDoc.getPathVariables())
-                .queryParameters(apiDoc.getQueryParameters())
-                .requestBody(apiDoc.getRequestBody())
-                .requestBodyName(apiDoc.getRequestBodyName())
-                .responseBody(apiDoc.getResponseBody())
-                .responseBodyName(apiDoc.getResponseBodyName())
+    public static ApiDoc toApiDoc(UpdateApiDoc apiDoc) {
+        return ApiDoc.builder()
+                .id(apiDoc.id())
+                .domain(apiDoc.domain())
+                .name(apiDoc.name())
+                .methodName(apiDoc.methodName())
+                .description(apiDoc.description())
+                .methodType(apiDoc.methodType())
+                .apiUriPath(apiDoc.apiUriPath())
+                .pathVariables(apiDoc.pathVariables())
+                .queryParameters(apiDoc.queryParameters())
+                .requestBody(apiDoc.requestBody())
+                .requestBodyName(apiDoc.requestBodyName())
+                .responseBody(apiDoc.responseBody())
+                .responseBodyName(apiDoc.responseBodyName())
                 .build();
     }
 }

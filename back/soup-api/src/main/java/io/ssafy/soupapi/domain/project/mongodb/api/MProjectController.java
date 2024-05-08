@@ -1,6 +1,7 @@
 package io.ssafy.soupapi.domain.project.mongodb.api;
 
 import io.ssafy.soupapi.domain.project.mongodb.application.MProjectService;
+import io.ssafy.soupapi.domain.project.mongodb.dto.request.UpdateApiDoc;
 import io.ssafy.soupapi.domain.project.mongodb.dto.request.UpdateProjectJiraKey;
 import io.ssafy.soupapi.domain.project.mongodb.dto.request.UpdateProjectProposal;
 import io.ssafy.soupapi.domain.project.mongodb.dto.response.*;
@@ -161,7 +162,7 @@ public class MProjectController {
     ) {
         return BaseResponse.success(
                 SuccessCode.UPDATE_SUCCESS,
-                mProjectService.updateProjectIssues(new ObjectId(projectId), issues, pageOffsetRequest, userSecurityDTO)
+                mProjectService.updateProjectIssues(new ObjectId(projectId), issues, pageOffsetRequest)
         );
     }
 
@@ -192,6 +193,20 @@ public class MProjectController {
         );
     }
 
+    @Operation(summary = "프로젝트 API Doc 등록/업데이트")
+    @PostMapping("/{projectId}/api-docs")
+    @PreAuthorize("!@authService.hasViewerProjectRoleMember(#projectId, #userSecurityDTO.getId())")
+    public ResponseEntity<BaseResponse<String>> insertProjectApiDoc(
+            @PathVariable String projectId,
+            @RequestBody UpdateApiDoc updateApiDoc,
+            @AuthenticationPrincipal UserSecurityDTO userSecurityDTO
+    ) {
+        return BaseResponse.success(
+                SuccessCode.INSERT_SUCCESS,
+                mProjectService.updateProjectApiDoc(projectId, updateApiDoc)
+        );
+    }
+
     @Operation(summary = "API 상세 문서 조회")
     @GetMapping("/{projectId}/api-docs/{apiDocId}")
     @PreAuthorize("@authService.hasProjectRoleMember(#projectId, #userSecurityDTO.getId())")
@@ -202,7 +217,7 @@ public class MProjectController {
     ) {
         return BaseResponse.success(
                 SuccessCode.SELECT_SUCCESS,
-                mProjectService.findProjectSingleApiDocs(new ObjectId(projectId), apiDocId)
+                mProjectService.findProjectSingleApiDocs(new ObjectId(projectId), UUID.fromString(apiDocId))
         );
     }
 

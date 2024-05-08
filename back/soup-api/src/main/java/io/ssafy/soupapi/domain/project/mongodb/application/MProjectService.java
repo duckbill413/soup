@@ -1,5 +1,6 @@
 package io.ssafy.soupapi.domain.project.mongodb.application;
 
+import io.ssafy.soupapi.domain.project.mongodb.dto.request.UpdateApiDoc;
 import io.ssafy.soupapi.domain.project.mongodb.dto.request.UpdateProjectInfo;
 import io.ssafy.soupapi.domain.project.mongodb.dto.request.UpdateProjectJiraKey;
 import io.ssafy.soupapi.domain.project.mongodb.dto.request.UpdateProjectProposal;
@@ -30,7 +31,7 @@ public interface MProjectService {
 
     PageOffsetResponse<List<ProjectIssue>> findProjectIssues(ObjectId projectId, PageOffsetRequest pageOffsetRequest);
 
-    PageOffsetResponse<List<ProjectIssue>> updateProjectIssues(ObjectId projectId, List<ProjectIssue> issues, PageOffsetRequest pageOffsetRequest, UserSecurityDTO userSecurityDTO);
+    PageOffsetResponse<List<ProjectIssue>> updateProjectIssues(ObjectId projectId, List<ProjectIssue> issues, PageOffsetRequest pageOffsetRequest);
 
     Object findProjectVuerd(ObjectId projectId);
 
@@ -40,7 +41,9 @@ public interface MProjectService {
 
     List<String> findProjectValidPathVariableNames(ObjectId projectIdl, UUID apiDocId);
 
-    GetApiDoc findProjectSingleApiDocs(ObjectId projectId, String apiDocId);
+    GetApiDoc findProjectSingleApiDocs(ObjectId projectId, UUID apiDocId);
 
     List<String> findProjectValidDomainNames(ObjectId projectId);
+
+    String updateProjectApiDoc(String projectId, UpdateApiDoc updateApiDoc);
 }

@@ -13,23 +13,20 @@ import java.util.UUID;
 @Setter
 @Builder
 public class ApiDoc {
-    @Field
+    @Field("api_doc_id")
     private UUID id;
-    @Field
+    @Field("domain")
     private String domain;
-    @Field
+    @Field("api_name")
     private String name;
     @Field("method_name")
     private String methodName;
-    @Field("method_description")
+    @Field("api_description")
     private String description;
     @Field("http_method_type")
     private HttpMethodType methodType;
-    @Field("uri_path")
+    @Field("api_uri_path")
     private String apiUriPath;
-    @Builder.Default
-    @Field("valid_path_variables")
-    private List<String> validPathVariableNames = new ArrayList<>();
     @Builder.Default
     @Field("path_variables")
     private List<ApiVariable> pathVariables = new ArrayList<>();
