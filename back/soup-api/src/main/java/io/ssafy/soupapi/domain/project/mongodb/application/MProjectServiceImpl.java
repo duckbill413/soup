@@ -11,8 +11,6 @@ import io.ssafy.soupapi.domain.project.mongodb.entity.Info;
 import io.ssafy.soupapi.domain.project.mongodb.entity.Project;
 import io.ssafy.soupapi.domain.project.mongodb.entity.apidocs.ApiDoc;
 import io.ssafy.soupapi.domain.project.mongodb.entity.issue.ProjectIssue;
-import io.ssafy.soupapi.domain.project.mongodb.entity.vuerd.SubTable;
-import io.ssafy.soupapi.domain.project.mongodb.entity.vuerd.VuerdDoc;
 import io.ssafy.soupapi.global.common.code.ErrorCode;
 import io.ssafy.soupapi.global.common.request.PageOffsetRequest;
 import io.ssafy.soupapi.global.common.response.OffsetPagination;
@@ -34,10 +32,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
 @Log4j2
 @Service
@@ -283,12 +278,45 @@ public class MProjectServiceImpl implements MProjectService {
     public List<String> findProjectValidDomainNames(ObjectId projectId) {
         var project = mProjectRepository.findVuerdById(projectId).orElseThrow(() ->
                 new BaseExceptionHandler(ErrorCode.NOT_FOUND_PROJECT));
-        if (Objects.isNull(project.getVuerdDoc()) || Objects.isNull(project.getVuerdDoc().getTable())
-            || Objects.isNull(project.getVuerdDoc().getTable().getTables())) {
+
+        if (Objects.isNull(project.getVuerd())) {
             return List.of();
         }
 
-        return project.getVuerdDoc().getTable().getTables().stream().map(SubTable::getName).toList();
+        return parsingVuerdObj(project);
+    }
+
+    private static List<String> parsingVuerdObj(Project project) {
+        var vuerdObj = project.getVuerd();
+        var domains = new ArrayList<String>();
+        if (vuerdObj instanceof LinkedHashMap<?, ?>) {
+            vuerdObj = ((LinkedHashMap<?, ?>) vuerdObj).get("$set");
+            if (vuerdObj instanceof LinkedHashMap<?, ?>) {
+                var doc = ((LinkedHashMap<?, ?>) vuerdObj).get("doc");
+                var collections = ((LinkedHashMap<?, ?>) vuerdObj).get("collections");
+                if (doc instanceof LinkedHashMap<?, ?>) {
+                    var tableIdsObj = ((LinkedHashMap<?, ?>) doc).get("tableIds");
+                    List<String> tableIds = new ArrayList<>();
+                    if (tableIdsObj instanceof List<?>) {
+                        ((List<?>) tableIdsObj).forEach(tableId -> tableIds.add(tableId.toString()));
+                    }
+
+                    if (collections instanceof LinkedHashMap<?, ?>) {
+                        var tableEntities = ((LinkedHashMap<?, ?>) collections).get("tableEntities");
+                        if (tableEntities instanceof LinkedHashMap<?, ?>) {
+                            for (String tableId : tableIds) {
+                                var table = ((LinkedHashMap<?, ?>) tableEntities).get(tableId);
+                                if (table instanceof LinkedHashMap<?, ?>) {
+                                    domains.add((((LinkedHashMap<?, ?>) table).get("name")).toString().toLowerCase());
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return domains;
     }
 
     private void deleteProjectIssue(ObjectId projectId, ProjectIssue issue) {
