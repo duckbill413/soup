@@ -7,7 +7,6 @@ import io.ssafy.soupapi.domain.project.mongodb.dto.response.GetProjectInfo;
 import io.ssafy.soupapi.domain.project.mongodb.dto.response.GetProjectJiraKey;
 import io.ssafy.soupapi.domain.project.mongodb.dto.response.GetProjectProposal;
 import io.ssafy.soupapi.domain.project.mongodb.entity.issue.ProjectIssue;
-import io.ssafy.soupapi.domain.project.mongodb.entity.vuerd.VuerdDoc;
 import io.ssafy.soupapi.global.common.request.PageOffsetRequest;
 import io.ssafy.soupapi.global.common.response.PageOffsetResponse;
 import io.ssafy.soupapi.global.security.user.UserSecurityDTO;
@@ -34,7 +33,7 @@ public interface MProjectService {
 
     PageOffsetResponse<List<ProjectIssue>> updateProjectIssues(ObjectId projectId, List<ProjectIssue> issues, PageOffsetRequest pageOffsetRequest, UserSecurityDTO userSecurityDTO);
 
-    VuerdDoc findProjectVuerd(ObjectId projectId);
+    Object findProjectVuerd(ObjectId projectId);
 
-    VuerdDoc changeProjectVuerd(ObjectId projectId, VuerdDoc vuerdDoc);
+    Object changeProjectVuerd(ObjectId projectId, Object vuerdDoc);
 }
