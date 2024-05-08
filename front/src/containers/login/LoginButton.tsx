@@ -1,7 +1,12 @@
 import Link from 'next/link'
 
 export default function LoginButton() {
-  const loginURL = `${process.env.NEXT_PUBLIC_SERVER_HOST}/oauth2/authorization/kakao`
+  // const isDev = process.env.NODE_ENV === 'development' ?? false
+  const isDev = true
+
+  const loginURL = isDev
+    ? `${process.env.NEXT_PUBLIC_CLIENT_HOST}/local-login`
+    : `${process.env.NEXT_PUBLIC_SERVER_HOST}/oauth2/authorization/kakao`
 
   return (
     <Link href={loginURL}>
