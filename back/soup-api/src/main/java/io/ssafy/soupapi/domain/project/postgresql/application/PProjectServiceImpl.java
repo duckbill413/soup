@@ -8,12 +8,11 @@ import io.ssafy.soupapi.domain.project.postgresql.dto.response.SimpleProjectDto;
 import io.ssafy.soupapi.domain.project.postgresql.entity.Project;
 import io.ssafy.soupapi.domain.project.postgresql.entity.ProjectRole;
 import io.ssafy.soupapi.domain.projectauth.entity.ProjectAuth;
-import io.ssafy.soupapi.global.common.code.ErrorCode;
 import io.ssafy.soupapi.global.common.request.PageOffsetRequest;
 import io.ssafy.soupapi.global.common.response.OffsetPagination;
 import io.ssafy.soupapi.global.common.response.PageOffsetResponse;
-import io.ssafy.soupapi.global.exception.BaseExceptionHandler;
 import io.ssafy.soupapi.global.security.user.UserSecurityDTO;
+import io.ssafy.soupapi.global.util.FindEntityUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Sort;
@@ -27,7 +26,9 @@ import java.util.Set;
 @Service
 @RequiredArgsConstructor
 public class PProjectServiceImpl implements PProjectService {
+
     private final PProjectRepository pProjectRepository;
+    private final FindEntityUtil findEntityUtil;
 
     /**
      * mongodb에서 생성된 프로젝트를 postgresql project 객체로 연관 등록
@@ -66,15 +67,8 @@ public class PProjectServiceImpl implements PProjectService {
     @Transactional
     @Override
     public void updateProjectInfo(String projectId, UpdateProjectInfo updateProjectInfo) {
-        var project = pProjectRepository.findById(projectId).orElseThrow(() ->
-                new BaseExceptionHandler(ErrorCode.NOT_FOUND_PROJECT));
+        var project = findEntityUtil.findPProjectById(projectId);
         project.setName(updateProjectInfo.name());
         pProjectRepository.save(project);
-    }
-
-    @Transactional(readOnly = true)
-    public Project findById(String projectId) {
-        return pProjectRepository.findById(projectId).orElseThrow(() ->
-                new BaseExceptionHandler(ErrorCode.NOT_FOUND_PROJECT));
     }
 }

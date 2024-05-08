@@ -1,11 +1,11 @@
 package io.ssafy.soupapi.domain.project.mongodb.application;
 
+import io.ssafy.soupapi.domain.project.mongodb.dto.request.UpdateApiDoc;
 import io.ssafy.soupapi.domain.project.mongodb.dto.request.UpdateProjectInfo;
 import io.ssafy.soupapi.domain.project.mongodb.dto.request.UpdateProjectJiraKey;
 import io.ssafy.soupapi.domain.project.mongodb.dto.request.UpdateProjectProposal;
 import io.ssafy.soupapi.domain.project.mongodb.dto.response.*;
 import io.ssafy.soupapi.domain.project.mongodb.entity.issue.ProjectIssue;
-import io.ssafy.soupapi.domain.project.mongodb.entity.vuerd.VuerdDoc;
 import io.ssafy.soupapi.global.common.request.PageOffsetRequest;
 import io.ssafy.soupapi.global.common.response.PageOffsetResponse;
 import io.ssafy.soupapi.global.security.user.UserSecurityDTO;
@@ -31,17 +31,19 @@ public interface MProjectService {
 
     PageOffsetResponse<List<ProjectIssue>> findProjectIssues(ObjectId projectId, PageOffsetRequest pageOffsetRequest);
 
-    PageOffsetResponse<List<ProjectIssue>> updateProjectIssues(ObjectId projectId, List<ProjectIssue> issues, PageOffsetRequest pageOffsetRequest, UserSecurityDTO userSecurityDTO);
+    PageOffsetResponse<List<ProjectIssue>> updateProjectIssues(ObjectId projectId, List<ProjectIssue> issues, PageOffsetRequest pageOffsetRequest);
 
-    VuerdDoc findProjectVuerd(ObjectId projectId);
+    Object findProjectVuerd(ObjectId projectId);
 
-    VuerdDoc changeProjectVuerd(ObjectId projectId, VuerdDoc vuerdDoc);
+    Object changeProjectVuerd(ObjectId projectId, Object vuerdDoc);
 
     List<GetSimpleApiDoc> findProjectApiDocs(ObjectId projectId);
 
     List<String> findProjectValidPathVariableNames(ObjectId projectIdl, UUID apiDocId);
 
-    GetApiDoc findProjectSingleApiDocs(ObjectId projectId, String apiDocId);
+    GetApiDoc findProjectSingleApiDocs(ObjectId projectId, UUID apiDocId);
 
     List<String> findProjectValidDomainNames(ObjectId projectId);
+
+    String updateProjectApiDoc(String projectId, UpdateApiDoc updateApiDoc);
 }

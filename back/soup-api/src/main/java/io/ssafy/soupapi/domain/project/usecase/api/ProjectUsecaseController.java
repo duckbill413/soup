@@ -1,6 +1,7 @@
 package io.ssafy.soupapi.domain.project.usecase.api;
 
 import io.ssafy.soupapi.domain.project.usecase.application.ProjectUsecase;
+import io.ssafy.soupapi.domain.project.usecase.dto.CreateAiProposal;
 import io.ssafy.soupapi.global.common.code.SuccessCode;
 import io.ssafy.soupapi.global.common.response.BaseResponse;
 import io.ssafy.soupapi.global.security.user.UserSecurityDTO;
@@ -9,10 +10,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Log4j2
 @RestController
@@ -38,4 +38,21 @@ public class ProjectUsecaseController {
                 projectUsecase.createProject(userSecurityDTO)
         );
     }
+
+    @Operation(summary = "AI 기획서 생성 요청")
+    @PostMapping("/{projectId}/plan/ai")
+    @PreAuthorize("@authService.hasProjectRoleMember(#projectId, #userSecurityDTO.getId())")
+    public ResponseEntity<BaseResponse<CreateAiProposal>> createAiProposal(
+            @PathVariable(name = "projectId") String projectId,
+            @AuthenticationPrincipal UserSecurityDTO userSecurityDTO,
+            @RequestBody CreateAiProposal createAiProposal
+    ) {
+        CreateAiProposal response = projectUsecase.createAiProposal(createAiProposal);
+
+        return BaseResponse.success(
+                SuccessCode.SELECT_SUCCESS,
+                response
+        );
+    }
+
 }

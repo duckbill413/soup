@@ -65,4 +65,20 @@ public class AuthService {
         }
         return false;
     }
+
+
+    public boolean hasChatProjectRoleMember(String projectId, UUID memberId) {
+        var projectAuths = projectAuthRepository.findByMemberAndProject(
+                Member.builder().id(memberId).build(),
+                Project.builder().id(projectId).build()
+        );
+
+        for (ProjectAuth projectAuth : projectAuths) {
+            if (projectAuth.isStatus()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }

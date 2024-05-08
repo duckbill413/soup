@@ -3,13 +3,13 @@ package io.ssafy.soupapi.domain.jira.dto.response;
 import io.ssafy.soupapi.domain.jira.dto.Issue;
 import io.ssafy.soupapi.domain.project.mongodb.entity.issue.ProjectIssue;
 import io.ssafy.soupapi.domain.project.mongodb.entity.issue.ProjectUser;
-import io.ssafy.soupapi.global.util.StringParserUtil;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 
 import java.util.Objects;
 import java.util.UUID;
 
+@Builder
 @Schema(description = "지라 이슈 정보")
 public record JiraIssue(
         @Schema(description = "지라 이슈 ID")
@@ -29,7 +29,7 @@ public record JiraIssue(
         @Schema(description = "지라 우선 순위")
         String priority,
         @Schema(description = "지라 스토리 포인트")
-        Long storyPoint,
+        long storyPoint,
         @Schema(description = "마지막 업데이트")
         String updated,
         @Schema(description = "상위 이슈 Id")
@@ -39,18 +39,6 @@ public record JiraIssue(
         @Schema(description = "이슈 보고자")
         JiraUser reporter
 ) {
-    @Builder
-    public JiraIssue {
-        issueId = StringParserUtil.parseNullToEmpty(issueId);
-        issueKey = StringParserUtil.parseNullToEmpty(issueKey);
-        projectKey = StringParserUtil.parseNullToEmpty(projectKey);
-        summary = StringParserUtil.parseNullToEmpty(summary);
-        description = StringParserUtil.parseNullToEmpty(description);
-        issueType = StringParserUtil.parseNullToEmpty(issueType);
-        priority = StringParserUtil.parseNullToEmpty(priority);
-        storyPoint = Objects.nonNull(storyPoint) ? storyPoint : 0L;
-    }
-
     public static JiraIssue of(Issue issue) {
         return JiraIssue.builder()
                 .issueId(Objects.nonNull(issue.id) ? issue.id : "")

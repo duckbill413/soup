@@ -26,7 +26,7 @@ public record GetApiDoc(
         @Schema(description = "uri_path")
         String apiUriPath,
         @Schema(description = "valid_path_variables")
-        List<String> validPathVariableNames,
+        List<String> validPathVariables,
         @Schema(description = "path_variables")
         List<ApiVariable> pathVariables,
         @Schema(description = "query_parameters")
@@ -41,16 +41,16 @@ public record GetApiDoc(
         String responseBody
 ) {
 
-    public static GetApiDoc of(ApiDoc apiDoc) {
+    public static GetApiDoc of(ApiDoc apiDoc, List<String> validPathVariables) {
         return GetApiDoc.builder()
                 .id(apiDoc.getId())
                 .domain(apiDoc.getDomain())
                 .name(apiDoc.getName())
+                .validPathVariables(validPathVariables)
                 .methodName(apiDoc.getMethodName())
                 .description(apiDoc.getDescription())
                 .methodType(apiDoc.getMethodType())
                 .apiUriPath(apiDoc.getApiUriPath())
-                .validPathVariableNames(apiDoc.getValidPathVariableNames())
                 .pathVariables(apiDoc.getPathVariables())
                 .queryParameters(apiDoc.getQueryParameters())
                 .requestBody(apiDoc.getRequestBody())

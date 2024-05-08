@@ -1,11 +1,11 @@
 package io.ssafy.soupapi.domain.project.mongodb.api;
 
 import io.ssafy.soupapi.domain.project.mongodb.application.MProjectService;
+import io.ssafy.soupapi.domain.project.mongodb.dto.request.UpdateApiDoc;
 import io.ssafy.soupapi.domain.project.mongodb.dto.request.UpdateProjectJiraKey;
 import io.ssafy.soupapi.domain.project.mongodb.dto.request.UpdateProjectProposal;
 import io.ssafy.soupapi.domain.project.mongodb.dto.response.*;
 import io.ssafy.soupapi.domain.project.mongodb.entity.issue.ProjectIssue;
-import io.ssafy.soupapi.domain.project.mongodb.entity.vuerd.VuerdDoc;
 import io.ssafy.soupapi.global.common.code.SuccessCode;
 import io.ssafy.soupapi.global.common.request.PageOffsetRequest;
 import io.ssafy.soupapi.global.common.response.BaseResponse;
@@ -162,14 +162,14 @@ public class MProjectController {
     ) {
         return BaseResponse.success(
                 SuccessCode.UPDATE_SUCCESS,
-                mProjectService.updateProjectIssues(new ObjectId(projectId), issues, pageOffsetRequest, userSecurityDTO)
+                mProjectService.updateProjectIssues(new ObjectId(projectId), issues, pageOffsetRequest)
         );
     }
 
     @Operation(summary = "프로젝트 ERD 조회")
     @GetMapping("/{projectId}/vuerd")
     @PreAuthorize("@authService.hasProjectRoleMember(#projectId, #userSecurityDTO.getId())")
-    public ResponseEntity<BaseResponse<VuerdDoc>> findProjectVuerd(
+    public ResponseEntity<BaseResponse<Object>> findProjectVuerd(
             @PathVariable(name = "projectId") String projectId,
             @AuthenticationPrincipal UserSecurityDTO userSecurityDTO
     ) {
@@ -182,14 +182,28 @@ public class MProjectController {
     @Operation(summary = "프로젝트 ERD 수정")
     @PutMapping("/{projectId}/vuerd")
     @PreAuthorize("!@authService.hasViewerProjectRoleMember(#projectId, #userSecurityDTO.getId())")
-    public ResponseEntity<BaseResponse<VuerdDoc>> changeProjectVuerd(
+    public ResponseEntity<BaseResponse<Object>> changeProjectVuerd(
             @PathVariable(name = "projectId") String projectId,
-            @RequestBody VuerdDoc vuerdDoc,
+            @RequestBody Object vuerdDoc,
             @AuthenticationPrincipal UserSecurityDTO userSecurityDTO
     ) {
         return BaseResponse.success(
                 SuccessCode.UPDATE_SUCCESS,
                 mProjectService.changeProjectVuerd(new ObjectId(projectId), vuerdDoc)
+        );
+    }
+
+    @Operation(summary = "프로젝트 API Doc 등록/업데이트")
+    @PostMapping("/{projectId}/api-docs")
+    @PreAuthorize("!@authService.hasViewerProjectRoleMember(#projectId, #userSecurityDTO.getId())")
+    public ResponseEntity<BaseResponse<String>> insertProjectApiDoc(
+            @PathVariable String projectId,
+            @RequestBody UpdateApiDoc updateApiDoc,
+            @AuthenticationPrincipal UserSecurityDTO userSecurityDTO
+    ) {
+        return BaseResponse.success(
+                SuccessCode.INSERT_SUCCESS,
+                mProjectService.updateProjectApiDoc(projectId, updateApiDoc)
         );
     }
 
@@ -203,7 +217,7 @@ public class MProjectController {
     ) {
         return BaseResponse.success(
                 SuccessCode.SELECT_SUCCESS,
-                mProjectService.findProjectSingleApiDocs(new ObjectId(projectId), apiDocId)
+                mProjectService.findProjectSingleApiDocs(new ObjectId(projectId), UUID.fromString(apiDocId))
         );
     }
 
