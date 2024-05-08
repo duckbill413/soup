@@ -1,7 +1,7 @@
 import { createClient, LiveObject,LiveList } from '@liveblocks/client'
 import { createRoomContext, createLiveblocksContext } from "@liveblocks/react";
 import {FuncDescResWithColor} from "@/types/functionDesc";
-  
+
 const client = createClient({
   publicApiKey: process.env.NEXT_PUBLIC_LIVEBLOCKS_PUBLIC_KEY!,
 });
@@ -10,7 +10,7 @@ const client = createClient({
 // and that will automatically be kept in sync. Accessible through the
 // `user.presence` property. Must be JSON-serializable.
 type Presence = {
-   // cursor: { x: number, y: number } | null,
+  // cursor: { x: number, y: number } | null,
   // ...
 };
 
@@ -22,20 +22,11 @@ type Presence = {
 type Storage = {
   // author: LiveObject<{ firstName: string, lastName: string }>,
   // ...
-  outline? : LiveObject<{
-      project_name: string,
-      project_description: string,
-      project_photo: string,
-      project_startDate:string,
-      project_endDate:string,
-      project_tools: LiveList<LiveObject<ProjectTool>>
-  }>,
+
+  outline : LiveObject<{name: string, description: string}>
+  func?: LiveList<LiveObject<FuncDescResWithColor>>
 };
-type ProjectTool = {
-  id: string;
-  name : string;
-  url? : string;
-}
+
 // Optionally, UserMeta represents static/readonly metadata on each user, as
 // provided by your own custom auth back end (if used). Useful for data that
 // will not change during a session, like a user's name or avatar.
@@ -100,7 +91,7 @@ export const {
     useMarkThreadAsRead,
     useRoomNotificationSettings,
     useUpdateRoomNotificationSettings,
-  
+
     // These hooks can be exported from either context
     // useUser,
     // useRoomInfo
@@ -115,7 +106,7 @@ export const {
     useMarkAllInboxNotificationsAsRead,
     useInboxNotifications,
     useUnreadInboxNotificationsCount,
-  
+
     // These hooks can be exported from either context
     useUser,
     useRoomInfo,
