@@ -15,7 +15,8 @@ function Room({ children }: { children: ReactNode }) {
     project_background: new LiveList<LiveObject<ProjectTags>>(),
     project_intro: new LiveList<LiveObject<ProjectTags>>(),
     project_target: new LiveList<LiveObject<ProjectTags>>(),
-    project_effect: new LiveList<LiveObject<ProjectTags>>()
+    project_effect: new LiveList<LiveObject<ProjectTags>>(),
+    project_using: false
   };
   const initialAfter = {
     project_background: "",

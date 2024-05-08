@@ -17,7 +17,7 @@ const baseAxios = axios.create({
 })
 
 baseAxios.interceptors.response.use(
-  (res) => res.data,
+  (res) => res,
   async (err) => {
     if (err.response?.status !== 401) return Promise.reject(err)
     const refreshToken = getRefreshToken()
