@@ -11,6 +11,7 @@ import io.ssafy.soupapi.domain.projectauth.dao.ProjectAuthRepository;
 import io.ssafy.soupapi.domain.projectauth.entity.ProjectAuth;
 import io.ssafy.soupapi.global.common.code.ErrorCode;
 import io.ssafy.soupapi.global.exception.BaseExceptionHandler;
+import io.ssafy.soupapi.global.external.liveblocks.application.LiveblocksService;
 import io.ssafy.soupapi.global.security.user.UserSecurityDTO;
 import io.ssafy.soupapi.global.util.GmailUtil;
 import io.ssafy.soupapi.usecase.dao.TempTeamMember;
@@ -37,6 +38,7 @@ public class InviteTeamMemberService {
     private final RedisTemplate<String, Object> redisTemplate;
     private final Gson gson;
     private final GmailUtil gmailUtil;
+    private final LiveblocksService liveblocksService;
 
     @Transactional
     public String inviteTeamMember(String projectId, InviteTeamMember inviteTeamMember, UserSecurityDTO userSecurityDTO) {
@@ -89,6 +91,7 @@ public class InviteTeamMemberService {
 
         // 현재 회원인 경우
         addTeamMember(project, inviteTeamMember.roles(), inviteMember);
+        liveblocksService.addMemberToAllStepRooms(userSecurityDTO.getId().toString(), project.getId());
 
         return inviteMember.getNickname() + "님 초대 완료";
     }

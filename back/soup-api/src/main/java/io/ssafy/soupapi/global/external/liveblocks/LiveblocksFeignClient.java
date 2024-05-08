@@ -3,9 +3,11 @@ package io.ssafy.soupapi.global.external.liveblocks;
 import io.ssafy.soupapi.global.external.config.LiveblocksFeignConfig;
 import io.ssafy.soupapi.global.external.liveblocks.dto.request.CreateRoomReq;
 import io.ssafy.soupapi.global.external.liveblocks.dto.request.GetUserIdTokenReq;
-import io.ssafy.soupapi.global.external.liveblocks.dto.response.CreateRoomRes;
+import io.ssafy.soupapi.global.external.liveblocks.dto.request.UpdateRoomReq;
+import io.ssafy.soupapi.global.external.liveblocks.dto.response.ChangeRoomRes;
 import io.ssafy.soupapi.global.external.liveblocks.dto.response.GetUserIdTokenRes;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -22,10 +24,17 @@ public interface LiveblocksFeignClient {
         @RequestBody GetUserIdTokenReq getUserIdTokenReq
     );
 
-    // room 생성
+    // create room
     @PostMapping(value = "/rooms", consumes = "application/json")
-    CreateRoomRes createRoom(
+    ChangeRoomRes createRoom(
         @RequestBody CreateRoomReq createRoomReq
+    );
+
+    // update room
+    @PostMapping(value = "/rooms/{roomId}", consumes = "application/json")
+    ChangeRoomRes updateRoom(
+        @PathVariable String roomId,
+        @RequestBody UpdateRoomReq updateRoomReq
     );
 
 }

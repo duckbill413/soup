@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 
 @Builder
-public record CreateRoomRes(
+public record ChangeRoomRes(
     String type,
     String id,
     String lastConnectionAt,
