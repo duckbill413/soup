@@ -176,6 +176,11 @@ feign:
     name: claude
     url: https://api.anthropic.com
 
+# Liveblocks
+liveblocks:
+  base-url: https://api.liveblocks.io/v2
+  secret-key: ${LIVEBLOCKS_SECRET_KEY}
+
 # Openvidu Configuration
 openvidu:
   url: ${OPENVIDU_SERVER_URL} #https://your-openvidu-server.com
