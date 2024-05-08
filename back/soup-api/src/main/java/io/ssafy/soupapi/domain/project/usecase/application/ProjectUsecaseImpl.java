@@ -6,7 +6,7 @@ import io.ssafy.soupapi.domain.project.usecase.dto.CreateAiProposal;
 import io.ssafy.soupapi.global.external.claude.ClaudeFeignClient;
 import io.ssafy.soupapi.global.external.claude.dto.CreateClaudeMessageReq;
 import io.ssafy.soupapi.global.external.claude.dto.CreateClaudeMessageRes;
-import io.ssafy.soupapi.global.external.liveblocks.application.LiveblocksService;
+import io.ssafy.soupapi.global.external.liveblocks.application.LiveblocksComponent;
 import io.ssafy.soupapi.global.security.user.UserSecurityDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -21,7 +21,7 @@ public class ProjectUsecaseImpl implements ProjectUsecase {
     private final PProjectService pProjectService;
 
     private final ClaudeFeignClient claudeFeignClient;
-    private final LiveblocksService liveblocksService;
+    private final LiveblocksComponent liveblocksComponent;
 
     /**
      * 프로젝트 생성
@@ -38,7 +38,7 @@ public class ProjectUsecaseImpl implements ProjectUsecase {
         var projectId = mProjectService.createProject(userSecurityDTO);
         String projectIdStr = projectId.toHexString();
         pProjectService.registProject(projectIdStr, userSecurityDTO);
-        liveblocksService.createAllStepRooms(userSecurityDTO.getId().toString(), projectIdStr);
+        liveblocksComponent.createAllStepRooms(userSecurityDTO.getId().toString(), projectIdStr);
         return projectIdStr;
     }
 

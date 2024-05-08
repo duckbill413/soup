@@ -3,9 +3,8 @@ package io.ssafy.soupapi.global.security.service;
 import io.ssafy.soupapi.domain.member.dao.MemberRepository;
 import io.ssafy.soupapi.domain.member.entity.Member;
 import io.ssafy.soupapi.domain.member.entity.MemberRole;
-import io.ssafy.soupapi.global.common.code.ErrorCode;
-import io.ssafy.soupapi.global.exception.BaseExceptionHandler;
 import io.ssafy.soupapi.global.security.user.UserSecurityDTO;
+import io.ssafy.soupapi.global.util.FindEntityUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
@@ -21,14 +20,12 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class CustomUserDetailsService implements UserDetailsService {
 
-    private final MemberRepository memberRepository;
+    private final FindEntityUtil findEntityUtil;
 
     @Transactional(readOnly = true)
     @Override
     public UserSecurityDTO loadUserByUsername(String id) {
-        var member = memberRepository.findById(UUID.fromString(id)).orElseThrow(
-                () -> new BaseExceptionHandler(ErrorCode.NOT_FOUND_USER)
-        );
+        var member = findEntityUtil.findMemberById(UUID.fromString(id));
 
         return UserSecurityDTO.fromSocial()
                 .username(member.getId().toString())

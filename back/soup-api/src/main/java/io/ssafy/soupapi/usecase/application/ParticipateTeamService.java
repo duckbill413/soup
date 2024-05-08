@@ -10,8 +10,9 @@ import io.ssafy.soupapi.domain.projectauth.dao.ProjectAuthRepository;
 import io.ssafy.soupapi.domain.projectauth.entity.ProjectAuth;
 import io.ssafy.soupapi.global.common.code.ErrorCode;
 import io.ssafy.soupapi.global.exception.BaseExceptionHandler;
-import io.ssafy.soupapi.global.external.liveblocks.application.LiveblocksService;
+import io.ssafy.soupapi.global.external.liveblocks.application.LiveblocksComponent;
 import io.ssafy.soupapi.global.security.user.UserSecurityDTO;
+import io.ssafy.soupapi.global.util.FindEntityUtil;
 import io.ssafy.soupapi.usecase.dao.TempTeamMember;
 import io.ssafy.soupapi.usecase.dto.request.ParticipateTeam;
 import lombok.RequiredArgsConstructor;
@@ -25,17 +26,16 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class ParticipateTeamService {
     private static final String TEMP_TEAM_MEMBER_HASH = "temp-team-member:";
-    private final MemberRepository memberRepository;
     private final PProjectRepository projectRepository;
     private final ProjectAuthRepository projectAuthRepository;
     private final RedisTemplate<String, Object> redisTemplate;
     private final Gson gson;
-
-    private final LiveblocksService liveblocksService;
+    private final LiveblocksComponent liveblocksComponent;
+    private final FindEntityUtil findEntityUtil;
 
     public String participateToTeam(ParticipateTeam participateTeam, UserSecurityDTO userSecurityDTO) {
-        var member = memberRepository.findById(userSecurityDTO.getId()).orElseThrow(() ->
-                new BaseExceptionHandler(ErrorCode.NOT_FOUND_USER));
+        var member = findEntityUtil.findMemberById(userSecurityDTO.getId());
+
         // 레디스 정보 호출
         var result = redisTemplate.opsForValue().get(TEMP_TEAM_MEMBER_HASH + member.getEmail());
         if (Objects.isNull(result)) {
@@ -49,11 +49,10 @@ public class ParticipateTeamService {
             throw new BaseExceptionHandler(ErrorCode.INVALID_INVITE_CODE);
         }
         redisTemplate.opsForValue().getAndDelete(TEMP_TEAM_MEMBER_HASH + member.getEmail());
-        var project = projectRepository.findById(tempTeamMember.projectId()).orElseThrow(() ->
-                new BaseExceptionHandler(ErrorCode.NOT_FOUND_PROJECT));
+        var project = findEntityUtil.findPProjectById(tempTeamMember.projectId());
 
         addTeamMember(project, tempTeamMember.roles(), Member.builder().id(userSecurityDTO.getId()).build());
-        liveblocksService.addMemberToAllStepRooms(userSecurityDTO.getId().toString(), project.getId());
+        liveblocksComponent.addMemberToAllStepRooms(userSecurityDTO.getId().toString(), project.getId());
 
         return project.getName() + " 프로젝트에 참가 되었습니다.";
     }

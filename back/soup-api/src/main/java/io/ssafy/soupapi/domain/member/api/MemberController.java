@@ -1,12 +1,12 @@
 package io.ssafy.soupapi.domain.member.api;
 
 import io.ssafy.soupapi.domain.member.application.MemberService;
-import io.ssafy.soupapi.domain.member.application.MemberUsecase;
 import io.ssafy.soupapi.domain.member.dto.MemberInfoDto;
 import io.ssafy.soupapi.domain.member.dto.response.GetLiveblocksTokenRes;
 import io.ssafy.soupapi.global.common.code.SuccessCode;
 import io.ssafy.soupapi.global.common.response.BaseResponse;
 import io.ssafy.soupapi.global.security.user.UserSecurityDTO;
+import io.ssafy.soupapi.global.util.FindEntityUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.NotEmpty;
@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class MemberController {
 
     private final MemberService memberService;
-    private final MemberUsecase memberUsecase;
+    private final FindEntityUtil findEntityUtil;
 
     @Operation(summary = "유저 정보 조회", description = "유저의 닉네임, 이메일 등의 정보를 조회")
     @GetMapping("")
@@ -36,7 +36,7 @@ public class MemberController {
     ) {
         return BaseResponse.success(
                 SuccessCode.SELECT_SUCCESS,
-                memberService.findById(userSecurityDTO.getId()).toMemberInfoDto()
+                findEntityUtil.findMemberById(userSecurityDTO.getId()).toMemberInfoDto()
         );
     }
 
@@ -47,7 +47,7 @@ public class MemberController {
     ) {
         return BaseResponse.success(
                 SuccessCode.CHECK_SUCCESS,
-                memberUsecase.getLiveblocksUserIdToken(userSecurityDTO.getId())
+                memberService.getLiveblocksUserIdToken(userSecurityDTO.getId())
         );
     }
 

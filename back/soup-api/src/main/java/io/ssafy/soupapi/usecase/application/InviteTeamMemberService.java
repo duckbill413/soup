@@ -11,8 +11,9 @@ import io.ssafy.soupapi.domain.projectauth.dao.ProjectAuthRepository;
 import io.ssafy.soupapi.domain.projectauth.entity.ProjectAuth;
 import io.ssafy.soupapi.global.common.code.ErrorCode;
 import io.ssafy.soupapi.global.exception.BaseExceptionHandler;
-import io.ssafy.soupapi.global.external.liveblocks.application.LiveblocksService;
+import io.ssafy.soupapi.global.external.liveblocks.application.LiveblocksComponent;
 import io.ssafy.soupapi.global.security.user.UserSecurityDTO;
+import io.ssafy.soupapi.global.util.FindEntityUtil;
 import io.ssafy.soupapi.global.util.GmailUtil;
 import io.ssafy.soupapi.usecase.dao.TempTeamMember;
 import lombok.RequiredArgsConstructor;
@@ -38,14 +39,13 @@ public class InviteTeamMemberService {
     private final RedisTemplate<String, Object> redisTemplate;
     private final Gson gson;
     private final GmailUtil gmailUtil;
-    private final LiveblocksService liveblocksService;
+    private final LiveblocksComponent liveblocksComponent;
+    private final FindEntityUtil findEntityUtil;
 
     @Transactional
     public String inviteTeamMember(String projectId, InviteTeamMember inviteTeamMember, UserSecurityDTO userSecurityDTO) {
-        var member = memberRepository.findById(userSecurityDTO.getId()).orElseThrow(() ->
-                new BaseExceptionHandler(ErrorCode.NOT_FOUND_USER));
-        var project = projectRepository.findById(projectId).orElseThrow(() ->
-                new BaseExceptionHandler(ErrorCode.NOT_FOUND_PROJECT));
+        var member = findEntityUtil.findMemberById(userSecurityDTO.getId());
+        var project = findEntityUtil.findPProjectById(projectId);
         var inviteMember = memberRepository.findByEmail(inviteTeamMember.email()).stream().findFirst().orElse(null);
 
         // 초대하려는 멤버가 이미 우리 프로젝트 팀원 인지 확인
@@ -91,7 +91,7 @@ public class InviteTeamMemberService {
 
         // 현재 회원인 경우
         addTeamMember(project, inviteTeamMember.roles(), inviteMember);
-        liveblocksService.addMemberToAllStepRooms(userSecurityDTO.getId().toString(), project.getId());
+        liveblocksComponent.addMemberToAllStepRooms(userSecurityDTO.getId().toString(), project.getId());
 
         return inviteMember.getNickname() + "님 초대 완료";
     }
