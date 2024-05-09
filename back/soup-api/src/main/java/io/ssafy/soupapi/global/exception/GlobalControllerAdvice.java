@@ -4,8 +4,10 @@ import io.ssafy.soupapi.global.common.code.ErrorCode;
 import io.ssafy.soupapi.global.common.response.ErrorResponse;
 import io.ssafy.soupapi.global.security.exception.AccessTokenException;
 import io.ssafy.soupapi.global.security.exception.RefreshTokenException;
+import kong.unirest.HttpStatus;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -43,6 +45,13 @@ public class GlobalControllerAdvice {
         return ResponseEntity.status(response.status()).body(response);
     }
 
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ErrorResponse> handleAccessDeniedExceptionHandler(AccessDeniedException e) {
+        log.info("handleAccessDeniedExceptionHandler에 오셨습니다.");
+        var response = ErrorResponse.fail(HttpStatus.UNAUTHORIZED, "UNAUTHORIZED", e.getMessage());
+        return ResponseEntity.status(response.status()).body(response);
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> handleMethodValidation(MethodArgumentNotValidException e) {
         BindingResult bindingResult = e.getBindingResult();
@@ -70,9 +79,9 @@ public class GlobalControllerAdvice {
 
     @ExceptionHandler(RuntimeException.class)
     protected ResponseEntity<ErrorResponse> handleRuntimeExceptions(RuntimeException e) {
+        log.info("handleRuntimeExceptions에 오셨습니다.");
         e.printStackTrace();
         var response = ErrorResponse.fail(ErrorCode.INTERNAL_SERVER_ERROR, e.getLocalizedMessage());
-
         return ResponseEntity.status(response.status()).body(response);
     }
 
@@ -84,6 +93,7 @@ public class GlobalControllerAdvice {
      */
     @ExceptionHandler({Exception.class})
     protected ResponseEntity<ErrorResponse> handleAllExceptions(Exception e) {
+        log.info("handleAllExceptions에 오셨습니다.");
         e.printStackTrace();
         var response = ErrorResponse.fail(ErrorCode.INTERNAL_SERVER_ERROR, e.getMessage());
 
