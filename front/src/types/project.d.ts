@@ -1,10 +1,10 @@
 export interface ProjectMemberImageUri{
-  projectMemberImageUri?: string;
+  projectMemberImageUrl?: string;
 }
 
 export interface ProjectRes {
-  projectId: number;
-  projectImageUri?: string;
-  projectName: string;
-  projectMemberImageUris?: ProjectMemberImageUri[];
+  id: string;
+  name?: string;
+  imgUrl: string;
+  projectMemberImageUrls:ProjectMemberImageUrl[],
 }
