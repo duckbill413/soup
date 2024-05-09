@@ -219,8 +219,16 @@ public class ProjectBuilderRepositoryImpl implements ProjectBuilderRepository {
     }
 
     @Override
-    public void createClassFiles(Project project) {
-        getProjectSchemaFromERD(project);
+    public void replaceEntityClassVariables(Project project) {
+        String domainFolder = getProjectMainPath(project, MainPath.domain);
+        var schema = getProjectSchemaFromERD(project);
+
+        for (TableDefinition tableDefinition : schema.getTables().values()) {
+            // Entity 파일 수정
+            System.out.println(tableDefinition.getName());
+            var entityFilePath = domainFolder + File.separator + tableDefinition.getName();
+            System.out.println(entityFilePath);
+        }
     }
 
     private void createDomainSubPackages(String domain, String destination, Map<String, List<File>> domainLeafFiles) throws IOException {

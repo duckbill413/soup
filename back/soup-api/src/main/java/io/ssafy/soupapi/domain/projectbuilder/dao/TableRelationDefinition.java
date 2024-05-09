@@ -11,10 +11,10 @@ import lombok.*;
 @AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class TableRelationDefinition {
-    public String id;
-    public boolean identification;
-    public int relationshipType;
-    public int startRelationshipType;
-    public Relation start;
-    public Relation end;
+    private String id;
+    private boolean identification;
+    private int relationshipType;
+    private int startRelationshipType;
+    private Relation start;
+    private Relation end;
 }

@@ -16,13 +16,13 @@ import java.util.Map;
 @AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class TableDefinition {
-    public String id;
-    public String name;
-    public String comment;
+    private String id;
+    private String name;
+    private String comment;
     @Builder.Default
-    public List<String> columnIds = new ArrayList<>();
+    private List<String> columnIds = new ArrayList<>();
     @Builder.Default
-    public List<String> seqColumnIds = new ArrayList<>();
+    private List<String> seqColumnIds = new ArrayList<>();
     @Builder.Default
-    public Map<String, ColumnDefinition> columns = new HashMap<>();
+    private Map<String, ColumnDefinition> columns = new HashMap<>();
 }

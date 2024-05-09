@@ -14,7 +14,7 @@ import java.util.List;
 @AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Relation {
-    public String tableId;
+    private String tableId;
     @Builder.Default
-    public List<String> columnIds = new ArrayList<>();
+    private List<String> columnIds = new ArrayList<>();
 }

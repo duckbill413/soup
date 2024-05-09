@@ -15,7 +15,7 @@ import java.util.Map;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class SchemaDefinition {
     @Builder.Default
-    Map<String, TableDefinition> tables = new HashMap<>();
+    private Map<String, TableDefinition> tables = new HashMap<>();
     @Builder.Default
-    Map<String, TableRelationDefinition> relations = new HashMap<>();
+    private Map<String, TableRelationDefinition> relations = new HashMap<>();
 }

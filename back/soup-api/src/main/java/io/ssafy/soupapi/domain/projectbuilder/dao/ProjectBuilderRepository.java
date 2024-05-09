@@ -16,5 +16,5 @@ public interface ProjectBuilderRepository {
 
     void createDomainPackages(Project project) throws IOException;
 
-    void createClassFiles(Project project);
+    void replaceEntityClassVariables(Project project);
 }

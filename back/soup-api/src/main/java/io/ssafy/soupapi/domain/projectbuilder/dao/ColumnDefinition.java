@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.ssafy.soupapi.global.common.code.ErrorCode;
 import io.ssafy.soupapi.global.exception.BaseExceptionHandler;
+import io.ssafy.soupapi.global.util.TypeMapper;
 import lombok.*;
 
 @Getter
@@ -14,14 +15,14 @@ import lombok.*;
 @AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ColumnDefinition {
-    public String id;
-    public String tableId;
-    public String name;
-    public String comment;
-    public String dataType;
+    private String id;
+    private String tableId;
+    private String name;
+    private String comment;
+    private String dataType;
     @JsonProperty("default")
-    public String mydefault;
-    public int options;
+    private String mydefault;
+    private int options;
 
     public String getColumnVariable() {
         // @Column(name = "project_builder_file_path", length = 1111, nullable = false, unique = true)
@@ -60,5 +61,8 @@ public class ColumnDefinition {
         }
 
         return sb.toString();
+    }
+    public String mapToJavaType() {
+        return TypeMapper.mapToJavaType(dataType);
     }
 }

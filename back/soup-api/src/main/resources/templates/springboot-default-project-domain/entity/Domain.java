@@ -15,7 +15,5 @@ import lombok.*;
 @Table(name = ":entity-table-name")
 public class :domain-class-name {
 
-    @Id
-    @Column(name = ":entity-table-name_id")
-    private :entity-id-type id;
+:domain-columns
 }
