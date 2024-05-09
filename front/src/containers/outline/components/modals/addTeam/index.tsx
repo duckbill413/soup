@@ -24,7 +24,7 @@ function OutlineTeamModal (props: { clickModal: () => void }) {
         <hr/>
         {/* 역할, 이메일, 초대하기 */}
         <div className={styles.middleDivision}>
-          <input className={styles.roleInput} placeholder="역할"/>
+          <input className={styles.roleInput} placeholder="엔터를 눌러서 역할 추가"/>
           <input className={styles.emailInput} placeholder="e-mail 주소"/>
           <button type="button" className={styles.invite}>초대하기</button>
         </div>

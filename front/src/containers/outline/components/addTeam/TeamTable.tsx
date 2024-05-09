@@ -1,12 +1,9 @@
 import * as styles from "@/containers/outline/styles/table/outlineTable.css"
+import { useStorage } from '../../../../../liveblocks.config'
 
-interface TableRow {
-  name: string;
-  role: string;
-  email: string;
-}
+function TeamTable () {
+  const teamStorage = useStorage((root)=>root.outline)
 
-function TeamTable ({ rows }: { rows: TableRow[] }) {
   return (
     <table>
       <thead>
@@ -17,11 +14,13 @@ function TeamTable ({ rows }: { rows: TableRow[] }) {
       </tr>
       </thead>
       <tbody>
-      {rows.map((row) => (
+      {teamStorage?.project_team.map((row) => (
         <tr key={row.email}>
           <td>{row.name}</td>
-          <td>{row.role}</td>
-          <td><a href={row.email}>{row.email}</a></td>
+          <td>{row.roles.map((role) => (
+            <span style={{backgroundColor:'gray'}} key={role.id}>{role.role_name}</span>
+          ))}</td>
+          <td><a href={`mailto:${row.email}`}>{row.email}</a></td>
         </tr>
       ))}
       </tbody>

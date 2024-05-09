@@ -1,7 +1,7 @@
 import { createClient, LiveObject,LiveList } from '@liveblocks/client'
 import { createRoomContext, createLiveblocksContext } from "@liveblocks/react";
 import {FuncDescResWithColor} from "@/types/functionDesc";
-import { ProjectTool } from '@/containers/outline/types/outlineStorage'
+import { OutlineStorage } from '@/containers/outline/types/outlineStorage'
 import { PlanStorage } from '@/containers/plan/types/planStorage'
 
 const client = createClient({
@@ -22,14 +22,7 @@ type Presence = {
 // automatically persisted and synced to all connected clients.
 
 type Storage = {
-  outline? : LiveObject<{
-    project_name: string,
-    project_description: string,
-    project_photo: string,
-    project_startDate:string,
-    project_endDate:string,
-    project_tools: LiveList<LiveObject<ProjectTool>>
-  }>,
+  outline? : LiveObject<OutlineStorage>,
   plan? : LiveObject<PlanStorage>,
   func?: LiveList<LiveObject<FuncDescResWithColor>>
   erd?: LiveObject<{
