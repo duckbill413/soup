@@ -11,13 +11,11 @@ export type ProjectMember = {
   name: string;
   roles: LiveList<LiveObject<Role>>;
   email: string;
-  jira: boolean;
 }
 
 export type Role = {
   id: string;
   role_name: string;
-
 }
 
 export type OutlineStorage = {

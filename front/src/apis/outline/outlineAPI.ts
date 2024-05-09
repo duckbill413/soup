@@ -28,6 +28,15 @@ export const changePhotoAPI = async (data:FormData) => {
     const response = await baseAxios.post(`/files/upload`,data, photoHeader)
     return response.data
   } catch (error) {
-    return handleApiError('사진을 업로드하는 중 오류 발생 : ', error)
+    return handleApiError('사진을 업로드하는 중 오류 발생: ', error)
+  }
+}
+
+export const inviteMemberAPI = async(projectId:string, data:any) => {
+  try {
+    const response = await baseAxios.post(`/projects/${projectId}/teams`,data)
+    return response.data
+  } catch (error) {
+    return handleApiError('팀원을 초대하는 중 오류 발생: ', error)
   }
 }
