@@ -11,8 +11,6 @@ ENV NEXT_PUBLIC_LIVEBLOCKS_PUBLIC_KEY=$NEXT_PUBLIC_LIVEBLOCKS_PUBLIC_KEY \
 
 WORKDIR /app
 
-ENV NODE_ENV=production
-
 # package.json과 기타 필요한 파일들만 먼저 복사
 COPY package*.json pnpm-lock.yaml ./
 
@@ -32,6 +30,8 @@ RUN pnpm run build
 # 런타임 이미지 준비
 FROM node:20.11.1
 WORKDIR /app
+
+ENV NODE_ENV=production
 
 # 빌드 결과물 복사 
 COPY --from=builder /app/.next/standalone ./
