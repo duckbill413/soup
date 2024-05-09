@@ -54,7 +54,7 @@ export const middleDivision = style ({
 })
 
 export const roleInput = style ({
-  width:'18%',
+  width:'20%',
   height:'50%',
   padding:'0.1rem',
   paddingLeft:'0.6rem',

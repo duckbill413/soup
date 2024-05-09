@@ -33,7 +33,7 @@ function Live({children}:{children:ReactNode}) {
 
   useEffect(() => {
     const onKeyUp = (e: KeyboardEvent) => {
-      if (e.key === '/') {
+      if (e.ctrlKey && e.key === '/') {
         setCursorState({
           mode: CursorMode.Chat,
           previousMessage: null,
@@ -45,7 +45,7 @@ function Live({children}:{children:ReactNode}) {
       }
     }
     const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === '/') {
+      if (e.ctrlKey && e.key === '/') {
         e.preventDefault()
       }
     }

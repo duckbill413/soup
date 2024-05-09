@@ -1,6 +1,14 @@
-import * as styles from '@/containers/api/input.css'
-import { APIInput } from '@/types/apiinput'
-import { MenuItem, Select, TextField, ButtonGroup, Button } from '@mui/material'
+'use client'
+
+import * as styles from '@/containers/api/styles/input.css'
+import { APIInput } from '@/containers/api/types/apiinput'
+import {
+  MenuItem,
+  Select,
+  TextField,
+  ToggleButton,
+  ToggleButtonGroup,
+} from '@mui/material'
 
 interface LabelProps {
   title: string
@@ -30,6 +38,8 @@ export function InputText({
   isEssential,
   placeholder,
   multiline,
+  value,
+  onChange,
 }: APIInput) {
   return (
     <InputLabel title={title} isEssential={isEssential}>
@@ -38,6 +48,8 @@ export function InputText({
         placeholder={placeholder}
         sx={{ width: 'fit-content', minWidth: '480px' }}
         multiline={multiline}
+        value={value}
+        onChange={onChange}
       />
     </InputLabel>
   )
@@ -61,16 +73,37 @@ export function Dropbox({ title, isEssential, options }: APIInput) {
   )
 }
 
-export function MethodButton({ title, isEssential }: APIInput) {
+export function MethodButton({
+  title,
+  isEssential,
+  value,
+  onChange,
+}: APIInput) {
   return (
     <InputLabel title={title} isEssential={isEssential}>
-      <ButtonGroup variant="outlined" color="secondary" size="large">
-        <Button>GET</Button>
-        <Button>POST</Button>
-        <Button>PUT</Button>
-        <Button>DELETE</Button>
-        <Button>PATCH</Button>
-      </ButtonGroup>
+      <ToggleButtonGroup
+        color="primary"
+        value={value}
+        exclusive
+        onChange={onChange}
+        aria-label="Platform"
+      >
+        <ToggleButton value="GET" sx={{ paddingX: '28px' }}>
+          GET
+        </ToggleButton>
+        <ToggleButton value="POST" sx={{ paddingX: '28px' }}>
+          POST
+        </ToggleButton>
+        <ToggleButton value="PUT" sx={{ paddingX: '28px' }}>
+          PUT
+        </ToggleButton>
+        <ToggleButton value="DELETE" sx={{ paddingX: '28px' }}>
+          DELETE
+        </ToggleButton>
+        <ToggleButton value="PATCH" sx={{ paddingX: '28px' }}>
+          PATCH
+        </ToggleButton>
+      </ToggleButtonGroup>
     </InputLabel>
   )
 }

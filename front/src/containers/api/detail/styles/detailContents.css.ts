@@ -1,5 +1,6 @@
+import { table } from '@/components/Table/table.css'
 import vars from '@/styles/variables.css'
-import { style } from '@vanilla-extract/css'
+import { globalStyle, style } from '@vanilla-extract/css'
 
 export const backButton = style({
   fontSize: vars.fontSize.medium,
@@ -30,4 +31,31 @@ export const inputSection = style({
   display: 'flex',
   flexDirection: 'column',
   gap: vars.space.base,
+})
+
+globalStyle(`${table} td input`, {
+  width: '90%',
+  outline: 'none',
+  border: 'none',
+  backgroundColor: 'inherit',
+
+  fontSize: vars.fontSize.caption,
+  fontWeight: 500,
+  color: vars.color.black,
+  textAlign: 'center',
+  wordBreak: 'break-all',
+})
+
+globalStyle(`${table} td textarea`, {
+  width: '90%',
+  outline: 'none',
+  border: 'none',
+  backgroundColor: 'inherit',
+  resize: 'none',
+
+  fontSize: vars.fontSize.caption,
+  fontWeight: 500,
+  color: vars.color.black,
+  textAlign: 'center',
+  wordBreak: 'break-all',
 })

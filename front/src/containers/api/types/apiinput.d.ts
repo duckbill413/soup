@@ -9,4 +9,6 @@ export interface APIInput {
   placeholder?: string
   options?: Array<Option>
   multiline?: boolean
+  value?: any
+  onChange?: function
 }

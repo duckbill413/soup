@@ -3,8 +3,7 @@ import { globalStyle, style } from '@vanilla-extract/css'
 import { container } from '@/containers/outline/styles/outline.css'
 
 globalStyle(`${container} table`, {
-  width: '80%',
-  caretColor:'transparent'
+  width: '80%'
 })
 
 globalStyle(`${container} td`, {

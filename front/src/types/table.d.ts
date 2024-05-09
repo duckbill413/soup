@@ -6,6 +6,5 @@ export type TableHead = {
 
 export interface TableProps {
   headers: Array<TableHead>
-  hasNewLine: boolean
   children: React.ReactNode
 }
