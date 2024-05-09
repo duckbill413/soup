@@ -32,9 +32,10 @@ type Storage = {
   }>,
   plan? : LiveObject<PlanStorage>,
   func?: LiveList<LiveObject<FuncDescResWithColor>>
-  erd?: LiveObject<{
-    json:string
-  }>;
+  erd?: LiveObject<{json:string}>,
+  flow?: LiveObject<{json:string}>,
+  readme?: LiveObject<{json:string}>,
+
 };
 
 // Optionally, UserMeta represents static/readonly metadata on each user, as
