@@ -1,5 +1,6 @@
 package io.ssafy.soupapi.domain.projectbuilder.dao;
 
+import com.google.gson.Gson;
 import io.ssafy.soupapi.domain.project.mongodb.entity.Project;
 import io.ssafy.soupapi.domain.project.mongodb.entity.apidocs.ApiDoc;
 import io.ssafy.soupapi.domain.project.mongodb.entity.apidocs.ApiVariable;
@@ -15,20 +16,18 @@ import org.springframework.stereotype.Repository;
 import java.io.*;
 import java.util.*;
 
+import static io.ssafy.soupapi.global.util.StringParserUtil.convertToPascalCase;
+import static io.ssafy.soupapi.global.util.StringParserUtil.renameFile;
+
 @Log4j2
 @Repository
 @RequiredArgsConstructor
 public class ProjectBuilderRepositoryImpl implements ProjectBuilderRepository {
-    final String globalPath = "src/main/resources/templates/springboot-default-project-global";
     final String sourcePath = "src/main/resources/templates/springboot-default-project";
-    final String destinationPath = "C:\\util\\%s\\%s"; // TODO: 환경 변수를 이용하여 경로 변경
-    final Map<String, String> domainSubFolders = new HashMap<>() {{
-        put("api", "Controller");
-        put("application", "Service");
-        put("dao", "Repository");
-        put("dto", "");
-        put("entity", "");
-    }};
+    final String domainPath = "src/main/resources/templates/springboot-default-project-domain";
+    final String globalPath = "src/main/resources/templates/springboot-default-project-global";
+    final String saveRootPath = "C:\\util\\%s\\%s"; // TODO: 환경 변수를 이용하여 경로 변경
+    private final Gson gson;
 
     @Override
     public void packageBuilder(Project project) throws IOException {
@@ -38,7 +37,7 @@ public class ProjectBuilderRepositoryImpl implements ProjectBuilderRepository {
     }
 
     private String getDestination(Project project) {
-        return String.format(destinationPath, project.getId(), project.getProjectBuilderInfo().getName());
+        return String.format(saveRootPath, project.getId(), project.getProjectBuilderInfo().getName());
     }
 
     private void createDefaultPackage(String destination, ProjectBuilderInfo projectBuilderInfo) throws IOException {
@@ -111,12 +110,12 @@ public class ProjectBuilderRepositoryImpl implements ProjectBuilderRepository {
             case PATCH -> "@PatchMapping";
         });
         mapUtil.addValue("apiUriPath", apiDoc.getApiUriPath());
-        mapUtil.addValue("responseBodyName", StringParserUtil.upperFirst(apiDoc.getResponseBodyName()));
-        mapUtil.addValue("methodName", StringParserUtil.lowerFirst(apiDoc.getMethodName()));
+        mapUtil.addValue("responseBodyName", StringParserUtil.upperFirstAndLowerElse(apiDoc.getResponseBodyName()));
+        mapUtil.addValue("methodName", StringParserUtil.convertToCamelCase(apiDoc.getMethodName()));
         mapUtil.addValue("pathVariables", addPathVariableBuilder(apiDoc.getPathVariables()));
         mapUtil.addValue("queryParameters", addQueryParameters(apiDoc.getQueryParameters()));
         mapUtil.addValue("requestBody", addRequestBody(apiDoc.getRequestBodyName()));
-        mapUtil.addValue("serviceClassName", StringParserUtil.lowerFirst(apiDoc.getDomain()) + "Service");
+        mapUtil.addValue("serviceClassName", StringParserUtil.convertToPascalCase(apiDoc.getDomain()) + "Service");
         mapUtil.addValue("serviceMethodName", addServiceMethod(apiDoc));
 
         return mapUtil.replace();
@@ -184,7 +183,7 @@ public class ProjectBuilderRepositoryImpl implements ProjectBuilderRepository {
     }
 
     @Override
-    public void createDomainPackages(Project project) {
+    public void createDomainPackages(Project project) throws IOException {
         // 도메인 폴더 생성
         String destination = getProjectMainPath(project, MainPath.domain);
 
@@ -195,8 +194,27 @@ public class ProjectBuilderRepositoryImpl implements ProjectBuilderRepository {
 
         // 도메인 리스트에 대한 각각의 폴더 생성 및 하위 폴더 생성
         var domains = project.getApiDocs().getDomains();
+        Map<String, List<File>> domainLeafFiles = new HashMap<>();
         for (String domain : domains) {
-            createDomainSubPackages(domain, destination);
+            createDomainSubPackages(domain, destination, domainLeafFiles);
+        }
+
+        // 파일 변수 치환
+        for (String domain : domainLeafFiles.keySet()) {
+            replaceDomainSubFiles(domain, domainLeafFiles.get(domain), project);
+        }
+    }
+
+    private void replaceDomainSubFiles(String domain, List<File> subFiles, Project project) throws IOException {
+        Map<String, String> variables = new HashMap<>();
+        variables.put("domain-package-name", project.getProjectBuilderInfo().getPackageName() + ".domain");
+        variables.put("domain-class-name", StringParserUtil.convertToPascalCase(domain));
+        variables.put("domain-method-name", StringParserUtil.convertToCamelCase(domain));
+        variables.put("entity-name", StringParserUtil.convertToPascalCase(domain));
+        variables.put("entity-table-name", StringParserUtil.convertToSnakeCase(domain));
+
+        for (File subFile : subFiles) {
+            replaceFileVariables(subFile, variables);
         }
     }
 
@@ -204,35 +222,33 @@ public class ProjectBuilderRepositoryImpl implements ProjectBuilderRepository {
     public void createClassFiles(Project project) {
     }
 
-    private void createDomainSubPackages(String domain, String destination) {
+    private void createDomainSubPackages(String domain, String destination, Map<String, List<File>> domainLeafFiles) throws IOException {
         domain = StringParserUtil.convertToSnakeCase(domain);
-        StringBuilder domainDestination = new StringBuilder(destination);
-        domainDestination.append(File.separator).append(domain);
 
         // 도메인 폴더 생성
-        File domainFolder = new File(domainDestination.toString());
+        File domainFolder = new File(destination + File.separator + domain
+                // 도메인 폴더 생성
+        );
         if (!domainFolder.exists()) {
             domainFolder.mkdir();
         }
 
         // 도메인 하위 폴더 생성
         // api, application, dao, dto, entity
-        domainDestination.append(File.separator);
-        for (String domainSubFolderName : domainSubFolders.keySet()) {
-            File domainSubFolder = new File(domainDestination + domainSubFolderName);
-            if (!domainSubFolder.exists()) {
-                domainSubFolder.mkdir();
-            }
+        File domainSourceFolder = new File(domainPath);
+        FileUtils.copyDirectory(domainSourceFolder, domainFolder);
 
-            if (domainSubFolderName.equals("dto")) {
-                File dtoRequestFolder = new File(domainDestination + domainSubFolderName + File.separator + "request");
-                if (!dtoRequestFolder.exists()) {
-                    dtoRequestFolder.mkdir();
+        List<File> leafFiles = getLeafFiles(domainFolder);
+        for (File leafFile : leafFiles) {
+            String filePath = leafFile.getAbsolutePath();
+            String newFilePath = renameFile(filePath, "Domain", convertToPascalCase(domain));
+
+            File newFile = new File(newFilePath);
+            if (leafFile.renameTo(newFile)) {
+                if (!domainLeafFiles.containsKey(domain)) {
+                    domainLeafFiles.put(domain, new ArrayList<>());
                 }
-                File dtoResponseFolder = new File(domainDestination + domainSubFolderName + File.separator + "response");
-                if (!dtoResponseFolder.exists()) {
-                    dtoResponseFolder.mkdir();
-                }
+                domainLeafFiles.get(domain).add(newFile);
             }
         }
     }
@@ -272,28 +288,6 @@ public class ProjectBuilderRepositoryImpl implements ProjectBuilderRepository {
         }
     }
 
-    private List<File> getLeafFiles(File folder) {
-        List<File> leafFiles = new ArrayList<>();
-
-        // 폴더 내의 모든 파일과 하위 폴더 얻기
-        File[] files = folder.listFiles();
-        if (Objects.isNull(files)) {
-            return leafFiles;
-        }
-        // 파일과 하위 폴더 순회
-        for (File file : files) {
-            if (file.isDirectory()) {
-                // 하위 폴더인 경우 재귀 호출
-                leafFiles.addAll(getLeafFiles(file));
-            } else {
-                // 파일인 경우 리스트에 추가
-                leafFiles.add(file);
-            }
-        }
-
-        return leafFiles;
-    }
-
     private void copyGlobalGroup(String destination) throws IOException {
         // global 폴더 생성
         File destinationFolder = new File(destination);
@@ -307,7 +301,7 @@ public class ProjectBuilderRepositoryImpl implements ProjectBuilderRepository {
     }
 
     private String addServiceMethod(ApiDoc apiDoc) {
-        String serviceMethodName = StringParserUtil.lowerFirst(apiDoc.getMethodName()) + "(:parameters)";
+        String serviceMethodName = StringParserUtil.convertToCamelCase(apiDoc.getMethodName()) + "(:parameters)";
         List<String> values = new ArrayList<>();
         if (Objects.nonNull(apiDoc.getPathVariables()) && !apiDoc.getPathVariables().isEmpty()) {
             for (ApiVariable pathVariable : apiDoc.getPathVariables()) {
@@ -376,5 +370,62 @@ public class ProjectBuilderRepositoryImpl implements ProjectBuilderRepository {
             strPathVariable.add(replaced);
         }
         return String.join(",\n", strPathVariable);
+    }
+
+    private List<File> getLeafFiles(File folder) {
+        List<File> leafFiles = new ArrayList<>();
+
+        // 폴더 내의 모든 파일과 하위 폴더 얻기
+        File[] files = folder.listFiles();
+        if (Objects.isNull(files)) {
+            return leafFiles;
+        }
+        // 파일과 하위 폴더 순회
+        for (File file : files) {
+            if (file.isDirectory()) {
+                // 하위 폴더인 경우 재귀 호출
+                leafFiles.addAll(getLeafFiles(file));
+            } else {
+                // 파일인 경우 리스트에 추가
+                leafFiles.add(file);
+            }
+        }
+
+        return leafFiles;
+    }
+
+    /**
+     * 프로젝트 도메인 리스트 정보
+     *
+     * @param project 프로젝트 ID
+     * @return 프로젝트 도메인 리스트
+     */
+    private SchemaDefinition getProjectSchemaFromERD(Project project) {
+        var vuerdObj = project.getVuerd();
+        Map<String, TableDefinition> tables = new HashMap<>();
+        Map<String, TableRelationDefinition> relations = new HashMap<>();
+
+        if (vuerdObj instanceof LinkedHashMap<?, ?>) {
+            vuerdObj = ((LinkedHashMap<?, ?>) vuerdObj).get("$set");
+
+            if (vuerdObj instanceof LinkedHashMap<?, ?>) {
+                var collections = ((LinkedHashMap<?, ?>) vuerdObj).get("collections");
+
+                if (collections instanceof LinkedHashMap<?,?>) {
+                    var tableEntities = ((LinkedHashMap<?, ?>) collections).get("tableEntities");
+                    var tableColumnEntities = ((LinkedHashMap<?, ?>) collections).get("tableColumnEntities");
+                    var relationshipEntities = ((LinkedHashMap<?, ?>) collections).get("relationshipEntities");
+
+                    if (tableEntities instanceof LinkedHashMap<?,?>) {
+                        for (Object key : ((LinkedHashMap<?, ?>) tableEntities).keySet()) {
+                            var tableDefinition = gson.fromJson(((LinkedHashMap<?, ?>) tableEntities).get(key).toString(), TableDefinition.class);
+                            System.out.println(tableDefinition);
+                        }
+                    }
+                }
+            }
+        }
+
+        return new SchemaDefinition(tables, relations);
     }
 }

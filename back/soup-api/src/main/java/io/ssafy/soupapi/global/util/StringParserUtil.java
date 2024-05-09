@@ -26,24 +26,15 @@ public class StringParserUtil {
         return result;
     }
 
-    public static String upperFirst(String data) {
+    public static String upperFirstAndLowerElse(String data) {
         if (data.isBlank()) {
             return "";
         }
         if (data.length() == 1) {
             return data.toUpperCase();
         }
+        data = data.toLowerCase();
         return Character.toUpperCase(data.charAt(0)) + data.substring(1);
-    }
-
-    public static String lowerFirst(String data) {
-        if (data.isBlank()) {
-            return "";
-        }
-        if (data.length() == 1) {
-            return data.toLowerCase();
-        }
-        return Character.toLowerCase(data.charAt(0)) + data.substring(1);
     }
 
     public static String convertToSnakeCase(String data) {
@@ -66,15 +57,42 @@ public class StringParserUtil {
     public static String convertToPascalCase(String data) {
         String[] parts = data.split("(?=[A-Z])|_");
         StringBuilder result = new StringBuilder();
-        for (String s : parts) {
-            if (s.isEmpty()) {
+        for (int i = 0; i < parts.length; i++) {
+            if (parts[i].isEmpty()) {
                 continue; // 빈 문자열인 경우 건너뜁니다.
             }
-            String part = upperFirst(s);
-            result.append(part);
+
+            result.append(upperFirstAndLowerElse(parts[i]));
         }
 
         return result.toString();
     }
 
+    public static String convertToCamelCase(String data) {
+        String[] parts = data.split("(?=[A-Z])|_");
+        StringBuilder result = new StringBuilder();
+        for (int i = 0; i < parts.length; i++) {
+            if (parts[i].isEmpty()) {
+                continue; // 빈 문자열인 경우 건너뜁니다.
+            }
+            // 첫번쨰 문자는 첫글자 내림
+            if (i == 0) {
+                result.append(parts[i].toLowerCase());
+                continue;
+            }
+
+            result.append(upperFirstAndLowerElse(parts[i]));
+        }
+
+        return result.toString();
+    }
+
+    public static String renameFile(String filePath, String oldString, String newString) {
+        int index = filePath.lastIndexOf(oldString);
+        if (index == -1) return filePath;
+
+        StringBuilder sb = new StringBuilder(filePath);
+        sb.replace(index, index + oldString.length(), newString);
+        return sb.toString();
+    }
 }
