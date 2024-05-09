@@ -1,53 +1,32 @@
 import { ErrorIcon, FilterIcon } from '@/../public/assets/icons'
+import Room from '@/app/(after-auth)/project/[projectId]/api/Room'
 import { StepTitleWithGuide } from '@/components/StepTitle/StepTitle'
-import APITable from '@/containers/api/APITable'
-import IconButton from '@/containers/api/IconButton'
-import * as style from '@/containers/api/index.css'
-import { APITableRow } from '@/types/apitable'
-
-// TODO: 샘플데이터, api 연결 후 삭제 필
-
-const sampleData: Array<APITableRow> = [
-  {
-    id: 1,
-    domain: 'Board',
-    domainColor: '#93B5E7',
-    name: '게시글 리스트 조회',
-    method: 'GET',
-    uri: '/board',
-    desc: '게시글을 전부 조회한다. 게시글을 하나만 조회할 수 있는겁니다. 뻥이고 사실 전부 조회할 수 있음요',
-  },
-  {
-    id: 2,
-    domain: 'Board',
-    domainColor: '#93B5E7',
-    name: '게시글 등록',
-    method: 'POST',
-    uri: '/board',
-    desc: '게시글 하나 등록.',
-  },
-]
+import APITable from '@/containers/api/components/APITable'
+import IconButton from '@/components/IconButton'
+import * as style from '@/containers/api/styles/index.css'
 
 export default function ApiSpecification() {
   return (
-    <div>
-      <StepTitleWithGuide
-        stepNum={6}
-        title="API 명세서"
-        desc="ERD를 기반으로 API 명세서를 작성해보세요."
-        guideTitle="API 명세서 작성 가이드"
-      />
-      <div className={style.buttonGroup}>
-        <IconButton name="정렬 기준" eventHandler="/">
-          <FilterIcon color="currentColor" />
-        </IconButton>
-        <div className={style.right}>
-          <IconButton name="에러 처리" eventHandler="api/error">
-            <ErrorIcon color="currentColor" />
+    <Room>
+      <div>
+        <StepTitleWithGuide
+          stepNum={6}
+          title="API 명세서"
+          desc="ERD를 기반으로 API 명세서를 작성해보세요."
+          guideTitle="API 명세서 작성 가이드"
+        />
+        <div className={style.buttonGroup}>
+          <IconButton name="정렬 기준" eventHandler="/">
+            <FilterIcon color="currentColor" />
           </IconButton>
+          <div className={style.right}>
+            <IconButton name="에러 처리" eventHandler="api/error">
+              <ErrorIcon color="currentColor" />
+            </IconButton>
+          </div>
         </div>
+        <APITable />
       </div>
-      <APITable data={sampleData} />
-    </div>
+    </Room>
   )
 }
