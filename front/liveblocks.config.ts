@@ -1,9 +1,9 @@
 import { createClient, LiveList, LiveObject } from '@liveblocks/client'
-import { createRoomContext, createLiveblocksContext } from "@liveblocks/react";
-  
+import { createLiveblocksContext, createRoomContext } from '@liveblocks/react'
+
 const client = createClient({
   publicApiKey: process.env.NEXT_PUBLIC_LIVEBLOCKS_PUBLIC_KEY!,
-});
+})
 
 // Presence represents the properties that exist on every user in the Room
 // and that will automatically be kept in sync. Accessible through the
@@ -11,7 +11,7 @@ const client = createClient({
 type Presence = {
   // cursor: { x: number, y: number } | null,
   // ...
-};
+}
 
 // Optionally, Storage represents the shared document that persists in the
 // Room, even after all users leave. Fields under Storage typically are
@@ -20,18 +20,48 @@ type Presence = {
 type Storage = {
   // author: LiveObject<{ firstName: string, lastName: string }>,
   // ...
-  outline? : LiveObject<{
-      project_name: string,
-      project_description: string,
-      project_startDate:string,
-      project_endDate:string,
-      project_tools: LiveList<LiveObject<ProjectTool>>
-  }>,
-};
+  outline?: LiveObject<{
+    project_name: string
+    project_description: string
+    project_startDate: string
+    project_endDate: string
+    project_tools: LiveList<LiveObject<ProjectTool>>
+  }>
+
+  apiList?: LiveList<
+    LiveObject<{
+      id: string
+      domain: string
+      name: string
+      method_name: string
+      http_method: string
+      uri: string
+      desc: string
+      path_variable?: LiveList<
+        LiveObject<{
+          name: string
+          type: number
+          desc: string
+        }>
+      >
+      query_param?: LiveList<
+        LiveObject<{
+          name: string
+          type: number
+          required: boolean
+          desc: string
+          default: string
+        }>
+      >
+      request_body?: string
+      response_body?: string
+    }>
+  >
+}
 type ProjectTool = {
-  id: string;
-  name : string;
-  url? : string;
+  id: string
+  name: string
+  url?: string
 }
 // Optionally, UserMeta represents static/readonly metadata on each user, as
 // provided by your own custom auth back end (if used). Useful for data that
@@ -39,14 +69,14 @@ type ProjectTool = {
 type UserMeta = {
   // id?: string,  // Accessible through `user.id`
   // info?: Json,  // Accessible through `user.info`
-};
+}
 
 // Optionally, the type of custom events broadcast and listened to in this
 // room. Use a union for multiple events. Must be JSON-serializable.
 type RoomEvent = {
   // type: "NOTIFICATION",
   // ...
-};
+}
 
 // Optionally, when using Comments, ThreadMetadata represents metadata on
 // each thread. Can only contain booleans, strings, and numbers.
@@ -54,7 +84,7 @@ export type ThreadMetadata = {
   // resolved: boolean;
   // quote: string;
   // time: number;
-};
+}
 
 // Room-level hooks, use inside `RoomProvider`
 export const {
@@ -97,12 +127,14 @@ export const {
     useMarkThreadAsRead,
     useRoomNotificationSettings,
     useUpdateRoomNotificationSettings,
-  
+
     // These hooks can be exported from either context
     // useUser,
     // useRoomInfo
-  }
-} = createRoomContext<Presence, Storage, UserMeta, RoomEvent, ThreadMetadata>(client);
+  },
+} = createRoomContext<Presence, Storage, UserMeta, RoomEvent, ThreadMetadata>(
+  client,
+)
 
 // Project-level hooks, use inside `LiveblocksProvider`
 export const {
@@ -112,9 +144,9 @@ export const {
     useMarkAllInboxNotificationsAsRead,
     useInboxNotifications,
     useUnreadInboxNotificationsCount,
-  
+
     // These hooks can be exported from either context
     useUser,
     useRoomInfo,
-  }
-} = createLiveblocksContext<UserMeta, ThreadMetadata>(client);
+  },
+} = createLiveblocksContext<UserMeta, ThreadMetadata>(client)
