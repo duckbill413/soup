@@ -1,35 +1,74 @@
 'use client'
 
-import { useEffect } from 'react'
-import { ErdEditorElement } from '@dineug/erd-editor'
-
-import * as styles from '@/containers/erd/erd.css'
+import { useEffect, useState } from 'react';
+import { ErdEditorElement } from '@dineug/erd-editor';
+import * as styles from '@/containers/erd/erd.css';
+import {useMutation, useStorage} from "../../../liveblocks.config";
 
 export default function ERDDrawing() {
-  const generateVuerd = () => {
-    const container: any = document.querySelector('#app-erd')
-    if (!container) return
-    let editor: ErdEditorElement | null
+  const init = useStorage((root)=>root.erd)
+  const [editor, setEditor] = useState<ErdEditorElement | null>(null);
+  const [initStart, setInitStart] = useState<boolean>(false);
 
-    if (container.children.item(0)) {
-      container.removeChild(container.children.item(0))
-      editor = document.createElement('erd-editor')
-    } else {
-      editor = document.createElement('erd-editor')
+  const updateElement = useMutation(({ storage },erd:string ) => {
+    const currData = storage.get('erd');
+    currData?.set('json',erd);
+  }, []);
+  const update = ()=>{
+    if(init?.json && init?.json!==''){
+      editor?.setInitialValue(init?.json);
     }
-    if (!editor) return
-    container.appendChild(editor)
-    editor.systemDarkMode = false
   }
+  useEffect(() => {
+      update();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [init,initStart]);
+
 
   useEffect(() => {
-    const loadErdEditor = async () => {
-      await import('@dineug/erd-editor')
-      generateVuerd()
+    if (editor) {
+      const handleChange = () => {
+        updateElement(editor.value);
+      };
+      editor.addEventListener('change', handleChange);
+      return () => {
+        editor.removeEventListener('change', handleChange);
+      };
     }
+    return () => {};
+  }, [editor,updateElement]);
 
-    loadErdEditor()
-  }, [])
+  useEffect(() => {
+    const generateVuerd = async () => {
+      const container: any = document.querySelector('#app-erd');
+      if (!container) return;
 
-  return <div className={styles.container} id="app-erd" />
+      if (container.children.item(0)) {
+        container.removeChild(container.children.item(0));
+      }
+
+      const newEditor = document.createElement('erd-editor');
+      container.appendChild(newEditor);
+      newEditor.systemDarkMode = false;
+      newEditor.setInitialValue('');
+      setEditor(newEditor);
+      setInitStart(true);
+    };
+
+    const loadErdEditor = async () => {
+      await import('@dineug/erd-editor');
+
+      generateVuerd();
+    };
+
+    loadErdEditor();
+
+    return () => {
+      editor?.destroy();
+    };
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  return <div className={styles.container} id="app-erd" />;
 }
