@@ -1,3 +1,4 @@
+import { APIListDetail } from '@/containers/api/types/apilist'
 import { OutlineStorage } from '@/containers/outline/types/outlineStorage'
 import { PlanStorage } from '@/containers/plan/types/planStorage'
 import { FuncDescResWithColor } from '@/types/functionDesc'
@@ -28,35 +29,7 @@ type Storage = {
   erd?: LiveObject<{
     json: string
   }>
-  apiList?: LiveList<
-    LiveObject<{
-      id: string
-      domain: string
-      name: string
-      method_name: string
-      http_method: string
-      uri: string
-      desc: string
-      path_variable?: LiveList<
-        LiveObject<{
-          name: string
-          type: number
-          desc: string
-        }>
-      >
-      query_param?: LiveList<
-        LiveObject<{
-          name: string
-          type: number
-          required: boolean
-          desc: string
-          default: string
-        }>
-      >
-      request_body?: string
-      response_body?: string
-    }>
-  >
+  apiList?: LiveList<LiveObject<APIListDetail>>
 }
 
 // Optionally, UserMeta represents static/readonly metadata on each user, as
