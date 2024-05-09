@@ -8,13 +8,13 @@ import { useMutation } from '../../../../../../liveblocks.config'
 
 function OutlineToolModal (props: { clickModal: () => void }) {
   const { clickModal } = props;
-
+  const [toolName, setToolName] = useState("");
+  const [toolURL, setToolURL] = useState("");
   const addTool = useMutation(({ storage }, tool) => {
     storage.get("outline")?.get("project_tools").push(new LiveObject<ProjectTool>(tool))
   }, []);
 
-  const [toolName, setToolName] = useState("");
-  const [toolURL, setToolURL] = useState("");
+
   const handleAddTool = () => {
     if (toolName) {
       addTool({
@@ -28,10 +28,12 @@ function OutlineToolModal (props: { clickModal: () => void }) {
     }
   };
 
+  const handleKeyPress = (e:React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') handleAddTool();
+  };
+
   const handleOuterClick = (e: React.MouseEvent) => {
-    if (e.target === e.currentTarget) {
-      clickModal();
-    }
+    if (e.target === e.currentTarget) clickModal();
   };
 
   return (
@@ -49,7 +51,9 @@ function OutlineToolModal (props: { clickModal: () => void }) {
           <input placeholder="툴 이름을 입력해주세요." className={styles.toolInput} value={toolName}
                  onChange={(e) => setToolName(e.target.value)}/>
           <input placeholder="URL 주소를 입력해주세요." className={styles.urlInput}  value={toolURL}
-                 onChange={(e) => setToolURL(e.target.value)}/>
+                 onChange={(e) => setToolURL(e.target.value)}
+                 onKeyDown={handleKeyPress}
+          />
           <div className={styles.inputSubDiv}>
             <button type="button" className={styles.button} onClick={handleAddTool}>등록</button>
           </div>

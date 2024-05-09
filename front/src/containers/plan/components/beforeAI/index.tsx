@@ -47,17 +47,13 @@ function PlanBeforeAI () {
   };
 
   const makePlan = () => {
-    if(initialProject?.before.project_using === true){alert('다른 사용자가 이용중입니다'); return;}
+    if(initialProject?.before.project_using === true){alert('기획서 생성 중입니다'); return;}
     updateTags("update","project_using", true)
-    const backgrounds = initialProject?.before?.project_background.map((tag: ProjectTags) => tag.content) || [];
-    const intros = initialProject?.before?.project_intro.map((tag: ProjectTags) => tag.content) || [];
-    const targets = initialProject?.before?.project_target.map((tag: ProjectTags) => tag.content) || [];
-    const results = initialProject?.before?.project_effect.map((tag: ProjectTags) => tag.content) || [];
     const aiData = {
-      background : backgrounds,
-      intro: intros,
-      target: targets,
-      result: results
+      background : initialProject?.before?.project_background.map((tag: ProjectTags) => tag.content) || [],
+      intro: initialProject?.before?.project_intro.map((tag: ProjectTags) => tag.content) || [],
+      target: initialProject?.before?.project_target.map((tag: ProjectTags) => tag.content) || [],
+      result: initialProject?.before?.project_effect.map((tag: ProjectTags) => tag.content) || []
     }
     makeAIPlan('663345305249cc4b837d65ab', aiData)
       .then(response => {
