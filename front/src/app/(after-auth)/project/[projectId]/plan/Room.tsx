@@ -32,7 +32,6 @@ function Room({ children }: { children: ReactNode }) {
                       after: new LiveObject(initialAfter)
                     })
     }}>
-      {/* Loading 페이지 추가해야 한다. */}
       <ClientSideSuspense fallback={<div><Loading/></div>}>
         {() => children}
       </ClientSideSuspense>
