@@ -11,6 +11,8 @@ ENV NEXT_PUBLIC_LIVEBLOCKS_PUBLIC_KEY=$NEXT_PUBLIC_LIVEBLOCKS_PUBLIC_KEY \
 
 WORKDIR /app
 
+ENV NODE_ENV=production
+
 # package.json과 기타 필요한 파일들만 먼저 복사
 COPY package*.json pnpm-lock.yaml ./
 

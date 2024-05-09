@@ -1,5 +1,5 @@
 import vars from '@/styles/variables.css'
-import { style, globalStyle } from '@vanilla-extract/css'
+import { globalStyle, style } from '@vanilla-extract/css'
 
 export const essential = style({
   fontSize: vars.fontSize.medium,
@@ -50,9 +50,7 @@ globalStyle(`${table} td`, {
   borderBottom: `2px solid ${vars.color.gray}`,
 })
 
-export const newLine = style({})
-
-globalStyle(`${table} tr ${newLine}`, {
+globalStyle(`${table} tr .newLine`, {
   paddingInline: vars.space.base,
   textAlign: 'start',
   color: vars.color.deepGray,

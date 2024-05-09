@@ -1,12 +1,13 @@
-import { createClient, LiveObject,LiveList } from '@liveblocks/client'
-import { createRoomContext, createLiveblocksContext } from "@liveblocks/react";
-import {FuncDescResWithColor} from "@/types/functionDesc";
+import { APIListDetail } from '@/containers/api/types/apilist'
 import { OutlineStorage } from '@/containers/outline/types/outlineStorage'
 import { PlanStorage } from '@/containers/plan/types/planStorage'
+import { FuncDescResWithColor } from '@/types/functionDesc'
+import { LiveList, LiveObject, createClient } from '@liveblocks/client'
+import { createLiveblocksContext, createRoomContext } from '@liveblocks/react'
 
 const client = createClient({
   publicApiKey: process.env.NEXT_PUBLIC_LIVEBLOCKS_PUBLIC_KEY!,
-});
+})
 
 // Presence represents the properties that exist on every user in the Room
 // and that will automatically be kept in sync. Accessible through the
@@ -14,7 +15,7 @@ const client = createClient({
 type Presence = {
   // cursor: { x: number, y: number } | null,
   // ...
-};
+}
 
 // Optionally, Storage represents the shared document that persists in the
 // Room, even after all users leave. Fields under Storage typically are
@@ -22,13 +23,14 @@ type Presence = {
 // automatically persisted and synced to all connected clients.
 
 type Storage = {
-  outline? : LiveObject<OutlineStorage>,
-  plan? : LiveObject<PlanStorage>,
+  outline?: LiveObject<OutlineStorage>
+  plan?: LiveObject<PlanStorage>
   func?: LiveList<LiveObject<FuncDescResWithColor>>
   erd?: LiveObject<{
-    json:string
-  }>;
-};
+    json: string
+  }>
+  apiList?: LiveList<LiveObject<APIListDetail>>
+}
 
 // Optionally, UserMeta represents static/readonly metadata on each user, as
 // provided by your own custom auth back end (if used). Useful for data that
@@ -36,14 +38,14 @@ type Storage = {
 type UserMeta = {
   // id?: string,  // Accessible through `user.id`
   // info?: Json,  // Accessible through `user.info`
-};
+}
 
 // Optionally, the type of custom events broadcast and listened to in this
 // room. Use a union for multiple events. Must be JSON-serializable.
 type RoomEvent = {
   // type: "NOTIFICATION",
   // ...
-};
+}
 
 // Optionally, when using Comments, ThreadMetadata represents metadata on
 // each thread. Can only contain booleans, strings, and numbers.
@@ -51,7 +53,7 @@ export type ThreadMetadata = {
   // resolved: boolean;
   // quote: string;
   // time: number;
-};
+}
 
 // Room-level hooks, use inside `RoomProvider`
 export const {
@@ -98,8 +100,10 @@ export const {
     // These hooks can be exported from either context
     // useUser,
     // useRoomInfo
-  }
-} = createRoomContext<Presence, Storage, UserMeta, RoomEvent, ThreadMetadata>(client);
+  },
+} = createRoomContext<Presence, Storage, UserMeta, RoomEvent, ThreadMetadata>(
+  client,
+)
 
 // Project-level hooks, use inside `LiveblocksProvider`
 export const {
@@ -113,5 +117,5 @@ export const {
     // These hooks can be exported from either context
     useUser,
     useRoomInfo,
-  }
-} = createLiveblocksContext<UserMeta, ThreadMetadata>(client);
+  },
+} = createLiveblocksContext<UserMeta, ThreadMetadata>(client)
