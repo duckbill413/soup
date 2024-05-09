@@ -26,11 +26,11 @@ type Storage = {
   outline?: LiveObject<OutlineStorage>
   plan?: LiveObject<PlanStorage>
   func?: LiveList<LiveObject<FuncDescResWithColor>>
-  erd?: LiveObject<{
-    json: string
-  }>
-  apiList?: LiveList<LiveObject<APIListDetail>>
-}
+  erd?: LiveObject<{json:string}>,
+  flow?: LiveObject<{json:string}>,
+  readme?: LiveObject<{json:string}>,
+
+};
 
 // Optionally, UserMeta represents static/readonly metadata on each user, as
 // provided by your own custom auth back end (if used). Useful for data that
