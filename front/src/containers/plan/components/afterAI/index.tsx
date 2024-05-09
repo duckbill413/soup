@@ -1,5 +1,6 @@
 'use client'
 
+import Loading from '@/app/loading'
 import { useMutation, useStorage } from '../../../../../liveblocks.config'
 
 function PlanAfterAI () {
@@ -9,6 +10,8 @@ function PlanAfterAI () {
     target?.set(field, newValue)
   }, [])
 
+  if(initialProject?.before.project_using===true) {return <Loading/>}
+  
   return (
     <div style={{ display: 'flex', flexDirection: 'column', width: '40%' }}>
       <p>기획 배경</p>
