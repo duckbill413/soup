@@ -1,5 +1,6 @@
 package io.ssafy.soupapi.domain.projectbuilder.dao;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.ssafy.soupapi.global.common.code.ErrorCode;
 import io.ssafy.soupapi.global.exception.BaseExceptionHandler;
@@ -9,7 +10,9 @@ import lombok.*;
 @Setter
 @Builder
 @ToString
+@NoArgsConstructor
 @AllArgsConstructor
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ColumnDefinition {
     public String id;
     public String tableId;

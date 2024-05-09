@@ -1,5 +1,6 @@
 package io.ssafy.soupapi.domain.projectbuilder.dao;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 
 import java.util.ArrayList;
@@ -11,7 +12,9 @@ import java.util.Map;
 @Setter
 @Builder
 @ToString
+@NoArgsConstructor
 @AllArgsConstructor
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class TableDefinition {
     public String id;
     public String name;

@@ -1,6 +1,6 @@
 package io.ssafy.soupapi.domain.projectbuilder.dao;
 
-import com.google.gson.Gson;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.ssafy.soupapi.domain.project.mongodb.entity.Project;
 import io.ssafy.soupapi.domain.project.mongodb.entity.apidocs.ApiDoc;
 import io.ssafy.soupapi.domain.project.mongodb.entity.apidocs.ApiVariable;
@@ -27,7 +27,7 @@ public class ProjectBuilderRepositoryImpl implements ProjectBuilderRepository {
     final String domainPath = "src/main/resources/templates/springboot-default-project-domain";
     final String globalPath = "src/main/resources/templates/springboot-default-project-global";
     final String saveRootPath = "C:\\util\\%s\\%s"; // TODO: 환경 변수를 이용하여 경로 변경
-    private final Gson gson;
+    private final ObjectMapper objectMapper;
 
     @Override
     public void packageBuilder(Project project) throws IOException {
@@ -220,6 +220,7 @@ public class ProjectBuilderRepositoryImpl implements ProjectBuilderRepository {
 
     @Override
     public void createClassFiles(Project project) {
+        getProjectSchemaFromERD(project);
     }
 
     private void createDomainSubPackages(String domain, String destination, Map<String, List<File>> domainLeafFiles) throws IOException {
@@ -411,15 +412,35 @@ public class ProjectBuilderRepositoryImpl implements ProjectBuilderRepository {
             if (vuerdObj instanceof LinkedHashMap<?, ?>) {
                 var collections = ((LinkedHashMap<?, ?>) vuerdObj).get("collections");
 
-                if (collections instanceof LinkedHashMap<?,?>) {
+                if (collections instanceof LinkedHashMap<?, ?>) {
                     var tableEntities = ((LinkedHashMap<?, ?>) collections).get("tableEntities");
                     var tableColumnEntities = ((LinkedHashMap<?, ?>) collections).get("tableColumnEntities");
                     var relationshipEntities = ((LinkedHashMap<?, ?>) collections).get("relationshipEntities");
 
-                    if (tableEntities instanceof LinkedHashMap<?,?>) {
+                    // 테이블 정보 파싱
+                    if (tableEntities instanceof LinkedHashMap<?, ?>) {
                         for (Object key : ((LinkedHashMap<?, ?>) tableEntities).keySet()) {
-                            var tableDefinition = gson.fromJson(((LinkedHashMap<?, ?>) tableEntities).get(key).toString(), TableDefinition.class);
-                            System.out.println(tableDefinition);
+                            var tableDefinition = objectMapper.convertValue(((LinkedHashMap<?, ?>) tableEntities).get(key), TableDefinition.class);
+                            tables.put(key.toString(), tableDefinition);
+                        }
+                    }
+
+                    // 칼럼 정보 파싱
+                    if (tableColumnEntities instanceof LinkedHashMap<?, ?>) {
+                        for (Object key : ((LinkedHashMap<?, ?>) tableColumnEntities).keySet()) {
+                            var tableColumnEntity = objectMapper.convertValue(((LinkedHashMap<?, ?>) tableColumnEntities).get(key), ColumnDefinition.class);
+                            // 테이블이 존재한다면
+                            if (tables.containsKey(tableColumnEntity.getTableId())) {
+                                tables.get(tableColumnEntity.getTableId()).getColumns().put(key.toString(), tableColumnEntity);
+                            }
+                        }
+                    }
+
+                    // 릴레이션 정보 파싱
+                    if (relationshipEntities instanceof LinkedHashMap<?, ?>) {
+                        for (Object key : ((LinkedHashMap<?, ?>) relationshipEntities).keySet()) {
+                            var tableRelationDefinition = objectMapper.convertValue(((LinkedHashMap<?, ?>) relationshipEntities).get(key), TableRelationDefinition.class);
+                            relations.put(key.toString(), tableRelationDefinition);
                         }
                     }
                 }
