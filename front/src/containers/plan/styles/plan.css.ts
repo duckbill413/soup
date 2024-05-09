@@ -26,7 +26,46 @@ export const button = style ({
   borderRadius:'15px',
   fontWeight:'bold',
   color: '#ffffff',
-  boxShadow:vars.boxShadow.customOuter
+  boxShadow:vars.boxShadow.customOuter,
+  ':hover': {
+    transform: 'scale(1.10)',
+    transitionDuration: '300ms',
+  },
+  ':active': {
+    transform: 'scale(0.90)',
+    transitionDuration: '300ms'
+  }
+})
+
+export const beforeAIContainer = style ({
+  display: 'flex',
+  flexDirection: 'column',
+  width: '42%',
+  height: '100%'
+})
+
+export const beforeAIMainDiv = style ({
+  display: 'flex',
+  flexWrap: 'wrap',
+  margin: '0.3rem'
+})
+
+export const tagContainer = style ({
+  backgroundColor: '#9FE0FC',
+  borderRadius: '6px',
+  margin: '0.1rem',
+  padding: '0.2rem'
+})
+
+export const tagDivision = style ({
+  paddingRight: '0.3em'
+})
+
+export const buttonDiv = style ({
+  height: '6%',
+  display: 'flex',
+  justifyContent: 'center',
+  marginTop: vars.space.large
 })
 
 globalStyle(`${mainDivision} p`, {

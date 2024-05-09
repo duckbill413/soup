@@ -11,7 +11,7 @@ export const container = style({
   padding: vars.space.tiny,
   color: 'white',
   boxShadow: `0px 0px 5px black`,
-  zIndex: 2
+  zIndex: 100
 });
 
 export const whiteTheme = style({

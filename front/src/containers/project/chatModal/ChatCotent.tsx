@@ -1,6 +1,6 @@
 import * as styles from '@/containers/project/chatModal/chatContent.css'
 import Image from 'next/image'
-import sendSvg from '#/assets/icons/send.svg'
+import sendSvg from '#/assets/icons/chat/send.svg'
 import { faker } from '@faker-js/faker'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'

@@ -5,9 +5,16 @@ const handleApiError = (message:any, error:any) => {
   console.error(`${message}: `, error);
   throw new Error(message);
 };
+// 사진용 헤더
+const photoHeader = {
+  headers: {
+    'Content-Type': 'multipart/form-data'
+  },
+};
+
 
 // 아래 수정해야한다.
-const getOutlineInfoAPI = async(projectId:string) => {
+export const getOutlineInfoAPI = async(projectId:string) => {
   try{
     const response = await baseAxios.get(`projects/${projectId}/info`)
     return response.data
@@ -16,4 +23,11 @@ const getOutlineInfoAPI = async(projectId:string) => {
   }
 }
 
-export default getOutlineInfoAPI
+export const changePhotoAPI = async (data:FormData) => {
+  try {
+    const response = await baseAxios.post(`/files/upload`,data, photoHeader)
+    return response.data
+  } catch (error) {
+    return handleApiError('사진을 업로드하는 중 오류 발생 : ', error)
+  }
+}

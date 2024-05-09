@@ -11,6 +11,7 @@ const vars = createGlobalTheme(':root', {
     medium: '1.1rem',
     small: '1rem',
     caption: '0.9rem',
+    tiny: '0.7rem',
   },
   space: {
     tiny: '0.5rem',

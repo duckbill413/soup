@@ -4,7 +4,8 @@ import { style } from '@vanilla-extract/css'
 export const container = style({
   width: '100%',
   height: '100%',
-  overflow: 'auto',
+  overflowY: 'auto',
+  overflowX: 'hidden',
   '::-webkit-scrollbar': {
     width: vars.space.tiny,
   },
