@@ -29,7 +29,7 @@ type Storage = {
   erd?: LiveObject<{json:string}>,
   flow?: LiveObject<{json:string}>,
   readme?: LiveObject<{json:string}>,
-
+  apiList?: LiveList<LiveObject<APIListDetail>>,
 };
 
 // Optionally, UserMeta represents static/readonly metadata on each user, as
