@@ -52,13 +52,8 @@ public class ProjectBuilderServiceImpl implements ProjectBuilderService {
             projectBuilderRepository.createGlobalGroup(project);
             // domain package 생성
             projectBuilderRepository.createDomainPackages(project);
-            // Controller Builder
-
-
-            // Service Builder
-            // Repository Builder
-            // Entity Builder
-            // DTO Builder
+            // build class files
+            projectBuilderRepository.createClassFiles(project);
         } catch (Exception e) {
             e.printStackTrace();
             throw new BaseExceptionHandler(ErrorCode.FAILED_TO_BUILD_PROJECT);

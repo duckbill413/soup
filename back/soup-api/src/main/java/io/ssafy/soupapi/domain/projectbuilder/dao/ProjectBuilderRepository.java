@@ -15,4 +15,6 @@ public interface ProjectBuilderRepository {
     void createGlobalGroup(Project project) throws IOException;
 
     void createDomainPackages(Project project);
+
+    void createClassFiles(Project project);
 }

@@ -4,6 +4,7 @@ import io.ssafy.soupapi.domain.project.mongodb.entity.Project;
 import io.ssafy.soupapi.domain.project.mongodb.entity.apidocs.ApiDoc;
 import io.ssafy.soupapi.domain.project.mongodb.entity.apidocs.ApiVariable;
 import io.ssafy.soupapi.domain.project.mongodb.entity.builder.ProjectBuilderInfo;
+import io.ssafy.soupapi.domain.projectbuilder.entity.MainPath;
 import io.ssafy.soupapi.global.util.MapStringReplace;
 import io.ssafy.soupapi.global.util.StringParserUtil;
 import lombok.RequiredArgsConstructor;
@@ -166,27 +167,28 @@ public class ProjectBuilderRepositoryImpl implements ProjectBuilderRepository {
 
     @Override
     public void createGlobalGroup(Project project) throws IOException {
-        String[] path = project.getProjectBuilderInfo().getPackageName().split("\\.");
+        String destination = getProjectMainPath(project, MainPath.global);
+        // Step 1. copy global folder
+        copyGlobalGroup(destination);
+        // Step 2. replace global folder variables
+        replaceGlobalGroupVariables(project, destination);
+    }
+
+    private String getProjectMainPath(Project project, MainPath mainPath) {
         StringBuilder destination = new StringBuilder(getDestination(project));
+        String[] path = project.getProjectBuilderInfo().getPackageName().split("\\.");
         destination.append("\\src\\main\\java\\");
         destination.append(String.join("\\", path));
-        destination.append(File.separator).append("global");
-        // Step 1. copy global folder
-        copyGlobalGroup(project, destination.toString());
-        // Step 2. replace global folder variables
-        replaceGlobalGroupVariables(project, destination.toString());
+        destination.append(File.separator).append(mainPath.name());
+        return destination.toString();
     }
 
     @Override
     public void createDomainPackages(Project project) {
         // 도메인 폴더 생성
-        String[] path = project.getProjectBuilderInfo().getPackageName().split("\\.");
-        StringBuilder destination = new StringBuilder(getDestination(project));
-        destination.append("\\src\\main\\java\\");
-        destination.append(String.join("\\", path));
-        destination.append(File.separator).append("domain");
+        String destination = getProjectMainPath(project, MainPath.domain);
 
-        File destinationFolder = new File(destination.toString());
+        File destinationFolder = new File(destination);
         if (!destinationFolder.exists()) {
             destinationFolder.mkdir();
         }
@@ -198,9 +200,13 @@ public class ProjectBuilderRepositoryImpl implements ProjectBuilderRepository {
         }
     }
 
-    private void createDomainSubPackages(String domain, StringBuilder destination) {
+    @Override
+    public void createClassFiles(Project project) {
+    }
+
+    private void createDomainSubPackages(String domain, String destination) {
         domain = StringParserUtil.convertToSnakeCase(domain);
-        StringBuilder domainDestination = new StringBuilder(destination.toString());
+        StringBuilder domainDestination = new StringBuilder(destination);
         domainDestination.append(File.separator).append(domain);
 
         // 도메인 폴더 생성
@@ -288,7 +294,7 @@ public class ProjectBuilderRepositoryImpl implements ProjectBuilderRepository {
         return leafFiles;
     }
 
-    private void copyGlobalGroup(Project project, String destination) throws IOException {
+    private void copyGlobalGroup(String destination) throws IOException {
         // global 폴더 생성
         File destinationFolder = new File(destination);
         if (!destinationFolder.exists()) {
@@ -298,7 +304,6 @@ public class ProjectBuilderRepositoryImpl implements ProjectBuilderRepository {
         File sourceFolder = new File(globalPath);
 
         FileUtils.copyDirectory(sourceFolder, destinationFolder);
-        log.info("Global Folder copied successfully");
     }
 
     private String addServiceMethod(ApiDoc apiDoc) {
