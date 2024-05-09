@@ -6,6 +6,8 @@ import PlanAfterAI from '@/containers/plan/components/afterAI'
 import PlanBeforeAI from '@/containers/plan/components/beforeAI'
 import Room from '@/app/(after-auth)/project/[projectId]/plan/Room'
 import Live from '@/components/cursor/Live'
+import { ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css';
 
 function Plan () {
   return (
@@ -30,6 +32,7 @@ function Plan () {
             </div>
           </div>
         </div>
+        <ToastContainer/>
       </Live>
     </Room>
   );

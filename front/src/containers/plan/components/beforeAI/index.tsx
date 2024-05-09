@@ -5,6 +5,7 @@ import { ChangeEvent, KeyboardEvent, useState } from 'react'
 import { LiveObject } from '@liveblocks/client'
 import { ProjectTags } from '@/containers/plan/types/planStorage'
 import makeAIPlan from '@/apis/plan/planAPI'
+import { Toast } from '@/utils/toast'
 import { useMutation, useStorage } from '../../../../../liveblocks.config'
 // import { useParams } from 'next/navigation'
 
@@ -47,7 +48,7 @@ function PlanBeforeAI () {
   };
 
   const makePlan = () => {
-    if(initialProject?.before.project_using === true){alert('기획서 생성 중입니다'); return;}
+    if(initialProject?.before.project_using === true){Toast.error("기획서 작성 중입니다"); return;}
     updateTags("update","project_using", true)
     const aiData = {
       background : initialProject?.before?.project_background.map((tag: ProjectTags) => tag.content) || [],
