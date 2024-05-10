@@ -13,6 +13,7 @@ const baseAxios = axios.create({
   headers: {
     'Content-Type': 'application/json;charset=utf-8',
     Authorization: `Bearer ${TOKEN}`,
+
   },
 })
 

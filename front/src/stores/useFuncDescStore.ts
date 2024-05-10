@@ -1,5 +1,5 @@
 import create from 'zustand';
-import { Category, FuncDescResWithColor } from '@/types/functionDesc';
+import { Category, FuncDescResWithColor } from '@/containers/func/types/functionDesc';
 import { getLowestIndexMissingColor } from "@/utils/getLightColorByIndex";
 
 type Store = {

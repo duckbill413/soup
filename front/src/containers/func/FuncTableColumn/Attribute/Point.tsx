@@ -1,4 +1,4 @@
-import {FuncTableColumnProps} from "@/types/functionDesc";
+import {FuncTableColumnProps} from "@/containers/func/types/functionDesc";
 import * as styles from "./point.css";
 
 export default function Point({funcCurrData,updateElement}: FuncTableColumnProps){

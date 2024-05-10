@@ -1,24 +1,14 @@
 'use client';
 
 import {useEffect} from 'react';
-import {FuncDescResWithColor} from '@/types/functionDesc';
+import {FuncDescResWithColor} from '@/containers/func/types/functionDesc';
 import useFuncDescStore from "@/stores/useFuncDescStore";
 import FuncTableColumn from '@/containers/func/FuncTableColumn/FuncTableColumn';
 import {LiveObject} from "@liveblocks/client";
-import {faker} from "@faker-js/faker";
 import useMemberStore from "@/stores/useMemberStore";
 import * as styles from './funcTable.css';
 import {useMutation, useStorage} from "../../../liveblocks.config";
 
-const MEMBER_INIT=[{
-    memberId: crypto.randomUUID(),
-    memberProfileUri: faker.image.avatarGitHub(),
-    memberNickname: '최지우',
-
-},{
-    memberId: crypto.randomUUID(),
-    memberProfileUri: faker.image.avatarGitHub(),
-    memberNickname: '정승원'}]
 
 const createNewFuncDescResWithColor = () => new LiveObject<FuncDescResWithColor>({
         functionId: crypto.randomUUID(),
@@ -28,7 +18,7 @@ const createNewFuncDescResWithColor = () => new LiveObject<FuncDescResWithColor>
         color: "",
         priority: "Medium",
         functionName: "",
-        reporter: { memberId: "", memberNickname: "", memberProfileUri: "" },
+        reporter: { id: "", nickname: "", profileImageUrl: "" },
     });
 
 export default function FuncTable() {
@@ -38,7 +28,6 @@ export default function FuncTable() {
     const {members,setMembers,setIsMemberModalVisible} = useMemberStore();
     useEffect(() => {
         setFuncDescData(init);
-        setMembers(MEMBER_INIT);
     }, [init, setFuncDescData,setMembers]);
 
     const updateCategory = (currData: LiveObject<FuncDescResWithColor> | undefined, changeId: string) => {
@@ -59,12 +48,12 @@ export default function FuncTable() {
     const updateReporter = (currData: LiveObject<FuncDescResWithColor> | undefined, changeId: string) => {
         if (!currData) return;
         if (changeId === 'none') {
-            currData.set('reporter', { memberId: "", memberNickname: "", memberProfileUri: "" });
+            currData.set('reporter', { id: "", nickname: "", profileImageUrl: "", });
         } else {
             setIsMemberModalVisible('none');
-            const selectedMember = members.find(data => data.memberId === changeId);
+            const selectedMember = members.find(data => data.id === changeId);
             if (selectedMember) {
-                currData.set('reporter', { memberId: selectedMember.memberId, memberNickname: selectedMember.memberNickname, memberProfileUri: selectedMember.memberProfileUri });
+                currData.set('reporter', { id: selectedMember.id, nickname: selectedMember.nickname, profileImageUrl: selectedMember.profileImageUrl });
             }
         }
     };

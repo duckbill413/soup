@@ -4,7 +4,15 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="dc45a297-51c8-4891-90ea-0beaa6a92584" name="Changes" comment="" />
+    <list default="true" id="dc45a297-51c8-4891-90ea-0beaa6a92584" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/front/src/apis/outline/outlineAPI.ts" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/apis/outline/outlineAPI.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/front/src/apis/project/projectAPI.ts" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/apis/project/projectAPI.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/front/src/app/(after-auth)/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/app/(after-auth)/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/front/src/app/(after-auth)/project/[projectId]/[temp]/page.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/front/src/app/(after-auth)/project/[projectId]/flow/Room.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/app/(after-auth)/project/[projectId]/flow/Room.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/front/src/app/(after-auth)/project/[projectId]/outline/Room.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/app/(after-auth)/project/[projectId]/outline/Room.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/front/src/containers/page.css.ts" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/containers/page.css.ts" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -16,9 +24,9 @@
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
   </component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "associatedIndex": 1
-}]]></component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 1
+}</component>
   <component name="ProjectId" id="2fRMF5amsi96J8DU5psa2Y3IfX1" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
@@ -28,14 +36,14 @@
   "keyToString": {
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "frontend",
+    "git-widget-placeholder": "fe/feat/memberapi",
     "last_opened_file_path": "C:/Users/SSAFY/Desktop/gitlab/S10P31A201/front",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
-    "ts.external.directory.path": "C:\\Users\\SSAFY\\Desktop\\gitlab\\S10P31A201\\front\\node_modules\\typescript\\lib",
+    "ts.external.directory.path": "C:\\Seokju\\S10P31A201\\front\\node_modules\\typescript\\lib",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
