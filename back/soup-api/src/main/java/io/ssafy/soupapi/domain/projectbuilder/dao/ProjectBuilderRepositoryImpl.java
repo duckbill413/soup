@@ -229,16 +229,33 @@ public class ProjectBuilderRepositoryImpl implements ProjectBuilderRepository {
             var entityFilePath = domainFolder + File.separator + tableDefinition.getName();
 
             for (String domainSubName : domainSubNames) {
+                String domainSubPath = entityFilePath + File.separator + domainSubName;
                 switch (domainSubName) {
-                    case "entity" ->
-                            replaceEntityVariables(entityFilePath + File.separator + domainSubName, tableDefinition);
+                    case "entity" -> replaceEntityVariables(domainSubPath, tableDefinition);
+                    case "dao" -> replaceRepositoryVariables(domainSubPath, tableDefinition);
+                    case "application" -> replaceServiceVariables(domainSubPath, tableDefinition);
                 }
             }
         }
     }
 
-    private void replaceEntityVariables(String destination, TableDefinition table) throws IOException {
-        List<File> files = getLeafFiles(new File(destination));
+    private void replaceServiceVariables(String domainSubPath, TableDefinition tableDefinition) {
+
+    }
+
+    private void replaceRepositoryVariables(String domainSubPath, TableDefinition tableDefinition) throws IOException {
+        List<File> files = getLeafFiles(new File(domainSubPath));
+
+        Map<String, String> variables = new HashMap<>();
+        variables.put("entity-id-type", tableDefinition.getTableIdType());
+
+        for (File file : files) {
+            replaceFileVariables(file, variables);
+        }
+    }
+
+    private void replaceEntityVariables(String domainSubPath, TableDefinition table) throws IOException {
+        List<File> files = getLeafFiles(new File(domainSubPath));
         StringBuilder sb = new StringBuilder();
 
         for (ColumnDefinition column : table.getColumns().values()) {

@@ -40,6 +40,6 @@ public class TypeMapper {
             }
         }
 
-        return null;
+        return "Object";
     }
 }

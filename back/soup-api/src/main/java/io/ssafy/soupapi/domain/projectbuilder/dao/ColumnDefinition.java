@@ -1,11 +1,14 @@
 package io.ssafy.soupapi.domain.projectbuilder.dao;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.ssafy.soupapi.global.common.code.ErrorCode;
 import io.ssafy.soupapi.global.exception.BaseExceptionHandler;
 import io.ssafy.soupapi.global.util.TypeMapper;
 import lombok.*;
+
+import java.util.regex.Pattern;
 
 import static io.ssafy.soupapi.global.util.StringParserUtil.convertToCamelCase;
 import static io.ssafy.soupapi.global.util.StringParserUtil.convertToSnakeCase;
@@ -18,6 +21,8 @@ import static io.ssafy.soupapi.global.util.StringParserUtil.convertToSnakeCase;
 @AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ColumnDefinition {
+    @JsonIgnore
+    private static final Pattern VALID_CHAR_PATTERN = Pattern.compile("[^a-zA-Z0-9]");
     private String id;
     private String tableId;
     private String name;
@@ -29,7 +34,7 @@ public class ColumnDefinition {
 
     public String getColumnVariable() {
         // @Column(name = "project_builder_file_path", length = 1111, nullable = false, unique = true)
-        if (name.isBlank() || dataType.isBlank()) {
+        if (name.isBlank()) {
             throw new BaseExceptionHandler(ErrorCode.NEED_MORE_PROJECT_BUILD_DATA);
         }
         StringBuilder sb = new StringBuilder(String.format("\t@Column(name = \"%s\"", convertToSnakeCase(name)));
@@ -64,11 +69,22 @@ public class ColumnDefinition {
             sb.insert(0, "\t@Id\n");
         }
 
-        sb.append("\t").append("private ").append(mapToJavaType()).append(" ").append(convertToCamelCase(name)).append(';');
+        sb.append("\t").append("private ").append(mapToJavaType()).append(" ").append(getValidParamName()).append(';');
 
         return sb.toString();
     }
     public String mapToJavaType() {
         return TypeMapper.mapToJavaType(dataType);
+    }
+    public boolean isId() {
+        return (options & 2) == 2;
+    }
+
+    private String getValidParamName() {
+        String validName = VALID_CHAR_PATTERN.matcher(name).replaceAll("");
+        if (Character.isDigit(validName.charAt(0))) {
+            validName = "_" + validName;
+        }
+        return convertToCamelCase(validName);
     }
 }

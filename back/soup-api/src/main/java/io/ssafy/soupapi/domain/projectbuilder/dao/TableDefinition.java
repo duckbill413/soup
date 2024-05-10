@@ -25,4 +25,13 @@ public class TableDefinition {
     private List<String> seqColumnIds = new ArrayList<>();
     @Builder.Default
     private Map<String, ColumnDefinition> columns = new HashMap<>();
+
+    public String getTableIdType() {
+        for (ColumnDefinition c : columns.values()) {
+            if (c.isId()) {
+                return c.mapToJavaType();
+            }
+        }
+        return "Object";
+    }
 }

@@ -13,5 +13,6 @@ import java.util.*;
 @AllArgsConstructor
 @Table(name = ":entity-table-name")
 public class :domain-class-name {
+
 :domain-columns
 }
