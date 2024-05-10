@@ -1,3 +1,4 @@
+import { getMemberIdToken } from '@/apis/member/memberAPI'
 import { APIListDetail } from '@/containers/api/types/apilist'
 import { OutlineStorage } from '@/containers/outline/types/outlineStorage'
 import { PlanStorage } from '@/containers/plan/types/planStorage'
@@ -5,8 +6,15 @@ import { FuncDescResWithColor } from '@/types/functionDesc'
 import { LiveList, LiveObject, createClient } from '@liveblocks/client'
 import { createLiveblocksContext, createRoomContext } from '@liveblocks/react'
 
+// const client = createClient({
+//   publicApiKey: process.env.NEXT_PUBLIC_LIVEBLOCKS_PUBLIC_KEY!,
+// })
+
 const client = createClient({
-  publicApiKey: process.env.NEXT_PUBLIC_LIVEBLOCKS_PUBLIC_KEY!,
+  authEndpoint: async () => {
+    const result = await getMemberIdToken()
+    return { token: result.liveblocksIdToken }
+  },
 })
 
 // Presence represents the properties that exist on every user in the Room
