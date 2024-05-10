@@ -7,6 +7,9 @@ import io.ssafy.soupapi.global.exception.BaseExceptionHandler;
 import io.ssafy.soupapi.global.util.TypeMapper;
 import lombok.*;
 
+import static io.ssafy.soupapi.global.util.StringParserUtil.convertToCamelCase;
+import static io.ssafy.soupapi.global.util.StringParserUtil.convertToSnakeCase;
+
 @Getter
 @Setter
 @Builder
@@ -26,10 +29,10 @@ public class ColumnDefinition {
 
     public String getColumnVariable() {
         // @Column(name = "project_builder_file_path", length = 1111, nullable = false, unique = true)
-        if (name.isBlank()) {
+        if (name.isBlank() || dataType.isBlank()) {
             throw new BaseExceptionHandler(ErrorCode.NEED_MORE_PROJECT_BUILD_DATA);
         }
-        StringBuilder sb = new StringBuilder(String.format("@Column(name = \"%s\"", name));
+        StringBuilder sb = new StringBuilder(String.format("\t@Column(name = \"%s\"", convertToSnakeCase(name)));
 
         // Data type이 VARCHAR 이면서 length가 정해진 경우
         if (dataType.toUpperCase().contains("VARCHAR")) {
@@ -47,6 +50,7 @@ public class ColumnDefinition {
         if ((options & 4) == 4) {
             sb.append(", unique = true");
         }
+        sb.append(")\n");
 
         // Primary Key
         // @Id
@@ -54,11 +58,13 @@ public class ColumnDefinition {
             // AUTO INCREMENT
             // @GeneratedValue(strategy = GenerationType.IDENTITY)
             if ((options & 1) == 1) {
-                sb.insert(0, "@GeneratedValue(strategy = GenerationType.IDENTITY)\n");
+                sb.insert(0, "\t@GeneratedValue(strategy = GenerationType.IDENTITY)\n");
             }
 
-            sb.insert(0, "@Id\n");
+            sb.insert(0, "\t@Id\n");
         }
+
+        sb.append("\t").append("private ").append(mapToJavaType()).append(" ").append(convertToCamelCase(name)).append(';');
 
         return sb.toString();
     }

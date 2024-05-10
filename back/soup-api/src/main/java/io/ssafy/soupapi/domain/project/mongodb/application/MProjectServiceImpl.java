@@ -272,8 +272,7 @@ public class MProjectServiceImpl implements MProjectService {
         Query query = new Query(Criteria.where("_id").is(projectId));
         // update 수행
         Update update = new Update().set("project_api_doc.usable_domains", getProjectDomainsFromERD(project));
-        var result = mongoTemplate.updateFirst(query, update, Project.class);
-        System.out.println(result);
+        mongoTemplate.updateFirst(query, update, Project.class);
     }
 
     /**

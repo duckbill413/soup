@@ -21,14 +21,19 @@ public class TypeMapper {
         TYPE_MAPPINGS.put("BIT", "Boolean");
         TYPE_MAPPINGS.put("LONG", "Long");
         TYPE_MAPPINGS.put("STRING", "String");
+        TYPE_MAPPINGS.put("BIGSERIAL", "Long");
+        TYPE_MAPPINGS.put("UUID", "UUID");
+        TYPE_MAPPINGS.put("INTEGER", "Integer");
+        TYPE_MAPPINGS.put("REAL", "Double");
+        TYPE_MAPPINGS.put("BIGINT", "Long");
     }
 
-    public static String mapToJavaType(String mysqlType) {
-        if (mysqlType == null) {
+    public static String mapToJavaType(String dbType) {
+        if (dbType == null) {
             return null;
         }
 
-        String type = mysqlType.toUpperCase().trim();
+        String type = dbType.toUpperCase().trim();
         for (Map.Entry<String, String> entry : TYPE_MAPPINGS.entrySet()) {
             if (type.startsWith(entry.getKey())) {
                 return entry.getValue();

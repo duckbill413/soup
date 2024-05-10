@@ -53,7 +53,7 @@ public class ProjectBuilderServiceImpl implements ProjectBuilderService {
             // domain package 생성
             projectBuilderRepository.createDomainPackages(project);
             // entity class files
-            projectBuilderRepository.replaceEntityClassVariables(project);
+            projectBuilderRepository.replaceClassesVariables(project);
         } catch (Exception e) {
             e.printStackTrace();
             throw new BaseExceptionHandler(ErrorCode.FAILED_TO_BUILD_PROJECT);

@@ -16,8 +16,7 @@ import org.springframework.stereotype.Repository;
 import java.io.*;
 import java.util.*;
 
-import static io.ssafy.soupapi.global.util.StringParserUtil.convertToPascalCase;
-import static io.ssafy.soupapi.global.util.StringParserUtil.renameFile;
+import static io.ssafy.soupapi.global.util.StringParserUtil.*;
 
 @Log4j2
 @Repository
@@ -28,6 +27,7 @@ public class ProjectBuilderRepositoryImpl implements ProjectBuilderRepository {
     final String globalPath = "src/main/resources/templates/springboot-default-project-global";
     final String saveRootPath = "C:\\util\\%s\\%s"; // TODO: 환경 변수를 이용하여 경로 변경
     private final ObjectMapper objectMapper;
+    final String[] domainSubNames = {"entity", "dao", "application", "api", "dto"};
 
     @Override
     public void packageBuilder(Project project) throws IOException {
@@ -111,7 +111,7 @@ public class ProjectBuilderRepositoryImpl implements ProjectBuilderRepository {
         });
         mapUtil.addValue("apiUriPath", apiDoc.getApiUriPath());
         mapUtil.addValue("responseBodyName", StringParserUtil.upperFirstAndLowerElse(apiDoc.getResponseBodyName()));
-        mapUtil.addValue("methodName", StringParserUtil.convertToCamelCase(apiDoc.getMethodName()));
+        mapUtil.addValue("methodName", convertToCamelCase(apiDoc.getMethodName()));
         mapUtil.addValue("pathVariables", addPathVariableBuilder(apiDoc.getPathVariables()));
         mapUtil.addValue("queryParameters", addQueryParameters(apiDoc.getQueryParameters()));
         mapUtil.addValue("requestBody", addRequestBody(apiDoc.getRequestBodyName()));
@@ -209,7 +209,7 @@ public class ProjectBuilderRepositoryImpl implements ProjectBuilderRepository {
         Map<String, String> variables = new HashMap<>();
         variables.put("domain-package-name", project.getProjectBuilderInfo().getPackageName() + ".domain");
         variables.put("domain-class-name", StringParserUtil.convertToPascalCase(domain));
-        variables.put("domain-method-name", StringParserUtil.convertToCamelCase(domain));
+        variables.put("domain-method-name", convertToCamelCase(domain));
         variables.put("entity-name", StringParserUtil.convertToPascalCase(domain));
         variables.put("entity-table-name", StringParserUtil.convertToSnakeCase(domain));
 
@@ -219,7 +219,7 @@ public class ProjectBuilderRepositoryImpl implements ProjectBuilderRepository {
     }
 
     @Override
-    public void replaceEntityClassVariables(Project project) {
+    public void replaceClassesVariables(Project project) throws IOException {
         String domainFolder = getProjectMainPath(project, MainPath.domain);
         var schema = getProjectSchemaFromERD(project);
 
@@ -227,7 +227,33 @@ public class ProjectBuilderRepositoryImpl implements ProjectBuilderRepository {
             // Entity 파일 수정
             System.out.println(tableDefinition.getName());
             var entityFilePath = domainFolder + File.separator + tableDefinition.getName();
-            System.out.println(entityFilePath);
+
+            for (String domainSubName : domainSubNames) {
+                switch (domainSubName) {
+                    case "entity" ->
+                            replaceEntityVariables(entityFilePath + File.separator + domainSubName, tableDefinition);
+                }
+            }
+        }
+    }
+
+    private void replaceEntityVariables(String destination, TableDefinition table) throws IOException {
+        List<File> files = getLeafFiles(new File(destination));
+        StringBuilder sb = new StringBuilder();
+
+        for (ColumnDefinition column : table.getColumns().values()) {
+            try {
+                sb.append(column.getColumnVariable()).append('\n');
+            } catch (Exception e) {
+                log.info("[빌드] 칼럼명: " + column.getName() + " 생성 실패");
+            }
+        }
+
+        Map<String, String> variables = new HashMap<>();
+        variables.put("domain-columns", sb.toString());
+
+        for (File file : files) {
+            replaceFileVariables(file, variables);
         }
     }
 
@@ -310,7 +336,7 @@ public class ProjectBuilderRepositoryImpl implements ProjectBuilderRepository {
     }
 
     private String addServiceMethod(ApiDoc apiDoc) {
-        String serviceMethodName = StringParserUtil.convertToCamelCase(apiDoc.getMethodName()) + "(:parameters)";
+        String serviceMethodName = convertToCamelCase(apiDoc.getMethodName()) + "(:parameters)";
         List<String> values = new ArrayList<>();
         if (Objects.nonNull(apiDoc.getPathVariables()) && !apiDoc.getPathVariables().isEmpty()) {
             for (ApiVariable pathVariable : apiDoc.getPathVariables()) {
@@ -411,6 +437,7 @@ public class ProjectBuilderRepositoryImpl implements ProjectBuilderRepository {
      */
     private SchemaDefinition getProjectSchemaFromERD(Project project) {
         var vuerdObj = project.getVuerd();
+        Set<String> usableNames = new LinkedHashSet<>();
         Map<String, TableDefinition> tables = new HashMap<>();
         Map<String, TableRelationDefinition> relations = new HashMap<>();
 
@@ -418,6 +445,19 @@ public class ProjectBuilderRepositoryImpl implements ProjectBuilderRepository {
             vuerdObj = ((LinkedHashMap<?, ?>) vuerdObj).get("$set");
 
             if (vuerdObj instanceof LinkedHashMap<?, ?>) {
+                var doc = ((LinkedHashMap<?, ?>) vuerdObj).get("doc");
+                if (doc instanceof LinkedHashMap<?, ?>) {
+                    var tableIdsObj = ((LinkedHashMap<?, ?>) doc).get("tableIds");
+                    if (tableIdsObj instanceof List<?>) {
+                        ((List<?>) tableIdsObj).forEach(tableId -> usableNames.add(tableId.toString()));
+                    }
+                    var relationshipIdsObj = ((LinkedHashMap<?, ?>) doc).get("relationshipIds");
+                    if (relationshipIdsObj instanceof List<?>) {
+                        ((List<?>) relationshipIdsObj).forEach(relationshipId -> usableNames.add(relationshipId.toString()));
+                    }
+                }
+
+                // collections 파싱
                 var collections = ((LinkedHashMap<?, ?>) vuerdObj).get("collections");
 
                 if (collections instanceof LinkedHashMap<?, ?>) {
@@ -428,6 +468,9 @@ public class ProjectBuilderRepositoryImpl implements ProjectBuilderRepository {
                     // 테이블 정보 파싱
                     if (tableEntities instanceof LinkedHashMap<?, ?>) {
                         for (Object key : ((LinkedHashMap<?, ?>) tableEntities).keySet()) {
+                            if (!usableNames.contains(key.toString())) {
+                                continue;
+                            }
                             var tableDefinition = objectMapper.convertValue(((LinkedHashMap<?, ?>) tableEntities).get(key), TableDefinition.class);
                             tables.put(key.toString(), tableDefinition);
                         }
@@ -447,6 +490,9 @@ public class ProjectBuilderRepositoryImpl implements ProjectBuilderRepository {
                     // 릴레이션 정보 파싱
                     if (relationshipEntities instanceof LinkedHashMap<?, ?>) {
                         for (Object key : ((LinkedHashMap<?, ?>) relationshipEntities).keySet()) {
+                            if (!usableNames.contains(key.toString())) {
+                                continue;
+                            }
                             var tableRelationDefinition = objectMapper.convertValue(((LinkedHashMap<?, ?>) relationshipEntities).get(key), TableRelationDefinition.class);
                             relations.put(key.toString(), tableRelationDefinition);
                         }

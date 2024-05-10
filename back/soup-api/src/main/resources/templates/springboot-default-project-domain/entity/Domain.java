@@ -1,10 +1,9 @@
 package :domain-package-name.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
+import java.time.*;
+import java.util.*;
 
 @Getter
 @Setter
@@ -14,6 +13,5 @@ import lombok.*;
 @AllArgsConstructor
 @Table(name = ":entity-table-name")
 public class :domain-class-name {
-
 :domain-columns
 }
