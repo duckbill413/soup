@@ -165,7 +165,6 @@ public class ProjectBuilderRepositoryImpl implements ProjectBuilderRepository {
         }
 
         FileUtils.copyDirectory(sourceFolder, destinationFolder);
-        log.info("Default Folder copied successfully!");
         return destinationFolder;
     }
 
@@ -264,7 +263,6 @@ public class ProjectBuilderRepositoryImpl implements ProjectBuilderRepository {
 
         for (TableDefinition tableDefinition : schema.getTables().values()) {
             // Entity 파일 수정
-            System.out.println(tableDefinition.getName());
             var entityFilePath = domainFolder + File.separator + tableDefinition.getName();
 
             // Entity 변수 치환
@@ -274,6 +272,15 @@ public class ProjectBuilderRepositoryImpl implements ProjectBuilderRepository {
         }
     }
 
+    @Override
+    public void insertEntityRelationShip(Project project) {
+        String domainFolder = getProjectMainPath(project, MainPath.domain);
+        var schema = getProjectSchemaFromERD(project);
+
+        for (TableRelationDefinition value : schema.getRelations().values()) {
+
+        }
+    }
     @Override
     public void projectMethodBuilder(Project project) throws IOException {
         String domainPath = getProjectMainPath(project, MainPath.domain);
@@ -300,8 +307,6 @@ public class ProjectBuilderRepositoryImpl implements ProjectBuilderRepository {
             for (File sFile : sFiles) {
                 insertMethodIntoFile(sFile, serviceMethod);
             }
-//            String responseDtoClass = createResponseDtoClass(apiDoc);
-//            String requestDtoClass = createRequestDtoClass(apiDoc);
         }
     }
 

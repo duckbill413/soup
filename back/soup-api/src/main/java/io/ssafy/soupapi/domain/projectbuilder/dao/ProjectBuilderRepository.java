@@ -16,4 +16,6 @@ public interface ProjectBuilderRepository {
     void replaceClassesVariables(Project project) throws IOException;
 
     void projectMethodBuilder(Project project) throws IOException;
+
+    void insertEntityRelationShip(Project project);
 }

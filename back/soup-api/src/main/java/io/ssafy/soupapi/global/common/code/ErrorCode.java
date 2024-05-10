@@ -94,7 +94,7 @@ public enum ErrorCode {
 
     // Vuerd 관련 에러 (CODE: 600)
     NOT_FOUND_PROJECT_VUERD(404, "B600", "프로젝트 VUERD를 찾을 수 없습니다."),
-
+    UNDEFINED_MASKING_CODE(404, "B601", "정의되지 않은 코드 입니다."),
     // S3 파일 업로드 (CODE: 700)
     NOT_FOUND_S3FILE(404, "B701", "S3 파일이 존재하지 않습니다"),
     FILE_NOT_EXISTS(400, "B702", "업로드할 파일이 비어있습니다."),
@@ -115,6 +115,7 @@ public enum ErrorCode {
     NEED_PROJECT_BUILD_BUILDINFO(404, "B1103", "프로젝트 BUILD 정보가 필요합니다."),
     FAILED_TO_BUILD_PROJECT(404, "B1104", "프로젝트 빌드에 실패하였습니다."),
     NEED_PROJECT_BUILD_ERD(404, "B1105", "프로젝트 ERD 정보가 필요합니다."),
+
     ; // End
 
     /**

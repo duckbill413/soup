@@ -56,6 +56,8 @@ public class ProjectBuilderServiceImpl implements ProjectBuilderService {
             projectBuilderRepository.replaceClassesVariables(project);
             // create method in controller and service
             projectBuilderRepository.projectMethodBuilder(project);
+            // create entity relationship
+            projectBuilderRepository.insertEntityRelationShip(project);
         } catch (Exception e) {
             e.printStackTrace();
             throw new BaseExceptionHandler(ErrorCode.FAILED_TO_BUILD_PROJECT);
