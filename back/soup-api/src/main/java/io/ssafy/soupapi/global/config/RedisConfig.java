@@ -1,6 +1,6 @@
 package io.ssafy.soupapi.global.config;
 
-import io.ssafy.soupapi.domain.chat.dto.request.ChatMessageDto;
+import io.ssafy.soupapi.domain.chat.dto.ChatMessageRedis;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -59,8 +59,8 @@ public class RedisConfig {
 
     // redis에 메시지 로그를 저장하기 위한 RedisTemplate 을 설정.
     @Bean
-    public RedisTemplate<String, ChatMessageDto> redisTemplateChatMessage(RedisConnectionFactory connectionFactory) {
-        RedisTemplate<String, ChatMessageDto> redisTemplate = new RedisTemplate<>();
+    public RedisTemplate<String, ChatMessageRedis> redisTemplateChatMessage(RedisConnectionFactory connectionFactory) {
+        RedisTemplate<String, ChatMessageRedis> redisTemplate = new RedisTemplate<>();
         redisTemplate.setConnectionFactory(connectionFactory);
 
         redisTemplate.setKeySerializer(new StringRedisSerializer());
