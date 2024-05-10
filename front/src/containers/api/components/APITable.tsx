@@ -79,17 +79,14 @@ export default function APITable() {
           data.map((item, key) => (
             <tr
               key={item.id}
-              onClick={(e) => {
-                if (e.button !== 2) {
-                  setOpen(true)
-                  setIdx(key)
-                }
-              }}
               onContextMenu={(e) => e.preventDefault()}
               onMouseDown={(e) => {
-                if (e.button === 2) {
+                if (e.button === 2 || anchorEl) {
                   e.stopPropagation()
                   setAnchorEl({ selectedIndex: key, el: e.currentTarget })
+                } else {
+                  setOpen(true)
+                  setIdx(key)
                 }
               }}
             >
