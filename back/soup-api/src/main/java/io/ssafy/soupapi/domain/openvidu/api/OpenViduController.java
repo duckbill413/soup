@@ -1,5 +1,4 @@
 package io.ssafy.soupapi.domain.openvidu.api;
-import io.openvidu.java.client.Connection;
 import io.openvidu.java.client.OpenViduHttpException;
 import io.openvidu.java.client.OpenViduJavaClientException;
 import io.ssafy.soupapi.domain.openvidu.application.OpenViduService;
@@ -41,7 +40,7 @@ public class OpenViduController {
             @AuthenticationPrincipal UserSecurityDTO userSecurityDto
     ) throws OpenViduJavaClientException, OpenViduHttpException {
         return BaseResponse.success(
-                SuccessCode.CHECK_SUCCESS,
+                SuccessCode.UPDATE_SUCCESS,
                 openViduService.getSessionId(projectId)
         );
     }
@@ -60,7 +59,7 @@ public class OpenViduController {
             @AuthenticationPrincipal UserSecurityDTO userSecurityDto
     ) throws OpenViduJavaClientException, OpenViduHttpException {
         return BaseResponse.success(
-                SuccessCode.CHECK_SUCCESS,
+                SuccessCode.UPDATE_SUCCESS,
                 openViduService.getUserConnection(sessionId)
                 );
     }
@@ -83,7 +82,7 @@ public class OpenViduController {
     ) throws OpenViduJavaClientException, OpenViduHttpException {
         openViduService.leaveSession(sessionId, connectionId);
         return BaseResponse.success(
-                SuccessCode.CHECK_SUCCESS,
+                SuccessCode.UPDATE_SUCCESS,
                 userSecurityDto.getId()+"님이 세션에서 퇴장하였습니다."
         );
     }
