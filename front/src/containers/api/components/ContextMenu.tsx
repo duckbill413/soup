@@ -5,8 +5,16 @@ import { Dispatch, SetStateAction } from 'react'
 interface Props {
   handleDelete: Function
   index: number
-  anchorEl: HTMLElement | null
-  setAnchorEl: Dispatch<SetStateAction<HTMLElement | null>>
+  anchorEl: {
+    el: HTMLElement
+    selectedIndex: number
+  } | null
+  setAnchorEl: Dispatch<
+    SetStateAction<{
+      el: HTMLElement
+      selectedIndex: number
+    } | null>
+  >
 }
 
 export default function ContextMenu({
@@ -15,7 +23,7 @@ export default function ContextMenu({
   anchorEl,
   setAnchorEl,
 }: Props) {
-  const open = Boolean(anchorEl)
+  const open = Boolean(anchorEl?.selectedIndex === index)
 
   const handleClose = () => {
     setAnchorEl(null)
@@ -23,7 +31,7 @@ export default function ContextMenu({
   return (
     <Menu
       id="context-menu"
-      anchorEl={anchorEl}
+      anchorEl={anchorEl?.el}
       open={open}
       onClose={handleClose}
       MenuListProps={{

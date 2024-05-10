@@ -40,8 +40,11 @@ const queryTableHeaders: Array<TableHead> = [
 ]
 
 export default function QueryTable({ idx }: Props) {
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
   const initial = useStorage((root) => root.apiList)
+  const [anchorEl, setAnchorEl] = useState<null | {
+    el: HTMLElement
+    selectedIndex: number
+  }>(null)
 
   const updateQueryParam = useMutation(({ storage }, index, key, newValue) => {
     const apiList = storage.get('apiList')
@@ -65,7 +68,6 @@ export default function QueryTable({ idx }: Props) {
   }, [])
 
   const deleteRow = useMutation(({ storage }, index) => {
-    console.log('index==', index)
     storage.get('apiList')?.get(idx)?.get('query_param')?.delete(index)
     setAnchorEl(null)
   }, [])
@@ -88,9 +90,7 @@ export default function QueryTable({ idx }: Props) {
               onContextMenu={(e) => e.preventDefault()}
               onMouseDown={(e) => {
                 if (e.button === 2) {
-                  console.log(e.currentTarget)
-                  setAnchorEl(e.currentTarget)
-                  console.log('index2==', index)
+                  setAnchorEl({ selectedIndex: index, el: e.currentTarget })
                 }
               }}
             >
