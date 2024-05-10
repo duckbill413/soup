@@ -46,7 +46,14 @@ export default function ContextMenu({
         horizontal: 'right',
       }}
     >
-      <MenuItem onClick={() => handleDelete(index)}>삭제</MenuItem>
+      <MenuItem
+        onClick={(e) => {
+          e.stopPropagation()
+          handleDelete(index)
+        }}
+      >
+        삭제
+      </MenuItem>
     </Menu>
   )
 }
