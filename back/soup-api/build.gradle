@@ -76,6 +76,11 @@ dependencies {
 
     // openvidu
     implementation 'io.openvidu:openvidu-java-client:2.28.0'
+
+    // WebSocket : WebSocket 연결을 편리하게 도와준다
+    implementation 'org.springframework.boot:spring-boot-starter-websocket'
+//    implementation("org.springframework.security:spring-security-messaging")
+
 }
 
 tasks.named('test') {
