@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service;
 public class RedisSubscriber implements MessageListener {
 
     private final ObjectMapper objectMapper;
-    private final RedisTemplate redisTemplateObject;
+    private final RedisTemplate redisTemplateJackson;
     private final SimpMessageSendingOperations messagingTemplate;
 
     // Redis 에서 메시지가 발행(publish)되면, listener 가 해당 메시지를 읽어서 처리
@@ -26,7 +26,7 @@ public class RedisSubscriber implements MessageListener {
         try {
             log.info("RedisSubscriber 안에 onMessage()에 왔어요!");
             String topicName = new String(pattern); // topicName 이자 roomId
-            String publishedMsg = (String) redisTemplateObject.getStringSerializer().deserialize(message.getBody());
+            String publishedMsg = (String) redisTemplateJackson.getStringSerializer().deserialize(message.getBody());
             ChatMessageDto msg = objectMapper.readValue(publishedMsg, ChatMessageDto.class);
             messagingTemplate.convertAndSend("/sub/chatrooms/" + topicName, msg);
         } catch (JsonProcessingException e) {

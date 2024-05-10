@@ -48,7 +48,7 @@ public class RedisConfig {
 
     // redis db와의 상호작용을 위한 RedisTemplate 을 설정. JSON 형식으로 담기 위해 직렬화
     @Bean
-    public RedisTemplate<String, Object> redisTemplateObject(RedisConnectionFactory connectionFactory) {
+    public RedisTemplate<String, Object> redisTemplateJackson(RedisConnectionFactory connectionFactory) {
         RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
         redisTemplate.setConnectionFactory(connectionFactory);
 
