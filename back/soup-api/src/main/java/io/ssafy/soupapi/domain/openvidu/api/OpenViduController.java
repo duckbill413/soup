@@ -80,7 +80,7 @@ public class OpenViduController {
             @PathVariable("connectionId") String connectionId,
             @AuthenticationPrincipal UserSecurityDTO userSecurityDto
     ) throws OpenViduJavaClientException, OpenViduHttpException {
-        openViduService.leaveSession(sessionId, connectionId);
+        openViduService.leaveSession(sessionId, connectionId, projectId);
         return BaseResponse.success(
                 SuccessCode.UPDATE_SUCCESS,
                 userSecurityDto.getId()+"님이 세션에서 퇴장하였습니다."
