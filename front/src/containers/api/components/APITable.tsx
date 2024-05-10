@@ -52,8 +52,8 @@ export default function APITable() {
         desc: '',
         path_variable: new LiveList(),
         query_param: new LiveList(),
-        request_body: '',
-        response_body: '',
+        request_body: new LiveObject({ data: '{}', isValid: true }),
+        response_body: new LiveObject({ data: '{}', isValid: true }),
       }),
     )
   }, [])

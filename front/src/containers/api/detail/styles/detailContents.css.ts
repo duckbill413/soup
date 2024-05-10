@@ -1,30 +1,6 @@
 import { table } from '@/components/Table/table.css'
 import vars from '@/styles/variables.css'
-import { globalStyle, style } from '@vanilla-extract/css'
-
-export const backButton = style({
-  fontSize: vars.fontSize.medium,
-  color: vars.color.black,
-  textDecoration: 'none',
-
-  width: 'fit-content',
-  display: 'flex',
-  alignItems: 'center',
-  padding: `${vars.space.tiny} ${vars.space.small}`,
-
-  borderRadius: '30px',
-  transition: 'all 0.5s ease',
-
-  ':hover': {
-    background: vars.color.gray,
-  },
-})
-
-export const buttonName = style({
-  fontFamily: 'inherit',
-  fontWeight: 800,
-  lineHeight: '24px',
-})
+import { globalStyle, keyframes, style } from '@vanilla-extract/css'
 
 export const inputSection = style({
   padding: `${vars.space.large} ${vars.space.xLarge}`,
@@ -58,4 +34,31 @@ globalStyle(`${table} td textarea`, {
   color: vars.color.black,
   textAlign: 'center',
   wordBreak: 'break-all',
+})
+
+export const easeAnimation = keyframes({
+  from: {
+    opacity: '0',
+    transform: 'translateY(-5%)',
+  },
+  to: {
+    opacity: '1',
+    transform: 'translateY(0)',
+  },
+})
+
+export const requestBody = style({
+  animation: `${easeAnimation} 0.5s ease`,
+})
+
+export const badgeAndError = style({
+  display: 'flex',
+  alignItems: 'center',
+  gap: vars.space.small,
+})
+
+export const errorMsg = style({
+  color: vars.color.orange,
+  fontSize: vars.fontSize.caption,
+  fontWeight: 700,
 })

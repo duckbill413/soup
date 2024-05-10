@@ -14,6 +14,11 @@ export type QueryParam = {
   default: string
 }
 
+export type Body = {
+  isValid: boolean
+  data: string
+}
+
 export type APIListDetail = {
   id: string
   domain: string
@@ -24,6 +29,6 @@ export type APIListDetail = {
   desc: string
   path_variable?: LiveList<LiveObject<PathVariable>>
   query_param?: LiveList<LiveObject<QueryParam>>
-  request_body?: string
-  response_body?: string
+  request_body?: LiveObject<Body>
+  response_body?: LiveObject<Body>
 }
