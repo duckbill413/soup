@@ -7,14 +7,14 @@ export type ProjectTool = {
 }
 
 export type ProjectMember = {
-  id: string;
+  id:string;
   name: string;
-  roles: LiveList<LiveObject<Role>>;
   email: string;
+  roles: LiveList<LiveObject<Role>>;
 }
 
 export type Role = {
-  id: string;
+  role_id: string;
   role_name: string;
 }
 

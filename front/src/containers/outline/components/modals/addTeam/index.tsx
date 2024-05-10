@@ -4,19 +4,24 @@ import * as styles from "@/containers/outline/styles/modals/outlineModal.css"
 import sample from "#/assets/icons/mainpage/sample1.jpg"
 import { ChangeEvent, KeyboardEvent, useState } from 'react'
 import { inviteMemberAPI } from '@/apis/outline/outlineAPI'
-// import { useMutation } from '../../../../../../liveblocks.config'
+import { LiveObject } from '@liveblocks/client'
+import { ProjectMember } from '@/containers/outline/types/outlineStorage'
+import { Toast } from '@/utils/toast'
+import { useParams } from 'next/navigation'
+import { useMutation } from '../../../../../../liveblocks.config'
 
 function OutlineTeamModal (props: { clickModal: () => void }) {
   const { clickModal } = props;
+  const {projectId} = useParams()
   const [auth, setAuth] =useState<string>('DEVELOPER')
   const [nameInput, setNameInput] = useState<string>('');
   const [roleInput, setRoleInput] = useState<string>('');
   const [emailInput, setEmailInput] = useState<string>('')
   const [tags, setTags] = useState<Array<{ id: string, role_name: string }>>([]);
 
-  // const updateTeam = useMutation(({ storage }) => {
-  //   storage.get("outline")?.get("project_team")
-  // }, []);
+  const updateTeam = useMutation(({ storage }, data) => {
+    storage.get("outline")?.get("project_team").push(new LiveObject<ProjectMember>(data))
+  }, []);
 
   const handleOuterClick = (e: React.MouseEvent) => {
     if (e.target === e.currentTarget) {
@@ -30,26 +35,36 @@ function OutlineTeamModal (props: { clickModal: () => void }) {
       setTags(prevTags => [...prevTags, newTag]);
       setRoleInput('');
       e.preventDefault();
-      console.log(tags)
     }
   }
   const removeTag = (tagId: string) => {
     setTags(prevTags => prevTags.filter(tag => tag.id !== tagId));
   }
 
-  const changeName = (e: ChangeEvent<HTMLInputElement>) => {setNameInput(e.target.value)}
-  const changeRole = (e: ChangeEvent<HTMLInputElement>) => {setRoleInput(e.target.value)}
-  const changeEmail = (e: ChangeEvent<HTMLInputElement>) => { setEmailInput(e.target.value) };
+  const changeInput = (setter: React.Dispatch<React.SetStateAction<string>>) =>
+    (e: ChangeEvent<HTMLInputElement>) => { setter(e.target.value) }
   const changeAuth = (e: ChangeEvent<HTMLSelectElement>) => {
     const selectedAuth = e.target.value === 'ADMIN' ? 'ADMIN' : 'DEVELOPER';
     setAuth(selectedAuth);
   };
 
   const invite = () => {
-    inviteMemberAPI('663b23d4fd804b719071533e',{email:emailInput,roles:[`${auth}`]})
-      .then(response=> {console.log(response)})
-      .catch(error=>alert(`초대하기 실패: , ${error.message}`))
-
+    if(nameInput && emailInput) {
+      updateTeam({id:crypto.randomUUID(), name:nameInput, email:emailInput, roles:tags})
+      inviteMemberAPI(`${projectId}`,{email:emailInput,roles:[`${auth}`]})
+        .then(response=> {
+          if(response.status === 201) {
+            Toast.success('초대 완료했습니다.')
+            setTags([]);
+            setEmailInput('');
+            setNameInput('');
+          }
+        }).catch(error=>alert(`초대하기 실패: , ${error.message}`))
+    } else if(nameInput) {
+        Toast.error('이메일을 입력하세요')
+    } else {
+        Toast.error('이름을 입력하세요')
+    }
   }
 
   return (
@@ -64,8 +79,8 @@ function OutlineTeamModal (props: { clickModal: () => void }) {
         </div>
         <hr/>
         {/* 역할, 이메일, 초대하기 */}
-        <div className={styles.middleDivision}>
-          <div style={{ display: 'flex', flexDirection: 'column' }}>
+        <div className={styles.middleDiv}>
+          <div className={styles.middleSubDiv}>
             <div>JIRA 권한</div>
             <select style={{ borderRadius: '8px' }} onChange={changeAuth}>
               <option value="DEVELOPER">No</option>
@@ -74,21 +89,21 @@ function OutlineTeamModal (props: { clickModal: () => void }) {
           </div>
           <input className={styles.roleInput} placeholder="엔터로 역할 추가"
                  value={roleInput}
-                 onChange={changeRole}
+                 onChange={changeInput(setRoleInput)}
                  onKeyDown={addHashtag}
           />
           <input className={styles.nameInput} placeholder="이름"
                  value={nameInput}
-                 onChange={changeName}
+                 onChange={changeInput(setNameInput)}
           />
           <input className={styles.emailInput} placeholder="e-mail 주소"
                  value={emailInput}
-                 onChange={changeEmail}
+                 onChange={changeInput(setEmailInput)}
           />
           <button type="button" className={styles.invite} onClick={invite}>초대하기</button>
         </div>
 
-        <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+        <div className={styles.roleShow}>
           {tags.map(tag => (
             <div key={tag.id} className={styles.role}>
             {tag.role_name}

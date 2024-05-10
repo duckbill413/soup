@@ -6,11 +6,11 @@ import { LiveObject } from '@liveblocks/client'
 import { ProjectTags } from '@/containers/plan/types/planStorage'
 import makeAIPlan from '@/apis/plan/planAPI'
 import { Toast } from '@/utils/toast'
+import { useParams } from 'next/navigation'
 import { useMutation, useStorage } from '../../../../../liveblocks.config'
-// import { useParams } from 'next/navigation'
 
 function PlanBeforeAI () {
-  // const {projectId} = useParams()
+  const {projectId} = useParams()
   const initialProject = useStorage((root)=>root.plan)
   const [backgroundInput, setBackgroundInput] = useState<string>('');
   const [introInput, setIntroInput] = useState<string>('')
@@ -56,7 +56,7 @@ function PlanBeforeAI () {
       target: initialProject?.before?.project_target.map((tag: ProjectTags) => tag.content) || [],
       result: initialProject?.before?.project_effect.map((tag: ProjectTags) => tag.content) || []
     }
-    makeAIPlan('663345305249cc4b837d65ab', aiData)
+    makeAIPlan(`${projectId}`, aiData)
       .then(response => {
         updateTags("fetch","project_background",response.result.background[0])
         updateTags("fetch","project_intro",response.result.intro[0])

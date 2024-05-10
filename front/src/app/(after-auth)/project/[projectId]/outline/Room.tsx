@@ -6,20 +6,11 @@ import { ReactNode } from 'react'
 import { RoomProvider } from '@/../liveblocks.config'
 import Loading from '@/app/loading'
 import { LiveList, LiveObject } from '@liveblocks/client'
-import { ProjectMember, ProjectTool, Role } from '@/containers/outline/types/outlineStorage'
+import { ProjectMember, ProjectTool } from '@/containers/outline/types/outlineStorage'
 
 function Room({ children }: { children: ReactNode }) {
   const path = usePathname()
 
-  const initialRoles = new LiveList<LiveObject<Role>>();  // 역할 리스트 초기화
-  const initialMembers = new LiveList<LiveObject<ProjectMember>>([
-    new LiveObject<ProjectMember>({
-      id: '',
-      name: '',
-      roles: initialRoles,
-      email: ''
-    })
-  ]);
   return (
     <RoomProvider id={path}
                   initialPresence={{}}
@@ -31,7 +22,7 @@ function Room({ children }: { children: ReactNode }) {
                       project_startDate:'',
                       project_endDate:'',
                       project_tools: new LiveList<LiveObject<ProjectTool>>(),
-                      project_team: initialMembers
+                      project_team: new LiveList<LiveObject<ProjectMember>>()
                     }),
     }}>
       <ClientSideSuspense fallback={<div><Loading/></div>}>

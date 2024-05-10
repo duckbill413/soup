@@ -18,7 +18,7 @@ function TeamTable () {
         <tr key={row.email}>
           <td>{row.name}</td>
           <td>{row.roles.map((role) => (
-            <span style={{backgroundColor:'gray'}} key={role.id}>{role.role_name}</span>
+            <span className={styles.tdDetail} key={role.role_id}>{role.role_name}</span>
           ))}</td>
           <td><a href={`mailto:${row.email}`}>{row.email}</a></td>
         </tr>
