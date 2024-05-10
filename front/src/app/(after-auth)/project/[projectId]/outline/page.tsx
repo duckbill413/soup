@@ -8,8 +8,10 @@ import Live from '@/components/cursor/Live'
 import Room from '@/app/(after-auth)/project/[projectId]/outline/Room'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css';
+import OutlineAddJira from '@/containers/outline/components/jira'
 
 function Outline () {
+
   return (
     <Room>
       <Live>
@@ -30,7 +32,9 @@ function Outline () {
 
               {/*  팀원 추가  */}
               <OutlineAddTeam/>
-
+              
+              {/* 지라 추가 */}
+              <OutlineAddJira/>
             </div>
           </div>
         </div>

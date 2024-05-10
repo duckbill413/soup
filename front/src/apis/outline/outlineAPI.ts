@@ -40,3 +40,12 @@ export const inviteMemberAPI = async(projectId:string, data:any) => {
     return handleApiError('팀원을 초대하는 중 오류 발생: ', error)
   }
 }
+
+export const addJiraAPI = async (projectId:string, data:any) => {
+  try {
+    const response = await baseAxios.put(`/projects/${projectId}/info/jira`, data)
+    return response.data
+  } catch (error) {
+    return handleApiError('JIRA를 등록하는 중 오류 발생: ', error)
+  }
+}
