@@ -1,89 +1,91 @@
 'use client'
 
-import React, { useRef } from 'react'
-import '@toast-ui/editor/dist/toastui-editor.css';
-import { Editor } from '@toast-ui/react-editor';
-import '@toast-ui/editor-plugin-code-syntax-highlight/dist/toastui-editor-plugin-code-syntax-highlight.css';
-import codeSyntaxHighlight from '@toast-ui/editor-plugin-code-syntax-highlight';
-import 'tui-color-picker/dist/tui-color-picker.css';
-import '@toast-ui/editor-plugin-color-syntax/dist/toastui-editor-plugin-color-syntax.css';
-import colorSyntax from '@toast-ui/editor-plugin-color-syntax';
-import Prism from 'prismjs';
+import React, {useRef, useEffect} from 'react';
+import dynamic from 'next/dynamic';
+import mermaid from 'mermaid';
+import {useMutation, useStorage} from "../../../liveblocks.config";
 
-// Todo 지우기
-const DummyData = `![image](https://uicdn.toast.com/toastui/img/tui-editor-bi.png)
+mermaid.initialize({
+    startOnLoad: true,
+    theme: 'default',
+    securityLevel: 'loose',
+});
+// 서버 사이드 렌더링을 방지하기 위해 dynamic import 사용
+const MDEditor = dynamic(() => import('@uiw/react-md-editor'), {ssr: false});
 
-# Awesome Editor!
-
-It has been _released as opensource in 2018_ and has ~~continually~~ evolved to **receive 10k GitHub ⭐️ Stars**.
-
-## Create Instance
-
-You can create an instance with the following code and use \`getHtml()\` and \`getMarkdown()\` of the [Editor](https://github.com/nhn/tui.editor).
-
-\`\`\`js
-const editor = new Editor(options);
-\`\`\`
-
-> See the table below for default options
-> > More API information can be found in the document
-
-| name | type | description |
-| --- | --- | --- |
-| el | \`HTMLElement\` | container element |
-
-## Features
-
-* CommonMark + GFM Specifications
-   * Live Preview
-   * Scroll Sync
-   * Auto Indent
-   * Syntax Highlight
-        1. Markdown
-        2. Preview
-
-## Support Wrappers
-
-> * Wrappers
->    1. [x] React
->    2. [x] Vue
->    3. [ ] Ember`
-
-export default function ToastEditor() {
-
-  const editorRef = useRef(null as Editor | null);
-
-  const handleEditorChange = () => {
-    const instance = editorRef.current?.getInstance().getMarkdown();
-    // Todo 지우기
-    console.log(instance);
-  };
-
-  return (
-    <Editor
-      initialValue={DummyData}
-      previewStyle="vertical"
-      height="68vh"
-      plugins={[colorSyntax, [codeSyntaxHighlight, { highlighter: Prism }]]}
-      initialEditType="markdown"
-      // codeBlock 속성 추가
-      codeBlock={{
-        languages: [
-          {
-            language: 'javascript',
-            syntax: /^```javascript/,
-          },
-          {
-            language: 'java',
-            syntax: /^```java/,
-          },
-
-        ],
-        autoLanguageDetection: true,
-      }}
-      onChange={handleEditorChange}
-      ref={editorRef}
-    />
-
-);
+interface CodeProps {
+    children: React.ReactNode;
+    className?: string;
 }
+
+
+const getCode = (arr: React.ReactNode = []): string =>
+    React.Children.toArray(arr)
+        .map((dt) => {
+            if (typeof dt === 'string') {
+                return dt;
+            }
+            if (React.isValidElement(dt) && dt.props && dt.props.children) {
+                return getCode(dt.props.children);
+            }
+            return '';
+        })
+        .filter(Boolean)
+        .join('');
+
+
+function Code({children = [], className}: CodeProps) {
+    const demoid = useRef(`dome${parseInt(String(Math.random() * 1e15), 10).toString(36)}`);
+    const code = getCode(children);
+    const demo = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        if (demo.current) {
+            try {
+                const str = mermaid.render(demoid.current, code, () => null, demo.current);
+                demo.current.innerHTML = str;
+            } catch (error) {
+                demo.current.innerHTML = error as string;
+            }
+        }
+    }, [code]);
+
+
+    if (
+        typeof code === 'string' &&
+        typeof className === 'string' &&
+        /^language-mermaid/.test(className.toLocaleLowerCase())
+    ) {
+        return (
+            <div ref={demo}>
+                <div id={demoid.current} style={{display: 'none'}}/>
+            </div>
+        );
+    }
+    return <code className={String(className)}>{children}</code>;
+}
+
+
+export default function Mermaid() {
+    const init = useStorage((root) => root.readme)
+    const updateElement = useMutation(({storage}, readme: string) => {
+        const currData = storage.get('readme');
+        currData?.set('json', readme);
+    }, []);
+
+    return (
+        <MDEditor
+            onChange={(newValue = '') => updateElement(newValue || '')}
+            textareaProps={{
+                placeholder: 'Markdown 텍스트를 입력해주세요'
+            }}
+            height={700}
+            value={init?.json}
+            previewOptions={{
+                components: {
+                    code: Code
+                }
+            }}
+        />
+    );
+};

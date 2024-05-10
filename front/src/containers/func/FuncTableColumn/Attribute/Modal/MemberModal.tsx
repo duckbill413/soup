@@ -1,10 +1,12 @@
 'use client'
 
-import {MemberModalProps} from "@/types/functionDesc";
+import {MemberModalProps} from "@/containers/func/types/functionDesc";
 import {useEffect, useRef} from "react";
 import useMemberStore from "@/stores/useMemberStore";
 import Image from "next/image";
+import defaultProfile from "#/assets/images/defaultProfile.png"
 import * as styles from "./memberModal.css";
+
 
 export default function MemberModal({setSelected,updateElement,selected,handleKey,funcCurrData}: MemberModalProps){
 
@@ -18,7 +20,7 @@ export default function MemberModal({setSelected,updateElement,selected,handleKe
 
     useEffect(() => {
         if (filteredMembers && filteredMembers.length > 0 ) {
-            setSelected(filteredMembers[0].memberId);
+            setSelected(filteredMembers[0].id);
         }
         if (!inputRef.current || funcCurrData.category!=="")  return;
 
@@ -36,12 +38,16 @@ export default function MemberModal({setSelected,updateElement,selected,handleKe
 
                 <div className={styles.btnGroup}>
                     <div className={`${styles.elementGroup}`}>
-                        {funcCurrData.reporter?.memberId!=="" ?
+                        {funcCurrData.reporter?.id!=="" ?
                             <div className={styles.currCategory}
                                  >
                                 <div>
-                                    <Image unoptimized src={funcCurrData.reporter?.memberProfileUri} alt="프로필 이미지" width={30} height={30}/>
-                                    {`${funcCurrData.reporter?.memberNickname}`}
+                                    {funcCurrData.reporter?.profileImageUrl ?
+                                        <Image unoptimized src={funcCurrData.reporter?.profileImageUrl} alt="프로필 이미지" width={30} height={30}/>
+                                        :<Image unoptimized src={defaultProfile} alt="프로필 이미지" width={30} height={30}/>
+                                    }
+
+                                    {`${funcCurrData.reporter?.nickname}`}
                                 </div>
                                 <p onClick={() => updateElement(funcCurrData.functionId, 'none','reporter')} aria-hidden="true" role="presentation">×</p>
                             </div>
@@ -55,10 +61,10 @@ export default function MemberModal({setSelected,updateElement,selected,handleKe
 
                     </div>
                     <div>
-                        {filteredMembers.filter(member => member.memberNickname.trim() !== '').map(d =>
+                        {filteredMembers.filter(member => member.nickname.trim() !== '').map(d =>
                             <div key={crypto.randomUUID()}
-                                 className={`${styles.select} ${selected === d.memberId ? styles.whitesmoke : ''}`}
-                                 onClick={() => updateElement(funcCurrData.functionId, d.memberId,'reporter')}
+                                 className={`${styles.select} ${selected === d.id ? styles.whitesmoke : ''}`}
+                                 onClick={() => updateElement(funcCurrData.functionId, d.id,'reporter')}
                                  aria-hidden="true"
                                  role="presentation"
                             >
@@ -66,8 +72,11 @@ export default function MemberModal({setSelected,updateElement,selected,handleKe
                                         className={styles.button}
                                         key={crypto.randomUUID()} type='button'
                                         aria-hidden="true">
-                                        <Image unoptimized src={d.memberProfileUri} alt="프로필 이미지" width={30} height={30}/>
-                                        {d.memberNickname}</button>
+                                    {d.profileImageUrl ?
+                                        <Image unoptimized src={d.profileImageUrl} alt="프로필 이미지" width={30} height={30}/>
+                                        :<Image unoptimized src={defaultProfile} alt="프로필 이미지" width={30} height={30}/>
+                                    }
+                                        {d.nickname}</button>
                             </div>
                         )}
                     </div>

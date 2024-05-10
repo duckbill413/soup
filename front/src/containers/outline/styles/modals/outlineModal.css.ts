@@ -54,7 +54,7 @@ export const middleDivision = style ({
 })
 
 export const roleInput = style ({
-  width:'20%',
+  width:'18%',
   height:'50%',
   padding:'0.1rem',
   paddingLeft:'0.6rem',
@@ -65,8 +65,20 @@ export const roleInput = style ({
   outline: 'none'
 })
 
+export const nameInput = style({
+  width:'10%',
+  height:'50%',
+  padding:'0.1rem',
+  paddingLeft:'0.6rem',
+  border:'none',
+  borderRadius:'5px',
+  borderBottom:'1px solid #F4F4F4',
+  boxShadow:vars.boxShadow.customInner,
+  backgroundColor:'#F4F4F4', outline: 'none'
+})
+
 export const emailInput = style({
-  width:'47%',
+  width:'30%',
   height:'50%',
   padding:'0.1rem',
   paddingLeft:'0.6rem',
@@ -118,7 +130,7 @@ export const roleSubDiv = style ({
 })
 
 export const role = style ({
-  background:'gray',
+  background:'#CFFFB7',
   borderRadius:'5px',
   padding:'0.3rem',
   fontWeight:'bold',

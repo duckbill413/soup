@@ -1,6 +1,6 @@
 'use client'
 
-import {PriorityIcons,  PriorityModalProps} from "@/types/functionDesc";
+import {PriorityIcons,  PriorityModalProps} from "@/containers/func/types/functionDesc";
 import useFuncDescStore from "@/stores/useFuncDescStore";
 import Image from "next/image";
 import Lowest from "#/assets/icons/func/doubleDown.svg";

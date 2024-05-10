@@ -68,6 +68,8 @@ export const whitesmoke = style({
 })
 
 export const button = style({
+    display:'flex',
+    alignItems:'center',
     borderRadius:'4px',
     padding:'3px',
 
