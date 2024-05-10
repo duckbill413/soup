@@ -6,6 +6,8 @@ import OutlineAddTool from '@/containers/outline/components/addTool'
 import OutlineAddTeam from '@/containers/outline/components/addTeam'
 import Live from '@/components/cursor/Live'
 import Room from '@/app/(after-auth)/project/[projectId]/outline/Room'
+import { ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css';
 
 function Outline () {
   return (
@@ -32,6 +34,7 @@ function Outline () {
             </div>
           </div>
         </div>
+        <ToastContainer/>
       </Live>
     </Room>
   )

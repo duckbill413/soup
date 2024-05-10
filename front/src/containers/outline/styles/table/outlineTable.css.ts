@@ -24,6 +24,14 @@ export const tableURLTitle = style ({
   borderRadius:'5px'
 })
 
+export const tdDetail = style({
+  backgroundColor:'#DEB06E',
+  padding:'0.9%',
+  marginRight:'2%',
+  borderRadius:'7px',
+  fontWeight:'bold'
+})
+
 export const toolInput = style ({
   fontSize:'1rem',
   textAlign:'center',

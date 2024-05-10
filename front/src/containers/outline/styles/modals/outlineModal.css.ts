@@ -45,12 +45,16 @@ export const topSubXDiv = style ({
   marginRight:'3%'
 })
 
-export const middleDivision = style ({
+export const middleDiv = style ({
   width:'100%',
   height:'15%',
   display:'flex',
   justifyContent:'space-around',
   alignItems:'center'
+})
+
+export const middleSubDiv = style ({
+  display: 'flex', flexDirection: 'column'
 })
 
 export const roleInput = style ({
@@ -95,7 +99,16 @@ export const invite = style ({
   borderRadius:'15px',
   backgroundColor:'#FF7E20',
   color:'white',
-  textAlign:'center'
+  textAlign:'center',
+  boxShadow:vars.boxShadow.customOuter,
+  ':hover': {
+    transform: 'scale(1.05)',
+    transitionDuration: '300ms',
+  },
+  ':active': {
+    transform: 'scale(0.90)',
+    transitionDuration: '300ms'
+  }
 })
 
 export const nowTeamTitle = style ({
@@ -130,11 +143,16 @@ export const roleSubDiv = style ({
 })
 
 export const role = style ({
-  background:'#CFFFB7',
+  background:'#DEB06E',
   borderRadius:'5px',
   padding:'0.3rem',
   fontWeight:'bold',
   margin:'0.3rem'
+})
+
+export const roleShow = style ({
+  display: 'flex',
+  flexWrap: 'wrap'
 })
 
 globalStyle(`${profileDetail} p`,{
