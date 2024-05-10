@@ -90,7 +90,7 @@ public class OpenViduService {
             throw new BaseExceptionHandler(ErrorCode.NOT_FOUND_EXPIRE_TIME);
         }
         // 만료 시간 연장
-        if (expireTime > 0) {
+        if (expireTime > 0 && expireTime < 8) {
             long newExpiration = expireTime + ADDITIONAL_EXPIRE_SECONDS;
             redisTemplate.expire(OPENVIDU_REDIS_HASH + sessionId, Duration.ofSeconds(newExpiration));
         }
