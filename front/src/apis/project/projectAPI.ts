@@ -6,7 +6,7 @@ const handleApiError = (message:any, error:any) => {
     throw new Error(message);
 };
 
-const getProjectList = async (): Promise<ProjectRes[]> => {
+export const getProjectList = async (): Promise<ProjectRes[]> => {
     try {
         const response = await baseAxios.get(`/projects?page=0&size=100`)
         return response.data.result.content;
@@ -14,5 +14,12 @@ const getProjectList = async (): Promise<ProjectRes[]> => {
         return handleApiError('프로젝트 리스트 에러: ', error);
     }
 }
+export const createProject = async (): Promise<string> => {
+    try {
+        const response = await baseAxios.post(`/projects`)
+        return response.data.result
+    } catch (error) {
+        return handleApiError('프로젝트 생성 에러 : ', error)
+    }
+}
 
-export default getProjectList;
