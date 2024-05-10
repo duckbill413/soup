@@ -2,7 +2,7 @@
 
 import useFuncDescStore from "@/stores/useFuncDescStore";
 import useHandleKeys from "@/hooks/useHandleKeys";
-import {FuncTableColumnProps} from "@/types/functionDesc";
+import {FuncTableColumnProps} from "@/containers/func/types/functionDesc";
 import CategoryModal from "@/containers/func/FuncTableColumn/Attribute/Modal/CategoryModal";
 import {useEffect} from "react";
 import * as styles from "./category.css";

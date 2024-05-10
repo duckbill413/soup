@@ -1,5 +1,5 @@
 import create from 'zustand';
-import {MemberRes} from "@/types/member";
+import {MemberRes} from "@/containers/project/types/member";
 
 type Store = {
     members: MemberRes[];
@@ -19,7 +19,7 @@ const useFuncDescStore = create<Store>((set) => ({
     searchMember: (query) => {
         set((state) => {
             const searchedMembers = state.members.filter((member) =>
-                member.memberNickname.toLowerCase().includes(query.toLowerCase())
+                member.nickname.toLowerCase().includes(query.toLowerCase())
             );
             return { filteredMembers: searchedMembers };
         });

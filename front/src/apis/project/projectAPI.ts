@@ -1,5 +1,5 @@
 import baseAxios from '@/apis/baseAxios'
-import { ProjectRes } from '@/types/project'
+import { ProjectRes } from '@/containers/project/types/project'
 
 const handleApiError = (message:any, error:any) => {
     console.error(`${message}: `, error);
@@ -14,6 +14,7 @@ export const getProjectList = async (): Promise<ProjectRes[]> => {
         return handleApiError('프로젝트 리스트 에러: ', error);
     }
 }
+
 export const createProject = async (): Promise<string> => {
     try {
         const response = await baseAxios.post(`/projects`)

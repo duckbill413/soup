@@ -3,7 +3,7 @@
 import Header from '@/components/Header/Header'
 import Project from '@/containers/Project'
 import * as styles from '@/containers/page.css'
-import {ProjectRes} from '@/types/project'
+import {ProjectRes} from '@/containers/project/types/project'
 import {createProject, getProjectList} from "@/apis/project/projectAPI";
 import {useEffect, useState} from "react";
 import {useRouter} from "next/navigation";

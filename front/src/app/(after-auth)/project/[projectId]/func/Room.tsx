@@ -6,7 +6,7 @@ import { ReactNode } from 'react'
 import { RoomProvider } from '@/../liveblocks.config'
 import Loading from '@/app/loading'
 import {LiveList, LiveObject} from '@liveblocks/client'
-import {FuncDescResWithColor} from "@/types/functionDesc";
+import {FuncDescResWithColor} from "@/containers/func/types/functionDesc";
 
 function Room({ children }: { children: ReactNode }) {
   const path = usePathname()

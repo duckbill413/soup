@@ -1,7 +1,7 @@
 import { APIListDetail } from '@/containers/api/types/apilist'
 import { OutlineStorage } from '@/containers/outline/types/outlineStorage'
 import { PlanStorage } from '@/containers/plan/types/planStorage'
-import { FuncDescResWithColor } from '@/types/functionDesc'
+import { FuncDescResWithColor } from '@/containers/func/types/functionDesc'
 import { LiveList, LiveObject, createClient } from '@liveblocks/client'
 import { createLiveblocksContext, createRoomContext } from '@liveblocks/react'
 

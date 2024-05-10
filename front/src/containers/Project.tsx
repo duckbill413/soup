@@ -1,6 +1,6 @@
 'use client'
 
-import { ProjectMemberImageUri, ProjectRes } from '@/types/project'
+import { ProjectMemberImageUri, ProjectRes } from '@/containers/project/types/project'
 import * as styles from '@/containers/project.css'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'

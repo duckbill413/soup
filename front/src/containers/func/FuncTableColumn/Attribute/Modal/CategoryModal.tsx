@@ -1,6 +1,6 @@
 'use client'
 
-import {CategoryModalProps} from "@/types/functionDesc";
+import {CategoryModalProps} from "@/containers/func/types/functionDesc";
 import {useEffect, useRef} from "react";
 import useFuncDescStore from "@/stores/useFuncDescStore";
 import * as styles from "./categoryModal.css";
