@@ -7,10 +7,13 @@ import io.ssafy.soupapi.domain.project.postgresql.dao.PProjectRepository;
 import io.ssafy.soupapi.domain.project.postgresql.dto.response.SimpleProjectDto;
 import io.ssafy.soupapi.domain.project.postgresql.entity.Project;
 import io.ssafy.soupapi.domain.project.postgresql.entity.ProjectRole;
+import io.ssafy.soupapi.domain.project.usecase.dto.request.UpdateProjectImage;
 import io.ssafy.soupapi.domain.projectauth.entity.ProjectAuth;
+import io.ssafy.soupapi.global.common.code.ErrorCode;
 import io.ssafy.soupapi.global.common.request.PageOffsetRequest;
 import io.ssafy.soupapi.global.common.response.OffsetPagination;
 import io.ssafy.soupapi.global.common.response.PageOffsetResponse;
+import io.ssafy.soupapi.global.exception.BaseExceptionHandler;
 import io.ssafy.soupapi.global.security.user.UserSecurityDTO;
 import io.ssafy.soupapi.global.util.FindEntityUtil;
 import lombok.RequiredArgsConstructor;
@@ -69,6 +72,15 @@ public class PProjectServiceImpl implements PProjectService {
     public void updateProjectInfo(String projectId, UpdateProjectInfo updateProjectInfo) {
         var project = findEntityUtil.findPProjectById(projectId);
         project.setName(updateProjectInfo.name());
+        pProjectRepository.save(project);
+    }
+
+    @Transactional
+    @Override
+    public void changeProjectImage(String projectId, UpdateProjectImage updateProjectImage) {
+        var project = pProjectRepository.findById(projectId).orElseThrow(() ->
+                new BaseExceptionHandler(ErrorCode.NOT_FOUND_PROJECT));
+        project.setImgUrl(updateProjectImage.imgUrl());
         pProjectRepository.save(project);
     }
 }

@@ -1,11 +1,9 @@
 package io.ssafy.soupapi.domain.project.mongodb.application;
 
-import io.ssafy.soupapi.domain.project.mongodb.dto.request.UpdateApiDoc;
-import io.ssafy.soupapi.domain.project.mongodb.dto.request.UpdateProjectInfo;
-import io.ssafy.soupapi.domain.project.mongodb.dto.request.UpdateProjectJiraKey;
-import io.ssafy.soupapi.domain.project.mongodb.dto.request.UpdateProjectProposal;
+import io.ssafy.soupapi.domain.project.mongodb.dto.request.*;
 import io.ssafy.soupapi.domain.project.mongodb.dto.response.*;
 import io.ssafy.soupapi.domain.project.mongodb.entity.issue.ProjectIssue;
+import io.ssafy.soupapi.domain.project.usecase.dto.request.UpdateProjectImage;
 import io.ssafy.soupapi.global.common.request.PageOffsetRequest;
 import io.ssafy.soupapi.global.common.response.PageOffsetResponse;
 import io.ssafy.soupapi.global.security.user.UserSecurityDTO;
@@ -46,4 +44,6 @@ public interface MProjectService {
     List<String> findProjectValidDomainNames(ObjectId projectId);
 
     String updateProjectApiDoc(String projectId, UpdateApiDoc updateApiDoc);
+
+    void changeProjectImage(ObjectId projectId, UpdateProjectImage updateProjectImage);
 }

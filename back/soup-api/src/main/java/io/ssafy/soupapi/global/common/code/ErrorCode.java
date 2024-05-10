@@ -78,6 +78,7 @@ public enum ErrorCode {
 
     // 프로젝트 에러 (CODE: 300)
     NOT_FOUND_PROJECT(404, "B300", "존재하지 않는 프로젝트 입니다."),
+    FAILED_TO_CHANGE_PROJECT_IMAGE(404, "B301", "프로젝트 이미지 변경 실패"),
 
     // 프로젝트 권한 (CODE: 400)
     NOT_FOUND_PROJECT_AUTH(404, "B400", "프로젝트 권한이 존재하지 않습니다."),
