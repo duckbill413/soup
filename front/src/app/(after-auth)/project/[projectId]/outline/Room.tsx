@@ -17,8 +17,7 @@ function Room({ children }: { children: ReactNode }) {
       id: '',
       name: '',
       roles: initialRoles,
-      email: '',
-      jira: false
+      email: ''
     })
   ]);
   return (

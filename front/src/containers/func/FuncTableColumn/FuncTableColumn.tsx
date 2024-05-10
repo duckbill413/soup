@@ -1,4 +1,4 @@
-import {FuncTableColumnProps} from "@/types/functionDesc";
+import {FuncTableColumnProps} from "@/containers/func/types/functionDesc";
 import Category from "@/containers/func/FuncTableColumn/Attribute/Category";
 import Priority from "@/containers/func/FuncTableColumn/Attribute/Priority";
 import Point from "@/containers/func/FuncTableColumn/Attribute/Point";

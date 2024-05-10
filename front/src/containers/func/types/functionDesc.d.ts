@@ -1,4 +1,4 @@
-import {MemberRes} from "@/types/member";
+import {Member} from "@/containers/project/types/member";
 
 
 export type FuncDescResWithColor = {
@@ -8,7 +8,7 @@ export type FuncDescResWithColor = {
     description: string;
     point: number;
     priority: string;
-    reporter: MemberRes;
+    reporter: Member;
     color: string
 }
 

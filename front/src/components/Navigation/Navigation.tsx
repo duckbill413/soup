@@ -13,8 +13,9 @@ type ColorPath ={
 }
 export default function Navigation() {
   const path = usePathname()
-  const parentPath = path.slice(0, path.lastIndexOf('/'))
-  const [hoverIndex, setHoverIndex] = useState<number>(-1)
+  const slicePath = path.split('/');
+  const parentPath = `/${slicePath[1]}/${slicePath[2]}`;
+  const [hoverIndex, setHoverIndex] = useState<number>(-1);
 
   const iconPathMapping = [
     { icon: outline, path: '/outline', name: '개요' },
@@ -23,8 +24,8 @@ export default function Navigation() {
     { icon: flow, path: '/flow', name: '차트' },
     { icon: ERD, path: '/erd', name: 'ERD' },
     { icon: API, path: '/api', name: 'API' },
-    { icon: build, path: '/build', name: '빌드' },
     { icon: readme, path: '/readme', name: 'README' },
+    { icon: build, path: '/build', name: '빌드' },
   ]
 
   const determineColor = ({ index, iconPath }:ColorPath) => {

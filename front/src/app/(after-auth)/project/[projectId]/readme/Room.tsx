@@ -5,14 +5,13 @@ import { usePathname } from 'next/navigation'
 import { ReactNode } from 'react'
 import { RoomProvider } from '@/../liveblocks.config'
 import Loading from '@/app/loading'
-import {LiveList, LiveObject} from '@liveblocks/client'
-import {FuncDescResWithColor} from "@/containers/func/types/functionDesc";
+import {LiveObject} from '@liveblocks/client'
 
 function Room({ children }: { children: ReactNode }) {
   const path = usePathname()
   return (
       <RoomProvider id={path} initialPresence={{}} initialStorage={{
-          func: new LiveList<LiveObject<FuncDescResWithColor>>}}
+          readme: new LiveObject({json:""})}}
       >
       {/* Loading 페이지 추가해야 한다. */}
       <ClientSideSuspense fallback={<div><Loading/></div>}>

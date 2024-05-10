@@ -1,7 +1,7 @@
 'use client'
 
 import useFuncDescStore from "@/stores/useFuncDescStore";
-import {FuncTableColumnProps, PriorityIcons} from "@/types/functionDesc";
+import {FuncTableColumnProps, PriorityIcons} from "@/containers/func/types/functionDesc";
 import PriorityModal from "@/containers/func/FuncTableColumn/Attribute/Modal/PriorityModal";
 import Image from "next/image";
 import Lowest from "#/assets/icons/func/doubleDown.svg";
