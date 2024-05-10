@@ -36,12 +36,8 @@ public record UpdateApiDoc(
         List<ApiVariable> pathVariables,
         @Schema(description = "query_parameters")
         List<ApiVariable> queryParameters,
-        @Schema(description = "request_body_name")
-        String requestBodyName,
         @Schema(description = "request_body")
         String requestBody,
-        @Schema(description = "response_body_name")
-        String responseBodyName,
         @Schema(description = "response_body")
         String responseBody
 ) {
@@ -52,14 +48,12 @@ public record UpdateApiDoc(
                 .name(apiDoc.name())
                 .methodName(apiDoc.methodName())
                 .description(apiDoc.description())
-                .methodType(apiDoc.methodType())
+                .httpMethodType(apiDoc.methodType())
                 .apiUriPath(apiDoc.apiUriPath())
                 .pathVariables(apiDoc.pathVariables())
                 .queryParameters(apiDoc.queryParameters())
                 .requestBody(apiDoc.requestBody())
-                .requestBodyName(apiDoc.requestBodyName())
                 .responseBody(apiDoc.responseBody())
-                .responseBodyName(apiDoc.responseBodyName())
                 .build();
     }
 }

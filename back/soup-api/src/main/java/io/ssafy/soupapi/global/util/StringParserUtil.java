@@ -95,4 +95,13 @@ public class StringParserUtil {
         sb.replace(index, index + oldString.length(), newString);
         return sb.toString();
     }
+
+    public static boolean isNullOrEmpty(String str) {
+        if (Objects.isNull(str)) {
+            return true;
+        }
+
+        return str.isEmpty();
+    }
+
 }

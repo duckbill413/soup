@@ -21,7 +21,7 @@ public record GetSimpleApiDoc(
                 .id(apiDoc.getId())
                 .domain(apiDoc.getDomain())
                 .name(apiDoc.getName())
-                .methodType(apiDoc.getMethodType())
+                .methodType(apiDoc.getHttpMethodType())
                 .uriPath(apiDoc.getApiUriPath())
                 .description(apiDoc.getDescription())
                 .build();

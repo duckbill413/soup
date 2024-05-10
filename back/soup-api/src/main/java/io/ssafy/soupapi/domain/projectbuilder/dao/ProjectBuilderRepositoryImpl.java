@@ -3,6 +3,7 @@ package io.ssafy.soupapi.domain.projectbuilder.dao;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.ssafy.soupapi.domain.project.mongodb.entity.Project;
 import io.ssafy.soupapi.domain.project.mongodb.entity.apidocs.ApiDoc;
+import io.ssafy.soupapi.domain.project.mongodb.entity.apidocs.ApiDocs;
 import io.ssafy.soupapi.domain.project.mongodb.entity.apidocs.ApiVariable;
 import io.ssafy.soupapi.domain.project.mongodb.entity.builder.ProjectBuilderInfo;
 import io.ssafy.soupapi.domain.projectbuilder.entity.MainPath;
@@ -230,9 +231,10 @@ public class ProjectBuilderRepositoryImpl implements ProjectBuilderRepository {
 
     /**
      * 도메인 서브 파일들의 패키지 경로 메소드 이름 등의 변수 치환
-     * @param domain 도메인 이름
+     *
+     * @param domain   도메인 이름
      * @param subFiles 서버 파일 리스트
-     * @param project 프로젝트 정보
+     * @param project  프로젝트 정보
      * @throws IOException 파일 입출력 에러
      */
     private void replaceDomainSubFiles(String domain, List<File> subFiles, Project project) throws IOException {
@@ -265,26 +267,200 @@ public class ProjectBuilderRepositoryImpl implements ProjectBuilderRepository {
             System.out.println(tableDefinition.getName());
             var entityFilePath = domainFolder + File.separator + tableDefinition.getName();
 
-            for (String domainSubName : domainSubNames) {
-                String domainSubPath = entityFilePath + File.separator + domainSubName;
-                switch (domainSubName) {
-                    case "entity" -> replaceEntityVariables(domainSubPath, tableDefinition);
-                    case "dao" -> replaceRepositoryVariables(domainSubPath, tableDefinition);
-                    case "application" -> replaceServiceVariables(domainSubPath, tableDefinition);
-                }
-            }
+            // Entity 변수 치환
+            replaceEntityVariables(entityFilePath + File.separator + "entity", tableDefinition);
+            // DAO 변수 치환
+            replaceRepositoryVariables(entityFilePath + File.separator + "dao", tableDefinition);
         }
     }
 
-    /**
-     * 프로젝트 Service 변수 치환
-     *
-     * @param domainSubPath   {projectpath}/domain/{domain}/application
-     * @param tableDefinition 테이블 정보
-     * @throws IOException 파일 쓰기 실패
-     */
-    private void replaceServiceVariables(String domainSubPath, TableDefinition tableDefinition) throws IOException {
+    @Override
+    public void projectMethodBuilder(Project project) throws IOException {
+        String domainPath = getProjectMainPath(project, MainPath.domain);
+        ApiDocs apiDocs = project.getApiDocs();
+        var apiDocList = project.getApiDocs().getApiDocList();
+        var usableDomains = new HashSet<>(apiDocs.getDomains().stream().map(String::toUpperCase).toList());
 
+        for (ApiDoc apiDoc : apiDocList) {
+            // 유효하지 않은 도메인의 경우 API를 생성하지 않음
+            if (!usableDomains.contains(apiDoc.getDomain().toUpperCase())) {
+                continue;
+            }
+
+            String domainSubPath = domainPath + File.separator + apiDoc.getDomain() + File.separator;
+
+            String controllerMethod = createControllerMethod(apiDoc);
+            List<File> cFiles = getLeafFiles(new File(domainSubPath + "api"));
+            for (File cFile : cFiles) {
+                insertMethodIntoFile(cFile, controllerMethod);
+            }
+
+            String serviceMethod = createServiceMethod(apiDoc);
+            List<File> sFiles = getLeafFiles(new File(domainSubPath + "application"));
+            for (File sFile : sFiles) {
+                insertMethodIntoFile(sFile, serviceMethod);
+            }
+//            String responseDtoClass = createResponseDtoClass(apiDoc);
+//            String requestDtoClass = createRequestDtoClass(apiDoc);
+        }
+    }
+
+    private String createRequestDtoClass(ApiDoc apiDoc) {
+        String dtoClassFile = """
+                package :domain-package-name.dto.request;
+                                
+                import io.swagger.v3.oas.annotations.media.Schema;
+                                
+                import java.util.*;
+                                
+                @Schema(description = ":dto-class-description 요청 DTO")
+                public record :dto-class-name(
+                :attributes
+                ) {
+                }
+                """;
+
+        return null;
+    }
+
+    private String createResponseDtoClass(ApiDoc apiDoc) {
+        String dtoClassFile = """
+                package :domain-package-name.dto.request;
+                                
+                import io.swagger.v3.oas.annotations.media.Schema;
+                                
+                import java.util.*;
+                                
+                @Schema(description = ":dto-class-description 응답 DTO")
+                public record :dto-class-name(
+                :attributes
+                ) {
+                }
+                """;
+
+        return null;
+    }
+
+
+    /**
+     * 프로젝트 Controller 메소드
+     *
+     * @param apiDoc 프로젝트 API 문서
+     */
+    private String createControllerMethod(ApiDoc apiDoc) {
+        String controllerMethod = """
+                    @Operation(summary = ":api-summary", description = ":api-description")
+                    :api-http-method(":api-uri")
+                    public :responsebody-name :controller-method-name(
+                    :parameters) {
+                        return null;
+                    }
+                """;
+
+        var mapUtil = new MapStringReplace(controllerMethod);
+        mapUtil.addValue("api-summary", apiDoc.getName() != null ? apiDoc.getName() : null);
+        mapUtil.addValue("api-description", apiDoc.getDescription() != null ? apiDoc.getDescription() : null);
+        mapUtil.addValue("api-http-method", apiDoc.getHttpMethod());
+        mapUtil.addValue("api-uri", apiDoc.getApiUriPath() != null ? apiDoc.getApiUriPath().replaceAll(" ", "") : "");
+        mapUtil.addValue("responsebody-name", apiDoc.getResponseBodyName());
+        mapUtil.addValue("controller-method-name", convertToCamelCase(apiDoc.getMethodName()));
+
+        List<String> parameters = new ArrayList<>();
+        // PathVariables
+        if (Objects.nonNull(apiDoc.getPathVariables()) && !apiDoc.getPathVariables().isEmpty()) {
+            for (ApiVariable pathVariable : apiDoc.getPathVariables()) {
+                parameters.add(makeControllerPathVariableAttr(pathVariable));
+            }
+        }
+        // QueryParameters
+        if (Objects.nonNull(apiDoc.getQueryParameters()) && !apiDoc.getQueryParameters().isEmpty()) {
+            for (ApiVariable queryVariable : apiDoc.getQueryParameters()) {
+                parameters.add(makeControllerQueryVariableAttr(queryVariable));
+            }
+        }
+        // RequestBody
+        if (Objects.nonNull(apiDoc.getRequestBody()) && !apiDoc.getRequestBody().isBlank()) {
+            parameters.add(makeControllerRequestBodyAttr(apiDoc));
+        }
+
+        mapUtil.addValue("parameters", String.join(",\n\t\t\t", parameters));
+        return mapUtil.replace();
+    }
+
+    private String makeControllerRequestBodyAttr(ApiDoc apiDoc) {
+        String attr = "@RequestBody %s %s";
+        return String.format(attr,
+                apiDoc.getRequestBodyName(),
+                convertToCamelCase(apiDoc.getRequestBodyName())
+        );
+    }
+
+    private String makeControllerQueryVariableAttr(ApiVariable queryVariable) {
+        String attr = "@RequestParam(name = \"%s\"%s%s) %s %s";
+        return String.format(attr,
+                queryVariable.getName().replaceAll(" ", ""),
+                queryVariable.isRequire() ? "" : ", required = false", // default is true
+                isNullOrEmpty(queryVariable.getDefaultVariable()) ? "" : String.format(", defaultValue = \"%s\"", queryVariable.getDefaultVariable()),
+                convertToPascalCase(queryVariable.getType().name().replaceAll(" ", "")),
+                convertToCamelCase(queryVariable.getName())
+        );
+    }
+
+    private String makeControllerPathVariableAttr(ApiVariable apiVariable) {
+        String attr = "@PathVariable(name = \"%s\"%s) %s %s";
+        return String.format(attr,
+                apiVariable.getName().replaceAll(" ", ""),
+                apiVariable.isRequire() ? "" : ", required = false", // default is true
+                convertToPascalCase(apiVariable.getType().name().replaceAll(" ", "")),
+                convertToCamelCase(apiVariable.getName())
+        );
+    }
+
+    /**
+     * 프로젝트 Service 메소드
+     *
+     * @param apiDoc 프로젝트 API 문서
+     */
+    private String createServiceMethod(ApiDoc apiDoc) {
+        String serviceMethod = """
+                    public :responsebody-name :service-method-name(:parameters) {
+                        return null;
+                    }
+                """;
+
+        var mapUtil = new MapStringReplace(serviceMethod);
+        mapUtil.addValue("responsebody-name", apiDoc.getResponseBodyName());
+        mapUtil.addValue("service-method-name", convertToCamelCase(apiDoc.getMethodName()));
+
+        List<String> parameters = new ArrayList<>();
+        // PathVariables
+        if (Objects.nonNull(apiDoc.getPathVariables()) && !apiDoc.getPathVariables().isEmpty()) {
+            for (ApiVariable pathVariable : apiDoc.getPathVariables()) {
+                parameters.add(makeMethodVariableAttr(pathVariable.getName(), pathVariable.getType().name()));
+            }
+        }
+        // QueryParameters
+        if (Objects.nonNull(apiDoc.getQueryParameters()) && !apiDoc.getQueryParameters().isEmpty()) {
+            for (ApiVariable queryVariable : apiDoc.getQueryParameters()) {
+                parameters.add(makeMethodVariableAttr(queryVariable.getName(), queryVariable.getType().name()));
+            }
+        }
+        // RequestBody
+        if (Objects.nonNull(apiDoc.getRequestBody()) && !apiDoc.getRequestBody().isBlank()) {
+            parameters.add(makeMethodVariableAttr(apiDoc.getRequestBodyName(), apiDoc.getRequestBodyName()));
+        }
+
+        mapUtil.addValue("parameters", String.join(", ", parameters));
+
+        return mapUtil.replace();
+    }
+
+    private String makeMethodVariableAttr(String name, String type) {
+        // ObjectId projectId
+        return String.format("%s %s",
+                convertToPascalCase(type),
+                convertToCamelCase(name)
+        );
     }
 
     /**
@@ -396,7 +572,8 @@ public class ProjectBuilderRepositoryImpl implements ProjectBuilderRepository {
     /**
      * 파일 변수 치환
      * 파일 정보 및 치환할 변수 맵을 이용하여 파일 문자열 치환
-     * @param file 파일 정보
+     *
+     * @param file      파일 정보
      * @param variables 치환할 문자 맵
      * @throws IOException 파일 입출력 에러
      */
@@ -421,6 +598,37 @@ public class ProjectBuilderRepositoryImpl implements ProjectBuilderRepository {
     }
 
     /**
+     * 파일 메소드 삽입
+     * 파일 정보 및 메소드 문자열을 이용해 메소드 삽입
+     *
+     * @param file      파일 정보
+     * @param methodStr 삽입할 함수 문자열
+     * @throws IOException 파일 입출력 에러
+     */
+    private static void insertMethodIntoFile(File file, String methodStr) throws IOException {
+        FileReader fileReader = new FileReader(file.getAbsolutePath());
+        try (BufferedReader br = new BufferedReader(fileReader)) {
+            StringBuilder sb = new StringBuilder();
+            String line;
+            while ((line = br.readLine()) != null) {
+                sb.append(line).append('\n');
+            }
+
+            int closingBraceIndex = sb.toString().lastIndexOf('}');
+            if (closingBraceIndex != -1) {
+                sb.insert(closingBraceIndex, "\n" + methodStr);
+            }
+
+            File newFile = new File(file.getAbsolutePath());
+            FileWriter writer = new FileWriter(newFile);
+            try (BufferedWriter bw = new BufferedWriter(writer)) {
+                bw.write(sb.toString());
+                bw.flush();
+            }
+        }
+    }
+
+    /**
      * global 기본 패키지 복사
      *
      * @param destination 복사할 경로
@@ -437,116 +645,6 @@ public class ProjectBuilderRepositoryImpl implements ProjectBuilderRepository {
 
         FileUtils.copyDirectory(sourceFolder, destinationFolder);
     }
-
-    private String addServiceMethod(ApiDoc apiDoc) {
-        String serviceMethodName = convertToCamelCase(apiDoc.getMethodName()) + "(:parameters)";
-        List<String> values = new ArrayList<>();
-        if (Objects.nonNull(apiDoc.getPathVariables()) && !apiDoc.getPathVariables().isEmpty()) {
-            for (ApiVariable pathVariable : apiDoc.getPathVariables()) {
-                values.add(pathVariable.getName());
-            }
-        }
-        if (Objects.nonNull(apiDoc.getQueryParameters()) && !apiDoc.getQueryParameters().isEmpty()) {
-            for (ApiVariable queryParameter : apiDoc.getQueryParameters()) {
-                values.add(queryParameter.getName());
-            }
-        }
-        if (Objects.nonNull(apiDoc.getRequestBodyName())) {
-            values.add(apiDoc.getRequestBodyName());
-        }
-        serviceMethodName = serviceMethodName.replaceAll(":parameters", String.join(", ", values));
-        return serviceMethodName;
-    }
-
-    private String addRequestBody(String requestBodyName) {
-        if (Objects.isNull(requestBodyName)) {
-            return "";
-        }
-        String className = Character.toUpperCase(requestBodyName.charAt(0)) + requestBodyName.substring(1);
-        String paramName = Character.toLowerCase(requestBodyName.charAt(0)) + requestBodyName.substring(1);
-        return String.format("@RequestBody %s %s", className, paramName);
-    }
-
-    private String addPathVariableBuilder(List<ApiVariable> apiVariables) {
-        if (Objects.isNull(apiVariables) || apiVariables.isEmpty()) {
-            return "";
-        }
-        List<String> strPathVariable = new ArrayList<>();
-        for (ApiVariable pathVariable : apiVariables) {
-            String strPath = "@PathVariable(name = :name :require) :type :name";
-            String replaced = strPath.replaceAll(":name", pathVariable.getName());
-            replaced = replaced.replaceAll(":type", pathVariable.getType().name());
-            if (pathVariable.isRequire()) {
-                replaced = replaced.replaceAll(":replace", ", required = false");
-            } else {
-                replaced = replaced.replaceAll(":replace", "");
-            }
-            strPathVariable.add(replaced);
-        }
-        return String.join(",\n", strPathVariable);
-    }
-
-    private String addQueryParameters(List<ApiVariable> apiVariables) {
-        if (Objects.isNull(apiVariables) || apiVariables.isEmpty()) {
-            return "";
-        }
-        List<String> strPathVariable = new ArrayList<>();
-        for (ApiVariable queryParam : apiVariables) {
-            String strQuery = "@RequestParam(name = :name :require :defaultValue) :type :name";
-            String replaced = strQuery.replaceAll(":name", queryParam.getName());
-            replaced = replaced.replaceAll(":type", queryParam.getType().name());
-            if (!queryParam.isRequire()) {
-                replaced = replaced.replaceAll(":replace", ", required = false");
-            } else {
-                replaced = replaced.replaceAll(":replace", "");
-            }
-            if (Objects.nonNull(queryParam.getDefaultVariable())) {
-                replaced = replaced.replaceAll(":defaultValue", String.format(", defaultValue = \"%s\"", queryParam.getDefaultVariable()));
-            } else {
-                replaced = replaced.replaceAll(":defaultValue", "");
-            }
-            strPathVariable.add(replaced);
-        }
-        return String.join(",\n", strPathVariable);
-    }
-
-    @Override
-    public String controllerBuilder(ApiDoc apiDoc) {
-        String controller = """
-                @Operation(summary = ":description")
-                :methodType(":apiUriPath")
-                public ResponseEntity<BaseResponse<:responseBodyName>> :methodName(
-                    :pathVariables
-                    :queryParameters
-                    :requestBody
-                ) {
-                    return :serviceClassName.:serviceMethodName
-                }
-                """;
-
-
-        var mapUtil = new MapStringReplace(controller);
-
-        mapUtil.addValue("description", apiDoc.getDescription());
-        mapUtil.addValue("methodType", switch (apiDoc.getMethodType()) {
-            case GET -> "@GetMapping";
-            case POST -> "@PostMapping";
-            case PUT -> "@PutMapping";
-            case DELETE -> "@DeleteMapping";
-            case PATCH -> "@PatchMapping";
-        });
-        mapUtil.addValue("apiUriPath", apiDoc.getApiUriPath());
-        mapUtil.addValue("responseBodyName", StringParserUtil.upperFirstAndLowerElse(apiDoc.getResponseBodyName()));
-        mapUtil.addValue("methodName", convertToCamelCase(apiDoc.getMethodName()));
-        mapUtil.addValue("pathVariables", addPathVariableBuilder(apiDoc.getPathVariables()));
-        mapUtil.addValue("queryParameters", addQueryParameters(apiDoc.getQueryParameters()));
-        mapUtil.addValue("requestBody", addRequestBody(apiDoc.getRequestBodyName()));
-        mapUtil.addValue("serviceClassName", StringParserUtil.convertToPascalCase(apiDoc.getDomain()) + "Service");
-        mapUtil.addValue("serviceMethodName", addServiceMethod(apiDoc));
-
-        return mapUtil.replace();
-    }
-
 
     /**
      * 프로젝트 도메인 리스트 정보

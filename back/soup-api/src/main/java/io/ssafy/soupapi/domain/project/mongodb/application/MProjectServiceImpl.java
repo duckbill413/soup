@@ -321,7 +321,9 @@ public class MProjectServiceImpl implements MProjectService {
      * @return 프로젝트 API DOC 정보
      */
     @Override
-    public GetApiDoc findProjectSingleApiDocs(ObjectId projectId, UUID apiDocId) {
+    public GetApiDoc findProjectSingleApiDocs(
+            ObjectId projectId, UUID apiDocId
+    ) {
         ApiDoc apiDoc = getProjectApiDoc(projectId, apiDocId);
 
         return GetApiDoc.of(apiDoc, new ArrayList<>(StringParserUtil.extractBracketsContent(apiDoc.getApiUriPath())));
