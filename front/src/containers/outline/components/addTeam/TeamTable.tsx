@@ -15,11 +15,13 @@ function TeamTable () {
       </thead>
       <tbody>
       {teamStorage?.project_team.map((row) => (
-        <tr key={row.email}>
+        <tr key={row.id}>
           <td>{row.name}</td>
-          <td>{row.roles.map((role) => (
-            <span className={styles.tdDetail} key={role.role_id}>{role.role_name}</span>
-          ))}</td>
+          <td>
+          {row.roles.map((role, index) => (
+            <span key={`${role.role_id}-${index}`} className={styles.tdDetail}>{role.role_name}</span>
+          ))}
+          </td>
           <td><a href={`mailto:${row.email}`}>{row.email}</a></td>
         </tr>
       ))}

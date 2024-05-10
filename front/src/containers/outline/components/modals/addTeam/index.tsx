@@ -1,14 +1,13 @@
 import Image from "next/image"
 import closeIcon from "#/assets/icons/modals/closeIcon.svg"
 import * as styles from "@/containers/outline/styles/modals/outlineModal.css"
-import sample from "#/assets/icons/mainpage/sample1.jpg"
 import { ChangeEvent, KeyboardEvent, useState } from 'react'
 import { inviteMemberAPI } from '@/apis/outline/outlineAPI'
 import { LiveObject } from '@liveblocks/client'
 import { ProjectMember } from '@/containers/outline/types/outlineStorage'
 import { Toast } from '@/utils/toast'
 import { useParams } from 'next/navigation'
-import { useMutation } from '../../../../../../liveblocks.config'
+import { useMutation, useStorage } from '../../../../../../liveblocks.config'
 
 function OutlineTeamModal (props: { clickModal: () => void }) {
   const { clickModal } = props;
@@ -18,9 +17,16 @@ function OutlineTeamModal (props: { clickModal: () => void }) {
   const [roleInput, setRoleInput] = useState<string>('');
   const [emailInput, setEmailInput] = useState<string>('')
   const [tags, setTags] = useState<Array<{ id: string, role_name: string }>>([]);
+  const invitedTeam = useStorage((root)=>root.outline)
 
   const updateTeam = useMutation(({ storage }, data) => {
-    storage.get("outline")?.get("project_team").push(new LiveObject<ProjectMember>(data))
+    // storage.get("outline")?.get("project_team").push(new LiveObject<ProjectMember>(data))
+    const members = storage.get("outline")?.get("project_team")
+    const index = members?.findIndex(member => member.get("email") === data.email)
+    if( index !== undefined && index !== -1) {
+      members?.delete(index)
+    }
+    members?.push(new LiveObject<ProjectMember>(data))
   }, []);
 
   const handleOuterClick = (e: React.MouseEvent) => {
@@ -112,21 +118,25 @@ function OutlineTeamModal (props: { clickModal: () => void }) {
           ))}
         </div>
 
-        <p className={styles.nowTeamTitle}>현재 프로젝트 팀원</p>
-        {/* 현재 팀원 */}
-        <div className={styles.bottomDivision}>
+        {/* 초대된 팀원 */}
+        <p className={styles.nowTeamTitle}>현재 초대된 팀원</p>
+
+        {invitedTeam?.project_team.map(member => (
+        <div key={member.id} className={styles.bottomDivision}>
           <div className={styles.bottomProfile}>
-            <Image className={styles.profileImg} src={sample} width={60} height={60} alt="profile"/>
             <div className={styles.profileDetail}>
-              <p>석주짜응</p>
-              <p>seokjugo@gmail.com</p>
+              <p style={{fontWeight:'bold'}}>{member.name}</p>
+              <p>{member.email}</p>
             </div>
           </div>
+
           <div className={styles.roleSubDiv}>
-            <div className={styles.role}>프론트엔드</div>
-            <div className={styles.role}>곰</div>
+          {member?.roles.map((role, index) => (
+            <div key={`${role.role_id}-${index}`} className={styles.role}>{role.role_name}</div>
+          ))}
           </div>
         </div>
+        ))}
 
       </div>
     </div>

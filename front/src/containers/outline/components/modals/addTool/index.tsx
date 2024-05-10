@@ -4,6 +4,7 @@ import Image from 'next/image'
 import { useState } from 'react'
 import { LiveObject } from '@liveblocks/client'
 import { ProjectTool } from '@/containers/outline/types/outlineStorage'
+import { Toast } from '@/utils/toast'
 import { useMutation } from '../../../../../../liveblocks.config'
 
 function OutlineToolModal (props: { clickModal: () => void }) {
@@ -24,7 +25,7 @@ function OutlineToolModal (props: { clickModal: () => void }) {
       });
       clickModal();
     } else {
-      alert("협업 툴 이름은 필수 입력값입니다!");
+      Toast.error("툴 이름은 필수 입력값입니다!");
     }
   };
 

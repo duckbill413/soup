@@ -51,7 +51,15 @@ export const button = style({
   backgroundColor:'#FF7E20',
   color:'white',
   textAlign:'center',
-  boxShadow:vars.boxShadow.customOuter
+  boxShadow:vars.boxShadow.customOuter,
+  ':hover': {
+    transform: 'scale(1.10)',
+    transitionDuration: '300ms',
+  },
+  ':active': {
+    transform: 'scale(0.90)',
+    transitionDuration: '300ms'
+  }
 })
 
 export const toolInput = style ({
