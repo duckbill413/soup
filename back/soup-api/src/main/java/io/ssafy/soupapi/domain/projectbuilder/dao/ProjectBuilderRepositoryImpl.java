@@ -16,6 +16,7 @@ import org.springframework.stereotype.Repository;
 import java.io.*;
 import java.util.*;
 
+import static io.ssafy.soupapi.global.util.BuildFileUtil.getLeafFiles;
 import static io.ssafy.soupapi.global.util.StringParserUtil.*;
 
 @Log4j2
@@ -29,18 +30,38 @@ public class ProjectBuilderRepositoryImpl implements ProjectBuilderRepository {
     private final ObjectMapper objectMapper;
     final String[] domainSubNames = {"entity", "dao", "application", "api", "dto"};
 
+    /**
+     * 프로젝트 패키지 구조 설정
+     *
+     * @param project 프로젝트 정보
+     * @throws IOException 파일 쓰기 에러
+     */
     @Override
     public void packageBuilder(Project project) throws IOException {
         String destination = getDestination(project);
         // package name을 기반으로 폴더 생성
-        createDefaultPackage(destination, project.getProjectBuilderInfo());
+        createStarterClass(destination, project.getProjectBuilderInfo());
     }
 
+    /**
+     * 생성할 프로젝트 저장 경로
+     *
+     * @param project 프로젝트 정보
+     * @return 프로젝트 저장 경로
+     */
     private String getDestination(Project project) {
         return String.format(saveRootPath, project.getId(), project.getProjectBuilderInfo().getName());
     }
 
-    private void createDefaultPackage(String destination, ProjectBuilderInfo projectBuilderInfo) throws IOException {
+    /**
+     * 프로젝트 기본 클래스 생성
+     * 스프링 시작을 위한 기본 클래스 생성
+     *
+     * @param destination        프로젝트 경로
+     * @param projectBuilderInfo 프로젝트 빌드 정보
+     * @throws IOException 파일 입출력 에러
+     */
+    private void createStarterClass(String destination, ProjectBuilderInfo projectBuilderInfo) throws IOException {
         String basicPath = destination + "\\src\\main\\java";
         String[] path = projectBuilderInfo.getPackageName().split("\\.");
         StringBuilder folderPath = new StringBuilder(basicPath);
@@ -84,43 +105,12 @@ public class ProjectBuilderRepositoryImpl implements ProjectBuilderRepository {
         }
     }
 
-    @Override
-    public String controllerBuilder(ApiDoc apiDoc) {
-        String controller = """
-                @Operation(summary = ":description")
-                :methodType(":apiUriPath")
-                public ResponseEntity<BaseResponse<:responseBodyName>> :methodName(
-                    :pathVariables
-                    :queryParameters
-                    :requestBody
-                ) {
-                    return :serviceClassName.:serviceMethodName
-                }
-                """;
-
-
-        var mapUtil = new MapStringReplace(controller);
-
-        mapUtil.addValue("description", apiDoc.getDescription());
-        mapUtil.addValue("methodType", switch (apiDoc.getMethodType()) {
-            case GET -> "@GetMapping";
-            case POST -> "@PostMapping";
-            case PUT -> "@PutMapping";
-            case DELETE -> "@DeleteMapping";
-            case PATCH -> "@PatchMapping";
-        });
-        mapUtil.addValue("apiUriPath", apiDoc.getApiUriPath());
-        mapUtil.addValue("responseBodyName", StringParserUtil.upperFirstAndLowerElse(apiDoc.getResponseBodyName()));
-        mapUtil.addValue("methodName", convertToCamelCase(apiDoc.getMethodName()));
-        mapUtil.addValue("pathVariables", addPathVariableBuilder(apiDoc.getPathVariables()));
-        mapUtil.addValue("queryParameters", addQueryParameters(apiDoc.getQueryParameters()));
-        mapUtil.addValue("requestBody", addRequestBody(apiDoc.getRequestBodyName()));
-        mapUtil.addValue("serviceClassName", StringParserUtil.convertToPascalCase(apiDoc.getDomain()) + "Service");
-        mapUtil.addValue("serviceMethodName", addServiceMethod(apiDoc));
-
-        return mapUtil.replace();
-    }
-
+    /**
+     * 기본 패키지 구성 생성
+     *
+     * @param project 프로젝트 정보
+     * @throws IOException 파일 입출력 에러
+     */
     public void createDefaultProject(Project project) throws IOException {
         // Step1. 폴더 복사 하기
         File destinationFolder = copyDefaultProject(project);
@@ -129,6 +119,13 @@ public class ProjectBuilderRepositoryImpl implements ProjectBuilderRepository {
         setDefaultProjectVariables(project, destinationFolder);
     }
 
+    /**
+     * 생성된 기본 프로젝트 변수 설정
+     *
+     * @param project           프로젝트 정보
+     * @param destinationFolder 프로젝트 경로
+     * @throws IOException 파일 입출력 에러
+     */
     private void setDefaultProjectVariables(Project project, File destinationFolder) throws IOException {
         // 기본 변수 설정
         Map<String, String> variables = new HashMap<>();
@@ -150,6 +147,13 @@ public class ProjectBuilderRepositoryImpl implements ProjectBuilderRepository {
         }
     }
 
+    /**
+     * 스프링 기본 프로젝트 복사
+     *
+     * @param project 프로젝트 정보
+     * @return 복사 완료된 File
+     * @throws IOException 파일 입출력 에러
+     */
     private File copyDefaultProject(Project project) throws IOException {
         String destination = getDestination(project);
         File sourceFolder = new File(sourcePath);
@@ -164,6 +168,12 @@ public class ProjectBuilderRepositoryImpl implements ProjectBuilderRepository {
         return destinationFolder;
     }
 
+    /**
+     * Global 패키지 구조 생성
+     *
+     * @param project 프로젝트 정보
+     * @throws IOException 파일 입출력 에러
+     */
     @Override
     public void createGlobalGroup(Project project) throws IOException {
         String destination = getProjectMainPath(project, MainPath.global);
@@ -173,6 +183,13 @@ public class ProjectBuilderRepositoryImpl implements ProjectBuilderRepository {
         replaceGlobalGroupVariables(project, destination);
     }
 
+    /**
+     * 프로젝트 Global, Domain 패키지 경로
+     *
+     * @param project  프로젝트 정보
+     * @param mainPath global, domain
+     * @return 패키지 경로
+     */
     private String getProjectMainPath(Project project, MainPath mainPath) {
         StringBuilder destination = new StringBuilder(getDestination(project));
         String[] path = project.getProjectBuilderInfo().getPackageName().split("\\.");
@@ -182,6 +199,12 @@ public class ProjectBuilderRepositoryImpl implements ProjectBuilderRepository {
         return destination.toString();
     }
 
+    /**
+     * Domain Package 생성
+     *
+     * @param project 프로젝트 정보
+     * @throws IOException 파일 입출력 에러
+     */
     @Override
     public void createDomainPackages(Project project) throws IOException {
         // 도메인 폴더 생성
@@ -205,6 +228,13 @@ public class ProjectBuilderRepositoryImpl implements ProjectBuilderRepository {
         }
     }
 
+    /**
+     * 도메인 서브 파일들의 패키지 경로 메소드 이름 등의 변수 치환
+     * @param domain 도메인 이름
+     * @param subFiles 서버 파일 리스트
+     * @param project 프로젝트 정보
+     * @throws IOException 파일 입출력 에러
+     */
     private void replaceDomainSubFiles(String domain, List<File> subFiles, Project project) throws IOException {
         Map<String, String> variables = new HashMap<>();
         variables.put("domain-package-name", project.getProjectBuilderInfo().getPackageName() + ".domain");
@@ -218,6 +248,13 @@ public class ProjectBuilderRepositoryImpl implements ProjectBuilderRepository {
         }
     }
 
+    /**
+     * 클래스 파일들의 변수 치환
+     * api, application, dao, entity의 변수 치환
+     *
+     * @param project 프로젝트 정보
+     * @throws IOException 파일 입출력 에러
+     */
     @Override
     public void replaceClassesVariables(Project project) throws IOException {
         String domainFolder = getProjectMainPath(project, MainPath.domain);
@@ -239,10 +276,24 @@ public class ProjectBuilderRepositoryImpl implements ProjectBuilderRepository {
         }
     }
 
-    private void replaceServiceVariables(String domainSubPath, TableDefinition tableDefinition) {
+    /**
+     * 프로젝트 Service 변수 치환
+     *
+     * @param domainSubPath   {projectpath}/domain/{domain}/application
+     * @param tableDefinition 테이블 정보
+     * @throws IOException 파일 쓰기 실패
+     */
+    private void replaceServiceVariables(String domainSubPath, TableDefinition tableDefinition) throws IOException {
 
     }
 
+    /**
+     * 프로젝트 DAO 변수 치환
+     *
+     * @param domainSubPath   {projectpath}/domain/{domain}/dao
+     * @param tableDefinition 테이블 정보
+     * @throws IOException 파일 쓰기 실패
+     */
     private void replaceRepositoryVariables(String domainSubPath, TableDefinition tableDefinition) throws IOException {
         List<File> files = getLeafFiles(new File(domainSubPath));
 
@@ -254,11 +305,18 @@ public class ProjectBuilderRepositoryImpl implements ProjectBuilderRepository {
         }
     }
 
-    private void replaceEntityVariables(String domainSubPath, TableDefinition table) throws IOException {
+    /**
+     * 프로젝트 Entity 변수 치환
+     *
+     * @param domainSubPath   {projectpath}/domain/{domain}/entity
+     * @param tableDefinition 테이블 정보
+     * @throws IOException 파일 쓰기 실패
+     */
+    private void replaceEntityVariables(String domainSubPath, TableDefinition tableDefinition) throws IOException {
         List<File> files = getLeafFiles(new File(domainSubPath));
         StringBuilder sb = new StringBuilder();
 
-        for (ColumnDefinition column : table.getColumns().values()) {
+        for (ColumnDefinition column : tableDefinition.getColumns().values()) {
             try {
                 sb.append(column.getColumnVariable()).append('\n');
             } catch (Exception e) {
@@ -274,13 +332,20 @@ public class ProjectBuilderRepositoryImpl implements ProjectBuilderRepository {
         }
     }
 
+    /**
+     * Domain package의 서브 폴더 생성
+     *
+     * @param domain          도메인 이름
+     * @param destination     도메인 경로
+     * @param domainLeafFiles 도메인 최하위 파일 (File)
+     * @throws IOException 파일 입출력 에러
+     */
     private void createDomainSubPackages(String domain, String destination, Map<String, List<File>> domainLeafFiles) throws IOException {
         domain = StringParserUtil.convertToSnakeCase(domain);
 
         // 도메인 폴더 생성
-        File domainFolder = new File(destination + File.separator + domain
-                // 도메인 폴더 생성
-        );
+        File domainFolder = new File(destination + File.separator + domain);
+        // 도메인 폴더 생성
         if (!domainFolder.exists()) {
             domainFolder.mkdir();
         }
@@ -305,6 +370,14 @@ public class ProjectBuilderRepositoryImpl implements ProjectBuilderRepository {
         }
     }
 
+    /**
+     * global package 변수 설정
+     * 패키지 경로 등의 변수 설정
+     *
+     * @param project     프로젝트 정보
+     * @param destination global 패키지 경로
+     * @throws IOException 파일 입출력 에러
+     */
     private void replaceGlobalGroupVariables(Project project, String destination) throws IOException {
         File destinationFolder = new File(destination);
 
@@ -320,6 +393,13 @@ public class ProjectBuilderRepositoryImpl implements ProjectBuilderRepository {
         }
     }
 
+    /**
+     * 파일 변수 치환
+     * 파일 정보 및 치환할 변수 맵을 이용하여 파일 문자열 치환
+     * @param file 파일 정보
+     * @param variables 치환할 문자 맵
+     * @throws IOException 파일 입출력 에러
+     */
     private static void replaceFileVariables(File file, Map<String, String> variables) throws IOException {
         FileReader fileReader = new FileReader(file.getAbsolutePath());
         try (BufferedReader br = new BufferedReader(fileReader)) {
@@ -340,6 +420,12 @@ public class ProjectBuilderRepositoryImpl implements ProjectBuilderRepository {
         }
     }
 
+    /**
+     * global 기본 패키지 복사
+     *
+     * @param destination 복사할 경로
+     * @throws IOException 파일 입출력 에러
+     */
     private void copyGlobalGroup(String destination) throws IOException {
         // global 폴더 생성
         File destinationFolder = new File(destination);
@@ -424,27 +510,43 @@ public class ProjectBuilderRepositoryImpl implements ProjectBuilderRepository {
         return String.join(",\n", strPathVariable);
     }
 
-    private List<File> getLeafFiles(File folder) {
-        List<File> leafFiles = new ArrayList<>();
+    @Override
+    public String controllerBuilder(ApiDoc apiDoc) {
+        String controller = """
+                @Operation(summary = ":description")
+                :methodType(":apiUriPath")
+                public ResponseEntity<BaseResponse<:responseBodyName>> :methodName(
+                    :pathVariables
+                    :queryParameters
+                    :requestBody
+                ) {
+                    return :serviceClassName.:serviceMethodName
+                }
+                """;
 
-        // 폴더 내의 모든 파일과 하위 폴더 얻기
-        File[] files = folder.listFiles();
-        if (Objects.isNull(files)) {
-            return leafFiles;
-        }
-        // 파일과 하위 폴더 순회
-        for (File file : files) {
-            if (file.isDirectory()) {
-                // 하위 폴더인 경우 재귀 호출
-                leafFiles.addAll(getLeafFiles(file));
-            } else {
-                // 파일인 경우 리스트에 추가
-                leafFiles.add(file);
-            }
-        }
 
-        return leafFiles;
+        var mapUtil = new MapStringReplace(controller);
+
+        mapUtil.addValue("description", apiDoc.getDescription());
+        mapUtil.addValue("methodType", switch (apiDoc.getMethodType()) {
+            case GET -> "@GetMapping";
+            case POST -> "@PostMapping";
+            case PUT -> "@PutMapping";
+            case DELETE -> "@DeleteMapping";
+            case PATCH -> "@PatchMapping";
+        });
+        mapUtil.addValue("apiUriPath", apiDoc.getApiUriPath());
+        mapUtil.addValue("responseBodyName", StringParserUtil.upperFirstAndLowerElse(apiDoc.getResponseBodyName()));
+        mapUtil.addValue("methodName", convertToCamelCase(apiDoc.getMethodName()));
+        mapUtil.addValue("pathVariables", addPathVariableBuilder(apiDoc.getPathVariables()));
+        mapUtil.addValue("queryParameters", addQueryParameters(apiDoc.getQueryParameters()));
+        mapUtil.addValue("requestBody", addRequestBody(apiDoc.getRequestBodyName()));
+        mapUtil.addValue("serviceClassName", StringParserUtil.convertToPascalCase(apiDoc.getDomain()) + "Service");
+        mapUtil.addValue("serviceMethodName", addServiceMethod(apiDoc));
+
+        return mapUtil.replace();
     }
+
 
     /**
      * 프로젝트 도메인 리스트 정보

@@ -34,4 +34,13 @@ public class TableDefinition {
         }
         return "Object";
     }
+
+    public String getTableIdName() {
+        for (ColumnDefinition c : columns.values()) {
+            if (c.isId()) {
+                return c.getValidColumnName();
+            }
+        }
+        return name + "_id";
+    }
 }

@@ -37,7 +37,7 @@ public class ColumnDefinition {
         if (name.isBlank()) {
             throw new BaseExceptionHandler(ErrorCode.NEED_MORE_PROJECT_BUILD_DATA);
         }
-        StringBuilder sb = new StringBuilder(String.format("\t@Column(name = \"%s\"", convertToSnakeCase(name)));
+        StringBuilder sb = new StringBuilder(String.format("\t@Column(name = \"%s\"", getValidColumnName()));
 
         // Data type이 VARCHAR 이면서 length가 정해진 경우
         if (dataType.toUpperCase().contains("VARCHAR")) {
@@ -73,18 +73,24 @@ public class ColumnDefinition {
 
         return sb.toString();
     }
+
     public String mapToJavaType() {
         return TypeMapper.mapToJavaType(dataType);
     }
+
     public boolean isId() {
         return (options & 2) == 2;
     }
 
-    private String getValidParamName() {
+    public String getValidParamName() {
         String validName = VALID_CHAR_PATTERN.matcher(name).replaceAll("");
         if (Character.isDigit(validName.charAt(0))) {
             validName = "_" + validName;
         }
         return convertToCamelCase(validName);
+    }
+
+    public String getValidColumnName() {
+        return convertToSnakeCase(getValidParamName());
     }
 }
