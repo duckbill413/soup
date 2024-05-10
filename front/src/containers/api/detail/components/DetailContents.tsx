@@ -14,6 +14,7 @@ import { Option } from '@/containers/api/types/apiinput'
 import { LiveList, LiveObject } from '@liveblocks/client'
 import { ChangeEvent } from 'react'
 import { useMutation, useStorage } from '../../../../../liveblocks.config'
+import JsonEditor from './JsonEditor'
 
 // TODO: 예시 데이터. 삭제 필
 const sampleData: Array<Option> = [
@@ -77,6 +78,26 @@ export default function DetailContents({ idx }: Props) {
     updateLiveblock('path_variable', newPathList)
   }
 
+  // request, response body 변경 함수
+  const handleChangeBody = (
+    valid: boolean | undefined,
+    key: string,
+    newValue: string,
+  ) => {
+    const newBody = {
+      data: newValue,
+      isValid: valid ?? false,
+    }
+    try {
+      JSON.parse(newValue)
+      newBody.isValid = true
+    } catch {
+      if (newValue.length < 1) newBody.isValid = true
+      else newBody.isValid = false
+    }
+    updateLiveblock(key, newBody)
+  }
+
   return (
     <section className={styles.inputSection}>
       <Dropbox title="도메인" isEssential options={sampleData} />
@@ -117,9 +138,7 @@ export default function DetailContents({ idx }: Props) {
       />
       <InputText
         title="method 설명"
-        placeholder={`[Swagger API] description 으로 반영됩니다.
-2줄 이상이 되면 이렇게 세로로 길어져요.
-제목은 세로 상 중간에 위치하고요. `}
+        placeholder="[Swagger API] description 으로 반영됩니다."
         isEssential={false}
         multiline
         value={initial ? initial[idx]?.desc : ''}
@@ -139,6 +158,50 @@ export default function DetailContents({ idx }: Props) {
       <div>
         <Badge name="Query Parameter" />
         <QueryTable idx={idx} />
+      </div>
+
+      {initial && initial[idx]?.http_method !== 'GET' ? (
+        <div className={styles.requestBody}>
+          <div className={styles.badgeAndError}>
+            <Badge name="Request Body" />
+            {initial && initial[idx]?.request_body?.isValid ? null : (
+              <span className={styles.errorMsg}>
+                * 올바른 Json 형식이 아닙니다.
+              </span>
+            )}
+          </div>
+          <JsonEditor
+            body={initial ? initial[idx]?.request_body : undefined}
+            handleChange={(e: string) =>
+              handleChangeBody(
+                initial[idx]?.request_body?.isValid,
+                'request_body',
+                e,
+              )
+            }
+          />
+        </div>
+      ) : null}
+
+      <div>
+        <div className={styles.badgeAndError}>
+          <Badge name="Response Body" />
+          {initial && initial[idx]?.response_body?.isValid ? null : (
+            <span className={styles.errorMsg}>
+              * 올바른 Json 형식이 아닙니다.
+            </span>
+          )}
+        </div>
+        <JsonEditor
+          body={initial ? initial[idx]?.response_body : undefined}
+          handleChange={(e: string) =>
+            handleChangeBody(
+              initial && initial[idx]?.response_body?.isValid,
+              'response_body',
+              e,
+            )
+          }
+        />
       </div>
     </section>
   )
