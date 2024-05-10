@@ -3,13 +3,16 @@
 import { useEffect, useState } from 'react';
 import { ErdEditorElement } from '@dineug/erd-editor';
 import * as styles from '@/containers/erd/erd.css';
+import {updateERD} from "@/apis/erd/erdAPI";
 import {useMutation, useStorage} from "../../../liveblocks.config";
 
-export default function ERDDrawing() {
+type Props={
+  projectId:string;
+}
+export default function ERDDrawing({projectId}:Props) {
   const init = useStorage((root)=>root.erd)
   const [editor, setEditor] = useState<ErdEditorElement | null>(null);
   const [initStart, setInitStart] = useState<boolean>(false);
-
   const updateElement = useMutation(({ storage },erd:string ) => {
     const currData = storage.get('erd');
     currData?.set('json',erd);
@@ -64,6 +67,10 @@ export default function ERDDrawing() {
     loadErdEditor();
 
     return () => {
+      if(init){
+        const initString = typeof init === 'string' ? init : init.json;
+        updateERD(projectId, initString);
+      }
       editor?.destroy();
     };
 
