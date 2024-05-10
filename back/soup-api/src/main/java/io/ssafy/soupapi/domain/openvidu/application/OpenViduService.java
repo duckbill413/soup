@@ -22,6 +22,7 @@ public class OpenViduService {
     }
     final String OPENVIDU_REDIS_HASH = "openvidu_session:";
     private static final long ADDITIONAL_EXPIRE_SECONDS = 2 * 3600; // 2시간
+    private static final Duration SESSION_TTL = Duration.ofHours(3);
 
     /**
      * 프로젝트 ID를 기반으로 세션을 생성하거나 가져옵니다.
@@ -29,27 +30,57 @@ public class OpenViduService {
      * @return 세션 ID
      */
     public String getSessionId(String projectId) throws OpenViduJavaClientException, OpenViduHttpException {
-        ValueOperations<String, String> ops = redisTemplate.opsForValue();
-        String sessionId = ops.get(OPENVIDU_REDIS_HASH+projectId);
-
-        if (sessionId == null || openVidu.getActiveSession(sessionId) == null) {
-            // 세션 생성
-            Session session = openVidu.createSession(new SessionProperties.Builder().build());
-            sessionId = session.getSessionId();
-            // 세션 정보를 레디스에 저장하고 TTL을 24시간으로 설정
-            ops.set(OPENVIDU_REDIS_HASH + projectId, sessionId, Duration.ofHours(3));
+        // Redis에서 세션 ID를 가져옴
+        String sessionId = getSessionIdFromRedis(projectId);
+        // 세션 ID가 없는 경우, 새 세션을 생성함
+        if (sessionId == null) {
+            sessionId = createSession(projectId);
         }
+        return sessionId;
+    }
 
+    /**
+     * Redis에서 프로젝트 ID를 기반으로 세션 ID를 가져옵니다.
+     * @param projectId 프로젝트 식별자
+     * @return 세션 ID
+     */
+    private String getSessionIdFromRedis(String projectId) {
+        return redisTemplate.opsForValue().get(OPENVIDU_REDIS_HASH + projectId);
+    }
+
+    /**
+     * 새 세션을 생성하고 Redis에 저장합니다.
+     * @param projectId 프로젝트 식별자
+     * @return 생성된 세션 ID
+     */
+    private String createSession(String projectId) throws OpenViduJavaClientException, OpenViduHttpException {
+        // OpenVidu로부터 새 세션을 생성
+        Session session = openVidu.createSession(new SessionProperties.Builder().build());
+        // 새 세션의 ID를 가져옴
+        String sessionId = session.getSessionId();
+        // Redis에 세션 정보를 저장하고 TTL을 설정
+        redisTemplate.opsForValue().set(OPENVIDU_REDIS_HASH + projectId, sessionId, SESSION_TTL);
+        return sessionId;
+    }
+
+    /**
+     * 프로젝트 ID를 기반으로 세션 ID를 가져옵니다.
+     * @param projectId 프로젝트 식별자
+     * @return 세션 ID
+     */
+    public String getOnlySessionId(String projectId) throws BaseExceptionHandler {
+        String sessionId = getSessionIdFromRedis(projectId);
+        // 세션을 찾지 못한 경우 예외 처리
+        if (sessionId == null) {
+            throw new BaseExceptionHandler(ErrorCode.NOT_FOUND_SESSION);
+        }
         return sessionId;
     }
 
     /**
      * 세션에 대한 연결 정보를 가져오고 만료 시간을 연장하여 사용자 연결 정보를 반환합니다.
-     *
      * @param sessionId 세션 ID
      * @return 사용자 연결 정보
-     * @throws OpenViduJavaClientException OpenVidu Java 클라이언트 예외
-     * @throws OpenViduHttpException      OpenVidu HTTP 예외
      */
     public UserConnection getUserConnection(String sessionId) throws OpenViduJavaClientException, OpenViduHttpException {
         // 세션 가져오기
@@ -62,11 +93,8 @@ public class OpenViduService {
 
     /**
      * 세션을 가져옵니다.
-     *
      * @param sessionId 세션 ID
      * @return 세션
-     * @throws OpenViduJavaClientException OpenVidu Java 클라이언트 예외
-     * @throws OpenViduHttpException      OpenVidu HTTP 예외
      */
     private Session getSession(String sessionId) throws OpenViduJavaClientException, OpenViduHttpException {
         Session session = openVidu.getActiveSession(sessionId);
@@ -79,7 +107,6 @@ public class OpenViduService {
 
     /**
      * 세션의 만료 시간을 연장합니다.
-     *
      * @param sessionId 세션 ID
      */
     private void extendSessionExpiration(String sessionId) {
@@ -98,7 +125,6 @@ public class OpenViduService {
 
     /**
      * 세션의 만료 시간을 가져옵니다.
-     *
      * @param sessionId 세션 ID
      * @return 세션의 만료 시간
      */
@@ -108,12 +134,9 @@ public class OpenViduService {
 
     /**
      * 사용자 연결 정보를 생성합니다.
-     *
      * @param session   세션
      * @param sessionId 세션 ID
      * @return 사용자 연결 정보
-     * @throws OpenViduJavaClientException OpenVidu Java 클라이언트 예외
-     * @throws OpenViduHttpException      OpenVidu HTTP 예외
      */
     private UserConnection createUserConnection(Session session, String sessionId) throws OpenViduJavaClientException, OpenViduHttpException {
         // 연결 속성 설정
