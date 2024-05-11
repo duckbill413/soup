@@ -35,4 +35,7 @@ public class Project {
     private Object vuerd;
     @Field("project_api_doc")
     private ApiDocs apiDocs;
+    @Builder.Default
+    @Field("project_chats")
+    private List<ChatMessage> chats = new ArrayList<>();
 }

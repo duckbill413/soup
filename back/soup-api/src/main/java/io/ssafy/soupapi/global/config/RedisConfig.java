@@ -1,6 +1,8 @@
 package io.ssafy.soupapi.global.config;
 
-import io.ssafy.soupapi.domain.chat.dto.ChatMessageRedis;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import io.ssafy.soupapi.domain.chat.dto.RChatMessage;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -59,12 +61,18 @@ public class RedisConfig {
 
     // redis에 메시지 로그를 저장하기 위한 RedisTemplate 을 설정.
     @Bean
-    public RedisTemplate<String, ChatMessageRedis> redisTemplateChatMessage(RedisConnectionFactory connectionFactory) {
-        RedisTemplate<String, ChatMessageRedis> redisTemplate = new RedisTemplate<>();
+    public RedisTemplate<String, RChatMessage> redisTemplateChatMessage(RedisConnectionFactory connectionFactory) {
+        RedisTemplate<String, RChatMessage> redisTemplate = new RedisTemplate<>();
         redisTemplate.setConnectionFactory(connectionFactory);
 
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+        Jackson2JsonRedisSerializer<RChatMessage> serializer =
+                new Jackson2JsonRedisSerializer<>(objectMapper, RChatMessage.class);
+
         redisTemplate.setKeySerializer(new StringRedisSerializer());
-        redisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer<>(String.class));
+        redisTemplate.setValueSerializer(serializer);
+        redisTemplate.setHashValueSerializer(serializer);
         return redisTemplate;
     }
 

@@ -44,4 +44,8 @@ public record PageOffsetRequest(
     public static PageRequest of(PageOffsetRequest pageOffsetRequest, Sort sort) {
         return PageRequest.of(pageOffsetRequest.page() - 1, pageOffsetRequest.size(), sort);
     }
+
+    public long calculateOffset() {
+        return (long) (page - 1) * size;
+    }
 }

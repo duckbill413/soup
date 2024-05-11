@@ -2,7 +2,7 @@ package io.ssafy.soupapi.domain.chat.redis;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.ssafy.soupapi.domain.chat.dto.request.ChatMessageDto;
+import io.ssafy.soupapi.domain.chat.dto.response.ChatMessageRes;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.connection.Message;
@@ -27,7 +27,7 @@ public class RedisSubscriber implements MessageListener {
             log.info("RedisSubscriber 안에 onMessage()에 왔어요!");
             String topicName = new String(pattern); // topicName 이자 roomId
             String publishedMsg = (String) redisTemplateJackson.getStringSerializer().deserialize(message.getBody());
-            ChatMessageDto msg = objectMapper.readValue(publishedMsg, ChatMessageDto.class);
+            ChatMessageRes msg = objectMapper.readValue(publishedMsg, ChatMessageRes.class);
             messagingTemplate.convertAndSend("/sub/chatrooms/" + topicName, msg);
         } catch (JsonProcessingException e) {
             log.info("redis에서 publish 된 메시지 역직렬화 중 에러 발생");

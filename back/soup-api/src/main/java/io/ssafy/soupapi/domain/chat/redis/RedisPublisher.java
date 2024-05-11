@@ -1,7 +1,6 @@
 package io.ssafy.soupapi.domain.chat.redis;
 
-import io.ssafy.soupapi.domain.chat.dto.ChatMessageRedis;
-import io.ssafy.soupapi.domain.chat.dto.request.ChatMessageDto;
+import io.ssafy.soupapi.domain.chat.dto.response.ChatMessageRes;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -15,9 +14,9 @@ public class RedisPublisher {
 
     private final RedisTemplate<String, Object> redisTemplateJackson;
 
-    // redis topic에 메시지 발행.  메시지를 발행 후, 대기 중이던 RedisSubscriber가 메시지를 처리.
-    public void publish(ChannelTopic topic, ChatMessageDto chatMessageDto) {
-        redisTemplateJackson.convertAndSend(topic.getTopic(), chatMessageDto);
+    // redis topic에 메시지 발행. 메시지를 발행 후, 대기 중이던 RedisSubscriber가 메시지를 처리.
+    public void publish(ChannelTopic topic, ChatMessageRes chatMessageRes) {
+        redisTemplateJackson.convertAndSend(topic.getTopic(), chatMessageRes);
     }
 
 }

@@ -1,5 +1,6 @@
 package io.ssafy.soupapi.domain.project.mongodb.dao;
 
+import io.ssafy.soupapi.domain.project.mongodb.entity.ChatMessage;
 import io.ssafy.soupapi.domain.project.mongodb.entity.Project;
 import io.ssafy.soupapi.domain.project.mongodb.entity.Proposal;
 import org.bson.types.ObjectId;
@@ -7,9 +8,10 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
 import org.springframework.data.mongodb.repository.Update;
 
+import java.util.List;
 import java.util.Optional;
 
-public interface MProjectRepository extends MongoRepository<Project, ObjectId> {
+public interface MProjectRepository extends MongoRepository<Project, ObjectId>, CustomMProjectRepository {
     @Query(value = "{ _id: ?0 }", fields = "{ project_proposal: 1 }")
     Optional<Project> findProposalById(ObjectId projectId);
 
@@ -44,4 +46,13 @@ public interface MProjectRepository extends MongoRepository<Project, ObjectId> {
 
     @Query(value = "{ _id: ?0 }", fields = "{ project_issues: 0 }")
     Optional<Project> findProjectIssuesCount(ObjectId projectId);
+
+    @Query(value = "{ '_id': ?0 }", fields = "{ 'project_chats': 1 }")
+    @Update("{ '$push': { 'project_chats': ?1 } }")
+    void addChatMessage(ObjectId projectId, ChatMessage chatMessage);
+
+    @Query(value = "{ '_id': ?0 }", fields = "{ 'project_chats': 1 }")
+    @Update("{ '$push': { 'project_chats': { '$each': ?1 } } }")
+    void addChatMessageList(ObjectId projectId, List<ChatMessage> chatMessageList);
+
 }
