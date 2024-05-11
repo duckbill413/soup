@@ -11,6 +11,7 @@ import io.ssafy.soupapi.domain.noti.dto.RMentionNoti;
 import io.ssafy.soupapi.domain.project.mongodb.dao.MProjectRepository;
 import io.ssafy.soupapi.domain.project.mongodb.entity.ChatMessage;
 import io.ssafy.soupapi.global.common.request.PageOffsetRequest;
+import io.ssafy.soupapi.global.util.DateConverterUtil;
 import io.ssafy.soupapi.global.util.FindEntityUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -60,29 +61,33 @@ public class ChatService {
         return generateChatMessageRes(RChatMessage.chatMessageId(), chatMessageReq, sentAtLdt.toString());
     }
 
-    public List<GetChatMessageRes> getChatMessages(String chatroomId, PageOffsetRequest pageOffsetRequest) {
+    public List<GetChatMessageRes> getChatMessages(String chatroomId, PageOffsetRequest pageOffsetRequest, LocalDateTime standardTime) {
         List<GetChatMessageRes> result = new ArrayList<>();
         List<RChatMessage> rChatMessageList;
         List<ChatMessage> mChatMessageList;
         Map<String, Member> senderMap = new HashMap<>();
 
-        int startIndex = (pageOffsetRequest.page() - 1) * pageOffsetRequest.size();
-        int endIndex = startIndex + pageOffsetRequest.size() - 1;
-        rChatMessageList = rChatRepository.getMessage(chatroomId, pageOffsetRequest.size(), startIndex, endIndex);
+        Long reqTime = DateConverterUtil.ldtToLong(standardTime);
+        long offset = pageOffsetRequest.calculateOffset();
+        rChatMessageList = rChatRepository.getNMessagesBefore(chatroomId, reqTime, offset, pageOffsetRequest.size());
 
         for (RChatMessage rChatMessage : rChatMessageList) {
             senderMap.put(rChatMessage.senderId(), null);
             result.add(rChatMessage.toGetChatMessageRes());
         }
 
-        // MongoDB에, redis에서 발견한 마지막 메시지의 sentAt 이후에 발행된 메시지가 있는 지 조회
-        if (rChatMessageList.size() < pageOffsetRequest.size()) {
-            int rDataSize = rChatMessageList.size();
+        // MongoDB에, redis에서 발견한 earliest 메시지 이전에 발행된 메시지가 있는지 조회
+        int rDataSize = rChatMessageList.size();
+        if (rDataSize < pageOffsetRequest.size()) {
             int mDataSize = pageOffsetRequest.size() - rDataSize;
-            LocalDateTime mLdt = rChatMessageList.get(rDataSize - 1).sentAt();
-//            Date mDate = DateConverterUtil.ldtToDate(mLdt, "Z");
 
-            mChatMessageList = mProjectRepository.getNChatMessagesAfter(chatroomId, mLdt, mDataSize);
+            LocalDateTime mLdt; // redis에서 earliest 메시지의 sentAt
+            if (rDataSize == 0) { // redis에 (기준 시간 상관 없이) earlliest 메시지의 sentAt 조회해야
+                rChatMessageList = rChatRepository.getMessageByIndex(chatroomId, 0, 1);
+            }
+            mLdt = rChatMessageList.get(0).sentAt();
+
+            mChatMessageList = mProjectRepository.getNChatMessagesBefore(chatroomId, mLdt, mDataSize);
 
             for (ChatMessage mChatMessage : mChatMessageList) {
                 senderMap.put(mChatMessage.getSenderId(), null);

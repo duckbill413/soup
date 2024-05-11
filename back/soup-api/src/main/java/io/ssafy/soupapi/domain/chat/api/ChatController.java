@@ -11,6 +11,7 @@ import io.ssafy.soupapi.global.common.request.PageOffsetRequest;
 import io.ssafy.soupapi.global.common.response.BaseResponse;
 import io.ssafy.soupapi.global.security.user.UserSecurityDTO;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -22,8 +23,10 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Log4j2
@@ -49,11 +52,15 @@ public class ChatController {
     public ResponseEntity<BaseResponse<List<GetChatMessageRes>>> getChatMessages(
             @PathVariable String chatroomId,
             @Valid PageOffsetRequest pageOffset,
+            @RequestParam @Parameter(description = "페이징 요청 시 기준 시간.\n\n" +
+                    "채팅 시 DB가 자꾸 바뀌기 때문에 index를 기반으로 조회를 하기가 어렵습니다.\n\n" +
+                    "이 시간을 기준으로 페이지네이션을 하므로 이 값은 페이징을 요청하는 동안 **일정해야** 합니다.\n\n" +
+                    "형식은 yyyy-MM-ddTHH:mm:ss 으로 한국 시간 입니다.") LocalDateTime standardTime,
             @AuthenticationPrincipal UserSecurityDTO userSecurityDTO
     ) {
         return BaseResponse.success(
                 SuccessCode.SELECT_SUCCESS,
-                chatService.getChatMessages(chatroomId, pageOffset)
+                chatService.getChatMessages(chatroomId, pageOffset, standardTime)
         );
     }
 }

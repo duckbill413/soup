@@ -7,6 +7,6 @@ import java.util.List;
 
 public interface CustomMProjectRepository {
 
-    List<ChatMessage> getNChatMessagesAfter(String projectId, LocalDateTime afterTimestamp, int size);
+    List<ChatMessage> getNChatMessagesBefore(String projectId, LocalDateTime beforeTime, int size);
 
 }

@@ -29,4 +29,8 @@ public class DateConverterUtil {
         return Date.from(ldt.atZone(ZoneId.of(tz)).toInstant());
     }
 
+    public static Long ldtToLong(LocalDateTime ldt) {
+        return ldt.atZone(ZoneId.of("Asia/Seoul")).toInstant().toEpochMilli();
+    }
+
 }
