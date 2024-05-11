@@ -1,5 +1,6 @@
 package io.ssafy.soupapi.domain.project.usecase.api;
 
+import io.ssafy.soupapi.domain.project.usecase.dto.request.UpdateProjectImage;
 import io.ssafy.soupapi.domain.project.usecase.application.ProjectUsecase;
 import io.ssafy.soupapi.domain.project.usecase.dto.CreateAiProposal;
 import io.ssafy.soupapi.global.common.code.SuccessCode;
@@ -55,4 +56,18 @@ public class ProjectUsecaseController {
         );
     }
 
+
+    @Operation(summary = "프로젝트 사진 업데이트")
+    @PatchMapping("/{projectId}/image")
+    @PreAuthorize("@authService.hasProjectRoleMember(#projectId, #userSecurityDTO.getId())")
+    public ResponseEntity<BaseResponse<String>> changeProjectImage(
+            @PathVariable String projectId,
+            @RequestBody UpdateProjectImage updateProjectImage,
+            @AuthenticationPrincipal UserSecurityDTO userSecurityDTO
+    ) {
+        return BaseResponse.success(
+                SuccessCode.UPDATE_SUCCESS,
+                projectUsecase.changeProjectImage(projectId, updateProjectImage)
+        );
+    }
 }

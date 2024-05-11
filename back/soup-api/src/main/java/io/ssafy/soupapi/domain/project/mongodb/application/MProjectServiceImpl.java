@@ -8,6 +8,7 @@ import io.ssafy.soupapi.domain.project.mongodb.entity.Info;
 import io.ssafy.soupapi.domain.project.mongodb.entity.Project;
 import io.ssafy.soupapi.domain.project.mongodb.entity.apidocs.ApiDoc;
 import io.ssafy.soupapi.domain.project.mongodb.entity.issue.ProjectIssue;
+import io.ssafy.soupapi.domain.project.usecase.dto.request.UpdateProjectImage;
 import io.ssafy.soupapi.global.common.code.ErrorCode;
 import io.ssafy.soupapi.global.common.request.PageOffsetRequest;
 import io.ssafy.soupapi.global.common.response.OffsetPagination;
@@ -381,6 +382,17 @@ public class MProjectServiceImpl implements MProjectService {
         Update update = new Update().set("project_api_doc.api_docs.$", apiDoc);
         mongoTemplate.updateFirst(query, update, Project.class);
         return updateApiDoc.id().toString();
+    }
+
+    @Override
+    public void changeProjectImage(ObjectId projectId, UpdateProjectImage updateProjectImage) {
+        try {
+            Query query = new Query(Criteria.where("_id").is(projectId));
+            Update update = new Update().set("project_info.project_img_url", updateProjectImage.imgUrl());
+            mongoTemplate.updateFirst(query, update, Project.class);
+        } catch (Exception e) {
+            throw new BaseExceptionHandler(ErrorCode.FAILED_TO_CHANGE_PROJECT_IMAGE);
+        }
     }
 
     /**

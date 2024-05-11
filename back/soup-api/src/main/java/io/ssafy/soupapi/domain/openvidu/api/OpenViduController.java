@@ -48,6 +48,7 @@ public class OpenViduController {
     /**
      * 지정된 세션에 대한 토큰을 생성합니다.
      * @param sessionId 세션 ID
+     * @param projectId 프로젝트 ID
      * @return UserConnection
      */
     @Operation(summary = "webRTC 세션별 토큰 생성")
@@ -68,7 +69,8 @@ public class OpenViduController {
     /**
      * 특정 세션에서 사용자가 나가는 요청을 처리합니다.
      * @param sessionId 세션 ID
-     * @param connectionId 사용자 connectionID
+     * @param projectId 프로젝트 ID
+     * @param connectionId openvidu 사용자의 connectionID
      * @return 응답 상태
      */
     @Operation(summary = "webRTC 세션 퇴장 처리")
@@ -86,5 +88,25 @@ public class OpenViduController {
                 userSecurityDto.getId()+"님이 세션에서 퇴장하였습니다."
         );
     }
+
+    /**
+     * 프로젝트 아이디로 세션 ID를 조회합니다.
+     * @param projectId 프로젝트 ID
+     * @return UserConnection
+     */
+    @Operation(summary = "프로젝트 아이디로 세션 ID 조회")
+    @GetMapping("search/{projectId}")
+    @PreAuthorize("@authService.hasChatProjectRoleMember(#projectId, #userSecurityDto.getId())")
+    public ResponseEntity<BaseResponse<String>> getSessionId(
+            @PathVariable("projectId") String projectId,
+            @AuthenticationPrincipal UserSecurityDTO userSecurityDto
+    ) throws OpenViduJavaClientException, OpenViduHttpException {
+        return BaseResponse.success(
+                SuccessCode.CHECK_SUCCESS,
+                openViduService.getOnlySessionId(projectId)
+        );
+    }
+
+
 }
 
