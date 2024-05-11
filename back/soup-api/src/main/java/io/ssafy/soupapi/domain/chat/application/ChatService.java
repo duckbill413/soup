@@ -7,7 +7,7 @@ import io.ssafy.soupapi.domain.chat.dto.response.ChatMessageRes;
 import io.ssafy.soupapi.domain.chat.dto.response.GetChatMessageRes;
 import io.ssafy.soupapi.domain.member.entity.Member;
 import io.ssafy.soupapi.domain.noti.application.NotiService;
-import io.ssafy.soupapi.domain.noti.dto.MentionNotiRedis;
+import io.ssafy.soupapi.domain.noti.dto.RMentionNoti;
 import io.ssafy.soupapi.domain.project.mongodb.dao.MProjectRepository;
 import io.ssafy.soupapi.domain.project.mongodb.entity.ChatMessage;
 import io.ssafy.soupapi.global.common.request.PageOffsetRequest;
@@ -46,12 +46,12 @@ public class ChatService {
 
         // 2. 태그 알림
         for (String mentioneeId : chatMessageReq.mentionedMemberIds()) {
-            MentionNotiRedis mentionNotiRedis = notiService.generateMentionNotiRedis(RChatMessage.chatMessageId(), chatMessageReq.senderId(), mentioneeId);
+            RMentionNoti RMentionNoti = notiService.generateMentionNotiRedis(RChatMessage.chatMessageId(), chatMessageReq.senderId(), mentioneeId);
 
-            // TODO: 2-1. PostgreSQL 저장
+            // TODO: 2-1. 태그 알림 -> PostgreSQL 저장
 
-            // 2-2. Redis 저장
-            notiService.saveMentionNotiToRedis(chatroomId, mentionNotiRedis, sentAtLong);
+            // 2-2. 태그 알림 -> Redis 저장
+            notiService.saveMentionNotiToRedis(chatroomId, RMentionNoti, sentAtLong);
         }
 
         // 3. 채팅 메시지 -> Redis 저장
