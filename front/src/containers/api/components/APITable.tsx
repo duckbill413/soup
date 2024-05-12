@@ -8,6 +8,7 @@ import { TableHead } from '@/types/table'
 import { LiveList, LiveObject } from '@liveblocks/client'
 import { useState } from 'react'
 import { useMutation, useStorage } from '../../../../liveblocks.config'
+import ContextMenu from './ContextMenu'
 
 const tableHeaders: Array<TableHead> = [
   {
@@ -36,6 +37,10 @@ const tableHeaders: Array<TableHead> = [
 export default function APITable() {
   const [open, setOpen] = useState(false)
   const [idx, setIdx] = useState(0)
+  const [anchorEl, setAnchorEl] = useState<null | {
+    el: HTMLElement
+    selectedIndex: number
+  }>(null)
 
   const data = useStorage((root) => root.apiList)
 
@@ -58,6 +63,11 @@ export default function APITable() {
     )
   }, [])
 
+  const deleteRow = useMutation(({ storage }, index) => {
+    storage.get('apiList')?.delete(index)
+    setAnchorEl(null)
+  }, [])
+
   const handleClick = () => {
     addRow()
   }
@@ -69,9 +79,15 @@ export default function APITable() {
           data.map((item, key) => (
             <tr
               key={item.id}
-              onClick={() => {
-                setOpen(true)
-                setIdx(key)
+              onContextMenu={(e) => e.preventDefault()}
+              onMouseDown={(e) => {
+                if (e.button === 2 || anchorEl) {
+                  e.stopPropagation()
+                  setAnchorEl({ selectedIndex: key, el: e.currentTarget })
+                } else {
+                  setOpen(true)
+                  setIdx(key)
+                }
               }}
             >
               <td>
@@ -81,6 +97,12 @@ export default function APITable() {
               <td>{item.http_method}</td>
               <td>{item.uri}</td>
               <td colSpan={2}>{item.desc}</td>
+              <ContextMenu
+                handleDelete={deleteRow}
+                index={key}
+                anchorEl={anchorEl}
+                setAnchorEl={setAnchorEl}
+              />
             </tr>
           ))}
         <tr>

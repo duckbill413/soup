@@ -5,7 +5,9 @@ import { TableHead } from '@/types/table'
 import { LiveObject } from '@liveblocks/client'
 import { TextareaAutosize } from '@mui/base/TextareaAutosize'
 import Checkbox from '@mui/material/Checkbox'
+import { useState } from 'react'
 import { useMutation, useStorage } from '../../../../../liveblocks.config'
+import ContextMenu from '../../components/ContextMenu'
 import { Props } from '../types/props'
 import SelectType from './SelectType'
 
@@ -39,6 +41,10 @@ const queryTableHeaders: Array<TableHead> = [
 
 export default function QueryTable({ idx }: Props) {
   const initial = useStorage((root) => root.apiList)
+  const [anchorEl, setAnchorEl] = useState<null | {
+    el: HTMLElement
+    selectedIndex: number
+  }>(null)
 
   const updateQueryParam = useMutation(({ storage }, index, key, newValue) => {
     const apiList = storage.get('apiList')
@@ -61,6 +67,11 @@ export default function QueryTable({ idx }: Props) {
       )
   }, [])
 
+  const deleteRow = useMutation(({ storage }, index) => {
+    storage.get('apiList')?.get(idx)?.get('query_param')?.delete(index)
+    setAnchorEl(null)
+  }, [])
+
   const toggleRequired = useMutation(({ storage }, index) => {
     const apiList = storage
       .get('apiList')
@@ -74,7 +85,15 @@ export default function QueryTable({ idx }: Props) {
     <Table headers={queryTableHeaders}>
       {initial
         ? initial[idx].query_param?.map((item, index) => (
-            <tr key={index}>
+            <tr
+              key={index}
+              onContextMenu={(e) => e.preventDefault()}
+              onMouseDown={(e) => {
+                if (e.button === 2) {
+                  setAnchorEl({ selectedIndex: index, el: e.currentTarget })
+                }
+              }}
+            >
               <td colSpan={1} aria-label="required">
                 <Checkbox
                   checked={initial[idx].query_param?.[index].required}
@@ -117,6 +136,12 @@ export default function QueryTable({ idx }: Props) {
                   }
                 />
               </td>
+              <ContextMenu
+                handleDelete={deleteRow}
+                index={index}
+                anchorEl={anchorEl}
+                setAnchorEl={setAnchorEl}
+              />
             </tr>
           ))
         : null}

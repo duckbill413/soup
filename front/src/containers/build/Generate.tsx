@@ -152,6 +152,7 @@ export default function Generate() {
           </div>
           <div className={`${styles.box} ${styles.code}`}>
             <CodeMirror
+              editable={false}
               value="console.log('hello world!');"
               height="80vh"
               basicSetup={{

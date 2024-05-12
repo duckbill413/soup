@@ -27,6 +27,10 @@ globalStyle(`${table} tr>th:last-of-type`, {
   borderRight: 'none',
 })
 
+globalStyle(`${table} tbody>tr`, {
+  position: 'relative',
+})
+
 globalStyle(`${table} tbody>tr:hover`, {
   background: 'whitesmoke',
 })
@@ -48,6 +52,26 @@ globalStyle(`${table} td`, {
   textAlign: 'center',
   padding: '12px 0',
   borderBottom: `2px solid ${vars.color.gray}`,
+})
+
+export const deleteButton = style({})
+
+globalStyle(`${table} ${deleteButton}`, {
+  position: 'absolute',
+  right: 4,
+  top: 14,
+  fontSize: vars.fontSize.caption,
+  fontWeight: 800,
+  color: 'white',
+
+  width: 'fit-contents',
+  padding: '6px',
+  borderRadius: '50%',
+  backgroundColor: vars.color.orange,
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  aspectRatio: '1 / 1',
 })
 
 globalStyle(`${table} tr .newLine`, {
