@@ -1,4 +1,4 @@
-package io.ssafy.soupapi.global.external.liveblocks;
+package io.ssafy.soupapi.global.external.liveblocks.dao;
 
 import io.ssafy.soupapi.global.external.config.LiveblocksFeignConfig;
 import io.ssafy.soupapi.global.external.liveblocks.dto.request.CreateRoomReq;
@@ -7,16 +7,16 @@ import io.ssafy.soupapi.global.external.liveblocks.dto.request.UpdateRoomReq;
 import io.ssafy.soupapi.global.external.liveblocks.dto.response.ChangeRoomRes;
 import io.ssafy.soupapi.global.external.liveblocks.dto.response.GetUserIdTokenRes;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
 
 @FeignClient(
         name="liveblocksFeignClient",
         url="${liveblocks.base-url}",
         configuration = { LiveblocksFeignConfig.class }
 )
-public interface LiveblocksFeignClient {
+public interface LbFeignClient {
 
     // user ID token 발급 받기
     @PostMapping(value = "/identify-user", consumes = "application/json")
@@ -38,6 +38,12 @@ public interface LiveblocksFeignClient {
         @PathVariable("projectId") String projectId,
         @PathVariable("stepName") String stepName,
         @RequestBody UpdateRoomReq updateRoomReq
+    );
+
+    @GetMapping(value = "/rooms/%2Fproject%2F{projectId}%2F{stepName}/storage?format=json", consumes = "application/json")
+    HashMap<String, Object> getRoomStorageDocument(
+            @PathVariable("projectId") String projectId,
+            @PathVariable("stepName") String stepName
     );
 
 }
