@@ -35,8 +35,12 @@ public class UpdateProjectInfoController {
      * @return 제안서 정보
      */
 
-    @Operation(summary = "프로젝트 정보 수정", description = "프로젝트 개요 화면 정보 수정 <br>Jira Key, 프로젝트 이미지, 팀원 정보는 수정 불가" +
-                                                     "<ul><li>프로젝트 이름</li><li>프로젝트 설명</li><li>프로젝트 시작일</li><li>프로젝트 종료일</li><li>프로젝트 사용툴</li></ul>")
+    @Operation(summary = "프로젝트 정보 수정", description = "프로젝트 개요 화면 정보 수정\n\n" +
+        "Jira Key, 팀원 정보는 수정 불가\n\n" +
+        "FE 신사 분께서 날짜 형식과 timezone은 KST(한국 시간) 아닌 **UTC**로 보내겠다고 하셨습니다. (예) 2024-05-07T15:00:00.000Z)\n\n" +
+        "수정을 원치 않는 속성은 **null**로 보내주세요." +
+        "<ul><li>프로젝트 이름</li><li>프로젝트 설명</li><li>프로젝트 이미지 링크</li><li>프로젝트 시작일</li><li>프로젝트 종료일</li><li>프로젝트 사용툴</li></ul>"
+    )
     @PutMapping("/api/projects/{projectId}/info")
     @PreAuthorize("!@authService.hasViewerProjectRoleMember(#projectId, #userSecurityDTO.getId())")
     public ResponseEntity<BaseResponse<GetProjectInfo>> updateProjectInfo(

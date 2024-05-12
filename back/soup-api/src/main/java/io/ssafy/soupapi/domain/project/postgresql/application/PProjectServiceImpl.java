@@ -2,7 +2,6 @@ package io.ssafy.soupapi.domain.project.postgresql.application;
 
 
 import io.ssafy.soupapi.domain.member.entity.Member;
-import io.ssafy.soupapi.domain.project.constant.StepName;
 import io.ssafy.soupapi.domain.project.mongodb.dto.request.UpdateProjectInfo;
 import io.ssafy.soupapi.domain.project.postgresql.dao.PProjectRepository;
 import io.ssafy.soupapi.domain.project.postgresql.dto.response.SimpleProjectDto;
@@ -16,7 +15,6 @@ import io.ssafy.soupapi.global.common.response.OffsetPagination;
 import io.ssafy.soupapi.global.common.response.PageOffsetResponse;
 import io.ssafy.soupapi.global.exception.BaseExceptionHandler;
 import io.ssafy.soupapi.global.external.liveblocks.application.LiveblocksComponent;
-import io.ssafy.soupapi.global.external.liveblocks.dto.outline.Outline;
 import io.ssafy.soupapi.global.security.user.UserSecurityDTO;
 import io.ssafy.soupapi.global.util.FindEntityUtil;
 import lombok.RequiredArgsConstructor;
@@ -73,19 +71,6 @@ public class PProjectServiceImpl implements PProjectService {
                 .pagination(OffsetPagination.offset(data.getTotalPages(), data.getTotalElements(), data.getPageable()))
                 .build();
 
-        // Liveblocks outline room storage에서 해당 프로젝트들의 개요 정보 조회
-        for (SimpleProjectDto prjDto : result.content()) {
-            log.info("projectId {}에 대해서 lb에서 정보를 조회합니다.", prjDto.getId());
-            Outline obj = liveblocksComponent.getRoomStorageDocument(
-                    prjDto.getId(), StepName.outline, Outline.class
-            );
-
-            if (obj != null) {
-                prjDto.setName(obj.getName());
-                prjDto.setImgUrl(obj.getPhoto());
-            }
-        }
-
         return result;
     }
 
@@ -93,7 +78,8 @@ public class PProjectServiceImpl implements PProjectService {
     @Override
     public void updateProjectInfo(String projectId, UpdateProjectInfo updateProjectInfo) {
         var project = findEntityUtil.findPProjectById(projectId);
-        project.setName(updateProjectInfo.name());
+        if (updateProjectInfo.name() != null) project.setName(updateProjectInfo.name());
+        if (updateProjectInfo.imgUrl() != null) project.setImgUrl(updateProjectInfo.imgUrl());
         pProjectRepository.save(project);
     }
 

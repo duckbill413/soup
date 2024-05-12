@@ -27,12 +27,4 @@ public class FeignConfig {
         return new Retryer.Default(1000, 2000, 3);
     }
 
-    @Bean
-    public ObjectMapper objectMapper() {
-        ObjectMapper objectMapper = new ObjectMapper();
-        // 알 수 없는 속성이 있어도 역직렬화가 실패하지 않도록
-        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        return objectMapper;
-    }
-
 }

@@ -1,6 +1,7 @@
 package io.ssafy.soupapi.domain.project.mongodb.dto.response;
 
 import io.ssafy.soupapi.domain.project.mongodb.entity.Project;
+import io.ssafy.soupapi.global.util.DateConverterUtil;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 
@@ -46,8 +47,8 @@ public record GetProjectInfo(
                 .name(project.getInfo().getName())
                 .description(project.getInfo().getDescription())
                 .profileImgUrl(project.getInfo().getImgUrl())
-                .startDate(project.getInfo().getStartDate())
-                .endDate(project.getInfo().getEndDate())
+                .startDate(DateConverterUtil.instantToKstLd(project.getInfo().getStartDate()))
+                .endDate(DateConverterUtil.instantToKstLd(project.getInfo().getEndDate()))
                 .tools(project.getTools().stream().map(GetProjectTool::toProjectToolDto).toList())
                 .build();
     }

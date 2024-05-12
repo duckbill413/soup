@@ -81,6 +81,9 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-websocket'
 //    implementation("org.springframework.security:spring-security-messaging")
 
+    // Jackson이 Java 8의 날짜/시간 타입인 LocalDateTime을 처리하기 위해 필요
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
+
 }
 
 tasks.named('test') {
