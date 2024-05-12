@@ -22,7 +22,7 @@ import static io.ssafy.soupapi.global.util.StringParserUtil.convertToSnakeCase;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ColumnDefinition {
     @JsonIgnore
-    private static final Pattern VALID_CHAR_PATTERN = Pattern.compile("[^a-zA-Z0-9]");
+    private static final Pattern VALID_CHAR_PATTERN = Pattern.compile("[^a-zA-Z0-9_]");
     private String id;
     private String tableId;
     private String name;

@@ -17,5 +17,5 @@ public interface ProjectBuilderRepository {
 
     void projectMethodBuilder(Project project) throws IOException;
 
-    void insertEntityRelationShip(Project project);
+    void insertEntityRelationShip(Project project) throws IOException;
 }

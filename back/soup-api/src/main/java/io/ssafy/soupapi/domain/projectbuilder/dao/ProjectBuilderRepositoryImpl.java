@@ -176,7 +176,7 @@ public class ProjectBuilderRepositoryImpl implements ProjectBuilderRepository {
      */
     @Override
     public void createGlobalGroup(Project project) throws IOException {
-        String destination = getProjectMainPath(project, MainPath.global);
+        String destination = getProjectMainAbsolutePath(project, MainPath.global);
         // Step 1. copy global folder
         copyGlobalGroup(destination);
         // Step 2. replace global folder variables
@@ -190,7 +190,7 @@ public class ProjectBuilderRepositoryImpl implements ProjectBuilderRepository {
      * @param mainPath global, domain
      * @return 패키지 경로
      */
-    private String getProjectMainPath(Project project, MainPath mainPath) {
+    private String getProjectMainAbsolutePath(Project project, MainPath mainPath) {
         StringBuilder destination = new StringBuilder(getDestination(project));
         String[] path = project.getProjectBuilderInfo().getPackageName().split("\\.");
         destination.append("\\src\\main\\java\\");
@@ -208,7 +208,7 @@ public class ProjectBuilderRepositoryImpl implements ProjectBuilderRepository {
     @Override
     public void createDomainPackages(Project project) throws IOException {
         // 도메인 폴더 생성
-        String destination = getProjectMainPath(project, MainPath.domain);
+        String destination = getProjectMainAbsolutePath(project, MainPath.domain);
 
         File destinationFolder = new File(destination);
         if (!destinationFolder.exists()) {
@@ -238,7 +238,7 @@ public class ProjectBuilderRepositoryImpl implements ProjectBuilderRepository {
      */
     private void replaceDomainSubFiles(String domain, List<File> subFiles, Project project) throws IOException {
         Map<String, String> variables = new HashMap<>();
-        variables.put("domain-package-name", project.getProjectBuilderInfo().getPackageName() + ".domain");
+        variables.put("domain-package-name", project.getProjectBuilderInfo().getPackageName() + ".domain." + convertToSnakeCase(domain));
         variables.put("domain-class-name", StringParserUtil.convertToPascalCase(domain));
         variables.put("domain-method-name", convertToCamelCase(domain));
         variables.put("entity-name", StringParserUtil.convertToPascalCase(domain));
@@ -258,7 +258,7 @@ public class ProjectBuilderRepositoryImpl implements ProjectBuilderRepository {
      */
     @Override
     public void replaceClassesVariables(Project project) throws IOException {
-        String domainFolder = getProjectMainPath(project, MainPath.domain);
+        String domainFolder = getProjectMainAbsolutePath(project, MainPath.domain);
         var schema = getProjectSchemaFromERD(project);
 
         for (TableDefinition tableDefinition : schema.getTables().values()) {
@@ -273,17 +273,36 @@ public class ProjectBuilderRepositoryImpl implements ProjectBuilderRepository {
     }
 
     @Override
-    public void insertEntityRelationShip(Project project) {
-        String domainFolder = getProjectMainPath(project, MainPath.domain);
+    public void insertEntityRelationShip(Project project) throws IOException {
+        String domainAbsolutePath = getProjectMainAbsolutePath(project, MainPath.domain);
+        String domainPackage = project.getProjectBuilderInfo().getPackageName() + ".domain";
         var schema = getProjectSchemaFromERD(project);
+        var tables = schema.getTables();
 
-        for (TableRelationDefinition value : schema.getRelations().values()) {
+        for (TableRelationDefinition relation : schema.getRelations().values()) {
+            var parent = tables.get(relation.getParentTableId());
+            var child = tables.get(relation.getChildTableId());
+            // 부모 Entity 파일 경로
+            var parentEntityPath = domainAbsolutePath + File.separator + convertToSnakeCase(parent.getName()) + File.separator + "entity" + File.separator + convertToPascalCase(parent.getName()) + ".java";
+            String parentImportBuilder = schema.getParentImportBuilder(relation.getId(), domainPackage);
+            String parentRelationBuilder = schema.getParentRelationBuilder(relation.getId());
 
+            insertImportIntoFile(new File(parentEntityPath), parentImportBuilder);
+            insertRelationIntoFile(new File(parentEntityPath), parentRelationBuilder);
+
+            // 자식 Entity 파일 경로
+            var childEntityPath = domainAbsolutePath + File.separator + convertToSnakeCase(child.getName()) + File.separator + "entity" + File.separator + convertToPascalCase(child.getName()) + ".java";
+            String childImportBuilder = schema.getChildImportBuilder(relation.getId(), domainPackage);
+            String childRelationBuilder = schema.getChildRelationBuilder(relation.getId());
+
+            insertImportIntoFile(new File(childEntityPath), childImportBuilder);
+            insertRelationIntoFile(new File(childEntityPath), childRelationBuilder);
         }
     }
+
     @Override
     public void projectMethodBuilder(Project project) throws IOException {
-        String domainPath = getProjectMainPath(project, MainPath.domain);
+        String domainPath = getProjectMainAbsolutePath(project, MainPath.domain);
         ApiDocs apiDocs = project.getApiDocs();
         var apiDocList = project.getApiDocs().getApiDocList();
         var usableDomains = new HashSet<>(apiDocs.getDomains().stream().map(String::toUpperCase).toList());
@@ -610,7 +629,7 @@ public class ProjectBuilderRepositoryImpl implements ProjectBuilderRepository {
      * @param methodStr 삽입할 함수 문자열
      * @throws IOException 파일 입출력 에러
      */
-    private static void insertMethodIntoFile(File file, String methodStr) throws IOException {
+    private void insertMethodIntoFile(File file, String methodStr) throws IOException {
         FileReader fileReader = new FileReader(file.getAbsolutePath());
         try (BufferedReader br = new BufferedReader(fileReader)) {
             StringBuilder sb = new StringBuilder();
@@ -622,6 +641,55 @@ public class ProjectBuilderRepositoryImpl implements ProjectBuilderRepository {
             int closingBraceIndex = sb.toString().lastIndexOf('}');
             if (closingBraceIndex != -1) {
                 sb.insert(closingBraceIndex, "\n" + methodStr);
+            }
+
+            File newFile = new File(file.getAbsolutePath());
+            FileWriter writer = new FileWriter(newFile);
+            try (BufferedWriter bw = new BufferedWriter(writer)) {
+                bw.write(sb.toString());
+                bw.flush();
+            }
+        }
+    }
+
+    private void insertImportIntoFile(File file, String importStr) throws IOException {
+        FileReader fileReader = new FileReader(file.getAbsolutePath());
+        try (BufferedReader br = new BufferedReader(fileReader)) {
+            StringBuilder sb = new StringBuilder();
+            String line;
+            while ((line = br.readLine()) != null) {
+                sb.append(line).append('\n');
+            }
+
+            int packageIndex = sb.indexOf("package");
+            if (packageIndex == -1) {
+                packageIndex = 0;
+            }
+
+            int insertIndex = sb.indexOf(";", packageIndex) + 1;
+            sb.insert(insertIndex, '\n' + importStr);
+
+            File newFile = new File(file.getAbsolutePath());
+            FileWriter writer = new FileWriter(newFile);
+            try (BufferedWriter bw = new BufferedWriter(writer)) {
+                bw.write(sb.toString());
+                bw.flush();
+            }
+        }
+    }
+
+    private void insertRelationIntoFile(File file, String relationStr) throws IOException {
+        FileReader fileReader = new FileReader(file.getAbsolutePath());
+        try (BufferedReader br = new BufferedReader(fileReader)) {
+            StringBuilder sb = new StringBuilder();
+            String line;
+            while ((line = br.readLine()) != null) {
+                sb.append(line).append('\n');
+            }
+
+            int closingBraceIndex = sb.toString().lastIndexOf('}');
+            if (closingBraceIndex != -1) {
+                sb.insert(closingBraceIndex, "\n" + relationStr);
             }
 
             File newFile = new File(file.getAbsolutePath());
