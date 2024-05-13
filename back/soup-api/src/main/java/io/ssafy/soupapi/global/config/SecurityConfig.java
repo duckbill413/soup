@@ -53,7 +53,8 @@ public class SecurityConfig {
         final List<String> allowedOriginPatterns = List.of(
                 "http://localhost:8080",
                 "http://localhost:3000",
-                "https://so-up.store"
+                "https://so-up.store",
+                "https://jiangxy.github.io" // websocket stomp 테스팅 : https://github.com/jiangxy/websocket-debug-tool
         );
 
         return request -> {
@@ -80,6 +81,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorize -> authorize
 //                        .requestMatchers(HttpMethod.OPTIONS,"/**").permitAll() // prefight CORS 이슈 때문에 넣었지만 안 넣어도 됨
                         .requestMatchers("/login", "/login/**", "/error", "/api/auth/**").permitAll()
+                        .requestMatchers("/ws-stomp", "/ws-stomp/**", "/sub/**", "/pub/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .oauth2Login(

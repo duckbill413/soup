@@ -38,4 +38,7 @@ public class Project {
     private ApiDocs apiDocs;
     @Field("project_builder_info")
     private ProjectBuilderInfo projectBuilderInfo;
+    @Builder.Default
+    @Field("project_chats")
+    private List<ChatMessage> chats = new ArrayList<>();
 }

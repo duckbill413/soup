@@ -78,6 +78,7 @@ public enum ErrorCode {
 
     // 프로젝트 에러 (CODE: 300)
     NOT_FOUND_PROJECT(404, "B300", "존재하지 않는 프로젝트 입니다."),
+    FAILED_TO_CHANGE_PROJECT_IMAGE(404, "B301", "프로젝트 이미지 변경 실패"),
 
     // 프로젝트 권한 (CODE: 400)
     NOT_FOUND_PROJECT_AUTH(404, "B400", "프로젝트 권한이 존재하지 않습니다."),
@@ -104,6 +105,7 @@ public enum ErrorCode {
 
     // OpenVidu 관련 에러 (CODE: 800)
     NOT_FOUND_SESSION(404, "B800", "존재하지 않는 세션입니다."),
+    NOT_FOUND_EXPIRE_TIME(404,"B801","만료시간이 존재하지 않습니다."),
 
     // API DOCS 관련 에러 (CODE: 900)
     NOT_FOUND_API_DOC(404, "B900", "찾을 수 없는 API 문서 입니다."),

@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.mongodb.core.mapping.Field;
 
+import java.time.Instant;
 import java.time.LocalDate;
 
 @Getter
@@ -18,9 +19,9 @@ public class Info {
     @Field("project_img_url")
     private String imgUrl;
     @Field("project_start_date")
-    private LocalDate startDate;
+    private Instant startDate;
     @Field("project_end_date")
-    private LocalDate endDate;
+    private Instant endDate;
     @Field("project_jira_host")
     private String jiraHost;
     @Field("project_jira_project_key")

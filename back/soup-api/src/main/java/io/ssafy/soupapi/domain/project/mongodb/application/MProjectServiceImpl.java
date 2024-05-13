@@ -8,12 +8,14 @@ import io.ssafy.soupapi.domain.project.mongodb.entity.Info;
 import io.ssafy.soupapi.domain.project.mongodb.entity.Project;
 import io.ssafy.soupapi.domain.project.mongodb.entity.apidocs.ApiDoc;
 import io.ssafy.soupapi.domain.project.mongodb.entity.issue.ProjectIssue;
+import io.ssafy.soupapi.domain.project.usecase.dto.request.UpdateProjectImage;
 import io.ssafy.soupapi.global.common.code.ErrorCode;
 import io.ssafy.soupapi.global.common.request.PageOffsetRequest;
 import io.ssafy.soupapi.global.common.response.OffsetPagination;
 import io.ssafy.soupapi.global.common.response.PageOffsetResponse;
 import io.ssafy.soupapi.global.exception.BaseExceptionHandler;
 import io.ssafy.soupapi.global.security.user.UserSecurityDTO;
+import io.ssafy.soupapi.global.util.DateConverterUtil;
 import io.ssafy.soupapi.global.util.StringParserUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -29,6 +31,7 @@ import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -54,8 +57,8 @@ public class MProjectServiceImpl implements MProjectService {
         var project = Project.builder()
                 .info(
                         Info.builder()
-                                .startDate(LocalDate.now())
-                                .endDate(LocalDate.now())
+                                .startDate(DateConverterUtil.ldToInstant(LocalDate.now()))
+                                .endDate(DateConverterUtil.ldToInstant(LocalDate.now()))
                                 .build()
                 ).build();
 
@@ -106,7 +109,7 @@ public class MProjectServiceImpl implements MProjectService {
 
     /**
      * 프로젝트 정보(개요) 업데이트
-     * - 이미지 정보, JIRA 정보는 업데이트 되지 않음
+     * - JIRA 정보는 업데이트 되지 않음
      *
      * @param projectId         업데이트 하는 프로젝트의 Id
      * @param updateProjectInfo 업데이트할 프로젝트 정보
@@ -119,18 +122,37 @@ public class MProjectServiceImpl implements MProjectService {
                 new BaseExceptionHandler(ErrorCode.NOT_FOUND_PROJECT));
 
         // update info
-        project.setInfo(Info.builder()
-                .name(updateProjectInfo.name())
-                .description(updateProjectInfo.description())
-                .startDate(updateProjectInfo.getStartDate())
-                .endDate(updateProjectInfo.getEndDate())
-                .build());
+        project.setInfo(generateInfo(project, updateProjectInfo));
         // update tools
-        var tools = updateProjectInfo.tools().stream().map(UpdateProjectTool::toTool).toList();
-        project.setTools(tools);
+        if (updateProjectInfo.tools() != null) {
+            var tools = updateProjectInfo.tools().stream().map(UpdateProjectTool::toTool).toList();
+            project.setTools(tools);
+        }
 
         mProjectRepository.save(project);
         return GetProjectInfo.toProjectInfoDto(project);
+    }
+
+    // null로 요청이 들어온 변수는 update 하지 않는다
+    private Info generateInfo(Project project, UpdateProjectInfo updateProjectInfo) {
+        return Info.builder()
+                .name(updateProjectInfo.name() == null ?
+                        project.getInfo().getName() : updateProjectInfo.name()
+                )
+                .description(updateProjectInfo.description() == null ?
+                        project.getInfo().getDescription() : updateProjectInfo.description()
+                )
+                .imgUrl(updateProjectInfo.imgUrl() == null ?
+                        project.getInfo().getImgUrl() : updateProjectInfo.imgUrl()
+                )
+                .startDate(updateProjectInfo.startDate() == null ?
+                        project.getInfo().getStartDate() : updateProjectInfo.startDate()
+
+                )
+                .endDate(updateProjectInfo.endDate() == null ?
+                        project.getInfo().getEndDate() : updateProjectInfo.endDate()
+                )
+                .build();
     }
 
     /**
@@ -408,6 +430,17 @@ public class MProjectServiceImpl implements MProjectService {
         }
 
         return "삭제 실패";
+    }
+
+    @Override
+    public void changeProjectImage(ObjectId projectId, UpdateProjectImage updateProjectImage) {
+        try {
+            Query query = new Query(Criteria.where("_id").is(projectId));
+            Update update = new Update().set("project_info.project_img_url", updateProjectImage.imgUrl());
+            mongoTemplate.updateFirst(query, update, Project.class);
+        } catch (Exception e) {
+            throw new BaseExceptionHandler(ErrorCode.FAILED_TO_CHANGE_PROJECT_IMAGE);
+        }
     }
 
     /**

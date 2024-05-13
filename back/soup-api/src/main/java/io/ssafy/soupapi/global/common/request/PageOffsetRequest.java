@@ -9,7 +9,7 @@ import org.springframework.data.domain.Sort;
 public record PageOffsetRequest(
         @Schema(description = "페이지 번호 (최초 페이지 번호: 1)")
         int page,
-        @Max(value = 100, message = "최대 100개까지 한번에 호출할 수 있습니다.")
+        @Max(value = 1000, message = "최대 1,000개까지 한번에 호출할 수 있습니다.")
         @Schema(description = "페이지 크기")
         int size
 ) {
@@ -43,5 +43,9 @@ public record PageOffsetRequest(
      */
     public static PageRequest of(PageOffsetRequest pageOffsetRequest, Sort sort) {
         return PageRequest.of(pageOffsetRequest.page() - 1, pageOffsetRequest.size(), sort);
+    }
+
+    public long calculateOffset() {
+        return (long) (page - 1) * size;
     }
 }
