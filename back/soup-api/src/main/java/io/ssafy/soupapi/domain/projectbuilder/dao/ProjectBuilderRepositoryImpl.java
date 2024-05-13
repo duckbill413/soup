@@ -8,6 +8,7 @@ import io.ssafy.soupapi.domain.project.mongodb.entity.apidocs.ApiVariable;
 import io.ssafy.soupapi.domain.project.mongodb.entity.builder.ProjectBuilderInfo;
 import io.ssafy.soupapi.domain.projectbuilder.entity.MainPath;
 import io.ssafy.soupapi.global.util.MapStringReplace;
+import io.ssafy.soupapi.global.util.RecordClassGenerator;
 import io.ssafy.soupapi.global.util.StringParserUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -24,11 +25,12 @@ import static io.ssafy.soupapi.global.util.StringParserUtil.*;
 @Repository
 @RequiredArgsConstructor
 public class ProjectBuilderRepositoryImpl implements ProjectBuilderRepository {
+    private final RecordClassGenerator recordClassGenerator;
+    private final ObjectMapper objectMapper;
     final String sourcePath = "src/main/resources/templates/springboot-default-project";
     final String domainPath = "src/main/resources/templates/springboot-default-project-domain";
     final String globalPath = "src/main/resources/templates/springboot-default-project-global";
     final String saveRootPath = "C:\\util\\%s\\%s"; // TODO: 환경 변수를 이용하여 경로 변경
-    private final ObjectMapper objectMapper;
     final String[] domainSubNames = {"entity", "dao", "application", "api", "dto"};
 
     /**
@@ -99,8 +101,7 @@ public class ProjectBuilderRepositoryImpl implements ProjectBuilderRepository {
         String replaced = mapUtil.replace();
 
         File defaultClass = new File(folderPath.toString());
-        FileWriter writer = new FileWriter(defaultClass);
-        try (BufferedWriter bw = new BufferedWriter(writer)) {
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(defaultClass))) {
             bw.write(replaced);
             bw.flush();
         }
@@ -297,6 +298,39 @@ public class ProjectBuilderRepositoryImpl implements ProjectBuilderRepository {
 
             insertImportIntoFile(new File(childEntityPath), childImportBuilder);
             insertRelationIntoFile(new File(childEntityPath), childRelationBuilder);
+        }
+    }
+
+    @Override
+    public void createDtoClassFiles(Project project) throws IOException {
+        String domainPackage = project.getProjectBuilderInfo().getPackageName() + ".domain";
+        String domainAbsolutePath = getProjectMainAbsolutePath(project, MainPath.domain);
+        ApiDocs apiDocs = project.getApiDocs();
+
+        List<ApiDoc> apiDocList = project.getApiDocs().getApiDocList();
+        for (ApiDoc apiDoc : apiDocList) {
+            String subDomainPackage = domainPackage + String.format(".%s.dto", convertToSnakeCase(apiDoc.getDomain()));
+            String subDomainAbsolutePath = domainAbsolutePath + File.separator + convertToSnakeCase(apiDoc.getDomain());
+
+            // Generate RequestBody
+            if (apiDoc.getResponseBody() != null && !apiDoc.getRequestBody().isBlank()) {
+                recordClassGenerator.generateRecordClasses(
+                        apiDoc.getRequestBody(),
+                        apiDoc.getRequestBodyName(),
+                        subDomainPackage + ".request",
+                        subDomainAbsolutePath + File.separator + "request"
+                );
+            }
+
+            // Generate ResponseBody
+            if (apiDoc.getResponseBody() != null && !apiDoc.getResponseBody().isBlank()) {
+                recordClassGenerator.generateRecordClasses(
+                        apiDoc.getResponseBody(),
+                        apiDoc.getResponseBodyName(),
+                        subDomainPackage + ".response",
+                        subDomainAbsolutePath + File.separator + "response"
+                );
+            }
         }
     }
 
@@ -613,8 +647,7 @@ public class ProjectBuilderRepositoryImpl implements ProjectBuilderRepository {
             mapUtil.addAllValues(variables);
 
             File newFile = new File(file.getAbsolutePath());
-            FileWriter writer = new FileWriter(newFile);
-            try (BufferedWriter bw = new BufferedWriter(writer)) {
+            try (BufferedWriter bw = new BufferedWriter(new FileWriter(newFile))) {
                 bw.write(mapUtil.replace());
                 bw.flush();
             }
@@ -644,8 +677,7 @@ public class ProjectBuilderRepositoryImpl implements ProjectBuilderRepository {
             }
 
             File newFile = new File(file.getAbsolutePath());
-            FileWriter writer = new FileWriter(newFile);
-            try (BufferedWriter bw = new BufferedWriter(writer)) {
+            try (BufferedWriter bw = new BufferedWriter(new FileWriter(newFile))) {
                 bw.write(sb.toString());
                 bw.flush();
             }
@@ -670,8 +702,7 @@ public class ProjectBuilderRepositoryImpl implements ProjectBuilderRepository {
             sb.insert(insertIndex, '\n' + importStr);
 
             File newFile = new File(file.getAbsolutePath());
-            FileWriter writer = new FileWriter(newFile);
-            try (BufferedWriter bw = new BufferedWriter(writer)) {
+            try (BufferedWriter bw = new BufferedWriter(new FileWriter(newFile))) {
                 bw.write(sb.toString());
                 bw.flush();
             }
@@ -693,8 +724,7 @@ public class ProjectBuilderRepositoryImpl implements ProjectBuilderRepository {
             }
 
             File newFile = new File(file.getAbsolutePath());
-            FileWriter writer = new FileWriter(newFile);
-            try (BufferedWriter bw = new BufferedWriter(writer)) {
+            try (BufferedWriter bw = new BufferedWriter(new FileWriter(newFile))) {
                 bw.write(sb.toString());
                 bw.flush();
             }

@@ -18,4 +18,5 @@ public interface ProjectBuilderRepository {
     void projectMethodBuilder(Project project) throws IOException;
 
     void insertEntityRelationShip(Project project) throws IOException;
+    void createDtoClassFiles(Project project) throws IOException;
 }
