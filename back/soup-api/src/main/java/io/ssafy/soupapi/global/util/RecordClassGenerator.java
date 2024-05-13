@@ -25,11 +25,11 @@ public class RecordClassGenerator {
     private void generateRecordClass(JsonNode node, String className, String packagePath, String destination) throws IOException {
         StringBuilder sb = new StringBuilder();
         // 패키지 선언
-        sb.append(String.format("package %s;", packagePath)).append("\n");
+        sb.append(String.format("package %s;", packagePath)).append("\n\n");
         // Util 생성
-        sb.append("import java.util.*").append("\n");
+        sb.append("import java.util.*;").append("\n");
         sb.append("import io.swagger.v3.oas.annotations.media.Schema;").append("\n");
-        sb.append("import jakarta.validation.constraints.*;").append("\n");
+        sb.append("import jakarta.validation.constraints.*;").append("\n\n");
         // Record 클래스 생성
         sb.append("public record ").append(className).append("(\n");
 

@@ -94,7 +94,7 @@ public class ProjectBuilderRepositoryImpl implements ProjectBuilderRepository {
                 }
                 """;
 
-        folderPath.append(File.separator).append(projectBuilderInfo.getName()).append("Application.java");
+        folderPath.append(File.separator).append(convertToPascalCase(projectBuilderInfo.getName())).append("Application.java");
         var mapUtil = new MapStringReplace(application);
         mapUtil.addValue("springboot-project_package", projectBuilderInfo.getPackageName());
         mapUtil.addValue("springboot-project-name", projectBuilderInfo.getName() + "Application");
@@ -310,7 +310,7 @@ public class ProjectBuilderRepositoryImpl implements ProjectBuilderRepository {
         List<ApiDoc> apiDocList = project.getApiDocs().getApiDocList();
         for (ApiDoc apiDoc : apiDocList) {
             String subDomainPackage = domainPackage + String.format(".%s.dto", convertToSnakeCase(apiDoc.getDomain()));
-            String subDomainAbsolutePath = domainAbsolutePath + File.separator + convertToSnakeCase(apiDoc.getDomain());
+            String subDomainAbsolutePath = domainAbsolutePath + File.separator + convertToSnakeCase(apiDoc.getDomain()) + File.separator + "dto";
 
             // Generate RequestBody
             if (apiDoc.getResponseBody() != null && !apiDoc.getRequestBody().isBlank()) {

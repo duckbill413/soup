@@ -58,6 +58,8 @@ public class ProjectBuilderServiceImpl implements ProjectBuilderService {
             projectBuilderRepository.projectMethodBuilder(project);
             // create entity relationship
             projectBuilderRepository.insertEntityRelationShip(project);
+            // create dto files
+            projectBuilderRepository.createDtoClassFiles(project);
         } catch (Exception e) {
             e.printStackTrace();
             throw new BaseExceptionHandler(ErrorCode.FAILED_TO_BUILD_PROJECT);
