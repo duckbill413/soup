@@ -17,6 +17,12 @@ function PlanBeforeAI () {
   const [targetInput, setTargetInput] = useState<string>('')
   const [effectInput, setEffectInput] = useState<string>('')
 
+  // 한글키 중복 입력 방지용
+  const [isComposingBackground, setIsComposingBackground] = useState(false);
+  const [isComposingIntro, setIsComposingIntro] = useState(false);
+  const [isComposingTarget, setIsComposingTarget] = useState(false);
+  const [isComposingEffect, setIsComposingEffect] = useState(false);
+
   const updateTags = useMutation(({storage}, action:string, field, tag)=>{
     const tags = storage.get("plan")?.get("before")?.get(field)
     if(action === "add"){
@@ -33,14 +39,19 @@ function PlanBeforeAI () {
     }
   },[])
 
-  const addHashtag = (inputValue:string, field:string, setter: React.Dispatch<React.SetStateAction<string>>) =>
+  const addHashtag = (inputValue:string, field:string, setter: React.Dispatch<React.SetStateAction<string>>, isComposing: boolean) =>
     (e: KeyboardEvent<HTMLInputElement>) => {
-      if (e.key === 'Enter' && inputValue.trim() !== '') {
+      if (e.key === 'Enter' && !isComposing && inputValue.trim() !== '') {
         updateTags("add",`project_${field}`, {id: crypto.randomUUID(), content: inputValue.trim()});
         setter('');
         e.preventDefault();
       }
   };
+
+  const handleComposition = (setter: React.Dispatch<React.SetStateAction<boolean>>) =>
+    (e: React.CompositionEvent) => {
+      setter(e.type !=='compositionend')
+    }
 
   const onChangeInput = (setter: React.Dispatch<React.SetStateAction<string>>) =>
     (e: ChangeEvent<HTMLInputElement>) => {
@@ -72,7 +83,9 @@ function PlanBeforeAI () {
       <input type="text" placeholder="기획 배경 키워드를 입력해주세요. 엔터키를 눌러 추가하세요."
         value={backgroundInput}
         onChange={onChangeInput(setBackgroundInput)}
-        onKeyDown={addHashtag(backgroundInput, "background", setBackgroundInput)}
+        onKeyDown={addHashtag(backgroundInput, "background", setBackgroundInput,isComposingBackground)}
+        onCompositionStart={e => handleComposition(setIsComposingBackground)(e)}
+        onCompositionEnd={e => handleComposition(setIsComposingBackground)(e)}
       />
       <div className={styles.beforeAIMainDiv}>
         {initialProject?.before?.project_background.map((tag: ProjectTags) => (
@@ -88,7 +101,9 @@ function PlanBeforeAI () {
       <input type="text" placeholder="서비스 소개 키워드를 입력해주세요. 엔터키를 눌러 추가하세요."
              value={introInput}
              onChange={onChangeInput(setIntroInput)}
-             onKeyDown={addHashtag(introInput, 'intro', setIntroInput)}
+             onKeyDown={addHashtag(introInput, 'intro', setIntroInput, isComposingIntro)}
+             onCompositionStart={e => handleComposition(setIsComposingIntro)(e)}
+             onCompositionEnd={e => handleComposition(setIsComposingIntro)(e)}
       />
       <div className={styles.beforeAIMainDiv}>
         {initialProject?.before?.project_intro.map((tag: ProjectTags) => (
@@ -104,7 +119,9 @@ function PlanBeforeAI () {
       <input type="text" placeholder="서비스 타겟 키워드를 입력해주세요. 엔터키를 눌러 추가하세요."
              value={targetInput}
              onChange={onChangeInput(setTargetInput)}
-             onKeyDown={addHashtag(targetInput, 'target', setTargetInput)}
+             onKeyDown={addHashtag(targetInput, 'target', setTargetInput, isComposingTarget)}
+             onCompositionStart={e => handleComposition(setIsComposingTarget)(e)}
+             onCompositionEnd={e => handleComposition(setIsComposingTarget)(e)}
       />
       <div className={styles.beforeAIMainDiv}>
         {initialProject?.before?.project_target.map((tag: ProjectTags) => (
@@ -121,7 +138,9 @@ function PlanBeforeAI () {
       <input type="text" placeholder="기대 효과 키워드를 입력해주세요. 엔터키를 눌러 추가하세요."
              value={effectInput}
              onChange={onChangeInput(setEffectInput)}
-             onKeyDown={addHashtag(effectInput, 'effect', setEffectInput)}
+             onKeyDown={addHashtag(effectInput, 'effect', setEffectInput, isComposingEffect)}
+             onCompositionStart={e => handleComposition(setIsComposingEffect)(e)}
+             onCompositionEnd={e => handleComposition(setIsComposingEffect)(e)}
       />
       <div className={styles.beforeAIMainDiv}>
         {initialProject?.before?.project_effect.map((tag: ProjectTags) => (
