@@ -139,7 +139,13 @@ public class ProjectBuilderRepositoryImpl implements ProjectBuilderRepository {
         // dependency 변수 설정
         var dependencies = project.getProjectBuilderInfo().getDependencies();
         StringBuilder sb = new StringBuilder();
-        dependencies.forEach(v -> sb.append("\t").append(v.getCode()).append("\n"));
+        dependencies.forEach(v -> {
+            String[] lines = v.getCode().split("\n");
+            for (String line : lines) {
+                sb.append("\t").append(line).append('\n');
+            }
+        });
+        sb.append('\n');
         variables.put("springboot-dependencies", sb.toString());
 
 
