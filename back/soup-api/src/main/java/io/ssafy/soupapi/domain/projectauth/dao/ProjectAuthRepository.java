@@ -1,11 +1,9 @@
 package io.ssafy.soupapi.domain.projectauth.dao;
 
 import io.ssafy.soupapi.domain.member.entity.Member;
-import io.ssafy.soupapi.domain.projectauth.dto.response.GetProjectTeamMember;
 import io.ssafy.soupapi.domain.project.postgresql.entity.Project;
 import io.ssafy.soupapi.domain.projectauth.entity.ProjectAuth;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 import java.util.UUID;

@@ -1,5 +1,4 @@
 package io.ssafy.soupapi.domain.openvidu.api;
-import io.openvidu.java.client.Connection;
 import io.openvidu.java.client.OpenViduHttpException;
 import io.openvidu.java.client.OpenViduJavaClientException;
 import io.ssafy.soupapi.domain.openvidu.application.OpenViduService;
