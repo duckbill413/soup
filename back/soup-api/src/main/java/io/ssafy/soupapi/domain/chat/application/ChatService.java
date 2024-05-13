@@ -74,6 +74,7 @@ public class ChatService {
         Long reqTime = DateConverterUtil.ldtToLong(standardTime);
         long offset = pageOffsetRequest.calculateOffset();
         rChatMessageList = rChatRepository.getNMessagesBefore(chatroomId, reqTime, offset, pageOffsetRequest.size());
+//        log.info("getChatMessages() -> redis에서 {}개 획득", rChatMessageList.size());
 
         for (RChatMessage rChatMessage : rChatMessageList) {
             senderMap.put(rChatMessage.senderId(), null);
@@ -93,6 +94,7 @@ public class ChatService {
             mLdt = rChatMessageList.get(0).sentAt();
 
             mChatMessageList = mProjectRepository.getNChatMessagesBefore(chatroomId, mLdt, mDataSize);
+//            log.info("getChatMessages() -> mongoDB에서 {}개 획득", mChatMessageList.size());
 
             for (ChatMessage mChatMessage : mChatMessageList) {
                 senderMap.put(mChatMessage.getSenderId(), null);

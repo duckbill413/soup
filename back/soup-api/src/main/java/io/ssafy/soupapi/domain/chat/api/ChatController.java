@@ -54,7 +54,8 @@ public class ChatController {
             @Valid PageOffsetRequest pageOffset,
             @RequestParam @Parameter(description = "페이징 요청 시 기준 시간.\n\n" +
                     "채팅 시 DB가 자꾸 바뀌기 때문에 index를 기반으로 조회를 하기가 어렵습니다.\n\n" +
-                    "이 시간을 기준으로 페이지네이션을 하므로 이 값은 페이징을 요청하는 동안 **일정해야** 합니다.\n\n" +
+                    "이 시간을 기준으로 페이징을 하므로 이 값은 페이징을 요청하는 동안 **일정해야** 합니다.\n\n" +
+                    "이 시간 이전의 채팅 메시지들을 조회합니다.\n\n" +
                     "형식은 yyyy-MM-ddTHH:mm:ss 으로 한국 시간 입니다.") LocalDateTime standardTime,
             @AuthenticationPrincipal UserSecurityDTO userSecurityDTO
     ) {

@@ -58,4 +58,10 @@ public class DateConverterUtil {
         return utc.withZoneSameInstant(ZoneId.of("Asia/Seoul"));
     }
 
+    public static Instant ldToInstant(LocalDate ld) {
+        LocalDateTime ldt = ld.atStartOfDay();
+        ZonedDateTime zdt = ldt.atZone(ZoneId.systemDefault());
+        return zdt.toInstant();
+    }
+
 }
