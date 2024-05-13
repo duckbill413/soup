@@ -30,6 +30,7 @@ import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -55,8 +56,8 @@ public class MProjectServiceImpl implements MProjectService {
         var project = Project.builder()
                 .info(
                         Info.builder()
-                                .startDate(LocalDate.now())
-                                .endDate(LocalDate.now())
+                                .startDate(Instant.from(LocalDate.now()))
+                                .endDate(Instant.from(LocalDate.now()))
                                 .build()
                 ).build();
 
@@ -107,7 +108,7 @@ public class MProjectServiceImpl implements MProjectService {
 
     /**
      * 프로젝트 정보(개요) 업데이트
-     * - 이미지 정보, JIRA 정보는 업데이트 되지 않음
+     * - JIRA 정보는 업데이트 되지 않음
      *
      * @param projectId         업데이트 하는 프로젝트의 Id
      * @param updateProjectInfo 업데이트할 프로젝트 정보
@@ -120,18 +121,37 @@ public class MProjectServiceImpl implements MProjectService {
                 new BaseExceptionHandler(ErrorCode.NOT_FOUND_PROJECT));
 
         // update info
-        project.setInfo(Info.builder()
-                .name(updateProjectInfo.name())
-                .description(updateProjectInfo.description())
-                .startDate(updateProjectInfo.getStartDate())
-                .endDate(updateProjectInfo.getEndDate())
-                .build());
+        project.setInfo(generateInfo(project, updateProjectInfo));
         // update tools
-        var tools = updateProjectInfo.tools().stream().map(UpdateProjectTool::toTool).toList();
-        project.setTools(tools);
+        if (updateProjectInfo.tools() != null) {
+            var tools = updateProjectInfo.tools().stream().map(UpdateProjectTool::toTool).toList();
+            project.setTools(tools);
+        }
 
         mProjectRepository.save(project);
         return GetProjectInfo.toProjectInfoDto(project);
+    }
+
+    // null로 요청이 들어온 변수는 update 하지 않는다
+    private Info generateInfo(Project project, UpdateProjectInfo updateProjectInfo) {
+        return Info.builder()
+                .name(updateProjectInfo.name() == null ?
+                        project.getInfo().getName() : updateProjectInfo.name()
+                )
+                .description(updateProjectInfo.description() == null ?
+                        project.getInfo().getDescription() : updateProjectInfo.description()
+                )
+                .imgUrl(updateProjectInfo.imgUrl() == null ?
+                        project.getInfo().getImgUrl() : updateProjectInfo.imgUrl()
+                )
+                .startDate(updateProjectInfo.startDate() == null ?
+                        project.getInfo().getStartDate() : updateProjectInfo.startDate()
+
+                )
+                .endDate(updateProjectInfo.endDate() == null ?
+                        project.getInfo().getEndDate() : updateProjectInfo.endDate()
+                )
+                .build();
     }
 
     /**

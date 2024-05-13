@@ -16,6 +16,8 @@ public record GetProjectTeamMember(
         String email,
         @Schema(description = "팀원 닉네임")
         String nickname,
+        @Schema(description = "팀원 프로필 사진")
+        String profileImageUrl,
         @Schema(description = "팀원 Jira displayName")
         String displayName,
         @Schema(description = "팀원의 핸드폰 번호")

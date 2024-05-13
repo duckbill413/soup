@@ -16,23 +16,16 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class RedisSubscriber implements MessageListener {
 
-    private final ObjectMapper objectMapper;
-    private final RedisTemplate redisTemplateJackson;
+    private final RedisTemplate<String, ChatMessageRes> redisTemplateChatMessageRes;
     private final SimpMessageSendingOperations messagingTemplate;
 
-    // Redis 에서 메시지가 발행(publish)되면, listener 가 해당 메시지를 읽어서 처리
+    // Redis 에서 채팅 메시지가 발행(publish)되면, listener 가 해당 메시지를 읽어서 처리
     @Override
     public void onMessage(Message message, byte[] pattern) {
-        try {
-            log.info("RedisSubscriber 안에 onMessage()에 왔어요!");
-            String topicName = new String(pattern); // topicName 이자 roomId
-            String publishedMsg = (String) redisTemplateJackson.getStringSerializer().deserialize(message.getBody());
-            ChatMessageRes msg = objectMapper.readValue(publishedMsg, ChatMessageRes.class);
-            messagingTemplate.convertAndSend("/sub/chatrooms/" + topicName, msg);
-        } catch (JsonProcessingException e) {
-            log.info("redis에서 publish 된 메시지 역직렬화 중 에러 발생");
-            throw new RuntimeException(e);
-        }
+
+        String topicName = new String(pattern); // topicName == roomId == projectId
+        ChatMessageRes msg = (ChatMessageRes) redisTemplateChatMessageRes.getValueSerializer().deserialize(message.getBody());
+        messagingTemplate.convertAndSend("/sub/chatrooms/" + topicName, msg);
     }
 
 }

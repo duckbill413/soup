@@ -33,4 +33,19 @@ public class DateConverterUtil {
         return ldt.atZone(ZoneId.of("Asia/Seoul")).toInstant().toEpochMilli();
     }
 
+    // KST LocalDateTime -> UTC Instant 로 변환 (이걸 DB에 저장)
+    public static Instant kstLdtToInstant(LocalDateTime ldt) {
+        ZonedDateTime zdt = ldt.atZone(ZoneId.of("Asia/Seoul"));
+        return zdt.toInstant();
+    }
+
+    public static LocalDate instantToKstLd(Instant instant) {
+        ZonedDateTime zdt = instant.atZone(ZoneId.of("Asia/Seoul"));
+        return zdt.toLocalDate();
+    }
+
+    public static ZonedDateTime instantToKstZdt(Instant instant) {
+        return instant.atZone(ZoneId.of("Asia/Seoul"));
+    }
+
 }
