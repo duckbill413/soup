@@ -46,4 +46,6 @@ public interface MProjectService {
     List<String> findProjectValidDomainNames(ObjectId projectId);
 
     String updateProjectApiDoc(String projectId, UpdateApiDoc updateApiDoc);
+
+    String deleteProjectApiDoc(ObjectId objectId, UUID apiDocId);
 }

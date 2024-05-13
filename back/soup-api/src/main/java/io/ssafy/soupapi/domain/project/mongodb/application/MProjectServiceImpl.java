@@ -397,6 +397,19 @@ public class MProjectServiceImpl implements MProjectService {
         return updateApiDoc.id().toString();
     }
 
+    @Override
+    public String deleteProjectApiDoc(ObjectId projectId, UUID apiDocId) {
+        Query query = new Query(Criteria.where("_id").is(projectId));
+        Update update = new Update().pull("project_api_doc.api_docs", Query.query(Criteria.where("api_doc_id").is(apiDocId)));
+        var result = mongoTemplate.updateFirst(query, update, Project.class);
+
+        if (result.wasAcknowledged() && result.getModifiedCount() > 0) {
+            return "삭제 성공";
+        }
+
+        return "삭제 실패";
+    }
+
     /**
      * 프로젝트 도메인 리스트 정보
      *
