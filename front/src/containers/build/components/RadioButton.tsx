@@ -1,6 +1,9 @@
+'use client'
+
+import * as styles from '@/containers/build/styles/radioButton.css'
 import { RadioProps } from '@/types/radio'
-import { Radio, RadioGroup, FormControlLabel } from '@mui/material'
-import * as styles from '@/containers/build/radioButton.css'
+import { FormControlLabel, Radio, RadioGroup } from '@mui/material'
+import { useMutation, useStorage } from '../../../../liveblocks.config'
 
 export function RadioButton({ checked, label }: RadioProps) {
   return (
@@ -17,8 +20,19 @@ export function RadioButton({ checked, label }: RadioProps) {
 }
 
 export function RadioButtonGroup() {
+  const data = useStorage((root) => root.build)
+
+  const handleChange = useMutation(({ storage }, e) => {
+    storage.get('build')?.set('springVersion', e.target.value)
+  }, [])
+
   return (
-    <RadioGroup row defaultValue="3.3.0 (SNAPSHOT)" name="radio-buttons-group">
+    <RadioGroup
+      row
+      value={data?.springVersion}
+      name="radio-buttons-group"
+      onChange={handleChange}
+    >
       <FormControlLabel
         value="3.3.0 (SNAPSHOT)"
         control={<Radio />}
@@ -28,7 +42,7 @@ export function RadioButtonGroup() {
         value="3.3.0 (M3)"
         control={<Radio />}
         label="3.3.0 (M3)"
-      />{' '}
+      />
       <FormControlLabel
         value="3.2.5 (SNAPSHOT)"
         control={<Radio />}

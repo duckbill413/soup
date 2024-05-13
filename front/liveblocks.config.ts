@@ -1,8 +1,9 @@
 import { getMemberIdToken } from '@/apis/member/memberAPI'
 import { APIListDetail } from '@/containers/api/types/apilist'
+import { BuildStorage } from '@/containers/build/types/build'
+import { FuncDescResWithColor } from '@/containers/func/types/functionDesc'
 import { OutlineStorage } from '@/containers/outline/types/outlineStorage'
 import { PlanStorage } from '@/containers/plan/types/planStorage'
-import { FuncDescResWithColor } from '@/containers/func/types/functionDesc'
 import { LiveList, LiveObject, createClient } from '@liveblocks/client'
 import { createLiveblocksContext, createRoomContext } from '@liveblocks/react'
 
@@ -34,11 +35,12 @@ type Storage = {
   outline?: LiveObject<OutlineStorage>
   plan?: LiveObject<PlanStorage>
   func?: LiveList<LiveObject<FuncDescResWithColor>>
-  erd?: LiveObject<{json:string}>,
-  flow?: LiveObject<{json:string}>,
-  readme?: LiveObject<{json:string}>,
-  apiList?: LiveList<LiveObject<APIListDetail>>,
-};
+  erd?: LiveObject<{ json: string }>
+  flow?: LiveObject<{ json: string }>
+  readme?: LiveObject<{ json: string }>
+  apiList?: LiveList<LiveObject<APIListDetail>>
+  build?: LiveObject<BuildStorage>
+}
 
 // Optionally, UserMeta represents static/readonly metadata on each user, as
 // provided by your own custom auth back end (if used). Useful for data that

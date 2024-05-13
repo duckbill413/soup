@@ -1,6 +1,6 @@
 'use client'
 
-import * as styles from '@/containers/build/dependencies.css'
+import * as styles from '@/containers/build/styles/dependencies.css'
 import { Dependency } from '@/types/dependency'
 import { DragIndicator, KeyboardArrowRight } from '@mui/icons-material'
 import { useRef, useState } from 'react'

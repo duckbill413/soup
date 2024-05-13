@@ -51,6 +51,8 @@ globalStyle(`${table} td`, {
 
   textAlign: 'center',
   padding: '12px 0',
+  height: '28px',
+  maxHeight: 'max-content',
   borderBottom: `2px solid ${vars.color.gray}`,
 })
 

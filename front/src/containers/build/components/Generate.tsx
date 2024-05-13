@@ -1,6 +1,6 @@
 'use client'
 
-import * as styles from '@/containers/build/generate.css'
+import * as styles from '@/containers/build/styles/generate.css'
 import { Bolt, Folder } from '@mui/icons-material'
 import CloseIcon from '@mui/icons-material/Close'
 import { Button, Dialog, Slide } from '@mui/material'
