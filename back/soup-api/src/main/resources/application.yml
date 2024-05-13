@@ -189,5 +189,4 @@ openvidu:
 
 # Spring Builder Root Path
 springbuilder:
-  path: C:\\util\\%s\\%s
-#  path: /home/ubuntu/build/%s/%s # "C:\\util\\%s\\%s"
+  path: ${FILE_WRITE_PATH}
