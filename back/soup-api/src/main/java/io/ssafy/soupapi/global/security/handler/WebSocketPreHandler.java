@@ -25,7 +25,7 @@ public class WebSocketPreHandler implements ChannelInterceptor {
         if (accessor.getCommand().equals(StompCommand.CONNECT)) {
             log.info("커넥트 합니다");
         } else if (accessor.getCommand().equals(StompCommand.SUBSCRIBE)) {
-            log.info("subscribe 된 거 같은디요");
+            log.info("subscribe 하셨어요");
         }
 
         return message;

@@ -15,6 +15,7 @@ import io.ssafy.soupapi.global.common.response.OffsetPagination;
 import io.ssafy.soupapi.global.common.response.PageOffsetResponse;
 import io.ssafy.soupapi.global.exception.BaseExceptionHandler;
 import io.ssafy.soupapi.global.security.user.UserSecurityDTO;
+import io.ssafy.soupapi.global.util.DateConverterUtil;
 import io.ssafy.soupapi.global.util.StringParserUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -56,8 +57,8 @@ public class MProjectServiceImpl implements MProjectService {
         var project = Project.builder()
                 .info(
                         Info.builder()
-                                .startDate(Instant.from(LocalDate.now()))
-                                .endDate(Instant.from(LocalDate.now()))
+                                .startDate(DateConverterUtil.ldToInstant(LocalDate.now()))
+                                .endDate(DateConverterUtil.ldToInstant(LocalDate.now()))
                                 .build()
                 ).build();
 

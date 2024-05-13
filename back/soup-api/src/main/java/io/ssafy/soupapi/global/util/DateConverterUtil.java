@@ -48,4 +48,20 @@ public class DateConverterUtil {
         return instant.atZone(ZoneId.of("Asia/Seoul"));
     }
 
+    public static Instant utcStringToInstant(String dateString) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+        ZonedDateTime zonedDateTime = ZonedDateTime.parse(dateString, formatter.withZone(ZoneOffset.UTC));
+        return zonedDateTime.toInstant();
+    }
+
+    public static ZonedDateTime utcZdtToKstZdt(ZonedDateTime utc) {
+        return utc.withZoneSameInstant(ZoneId.of("Asia/Seoul"));
+    }
+
+    public static Instant ldToInstant(LocalDate ld) {
+        LocalDateTime ldt = ld.atStartOfDay();
+        ZonedDateTime zdt = ldt.atZone(ZoneId.systemDefault());
+        return zdt.toInstant();
+    }
+
 }

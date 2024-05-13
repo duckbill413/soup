@@ -30,6 +30,7 @@ public class RChatRepository {
     }
 
     public List<RChatMessage> getNMessagesBefore(String chatroomId, Long before, long offset, long size) {
+//        log.info("[RChatMessage] redis에서 score {} 이전의 메시지들을 조회합니다.", before);
         Set<RChatMessage> RChatMessageSet
                 = redisTemplateChatMessage.opsForZSet().reverseRangeByScore(CHATROOM_HASH + chatroomId, 0, before, offset, size);
         return new ArrayList<>(RChatMessageSet);

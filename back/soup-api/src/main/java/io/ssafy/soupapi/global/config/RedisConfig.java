@@ -1,6 +1,7 @@
 package io.ssafy.soupapi.global.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.ssafy.soupapi.domain.chat.dto.RChatMessage;
 import io.ssafy.soupapi.domain.chat.dto.response.ChatMessageRes;
@@ -51,46 +52,39 @@ public class RedisConfig {
 
     // redis db와의 상호작용을 위한 RedisTemplate 을 설정. JSON 형식으로 담기 위해 직렬화
     @Bean
-    public RedisTemplate<String, Object> redisTemplateJackson(RedisConnectionFactory connectionFactory) {
+    public RedisTemplate<String, Object> redisTemplateJackson(RedisConnectionFactory connectionFactory, ObjectMapper objectMapper) {
         RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
         redisTemplate.setConnectionFactory(connectionFactory);
 
-        ObjectMapper objectMapper = new ObjectMapper();
-        Jackson2JsonRedisSerializer<Object> serializer = new Jackson2JsonRedisSerializer<>(objectMapper, Object.class);
-
         redisTemplate.setKeySerializer(new StringRedisSerializer());
+
+        Jackson2JsonRedisSerializer<Object> serializer = new Jackson2JsonRedisSerializer<>(objectMapper, Object.class);
         redisTemplate.setValueSerializer(serializer);
         return redisTemplate;
     }
 
     // redis에 메시지 로그를 저장하기 위한 RedisTemplate 을 설정.
     @Bean
-    public RedisTemplate<String, RChatMessage> redisTemplateChatMessage(RedisConnectionFactory connectionFactory) {
+    public RedisTemplate<String, RChatMessage> redisTemplateChatMessage(RedisConnectionFactory connectionFactory, ObjectMapper objectMapper) {
         RedisTemplate<String, RChatMessage> redisTemplate = new RedisTemplate<>();
         redisTemplate.setConnectionFactory(connectionFactory);
 
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.registerModule(new JavaTimeModule());
-        Jackson2JsonRedisSerializer<RChatMessage> serializer =
-                new Jackson2JsonRedisSerializer<>(objectMapper, RChatMessage.class);
-
         redisTemplate.setKeySerializer(new StringRedisSerializer());
+
+        Jackson2JsonRedisSerializer<RChatMessage> serializer = new Jackson2JsonRedisSerializer<>(objectMapper, RChatMessage.class);
         redisTemplate.setValueSerializer(serializer);
         redisTemplate.setHashValueSerializer(serializer);
         return redisTemplate;
     }
 
     @Bean
-    public RedisTemplate<String, ChatMessageRes> redisTemplateChatMessageRes(RedisConnectionFactory connectionFactory) {
+    public RedisTemplate<String, ChatMessageRes> redisTemplateChatMessageRes(RedisConnectionFactory connectionFactory, ObjectMapper objectMapper) {
         RedisTemplate<String, ChatMessageRes> redisTemplate = new RedisTemplate<>();
         redisTemplate.setConnectionFactory(connectionFactory);
 
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.registerModule(new JavaTimeModule());
-        Jackson2JsonRedisSerializer<ChatMessageRes> serializer =
-                new Jackson2JsonRedisSerializer<>(objectMapper, ChatMessageRes.class);
-
         redisTemplate.setKeySerializer(new StringRedisSerializer());
+
+        Jackson2JsonRedisSerializer<ChatMessageRes> serializer = new Jackson2JsonRedisSerializer<>(objectMapper, ChatMessageRes.class);
         redisTemplate.setValueSerializer(serializer);
         redisTemplate.setHashValueSerializer(serializer);
         return redisTemplate;
