@@ -23,7 +23,6 @@ public record GetProjectInfo(
         LocalDate startDate,
         @Schema(description = "프로젝트 종료일")
         LocalDate endDate,
-        @Builder.Default
         @Schema(description = "프로젝트 관리툴 목록")
         List<GetProjectTool> tools
 ) {

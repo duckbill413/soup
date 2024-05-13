@@ -11,7 +11,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -38,8 +41,33 @@ public class S3FileServiceImpl implements S3FileService {
     }
 
     @Override
+    public String uploadFile(String localFilePath) throws IOException {
+        File file = new File(localFilePath);
+        if (!file.exists() || !file.isFile()) {
+            throw new BaseExceptionHandler(ErrorCode.FILE_NOT_EXISTS);
+        }
+
+        String fileName = UUID.randomUUID() + "/" + file.getName();
+        String fileUrl = "https://" + bucket + ".s3." + region + ".amazonaws.com/" + fileName;
+        ObjectMetadata metadata = new ObjectMetadata();
+        metadata.setContentType(Files.probeContentType(file.toPath()));
+        metadata.setContentLength(file.length());
+
+        try (FileInputStream inputStream = new FileInputStream(file)) {
+            amazonS3Client.putObject(
+                    new PutObjectRequest(bucket, fileName, inputStream, metadata)
+                    //.withCannedAcl(CannedAccessControlList.PublicRead)
+            );
+        } catch (IOException e) {
+            throw new BaseExceptionHandler(ErrorCode.FAILED_TO_UPLOAD_S3_FILE);
+        }
+
+        return fileUrl;
+    }
+
+    @Override
     public String uploadFile(MultipartFile file) {
-        if (file.isEmpty() ) {
+        if (file.isEmpty()) {
             throw new BaseExceptionHandler(ErrorCode.FILE_NOT_EXISTS);
         }
 

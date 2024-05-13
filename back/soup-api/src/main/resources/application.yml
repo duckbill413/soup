@@ -186,3 +186,7 @@ liveblocks:
 openvidu:
   url: ${OPENVIDU_SERVER_URL} #https://your-openvidu-server.com
   secret: ${OPENVIDU_SECRET_KEY}
+
+# Spring Builder Root Path
+springbuilder:
+  path: ${FILE_WRITE_PATH}

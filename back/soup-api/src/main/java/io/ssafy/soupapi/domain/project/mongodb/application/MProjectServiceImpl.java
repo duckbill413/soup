@@ -31,7 +31,6 @@ import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.Instant;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -284,7 +283,17 @@ public class MProjectServiceImpl implements MProjectService {
                 new BaseExceptionHandler(ErrorCode.NOT_FOUND_PROJECT));
 
         mProjectRepository.changeVuerdById(projectId, vuerdDoc);
+
+        // 프로젝트 도메인 정보 업데이트
+        saveProjectDomainsByERD(projectId, project);
         return vuerdDoc;
+    }
+
+    private void saveProjectDomainsByERD(ObjectId projectId, Project project) {
+        Query query = new Query(Criteria.where("_id").is(projectId));
+        // update 수행
+        Update update = new Update().set("project_api_doc.usable_domains", getProjectDomainsFromERD(project));
+        mongoTemplate.updateFirst(query, update, Project.class);
     }
 
     /**
@@ -333,7 +342,9 @@ public class MProjectServiceImpl implements MProjectService {
      * @return 프로젝트 API DOC 정보
      */
     @Override
-    public GetApiDoc findProjectSingleApiDocs(ObjectId projectId, UUID apiDocId) {
+    public GetApiDoc findProjectSingleApiDocs(
+            ObjectId projectId, UUID apiDocId
+    ) {
         ApiDoc apiDoc = getProjectApiDoc(projectId, apiDocId);
 
         return GetApiDoc.of(apiDoc, new ArrayList<>(StringParserUtil.extractBracketsContent(apiDoc.getApiUriPath())));
@@ -369,14 +380,16 @@ public class MProjectServiceImpl implements MProjectService {
      */
     @Override
     public List<String> findProjectValidDomainNames(ObjectId projectId) {
-        var project = mProjectRepository.findVuerdById(projectId).orElseThrow(() ->
-                new BaseExceptionHandler(ErrorCode.NOT_FOUND_PROJECT));
+        Query query = new Query().addCriteria(Criteria.where("_id").is(projectId));
+        query.fields().include("project_api_doc.usable_domains");
 
-        if (Objects.isNull(project.getVuerd())) {
+        Project project = mongoTemplate.findOne(query, Project.class);
+
+        if (project == null || project.getApiDocs() == null || project.getApiDocs().getDomains() == null) {
             return List.of();
         }
 
-        return getProjectDomainsFromERD(project);
+        return project.getApiDocs().getDomains();
     }
 
     /**
@@ -403,6 +416,19 @@ public class MProjectServiceImpl implements MProjectService {
         Update update = new Update().set("project_api_doc.api_docs.$", apiDoc);
         mongoTemplate.updateFirst(query, update, Project.class);
         return updateApiDoc.id().toString();
+    }
+
+    @Override
+    public String deleteProjectApiDoc(ObjectId projectId, UUID apiDocId) {
+        Query query = new Query(Criteria.where("_id").is(projectId));
+        Update update = new Update().pull("project_api_doc.api_docs", Query.query(Criteria.where("api_doc_id").is(apiDocId)));
+        var result = mongoTemplate.updateFirst(query, update, Project.class);
+
+        if (result.wasAcknowledged() && result.getModifiedCount() > 0) {
+            return "삭제 성공";
+        }
+
+        return "삭제 실패";
     }
 
     @Override

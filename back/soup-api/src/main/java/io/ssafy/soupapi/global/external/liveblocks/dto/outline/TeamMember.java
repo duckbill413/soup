@@ -1,6 +1,5 @@
 package io.ssafy.soupapi.global.external.liveblocks.dto.outline;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
 import java.util.List;

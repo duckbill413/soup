@@ -16,6 +16,8 @@ public class ApiDocs {
     private ApiBaseRequestBody baseRequestBody;
     @Field("api_base_response_body")
     private ApiBaseResponseBody baseResponseBody;
+    @Field("usable_domains")
+    private List<String> domains;
     @Builder.Default
     @Field("api_docs")
     private List<ApiDoc> apiDocList = new ArrayList<>();

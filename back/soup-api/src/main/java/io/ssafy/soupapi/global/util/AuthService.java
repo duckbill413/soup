@@ -1,6 +1,5 @@
 package io.ssafy.soupapi.global.util;
 
-import io.ssafy.soupapi.domain.member.dao.MemberRepository;
 import io.ssafy.soupapi.domain.member.entity.Member;
 import io.ssafy.soupapi.domain.project.postgresql.entity.Project;
 import io.ssafy.soupapi.domain.project.postgresql.entity.ProjectRole;

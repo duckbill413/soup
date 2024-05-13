@@ -234,6 +234,20 @@ public class MProjectController {
         );
     }
 
+    @Operation(summary = "프로젝트 API 문서 삭제")
+    @DeleteMapping("/{projectId}/api-docs/{apiDocId}")
+    @PreAuthorize("@authService.hasProjectRoleMember(#projectId, #userSecurityDTO.getId())")
+    public ResponseEntity<BaseResponse<String>> deleteProjectApiDoc(
+            @PathVariable String projectId,
+            @PathVariable String apiDocId,
+            @AuthenticationPrincipal UserSecurityDTO userSecurityDTO
+    ) {
+        return BaseResponse.success(
+                SuccessCode.DELETE_SUCCESS,
+                mProjectService.deleteProjectApiDoc(new ObjectId(projectId), UUID.fromString(apiDocId))
+        );
+    }
+
     @Operation(summary = "사용할 수 있는 PathVariable Name 조회")
     @GetMapping("/{projectId}/api-docs/{apiDocId}/names")
     @PreAuthorize("@authService.hasProjectRoleMember(#projectId, #userSecurityDTO.getId())")

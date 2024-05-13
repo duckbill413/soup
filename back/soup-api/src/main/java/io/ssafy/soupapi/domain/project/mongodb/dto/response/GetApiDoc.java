@@ -31,12 +31,8 @@ public record GetApiDoc(
         List<ApiVariable> pathVariables,
         @Schema(description = "query_parameters")
         List<ApiVariable> queryParameters,
-        @Schema(description = "request_body_name")
-        String requestBodyName,
         @Schema(description = "request_body")
         String requestBody,
-        @Schema(description = "response_body_name")
-        String responseBodyName,
         @Schema(description = "response_body")
         String responseBody
 ) {
@@ -49,14 +45,12 @@ public record GetApiDoc(
                 .validPathVariables(validPathVariables)
                 .methodName(apiDoc.getMethodName())
                 .description(apiDoc.getDescription())
-                .methodType(apiDoc.getMethodType())
+                .methodType(apiDoc.getHttpMethodType())
                 .apiUriPath(apiDoc.getApiUriPath())
                 .pathVariables(apiDoc.getPathVariables())
                 .queryParameters(apiDoc.getQueryParameters())
                 .requestBody(apiDoc.getRequestBody())
-                .requestBodyName(apiDoc.getRequestBodyName())
                 .responseBody(apiDoc.getResponseBody())
-                .responseBodyName(apiDoc.getResponseBodyName())
                 .build();
     }
 }

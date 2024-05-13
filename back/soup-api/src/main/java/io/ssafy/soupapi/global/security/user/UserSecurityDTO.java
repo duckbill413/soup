@@ -3,7 +3,6 @@ package io.ssafy.soupapi.global.security.user;
 import io.ssafy.soupapi.domain.member.entity.Member;
 import lombok.Builder;
 import lombok.Getter;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.User;

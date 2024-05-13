@@ -1,5 +1,5 @@
 package io.ssafy.soupapi.domain.project.mongodb.entity.apidocs;
 
 public enum ApiVariableType {
-    STRING, INT, LONG, DATETIME, DATE
+    Object, String, Integer, Long, LocalDateTime, LocalDate
 }

@@ -1,7 +1,6 @@
 package io.ssafy.soupapi.usecase.application;
 
 import com.google.gson.Gson;
-import io.ssafy.soupapi.domain.member.dao.MemberRepository;
 import io.ssafy.soupapi.domain.member.entity.Member;
 import io.ssafy.soupapi.domain.project.postgresql.dao.PProjectRepository;
 import io.ssafy.soupapi.domain.project.postgresql.entity.Project;

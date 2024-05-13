@@ -3,7 +3,6 @@ package io.ssafy.soupapi.domain.chat.dto.response;
 import io.ssafy.soupapi.domain.chat.dto.ChatSender;
 import lombok.*;
 
-import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;

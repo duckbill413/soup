@@ -1,6 +1,5 @@
 package io.ssafy.soupapi.global.security.service;
 
-import io.ssafy.soupapi.domain.member.dao.MemberRepository;
 import io.ssafy.soupapi.domain.member.entity.Member;
 import io.ssafy.soupapi.domain.member.entity.MemberRole;
 import io.ssafy.soupapi.global.security.user.UserSecurityDTO;

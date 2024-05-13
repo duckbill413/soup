@@ -46,4 +46,6 @@ public interface MProjectService {
     String updateProjectApiDoc(String projectId, UpdateApiDoc updateApiDoc);
 
     void changeProjectImage(ObjectId projectId, UpdateProjectImage updateProjectImage);
+
+    String deleteProjectApiDoc(ObjectId objectId, UUID apiDocId);
 }
