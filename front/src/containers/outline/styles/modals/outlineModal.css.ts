@@ -150,6 +150,15 @@ export const role = style ({
   margin:'0.3rem'
 })
 
+export const invitedRole = style ({
+  background:'#B2D1FF',
+  borderRadius:'5px',
+  padding:'0.3rem',
+  fontWeight:'bold',
+  margin:'0.3rem'
+})
+
+
 export const roleShow = style ({
   display: 'flex',
   flexWrap: 'wrap'

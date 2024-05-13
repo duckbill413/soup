@@ -24,6 +24,17 @@ export const tableURLTitle = style ({
   borderRadius:'5px'
 })
 
+export const tdMemberName = style ({
+  display:'flex',
+  justifyContent:'center',
+  alignItems:'center'
+})
+
+export const tdMemberImage = style ({
+  borderRadius:'50%',
+  marginRight:'10%',
+})
+
 export const tdDetail = style({
   backgroundColor:'#DEB06E',
   padding:'0.9%',

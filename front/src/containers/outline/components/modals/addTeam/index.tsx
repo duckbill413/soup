@@ -127,7 +127,7 @@ function OutlineTeamModal (props: { clickModal: () => void }) {
         {/* 초대된 팀원 */}
         <p className={styles.nowTeamTitle}>현재 초대된 팀원</p>
 
-        {invitedTeam?.project_team.map(member => (
+        {invitedTeam?.project_team.toReversed().map(member => (
         <div key={member.id} className={styles.bottomDivision}>
           <div className={styles.bottomProfile}>
             <div className={styles.profileDetail}>
@@ -138,7 +138,7 @@ function OutlineTeamModal (props: { clickModal: () => void }) {
 
           <div className={styles.roleSubDiv}>
           {member?.roles.map((role, index) => (
-            <div key={`${role.role_id}-${index}`} className={styles.role}>{role.role_name}</div>
+            <div key={`${role.role_id}-${index}`} className={styles.invitedRole}>{role.role_name}</div>
           ))}
           </div>
         </div>

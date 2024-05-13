@@ -1,4 +1,5 @@
 import baseAxios from '@/apis/baseAxios'
+import { InviteMember, JiraRegister, OutlineUpdate } from '@/containers/outline/types/outlineAPI'
 
 // 에러 처리
 const handleApiError = (message:any, error:any) => {
@@ -32,7 +33,7 @@ export const changePhotoAPI = async (data:FormData) => {
   }
 }
 
-export const inviteMemberAPI = async(projectId:string, data:any) => {
+export const inviteMemberAPI = async(projectId:string, data:InviteMember) => {
   try {
     const response = await baseAxios.post(`/projects/${projectId}/teams`,data)
     return response.data
@@ -41,11 +42,20 @@ export const inviteMemberAPI = async(projectId:string, data:any) => {
   }
 }
 
-export const addJiraAPI = async (projectId:string, data:any) => {
+export const addJiraAPI = async (projectId:string, data:JiraRegister) => {
   try {
     const response = await baseAxios.put(`/projects/${projectId}/info/jira`, data)
     return response.data
   } catch (error) {
     return handleApiError('JIRA를 등록하는 중 오류 발생: ', error)
+  }
+}
+
+export const sendOutlineAPI = async (projectId:string, data:OutlineUpdate) => {
+  try {
+    const response = await baseAxios.put(`/projects/${projectId}/info`,data)
+    return response.data
+  } catch (error) {
+    return handleApiError('프로젝트 개요 정보를 수정하는 중 오류 발생: ', error)
   }
 }
