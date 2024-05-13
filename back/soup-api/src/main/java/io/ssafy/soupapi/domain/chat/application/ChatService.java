@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.*;
 
 @Slf4j
@@ -36,11 +37,12 @@ public class ChatService {
     // 대화 저장
     public ChatMessageRes saveMessage(String chatroomId, ChatMessageReq chatMessageReq) {
         long sentAtLong = System.currentTimeMillis();
-        LocalDateTime sentAtLdt = Instant.ofEpochMilli(sentAtLong).atZone(ZoneId.of("Asia/Seoul")).toLocalDateTime();
+        Instant sentAtInstant = Instant.ofEpochMilli(sentAtLong);
+//        LocalDateTime sentAtLdt = Instant.ofEpochMilli(sentAtLong).atZone(ZoneId.of("Asia/Seoul")).toLocalDateTime();
 
         String chatMessageId = UUID.randomUUID().toString();
-        RChatMessage RChatMessage = chatMessageReq.toChatMessageRedis(chatMessageId, sentAtLdt);
-        ChatMessage chatMessage = chatMessageReq.toMChatMessage(chatMessageId, sentAtLdt);
+        RChatMessage RChatMessage = chatMessageReq.toRChatMessage(chatMessageId, sentAtInstant);
+        ChatMessage chatMessage = chatMessageReq.toMChatMessage(chatMessageId, sentAtInstant);
 
         // 1. 채팅 메시지 -> MongoDB 저장
         mProjectRepository.addChatMessage(new ObjectId(chatroomId), chatMessage);
@@ -58,7 +60,9 @@ public class ChatService {
         // 3. 채팅 메시지 -> Redis 저장
         rChatRepository.saveMessageToRedis(chatroomId, RChatMessage, sentAtLong);
 
-        return generateChatMessageRes(RChatMessage.chatMessageId(), chatMessageReq, sentAtLdt.toString());
+        ZonedDateTime sentAtZdt = DateConverterUtil.instantToKstZdt(sentAtInstant);
+//        log.info("sentAt -> [Instant] {} / [ZonedDateTime] {}", sentAtInstant, sentAtZdt);
+        return generateChatMessageRes(RChatMessage.chatMessageId(), chatMessageReq, sentAtZdt);
     }
 
     public List<GetChatMessageRes> getChatMessages(String chatroomId, PageOffsetRequest pageOffsetRequest, LocalDateTime standardTime) {
@@ -81,7 +85,7 @@ public class ChatService {
         if (rDataSize < pageOffsetRequest.size()) {
             int mDataSize = pageOffsetRequest.size() - rDataSize;
 
-            LocalDateTime mLdt; // redis에서 earliest 메시지의 sentAt
+            Instant mLdt; // redis에서 earliest 메시지의 sentAt
             if (rDataSize == 0) { // redis에 (기준 시간 상관 없이) earlliest 메시지의 sentAt 조회해야
                 rChatMessageList = rChatRepository.getMessageByIndex(chatroomId, 0, 1);
             }
@@ -109,12 +113,12 @@ public class ChatService {
         return result;
     }
 
-    private ChatMessageRes generateChatMessageRes(String chatMessageId, ChatMessageReq chatMessageReq, String sentAt) {
+    private ChatMessageRes generateChatMessageRes(String chatMessageId, ChatMessageReq chatMessageReq, ZonedDateTime sentAt) {
         return ChatMessageRes.builder()
                 .chatMessageId(chatMessageId)
                 .senderId(chatMessageReq.senderId())
                 .message(chatMessageReq.message())
-                .sentAt(sentAt)
+                .sentAt(sentAt.toString())
                 .mentionedMemberIds(chatMessageReq.mentionedMemberIds())
                 .build();
     }

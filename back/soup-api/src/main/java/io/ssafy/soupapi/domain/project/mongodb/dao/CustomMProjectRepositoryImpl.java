@@ -7,6 +7,7 @@ import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.aggregation.AggregationOperation;
 import org.springframework.data.mongodb.core.aggregation.AggregationResults;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -19,7 +20,7 @@ public class CustomMProjectRepositoryImpl implements CustomMProjectRepository {
      * projectId 프로젝트의 채팅 메시지 중에서, afterTimestamp 이후에 만들어진 size1 개의 채팅 메시지를 반환한다.
      */
     @Override
-    public List<ChatMessage> getNChatMessagesBefore(String projectId, LocalDateTime beforeTime, int size) {
+    public List<ChatMessage> getNChatMessagesBefore(String projectId, Instant beforeTime, int size) {
 
         AggregationOperation opMatchProjectId = Aggregation.stage("""
             { $match: { _id: ObjectId('#projectId#') } }

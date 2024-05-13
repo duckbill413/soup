@@ -44,4 +44,8 @@ public class DateConverterUtil {
         return zdt.toLocalDate();
     }
 
+    public static ZonedDateTime instantToKstZdt(Instant instant) {
+        return instant.atZone(ZoneId.of("Asia/Seoul"));
+    }
+
 }

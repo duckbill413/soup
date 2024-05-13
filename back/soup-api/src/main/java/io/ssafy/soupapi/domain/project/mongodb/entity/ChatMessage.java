@@ -8,6 +8,8 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.mongodb.core.mapping.Field;
 
+import java.time.Instant;
+
 @Slf4j
 @Getter
 @Setter
@@ -20,11 +22,11 @@ public class ChatMessage {
     @Field("chat_message_content")
     private String content;
     @Field("chat_message_timestamp")
-    private String timestamp;
+    private Instant timestamp;
 
     public GetChatMessageRes toGetChatMessageRes() {
         GetChatMessageRes res = GetChatMessageRes.builder()
-                .chatMessageId(id).message(content).sentAt(DateConverterUtil.StringToLdt(timestamp))
+                .chatMessageId(id).message(content).sentAt(DateConverterUtil.instantToKstZdt(timestamp))
                 .build();
         res.setSenderId(senderId);
         return res;
