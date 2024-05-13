@@ -4,7 +4,6 @@ import io.ssafy.soupapi.domain.chat.dao.RChatRepository;
 import io.ssafy.soupapi.domain.chat.dto.RChatMessage;
 import io.ssafy.soupapi.domain.chat.dto.request.ChatMessageReq;
 import io.ssafy.soupapi.domain.chat.dto.response.ChatMessageRes;
-import io.ssafy.soupapi.domain.chat.dto.response.GetChatMessageRes;
 import io.ssafy.soupapi.domain.member.entity.Member;
 import io.ssafy.soupapi.domain.noti.application.NotiService;
 import io.ssafy.soupapi.domain.noti.dto.RMentionNoti;
@@ -20,8 +19,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
 import java.util.*;
 
 @Slf4j
@@ -49,7 +46,9 @@ public class ChatService {
 
         // 2. 태그 알림
         for (String mentioneeId : chatMessageReq.mentionedMemberIds()) {
-            RMentionNoti RMentionNoti = notiService.generateMentionNotiRedis(RChatMessage.chatMessageId(), chatMessageReq.senderId(), mentioneeId);
+            RMentionNoti RMentionNoti = notiService.generateMentionNotiRedis(
+                    RChatMessage.chatMessageId(), chatMessageReq.sender().getMemberId(), mentioneeId
+            );
 
             // TODO: 2-1. 태그 알림 -> PostgreSQL 저장
 
@@ -65,8 +64,8 @@ public class ChatService {
         return generateChatMessageRes(RChatMessage.chatMessageId(), chatMessageReq, sentAtInstant);
     }
 
-    public List<GetChatMessageRes> getChatMessages(String chatroomId, PageOffsetRequest pageOffsetRequest, LocalDateTime standardTime) {
-        List<GetChatMessageRes> result = new ArrayList<>();
+    public List<ChatMessageRes> getChatMessages(String chatroomId, PageOffsetRequest pageOffsetRequest, LocalDateTime standardTime) {
+        List<ChatMessageRes> result = new ArrayList<>();
         List<RChatMessage> rChatMessageList;
         List<ChatMessage> mChatMessageList;
         Map<String, Member> senderMap = new HashMap<>();
@@ -78,7 +77,7 @@ public class ChatService {
 
         for (RChatMessage rChatMessage : rChatMessageList) {
             senderMap.put(rChatMessage.senderId(), null);
-            result.add(rChatMessage.toGetChatMessageRes());
+            result.add(rChatMessage.toChatMessageRes());
         }
 
         // MongoDB에, redis에서 발견한 earliest 메시지 이전에 발행된 메시지가 있는지 조회
@@ -107,7 +106,7 @@ public class ChatService {
             senderMap.put(memberId, member);
         }
 
-        for (GetChatMessageRes res : result) {
+        for (ChatMessageRes res : result) {
             String senderId = res.getSender().getMemberId();
             res.getSender().setNickname(senderMap.get(senderId).getNickname());
             res.getSender().setProfileImageUrl(senderMap.get(senderId).getProfileImageUrl());
@@ -117,10 +116,13 @@ public class ChatService {
     }
 
     private ChatMessageRes generateChatMessageRes(String chatMessageId, ChatMessageReq chatMessageReq, Instant sentAt) {
-        return new ChatMessageRes(
-            chatMessageId, chatMessageReq.senderId(), chatMessageReq.message(),
-            DateConverterUtil.instantToKstZdt(sentAt), chatMessageReq.mentionedMemberIds()
-        );
+        return ChatMessageRes.builder()
+                .chatMessageId(chatMessageId)
+                .sender(chatMessageReq.sender())
+                .message(chatMessageReq.message())
+                .mentionedMemberIds(chatMessageReq.mentionedMemberIds())
+                .sentAt(DateConverterUtil.instantToKstZdt(sentAt))
+                .build();
     }
 
 }
