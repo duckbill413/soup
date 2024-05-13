@@ -91,7 +91,9 @@ export default function APITable() {
               }}
             >
               <td>
-                <span className={styles.domain}>{item.domain}</span>
+                {item.domain ? (
+                  <span className={styles.domain}>{item.domain}</span>
+                ) : null}
               </td>
               <td>{item.name}</td>
               <td>{item.http_method}</td>
