@@ -4,7 +4,6 @@ import io.ssafy.soupapi.domain.chat.application.ChatService;
 import io.ssafy.soupapi.domain.chat.application.ChatroomService;
 import io.ssafy.soupapi.domain.chat.dto.request.ChatMessageReq;
 import io.ssafy.soupapi.domain.chat.dto.response.ChatMessageRes;
-import io.ssafy.soupapi.domain.chat.dto.response.GetChatMessageRes;
 import io.ssafy.soupapi.domain.chat.redis.RedisPublisher;
 import io.ssafy.soupapi.global.common.code.SuccessCode;
 import io.ssafy.soupapi.global.common.request.PageOffsetRequest;
@@ -49,7 +48,7 @@ public class ChatController {
     @Operation(summary = "채팅방의 메시지 내역 조회", description = "특정 채팅방에 채팅 내역을 조회한다.")
 //    @PreAuthorize("@authService.hasProjectRoleMember(#chatroomId, #userSecurityDTO.getId())")
     @GetMapping("/api/chatrooms/{chatroomId}")
-    public ResponseEntity<BaseResponse<List<GetChatMessageRes>>> getChatMessages(
+    public ResponseEntity<BaseResponse<List<ChatMessageRes>>> getChatMessages(
             @PathVariable String chatroomId,
             @Valid PageOffsetRequest pageOffset,
             @RequestParam @Parameter(description = "페이징 요청 시 기준 시간.\n\n" +

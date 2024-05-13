@@ -1,6 +1,6 @@
 package io.ssafy.soupapi.domain.project.mongodb.entity;
 
-import io.ssafy.soupapi.domain.chat.dto.response.GetChatMessageRes;
+import io.ssafy.soupapi.domain.chat.dto.response.ChatMessageRes;
 import io.ssafy.soupapi.global.util.DateConverterUtil;
 import lombok.Builder;
 import lombok.Getter;
@@ -24,11 +24,11 @@ public class ChatMessage {
     @Field("chat_message_timestamp")
     private Instant timestamp;
 
-    public GetChatMessageRes toGetChatMessageRes() {
-        GetChatMessageRes res = GetChatMessageRes.builder()
+    public ChatMessageRes toGetChatMessageRes() {
+        ChatMessageRes res = ChatMessageRes.builder()
                 .chatMessageId(id).message(content).sentAt(DateConverterUtil.instantToKstZdt(timestamp))
                 .build();
-        res.setSenderId(senderId);
+        res.getSender().setMemberId(senderId);
         return res;
     }
 

@@ -1,6 +1,6 @@
 package io.ssafy.soupapi.domain.chat.dto;
 
-import io.ssafy.soupapi.domain.chat.dto.response.GetChatMessageRes;
+import io.ssafy.soupapi.domain.chat.dto.response.ChatMessageRes;
 import io.ssafy.soupapi.global.util.DateConverterUtil;
 import lombok.Builder;
 
@@ -15,11 +15,11 @@ public record RChatMessage(
         Instant sentAt
 ) {
 
-    public GetChatMessageRes toGetChatMessageRes() {
-        GetChatMessageRes res = GetChatMessageRes.builder()
+    public ChatMessageRes toChatMessageRes() {
+        ChatMessageRes res = ChatMessageRes.builder()
                 .chatMessageId(chatMessageId).message(message).sentAt(DateConverterUtil.instantToKstZdt(sentAt))
                 .build();
-        res.setSenderId(senderId);
+        res.getSender().setMemberId(senderId);
         return res;
     }
 
