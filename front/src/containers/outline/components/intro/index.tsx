@@ -2,8 +2,6 @@
 
 import * as styles from "@/containers/outline/styles/intro/outlineIntro.css"
 import basic from '#/assets/icons/outline/basicPhoto.svg'
-// import { useEffect } from 'react'
-// import getOutlineInfoAPI from '@/apis/outline/outlineAPI'
 import { useRef } from 'react'
 import { changePhotoAPI } from '@/apis/outline/outlineAPI'
 import { useMutation, useStorage } from '../../../../../liveblocks.config'
@@ -39,17 +37,6 @@ function OutlineIntro () {
       }).catch(error => alert(`업로드 실패: ${ error.message}`));
   }
 
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     try {
-  //       const data = await getOutlineInfoAPI('663345425249cc4b837d65ad');
-  //       console.log(data);
-  //     } catch (error) {
-  //       console.error('Error fetching data', error);
-  //     }
-  //   };
-  //   fetchData();
-  // }, [])
   return (
     <div className={styles.container}>
       <div className={styles.photoDivision}>

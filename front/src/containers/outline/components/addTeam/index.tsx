@@ -21,7 +21,7 @@ function OutlineAddTeam () {
         <p>팀원</p>
         <Image src={Add} alt="add" width={32} height={32} onClick={addTeam} />
       </div>
-      <TeamTable />
+      <TeamTable showModal={showModal} />
       {showModal && <OutlineTeamModal clickModal={clickModal}/>}
     </div>
   )
