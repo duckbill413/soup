@@ -1,6 +1,7 @@
 package io.ssafy.soupapi.domain.projectbuilder.application;
 
 import io.ssafy.soupapi.domain.project.mongodb.dao.MProjectRepository;
+import io.ssafy.soupapi.domain.project.mongodb.entity.Project;
 import io.ssafy.soupapi.domain.project.mongodb.entity.builder.ProjectBuilderDependency;
 import io.ssafy.soupapi.domain.project.mongodb.entity.builder.ProjectBuilderInfo;
 import io.ssafy.soupapi.domain.projectbuilder.dao.ProjectBuilderRepository;
@@ -9,11 +10,19 @@ import io.ssafy.soupapi.domain.projectbuilder.dto.response.GetProjectBuilderInfo
 import io.ssafy.soupapi.domain.springinfo.dao.SpringDependencyRepository;
 import io.ssafy.soupapi.global.common.code.ErrorCode;
 import io.ssafy.soupapi.global.exception.BaseExceptionHandler;
+import io.ssafy.soupapi.global.external.s3.application.S3FileService;
+import io.ssafy.soupapi.global.util.FolderZipper;
 import lombok.RequiredArgsConstructor;
 import org.bson.types.ObjectId;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 
@@ -24,9 +33,11 @@ public class ProjectBuilderServiceImpl implements ProjectBuilderService {
     private final MProjectRepository mProjectRepository;
     private final SpringDependencyRepository dependencyRepository;
     private final ProjectBuilderRepository projectBuilderRepository;
+    private final S3FileService s3FileService;
+    private final MongoTemplate mongoTemplate;
 
     @Override
-    public void buildProject(String projectId) {
+    public String buildProject(String projectId) {
         var project = mProjectRepository.findById(new ObjectId(projectId)).orElseThrow(() ->
                 new BaseExceptionHandler(ErrorCode.NOT_FOUND_PROJECT));
         if (Objects.isNull(project.getInfo())) {
@@ -43,9 +54,8 @@ public class ProjectBuilderServiceImpl implements ProjectBuilderService {
         }
 
         try {
-
             // default project 복사
-            projectBuilderRepository.createDefaultProject(project);
+            File destinationFolder = projectBuilderRepository.createDefaultProject(project);
             // Package Builder
             projectBuilderRepository.packageBuilder(project);
             // global 폴더 복사 및 variable 치환
@@ -60,10 +70,36 @@ public class ProjectBuilderServiceImpl implements ProjectBuilderService {
             projectBuilderRepository.insertEntityRelationShip(project);
             // create dto files
             projectBuilderRepository.createDtoClassFiles(project);
+            // update local file to s3 cloud
+            return uploadLocalProjectFile(project, destinationFolder);
         } catch (Exception e) {
             e.printStackTrace();
             throw new BaseExceptionHandler(ErrorCode.FAILED_TO_BUILD_PROJECT);
         }
+    }
+
+    private String uploadLocalProjectFile(Project project, File file) throws IOException {
+        String sourceFolderPath = file.getAbsolutePath();
+        String zipFilePath = file.getAbsolutePath() + ".zip";
+
+        FolderZipper.zipFolder(sourceFolderPath, zipFilePath);
+        var s3Url = s3FileService.uploadFile(zipFilePath);
+        updateFilePath(project, sourceFolderPath, zipFilePath, s3Url);
+        return s3Url;
+    }
+
+    private void updateFilePath(Project project, String filePath, String zipFilePath, String s3Url) {
+        Query query = new Query().addCriteria(Criteria.where("_id").is(project.getId()));
+        Update update = new Update()
+                .set("project_builder_info.springboot_file_path", filePath)
+                .set("project_builder_info.springboot_zip_file_path", zipFilePath)
+                .set("project_builder_info.springboot_s3_url", s3Url);
+
+        var result = mongoTemplate.updateFirst(query, update, Project.class);
+        if (result.wasAcknowledged() && result.getModifiedCount() > 0) {
+            return;
+        }
+        throw new BaseExceptionHandler(ErrorCode.FAILED_TO_UPDATE_PROJECT);
     }
 
     /**

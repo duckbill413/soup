@@ -4,7 +4,7 @@ import io.ssafy.soupapi.domain.projectbuilder.dto.request.ChangeProjectBuilderIn
 import io.ssafy.soupapi.domain.projectbuilder.dto.response.GetProjectBuilderInfo;
 
 public interface ProjectBuilderService {
-    void buildProject(String projectId);
+    String buildProject(String projectId);
 
     GetProjectBuilderInfo changeBuilderInfo(String projectId, ChangeProjectBuilderInfo changeProjectBuilderInfo);
 

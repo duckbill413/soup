@@ -2,12 +2,13 @@ package io.ssafy.soupapi.domain.projectbuilder.dao;
 
 import io.ssafy.soupapi.domain.project.mongodb.entity.Project;
 
+import java.io.File;
 import java.io.IOException;
 
 public interface ProjectBuilderRepository {
     void packageBuilder(Project project) throws IOException;
 
-    void createDefaultProject(Project project) throws IOException;
+    File createDefaultProject(Project project) throws IOException;
 
     void createGlobalGroup(Project project) throws IOException;
 

@@ -116,14 +116,17 @@ public class ProjectBuilderRepositoryImpl implements ProjectBuilderRepository {
      * 기본 패키지 구성 생성
      *
      * @param project 프로젝트 정보
+     * @return
      * @throws IOException 파일 입출력 에러
      */
-    public void createDefaultProject(Project project) throws IOException {
+    public File createDefaultProject(Project project) throws IOException {
         // Step1. 폴더 복사 하기
         File destinationFolder = copyDefaultProject(project);
 
         // Step2. 폴더 변수 설정
         setDefaultProjectVariables(project, destinationFolder);
+
+        return destinationFolder;
     }
 
     /**

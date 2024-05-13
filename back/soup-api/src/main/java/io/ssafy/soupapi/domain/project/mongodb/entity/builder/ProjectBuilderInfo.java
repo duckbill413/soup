@@ -33,4 +33,10 @@ public class ProjectBuilderInfo {
     private String packageName;
     @Field("springboot_dependencies")
     private List<ProjectBuilderDependency> dependencies;
+    @Field("springboot_file_path")
+    private String filePath;
+    @Field("springboot_zip_file_path")
+    private String zipFilePath;
+    @Field("springboot_s3_url")
+    private String s3Url;
 }

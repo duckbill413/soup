@@ -39,6 +39,7 @@ public class S3FileServiceImpl implements S3FileService {
         String uuid = UUID.randomUUID().toString();
         return uuid + "." + extension;
     }
+
     @Override
     public String uploadFile(String localFilePath) throws IOException {
         File file = new File(localFilePath);
@@ -46,7 +47,7 @@ public class S3FileServiceImpl implements S3FileService {
             throw new BaseExceptionHandler(ErrorCode.FILE_NOT_EXISTS);
         }
 
-        String fileName = generateFileName(file.getName());
+        String fileName = UUID.randomUUID() + "/" + file.getName();
         String fileUrl = "https://" + bucket + ".s3." + region + ".amazonaws.com/" + fileName;
         ObjectMetadata metadata = new ObjectMetadata();
         metadata.setContentType(Files.probeContentType(file.toPath()));
@@ -66,7 +67,7 @@ public class S3FileServiceImpl implements S3FileService {
 
     @Override
     public String uploadFile(MultipartFile file) {
-        if (file.isEmpty() ) {
+        if (file.isEmpty()) {
             throw new BaseExceptionHandler(ErrorCode.FILE_NOT_EXISTS);
         }
 
