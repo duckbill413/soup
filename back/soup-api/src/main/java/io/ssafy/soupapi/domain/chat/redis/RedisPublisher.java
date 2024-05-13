@@ -12,11 +12,11 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class RedisPublisher {
 
-    private final RedisTemplate<String, Object> redisTemplateJackson;
+    private final RedisTemplate<String, ChatMessageRes> redisTemplateChatMessageRes;
 
     // redis topic에 메시지 발행. 메시지를 발행 후, 대기 중이던 RedisSubscriber가 메시지를 처리.
     public void publish(ChannelTopic topic, ChatMessageRes chatMessageRes) {
-        redisTemplateJackson.convertAndSend(topic.getTopic(), chatMessageRes);
+        redisTemplateChatMessageRes.convertAndSend(topic.getTopic(), chatMessageRes);
     }
 
 }

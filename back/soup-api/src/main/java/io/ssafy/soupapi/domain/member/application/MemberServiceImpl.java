@@ -3,7 +3,7 @@ package io.ssafy.soupapi.domain.member.application;
 import io.ssafy.soupapi.domain.member.dao.MemberRepository;
 import io.ssafy.soupapi.domain.member.dto.response.GetLiveblocksTokenRes;
 import io.ssafy.soupapi.domain.member.entity.Member;
-import io.ssafy.soupapi.global.external.liveblocks.LiveblocksFeignClient;
+import io.ssafy.soupapi.global.external.liveblocks.dao.LbFeignClient;
 import io.ssafy.soupapi.global.external.liveblocks.dto.request.GetUserIdTokenReq;
 import io.ssafy.soupapi.global.external.liveblocks.dto.response.GetUserIdTokenRes;
 import io.ssafy.soupapi.global.security.user.UserSecurityDTO;
@@ -23,7 +23,7 @@ public class MemberServiceImpl implements MemberService {
 
     private final FindEntityUtil findEntityUtil;
     private final MemberRepository memberRepository;
-    private final LiveblocksFeignClient liveblocksFeignClient;
+    private final LbFeignClient lbFeignClient;
 
     @Transactional
     @Override
@@ -50,7 +50,7 @@ public class MemberServiceImpl implements MemberService {
                 )
                 .build();
         GetUserIdTokenRes getUserIdTokenRes
-                = liveblocksFeignClient.getLiveblocksUserIdToken(getUserIdTokenReq);
+                = lbFeignClient.getLiveblocksUserIdToken(getUserIdTokenReq);
         return GetLiveblocksTokenRes.builder()
                 .liveblocksIdToken(getUserIdTokenRes.token())
                 .build();

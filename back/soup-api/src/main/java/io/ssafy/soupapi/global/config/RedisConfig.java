@@ -3,6 +3,7 @@ package io.ssafy.soupapi.global.config;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.ssafy.soupapi.domain.chat.dto.RChatMessage;
+import io.ssafy.soupapi.domain.chat.dto.response.ChatMessageRes;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -54,8 +55,11 @@ public class RedisConfig {
         RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
         redisTemplate.setConnectionFactory(connectionFactory);
 
+        ObjectMapper objectMapper = new ObjectMapper();
+        Jackson2JsonRedisSerializer<Object> serializer = new Jackson2JsonRedisSerializer<>(objectMapper, Object.class);
+
         redisTemplate.setKeySerializer(new StringRedisSerializer());
-        redisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer<>(String.class));
+        redisTemplate.setValueSerializer(serializer);
         return redisTemplate;
     }
 
@@ -69,6 +73,22 @@ public class RedisConfig {
         objectMapper.registerModule(new JavaTimeModule());
         Jackson2JsonRedisSerializer<RChatMessage> serializer =
                 new Jackson2JsonRedisSerializer<>(objectMapper, RChatMessage.class);
+
+        redisTemplate.setKeySerializer(new StringRedisSerializer());
+        redisTemplate.setValueSerializer(serializer);
+        redisTemplate.setHashValueSerializer(serializer);
+        return redisTemplate;
+    }
+
+    @Bean
+    public RedisTemplate<String, ChatMessageRes> redisTemplateChatMessageRes(RedisConnectionFactory connectionFactory) {
+        RedisTemplate<String, ChatMessageRes> redisTemplate = new RedisTemplate<>();
+        redisTemplate.setConnectionFactory(connectionFactory);
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+        Jackson2JsonRedisSerializer<ChatMessageRes> serializer =
+                new Jackson2JsonRedisSerializer<>(objectMapper, ChatMessageRes.class);
 
         redisTemplate.setKeySerializer(new StringRedisSerializer());
         redisTemplate.setValueSerializer(serializer);
