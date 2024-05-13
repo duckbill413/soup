@@ -13,6 +13,7 @@ import io.ssafy.soupapi.global.util.StringParserUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.io.FileUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
 import java.io.*;
@@ -30,12 +31,12 @@ public class ProjectBuilderRepositoryImpl implements ProjectBuilderRepository {
     final String sourcePath = "src/main/resources/templates/springboot-default-project";
     final String domainPath = "src/main/resources/templates/springboot-default-project-domain";
     final String globalPath = "src/main/resources/templates/springboot-default-project-global";
-    final String saveRootPath = "C:\\util\\%s\\%s"; // TODO: 환경 변수를 이용하여 경로 변경
-    final String[] domainSubNames = {"entity", "dao", "application", "api", "dto"};
     final Map<String, String> baseDtoPackage = new HashMap<>(Map.of(
             "REQUEST", "import %s.dto.request.*;",
             "RESPONSE", "import %s.dto.response.*;"
     ));
+    @Value("${springbuilder.path}")
+    private String saveRootPath;
 
     /**
      * 프로젝트 패키지 구조 설정

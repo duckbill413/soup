@@ -185,3 +185,8 @@ liveblocks:
 openvidu:
   url: ${OPENVIDU_SERVER_URL} #https://your-openvidu-server.com
   secret: ${OPENVIDU_SECRET_KEY}
+
+# Spring Builder Root Path
+springbuilder:
+  path: C:\\util\\%s\\%s
+#  path: /home/ubuntu/build/%s/%s # "C:\\util\\%s\\%s"
