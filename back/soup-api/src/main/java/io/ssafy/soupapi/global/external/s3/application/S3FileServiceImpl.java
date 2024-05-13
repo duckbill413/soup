@@ -41,13 +41,13 @@ public class S3FileServiceImpl implements S3FileService {
     }
 
     @Override
-    public String uploadFile(String localFilePath) throws IOException {
+    public String uploadFile(String defaultPath, String localFilePath) throws IOException {
         File file = new File(localFilePath);
         if (!file.exists() || !file.isFile()) {
             throw new BaseExceptionHandler(ErrorCode.FILE_NOT_EXISTS);
         }
 
-        String fileName = UUID.randomUUID() + "/" + file.getName();
+        String fileName = defaultPath + "/" + file.getName();
         String fileUrl = "https://" + bucket + ".s3." + region + ".amazonaws.com/" + fileName;
         ObjectMetadata metadata = new ObjectMetadata();
         metadata.setContentType(Files.probeContentType(file.toPath()));
