@@ -5,7 +5,6 @@ import io.ssafy.soupapi.global.common.code.ErrorCode;
 import io.ssafy.soupapi.global.security.exception.AccessTokenException;
 import io.ssafy.soupapi.global.security.exception.RefreshTokenException;
 import io.swagger.v3.oas.annotations.media.Schema;
-import org.springframework.http.HttpStatus;
 import org.springframework.validation.FieldError;
 
 import java.util.List;

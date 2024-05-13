@@ -1,7 +1,5 @@
 package io.ssafy.soupapi.domain.chat.redis;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.ssafy.soupapi.domain.chat.dto.response.ChatMessageRes;
 import io.ssafy.soupapi.global.util.DateConverterUtil;
 import lombok.RequiredArgsConstructor;

@@ -8,7 +8,6 @@ import org.springframework.data.mongodb.core.aggregation.AggregationOperation;
 import org.springframework.data.mongodb.core.aggregation.AggregationResults;
 
 import java.time.Instant;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @RequiredArgsConstructor

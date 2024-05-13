@@ -6,7 +6,6 @@ import lombok.Setter;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.time.Instant;
-import java.time.LocalDate;
 
 @Getter
 @Setter

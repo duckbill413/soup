@@ -1,8 +1,6 @@
 package io.ssafy.soupapi.global.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.ssafy.soupapi.domain.chat.dto.RChatMessage;
 import io.ssafy.soupapi.domain.chat.dto.response.ChatMessageRes;
 import org.springframework.beans.factory.annotation.Value;

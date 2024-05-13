@@ -1,7 +1,5 @@
 package io.ssafy.soupapi.global.config;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import feign.Logger;
 import feign.Retryer;
 import io.ssafy.soupapi.global.external.claude.ClaudeFeignClient;
