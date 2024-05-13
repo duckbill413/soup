@@ -3,6 +3,7 @@ package io.ssafy.soupapi.domain.chat.redis;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.ssafy.soupapi.domain.chat.dto.response.ChatMessageRes;
+import io.ssafy.soupapi.global.util.DateConverterUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.connection.Message;
@@ -25,6 +26,7 @@ public class RedisSubscriber implements MessageListener {
 
         String topicName = new String(pattern); // topicName == roomId == projectId
         ChatMessageRes msg = (ChatMessageRes) redisTemplateChatMessageRes.getValueSerializer().deserialize(message.getBody());
+        if (msg != null) msg.setSentAt(DateConverterUtil.utcZdtToKstZdt(msg.getSentAt()));
         messagingTemplate.convertAndSend("/sub/chatrooms/" + topicName, msg);
     }
 

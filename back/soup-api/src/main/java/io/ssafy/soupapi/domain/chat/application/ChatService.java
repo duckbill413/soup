@@ -60,9 +60,9 @@ public class ChatService {
         // 3. 채팅 메시지 -> Redis 저장
         rChatRepository.saveMessageToRedis(chatroomId, RChatMessage, sentAtLong);
 
-        ZonedDateTime sentAtZdt = DateConverterUtil.instantToKstZdt(sentAtInstant);
+//        ZonedDateTime sentAtZdt = DateConverterUtil.instantToKstZdt(sentAtInstant);
 //        log.info("sentAt -> [Instant] {} / [ZonedDateTime] {}", sentAtInstant, sentAtZdt);
-        return generateChatMessageRes(RChatMessage.chatMessageId(), chatMessageReq, sentAtZdt);
+        return generateChatMessageRes(RChatMessage.chatMessageId(), chatMessageReq, sentAtInstant);
     }
 
     public List<GetChatMessageRes> getChatMessages(String chatroomId, PageOffsetRequest pageOffsetRequest, LocalDateTime standardTime) {
@@ -89,6 +89,7 @@ public class ChatService {
             if (rDataSize == 0) { // redis에 (기준 시간 상관 없이) earlliest 메시지의 sentAt 조회해야
                 rChatMessageList = rChatRepository.getMessageByIndex(chatroomId, 0, 1);
             }
+//            mLdt = DateConverterUtil.utcStringToInstant(rChatMessageList.get(0).sentAt());
             mLdt = rChatMessageList.get(0).sentAt();
 
             mChatMessageList = mProjectRepository.getNChatMessagesBefore(chatroomId, mLdt, mDataSize);
@@ -113,14 +114,11 @@ public class ChatService {
         return result;
     }
 
-    private ChatMessageRes generateChatMessageRes(String chatMessageId, ChatMessageReq chatMessageReq, ZonedDateTime sentAt) {
-        return ChatMessageRes.builder()
-                .chatMessageId(chatMessageId)
-                .senderId(chatMessageReq.senderId())
-                .message(chatMessageReq.message())
-                .sentAt(sentAt.toString())
-                .mentionedMemberIds(chatMessageReq.mentionedMemberIds())
-                .build();
+    private ChatMessageRes generateChatMessageRes(String chatMessageId, ChatMessageReq chatMessageReq, Instant sentAt) {
+        return new ChatMessageRes(
+            chatMessageId, chatMessageReq.senderId(), chatMessageReq.message(),
+            DateConverterUtil.instantToKstZdt(sentAt), chatMessageReq.mentionedMemberIds()
+        );
     }
 
 }
