@@ -1,5 +1,6 @@
 'use client'
 
+import { getDomainNamesAPI } from '@/apis/api'
 import {
   Dropbox,
   InputText,
@@ -10,25 +11,16 @@ import PathTable from '@/containers/api/detail/components/PathTable'
 import QueryTable from '@/containers/api/detail/components/QueryTable'
 import * as styles from '@/containers/api/detail/styles/detailContents.css'
 import { Props } from '@/containers/api/detail/types/props'
-import { Option } from '@/containers/api/types/apiinput'
 import { LiveList, LiveObject } from '@liveblocks/client'
-import { ChangeEvent } from 'react'
+import { useParams } from 'next/navigation'
+import { ChangeEvent, useEffect, useState } from 'react'
 import { useMutation, useStorage } from '../../../../../liveblocks.config'
 import JsonEditor from './JsonEditor'
 
-// TODO: 예시 데이터. 삭제 필
-const sampleData: Array<Option> = [
-  {
-    id: 1,
-    value: 'Member',
-  },
-  {
-    id: 2,
-    value: 'Board',
-  },
-]
-
 export default function DetailContents({ idx }: Props) {
+  const params = useParams()
+  const { projectId } = params
+  const [domain, setDomain] = useState(null)
   const initial = useStorage((root) => root.apiList)
 
   const updateLiveblock = useMutation(({ storage }, key, newValue) => {
@@ -98,9 +90,20 @@ export default function DetailContents({ idx }: Props) {
     updateLiveblock(key, newBody)
   }
 
+  const setDomainNames = async () => {
+    if (projectId && typeof projectId === 'string') {
+      const res = await getDomainNamesAPI(projectId)
+      setDomain(res.result)
+    }
+  }
+
+  useEffect(() => {
+    setDomainNames()
+  }, [])
+
   return (
     <section className={styles.inputSection}>
-      <Dropbox title="도메인" isEssential options={sampleData} />
+      <Dropbox title="도메인" isEssential options={domain ?? []} />
       <InputText
         title="API 이름"
         placeholder="[Swagger API] summary로 반영됩니다."

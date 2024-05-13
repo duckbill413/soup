@@ -59,13 +59,13 @@ export function Dropbox({ title, isEssential, options }: APIInput) {
   return (
     <InputLabel title={title} isEssential={isEssential}>
       <Select
-        value={options ? options[0].id : null}
+        value={options ?? null}
         displayEmpty
         sx={{ width: 'fit-content', minWidth: '200px' }}
       >
         {options?.map((item) => (
-          <MenuItem value={item.id} key={item.id}>
-            {item.value}
+          <MenuItem value={item} key={item}>
+            {item}
           </MenuItem>
         ))}
       </Select>
