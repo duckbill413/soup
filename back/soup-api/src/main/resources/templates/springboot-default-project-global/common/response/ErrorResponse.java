@@ -1,9 +1,7 @@
 package :springboot-project_package.global.common.response;
 
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import io.ssafy.soupapi.global.common.code.ErrorCode;
-import io.ssafy.soupapi.global.security.exception.AccessTokenException;
-import io.ssafy.soupapi.global.security.exception.RefreshTokenException;
+import :springboot-project_package.global.common.code.ErrorCode;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.validation.FieldError;
 
@@ -38,23 +36,4 @@ public record ErrorResponse(
         );
     }
 
-    public static ErrorResponse fail(AccessTokenException e) {
-        return new ErrorResponse(
-                e.getErrorCode().getHttpStatus().value(),
-                e.getErrorCode().name(),
-                e.getErrorCode().getMessage(),
-                null,
-                List.of()
-        );
-    }
-
-    public static ErrorResponse fail(RefreshTokenException e) {
-        return new ErrorResponse(
-                e.getErrorCode().getHttpStatus().value(),
-                e.getErrorCode().name(),
-                e.getErrorCode().getMessage(),
-                null,
-                List.of()
-        );
-    }
 }

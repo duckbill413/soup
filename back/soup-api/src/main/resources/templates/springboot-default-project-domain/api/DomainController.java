@@ -1,7 +1,5 @@
 package :domain-package-name.api;
 
-import :domain-package-name.dto.request.*;
-import :domain-package-name.dto.response.*;
 import :domain-package-name.application.:domain-class-nameService;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.*;

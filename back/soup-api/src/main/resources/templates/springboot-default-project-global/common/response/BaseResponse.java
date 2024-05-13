@@ -1,7 +1,7 @@
 package :springboot-project_package.global.common.response;
 
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import io.ssafy.soupapi.global.common.code.SuccessCode;
+import :springboot-project_package.global.common.code.SuccessCode;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.http.ResponseEntity;
 

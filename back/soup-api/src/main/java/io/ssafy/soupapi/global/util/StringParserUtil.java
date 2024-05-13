@@ -38,7 +38,7 @@ public class StringParserUtil {
     }
 
     public static String convertToSnakeCase(String data) {
-        String[] parts = data.split("(?=[A-Z])|_");
+        String[] parts = data.split("(?=[A-Z])|_|-");
         StringBuilder result = new StringBuilder();
         for (int i = 0; i < parts.length; i++) {
             if (parts[i].isEmpty()) {
@@ -55,7 +55,7 @@ public class StringParserUtil {
     }
 
     public static String convertToPascalCase(String data) {
-        String[] parts = data.split("(?=[A-Z])|_");
+        String[] parts = data.split("(?=[A-Z])|_|-");
         StringBuilder result = new StringBuilder();
         for (int i = 0; i < parts.length; i++) {
             if (parts[i].isEmpty()) {
@@ -69,7 +69,7 @@ public class StringParserUtil {
     }
 
     public static String convertToCamelCase(String data) {
-        String[] parts = data.split("(?=[A-Z])|_");
+        String[] parts = data.split("(?=[A-Z])|_|-");
         StringBuilder result = new StringBuilder();
         for (int i = 0; i < parts.length; i++) {
             if (parts[i].isEmpty()) {

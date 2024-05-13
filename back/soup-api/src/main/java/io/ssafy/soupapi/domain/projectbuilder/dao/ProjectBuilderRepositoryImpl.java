@@ -32,6 +32,10 @@ public class ProjectBuilderRepositoryImpl implements ProjectBuilderRepository {
     final String globalPath = "src/main/resources/templates/springboot-default-project-global";
     final String saveRootPath = "C:\\util\\%s\\%s"; // TODO: 환경 변수를 이용하여 경로 변경
     final String[] domainSubNames = {"entity", "dao", "application", "api", "dto"};
+    final Map<String, String> baseDtoPackage = new HashMap<>(Map.of(
+            "REQUEST", "import %s.dto.request.*;",
+            "RESPONSE", "import %s.dto.response.*;"
+    ));
 
     /**
      * 프로젝트 패키지 구조 설정
@@ -97,7 +101,7 @@ public class ProjectBuilderRepositoryImpl implements ProjectBuilderRepository {
         folderPath.append(File.separator).append(convertToPascalCase(projectBuilderInfo.getName())).append("Application.java");
         var mapUtil = new MapStringReplace(application);
         mapUtil.addValue("springboot-project_package", projectBuilderInfo.getPackageName());
-        mapUtil.addValue("springboot-project-name", projectBuilderInfo.getName() + "Application");
+        mapUtil.addValue("springboot-project-name", convertToPascalCase(projectBuilderInfo.getName()) + "Application");
         String replaced = mapUtil.replace();
 
         File defaultClass = new File(folderPath.toString());
@@ -313,10 +317,13 @@ public class ProjectBuilderRepositoryImpl implements ProjectBuilderRepository {
         String domainAbsolutePath = getProjectMainAbsolutePath(project, MainPath.domain);
         ApiDocs apiDocs = project.getApiDocs();
 
+        Set<String> domainReqDtoPackage = new HashSet<>();
+        Set<String> domainResDtoPackage = new HashSet<>();
+
         List<ApiDoc> apiDocList = project.getApiDocs().getApiDocList();
         for (ApiDoc apiDoc : apiDocList) {
             String subDomainPackage = domainPackage + String.format(".%s.dto", convertToSnakeCase(apiDoc.getDomain()));
-            String subDomainAbsolutePath = domainAbsolutePath + File.separator + convertToSnakeCase(apiDoc.getDomain()) + File.separator + "dto";
+            String subDomainAbsoluteDtoPath = domainAbsolutePath + File.separator + convertToSnakeCase(apiDoc.getDomain()) + File.separator + "dto";
 
             // Generate RequestBody
             if (apiDoc.getResponseBody() != null && !apiDoc.getRequestBody().isBlank()) {
@@ -324,8 +331,17 @@ public class ProjectBuilderRepositoryImpl implements ProjectBuilderRepository {
                         apiDoc.getRequestBody(),
                         apiDoc.getRequestBodyName(),
                         subDomainPackage + ".request",
-                        subDomainAbsolutePath + File.separator + "request"
+                        subDomainAbsoluteDtoPath + File.separator + "request"
                 );
+
+                // Request import 문 삽입
+                if (!domainReqDtoPackage.contains(apiDoc.getDomain())) {
+                    domainReqDtoPackage.add(apiDoc.getDomain());
+                    String importStrPath = domainAbsolutePath + File.separator + convertToSnakeCase(apiDoc.getDomain()) + File.separator;
+                    String importStr = String.format(baseDtoPackage.get("REQUEST"), domainPackage + "." + convertToSnakeCase(apiDoc.getDomain()));
+                    insertImportIntoFile(new File(importStrPath + String.format("api\\%s", convertToPascalCase(apiDoc.getDomain()) + "Controller.java")), importStr);
+                    insertImportIntoFile(new File(importStrPath + String.format("application\\%s", convertToPascalCase(apiDoc.getDomain()) + "Service.java")), importStr);
+                }
             }
 
             // Generate ResponseBody
@@ -334,8 +350,17 @@ public class ProjectBuilderRepositoryImpl implements ProjectBuilderRepository {
                         apiDoc.getResponseBody(),
                         apiDoc.getResponseBodyName(),
                         subDomainPackage + ".response",
-                        subDomainAbsolutePath + File.separator + "response"
+                        subDomainAbsoluteDtoPath + File.separator + "response"
                 );
+
+                // Response import 문 삽입
+                if (!domainResDtoPackage.contains(apiDoc.getDomain())) {
+                    domainResDtoPackage.add(apiDoc.getDomain());
+                    String importStrPath = domainAbsolutePath + File.separator + convertToSnakeCase(apiDoc.getDomain()) + File.separator;
+                    String importStr = String.format(baseDtoPackage.get("RESPONSE"), domainPackage + "." + convertToSnakeCase(apiDoc.getDomain()));
+                    insertImportIntoFile(new File(importStrPath + String.format("api\\%s", convertToPascalCase(apiDoc.getDomain()) + "Controller.java")), importStr);
+                    insertImportIntoFile(new File(importStrPath + String.format("application\\%s", convertToPascalCase(apiDoc.getDomain()) + "Service.java")), importStr);
+                }
             }
         }
     }
@@ -367,42 +392,6 @@ public class ProjectBuilderRepositoryImpl implements ProjectBuilderRepository {
                 insertMethodIntoFile(sFile, serviceMethod);
             }
         }
-    }
-
-    private String createRequestDtoClass(ApiDoc apiDoc) {
-        String dtoClassFile = """
-                package :domain-package-name.dto.request;
-                                
-                import io.swagger.v3.oas.annotations.media.Schema;
-                                
-                import java.util.*;
-                                
-                @Schema(description = ":dto-class-description 요청 DTO")
-                public record :dto-class-name(
-                :attributes
-                ) {
-                }
-                """;
-
-        return null;
-    }
-
-    private String createResponseDtoClass(ApiDoc apiDoc) {
-        String dtoClassFile = """
-                package :domain-package-name.dto.request;
-                                
-                import io.swagger.v3.oas.annotations.media.Schema;
-                                
-                import java.util.*;
-                                
-                @Schema(description = ":dto-class-description 응답 DTO")
-                public record :dto-class-name(
-                :attributes
-                ) {
-                }
-                """;
-
-        return null;
     }
 
 
@@ -555,13 +544,22 @@ public class ProjectBuilderRepositoryImpl implements ProjectBuilderRepository {
     private void replaceEntityVariables(String domainSubPath, TableDefinition tableDefinition) throws IOException {
         List<File> files = getLeafFiles(new File(domainSubPath));
         StringBuilder sb = new StringBuilder();
+        Map<String, String> columns = new HashMap<>();
 
-        for (ColumnDefinition column : tableDefinition.getColumns().values()) {
+        for (String columnId : tableDefinition.getColumnIds()) {
+            ColumnDefinition column = tableDefinition.getColumns().get(columnId);
+            if (column.isForeignKey()) {
+                continue;
+            }
             try {
-                sb.append(column.getColumnVariable()).append('\n');
+                columns.put(column.getValidParamName(), column.getColumnVariable());
             } catch (Exception e) {
                 log.info("[빌드] 칼럼명: " + column.getName() + " 생성 실패");
             }
+        }
+
+        for (String value : columns.values()) {
+            sb.append(value).append('\n');
         }
 
         Map<String, String> variables = new HashMap<>();

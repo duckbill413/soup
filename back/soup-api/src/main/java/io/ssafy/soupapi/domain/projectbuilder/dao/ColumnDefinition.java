@@ -22,7 +22,7 @@ import static io.ssafy.soupapi.global.util.StringParserUtil.convertToSnakeCase;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ColumnDefinition {
     @JsonIgnore
-    private static final Pattern VALID_CHAR_PATTERN = Pattern.compile("[^a-zA-Z0-9_]");
+    private static final Pattern VALID_CHAR_PATTERN = Pattern.compile("[^a-zA-Z0-9_-]");
     private String id;
     private String tableId;
     private String name;
@@ -31,6 +31,11 @@ public class ColumnDefinition {
     @JsonProperty("default")
     private String mydefault;
     private int options;
+    private Ui ui;
+
+    public boolean isForeignKey() {
+        return ui.keys() == 2;
+    }
 
     public String getColumnVariable() {
         // @Column(name = "project_builder_file_path", length = 1111, nullable = false, unique = true)

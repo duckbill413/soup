@@ -1,7 +1,5 @@
 package :domain-package-name.application;
 
-import :domain-package-name.dto.request.*;
-import :domain-package-name.dto.response.*;
 import :domain-package-name.dao.:domain-class-nameRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

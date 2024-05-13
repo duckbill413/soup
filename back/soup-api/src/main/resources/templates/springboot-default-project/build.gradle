@@ -20,8 +20,9 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
-	// appended by soup!
+	// added by soup!
 :springboot-dependencies
+	// end
 }
 
 tasks.named('test') {
