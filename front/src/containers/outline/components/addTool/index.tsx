@@ -1,7 +1,7 @@
 "use client"
 
 import Image from 'next/image';
-import { useState } from 'react';
+import { useEffect, useState } from 'react'
 import Add from '#/assets/icons/outline/addButton.svg';
 import ToolTable from '@/containers/outline/components/addTool/ToolTable';
 import * as styles from "@/containers/outline/styles/addTool/outlineAddTool.css";
@@ -14,6 +14,10 @@ function OutlineAddTool () {
   const addTool = () => {
     setShowModal(!showModal);
   };
+
+  useEffect(() => () => {
+      console.log("페이지 나감")
+    }, [])
 
   return (
     <div className={styles.container}>

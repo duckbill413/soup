@@ -18,9 +18,13 @@ function OutlineTeamModal (props: { clickModal: () => void }) {
   const [emailInput, setEmailInput] = useState<string>('')
   const [tags, setTags] = useState<Array<{ id: string, role_name: string }>>([]);
   const invitedTeam = useStorage((root)=>root.outline)
+  const [isComposing, setIsComposing] = useState(false);
+
+  const handleComposition = (e: React.CompositionEvent) => {
+    setIsComposing(e.type !== 'compositionend')
+  };
 
   const updateTeam = useMutation(({ storage }, data) => {
-    // storage.get("outline")?.get("project_team").push(new LiveObject<ProjectMember>(data))
     const members = storage.get("outline")?.get("project_team")
     const index = members?.findIndex(member => member.get("email") === data.email)
     if( index !== undefined && index !== -1) {
@@ -36,7 +40,7 @@ function OutlineTeamModal (props: { clickModal: () => void }) {
   };
 
   const addHashtag = (e: KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter' && roleInput.trim() !== '') {
+    if (e.key === 'Enter' && !isComposing && roleInput.trim() !== '') {
       const newTag = { id: crypto.randomUUID(), role_name: roleInput };
       setTags(prevTags => [...prevTags, newTag]);
       setRoleInput('');
@@ -97,6 +101,8 @@ function OutlineTeamModal (props: { clickModal: () => void }) {
                  value={roleInput}
                  onChange={changeInput(setRoleInput)}
                  onKeyDown={addHashtag}
+                 onCompositionStart={handleComposition}
+                 onCompositionEnd={handleComposition}
           />
           <input className={styles.nameInput} placeholder="이름"
                  value={nameInput}
