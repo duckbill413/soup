@@ -9,7 +9,7 @@ public interface S3FileService {
 
     public String generateFileName(String originalFileName);
 
-    String uploadFile(String localFilePath) throws IOException;
+    String uploadFile(String defaultPath, String localFilePath) throws IOException;
 
     public String uploadFile(MultipartFile file);
 

@@ -83,7 +83,7 @@ public class ProjectBuilderServiceImpl implements ProjectBuilderService {
         String zipFilePath = file.getAbsolutePath() + ".zip";
 
         FolderZipper.zipFolder(sourceFolderPath, zipFilePath);
-        var s3Url = s3FileService.uploadFile(zipFilePath);
+        var s3Url = s3FileService.uploadFile(project.getId().toHexString(), zipFilePath);
         updateFilePath(project, sourceFolderPath, zipFilePath, s3Url);
         return s3Url;
     }
