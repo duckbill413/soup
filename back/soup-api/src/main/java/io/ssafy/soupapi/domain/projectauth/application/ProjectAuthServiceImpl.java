@@ -36,6 +36,7 @@ public class ProjectAuthServiceImpl implements ProjectAuthService {
                     .id(projectAuth.getMember().getId())
                     .email(projectAuth.getMember().getEmail())
                     .nickname(projectAuth.getMember().getNickname())
+                    .profileImageUrl(projectAuth.getMember().getProfileImageUrl())
                     .phone(projectAuth.getMember().getPhone())
                     .roles(projectAuth.getRoles().stream().toList())
                     .build());

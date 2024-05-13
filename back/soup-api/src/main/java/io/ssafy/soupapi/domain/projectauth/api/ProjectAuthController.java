@@ -29,7 +29,7 @@ import java.util.List;
 public class ProjectAuthController {
     private final ProjectAuthService projectAuthService;
 
-    @Operation(summary = "프로젝트 팀원 정보 요청", description = "프로젝트 팀원들의 정보 및 권한 요청")
+    @Operation(summary = "팀원 정보 요청", description = "특정 프로젝트에 참여한 팀원들의 정보와 권한 요청")
     @GetMapping("/{projectId}/teams")
     @PreAuthorize("@authService.hasProjectRoleMember(#projectId, #userSecurityDTO.getId())")
     public ResponseEntity<BaseResponse<List<GetProjectTeamMember>>> findProjectTeamMembers(
