@@ -28,14 +28,17 @@ import static io.ssafy.soupapi.global.util.StringParserUtil.*;
 public class ProjectBuilderRepositoryImpl implements ProjectBuilderRepository {
     private final RecordClassGenerator recordClassGenerator;
     private final ObjectMapper objectMapper;
-    final String sourcePath = "src/main/resources/templates/springboot-default-project";
-    final String domainPath = "src/main/resources/templates/springboot-default-project-domain";
-    final String globalPath = "src/main/resources/templates/springboot-default-project-global";
+    @Value("${springbuilder.source-path}")
+    private String sourcePath;
+    @Value("${springbuilder.domain-path}")
+    private String domainPath;
+    @Value("${springbuilder.global-path}")
+    private String globalPath;
     final Map<String, String> baseDtoPackage = new HashMap<>(Map.of(
             "REQUEST", "import %s.dto.request.*;",
             "RESPONSE", "import %s.dto.response.*;"
     ));
-    @Value("${springbuilder.path}")
+    @Value("${springbuilder.build-path}")
     private String saveRootPath;
 
     /**

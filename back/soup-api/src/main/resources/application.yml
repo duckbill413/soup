@@ -189,4 +189,7 @@ openvidu:
 
 # Spring Builder Root Path
 springbuilder:
-  path: ${FILE_WRITE_PATH}
+  source-path: ${PROJECT_SOURCE_PATH}
+  domain-path: ${PROJECT_DOMAIN_PATH}
+  global-path: ${PROJECT_GLOBAL_PATH}
+  build-path: ${FILE_WRITE_PATH}
