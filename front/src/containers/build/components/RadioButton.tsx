@@ -1,6 +1,6 @@
+import * as styles from '@/containers/build/styles/radioButton.css'
 import { RadioProps } from '@/types/radio'
-import { Radio, RadioGroup, FormControlLabel } from '@mui/material'
-import * as styles from '@/containers/build/radioButton.css'
+import { FormControlLabel, Radio, RadioGroup } from '@mui/material'
 
 export function RadioButton({ checked, label }: RadioProps) {
   return (
