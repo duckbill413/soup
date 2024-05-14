@@ -48,12 +48,13 @@ globalStyle(`${content} >div>p`, {
     fontSize: vars.fontSize.t4
 })
 
-globalStyle(`${content} >div>button`, {
+globalStyle(`${content} >div>span>button`, {
     backgroundColor:vars.color.main,
     borderRadius:'10px',
     padding:vars.space.tiny,
     color:'white',
     fontWeight:'500',
-    margin:'0'
+    margin:'0',
+    marginRight:'8px'
 })
 

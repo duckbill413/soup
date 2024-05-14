@@ -28,6 +28,9 @@ export const pageContainer = style({
   height: '90vh',
   width: '100%',
   overflowY: 'auto',
+  '::-webkit-scrollbar' : {
+    display: 'none'
+  }
 })
 
 export const mainPageHeader = style({
