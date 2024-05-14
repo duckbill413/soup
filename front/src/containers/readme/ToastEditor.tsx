@@ -3,6 +3,7 @@
 import React, {useRef, useEffect} from 'react';
 import dynamic from 'next/dynamic';
 import mermaid from 'mermaid';
+import {getReadMeTemplate} from "@/apis/readme/readmeAPI";
 import {useMutation, useStorage} from "../../../liveblocks.config";
 
 mermaid.initialize({
@@ -65,12 +66,23 @@ function Code({children = [], className}: CodeProps) {
     return <code className={String(className)}>{children}</code>;
 }
 
-
-export default function Mermaid() {
+type Props={
+    projectId:string;
+}
+export default function Mermaid({projectId}:Props) {
     const init = useStorage((root) => root.readme)
     const updateElement = useMutation(({storage}, readme: string) => {
         const currData = storage.get('readme');
         currData?.set('json', readme);
+    }, []);
+    useEffect(() => {
+        const fetchReadMeTemplate = async () => {
+            if (!init?.json) {
+                const readMeTemplate = await getReadMeTemplate(projectId);
+                updateElement(readMeTemplate);
+            }
+        };
+        fetchReadMeTemplate();
     }, []);
 
     return (
