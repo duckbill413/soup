@@ -173,6 +173,7 @@ public class MProjectController {
             @PathVariable(name = "projectId") String projectId,
             @AuthenticationPrincipal UserSecurityDTO userSecurityDTO
     ) {
+        mProjectService.linkProjectVuerdWithLiveblocks(new ObjectId(projectId));
         return BaseResponse.success(
                 SuccessCode.SELECT_SUCCESS,
                 mProjectService.findProjectVuerd(new ObjectId(projectId))
@@ -190,6 +191,19 @@ public class MProjectController {
         return BaseResponse.success(
                 SuccessCode.UPDATE_SUCCESS,
                 mProjectService.changeProjectVuerd(new ObjectId(projectId), vuerdDoc)
+        );
+    }
+
+    @Operation(summary = "Liveblocks 프로젝트 ERD 업데이트")
+    @PutMapping("/{projectId}/vuerd/live")
+    @PreAuthorize("@authService.hasProjectRoleMember(#projectId, #userSecurityDTO.getId())")
+    public ResponseEntity<BaseResponse<Object>> changeProjectVuerdWithLiveblocks(
+            @PathVariable String projectId,
+            @AuthenticationPrincipal UserSecurityDTO userSecurityDTO
+    ) {
+        return BaseResponse.success(
+                SuccessCode.UPDATE_SUCCESS,
+                mProjectService.linkProjectVuerdWithLiveblocks(new ObjectId(projectId))
         );
     }
 
@@ -269,6 +283,7 @@ public class MProjectController {
             @PathVariable String projectId,
             @AuthenticationPrincipal UserSecurityDTO userSecurityDTO
     ) {
+        mProjectService.linkProjectVuerdWithLiveblocks(new ObjectId(projectId));
         return BaseResponse.success(
                 SuccessCode.SELECT_SUCCESS,
                 mProjectService.findProjectValidDomainNames(new ObjectId(projectId))

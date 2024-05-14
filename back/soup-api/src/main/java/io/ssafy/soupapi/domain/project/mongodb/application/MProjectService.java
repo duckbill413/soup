@@ -48,4 +48,6 @@ public interface MProjectService {
     void changeProjectImage(ObjectId projectId, UpdateProjectImage updateProjectImage);
 
     String deleteProjectApiDoc(ObjectId objectId, UUID apiDocId);
+
+    Object linkProjectVuerdWithLiveblocks(ObjectId projectId);
 }

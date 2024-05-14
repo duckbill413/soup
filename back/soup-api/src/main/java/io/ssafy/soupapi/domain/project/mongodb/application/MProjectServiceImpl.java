@@ -1,6 +1,7 @@
 package io.ssafy.soupapi.domain.project.mongodb.application;
 
 import com.google.gson.Gson;
+import io.ssafy.soupapi.domain.project.constant.StepName;
 import io.ssafy.soupapi.domain.project.mongodb.dao.MProjectRepository;
 import io.ssafy.soupapi.domain.project.mongodb.dto.request.*;
 import io.ssafy.soupapi.domain.project.mongodb.dto.response.*;
@@ -14,6 +15,7 @@ import io.ssafy.soupapi.global.common.request.PageOffsetRequest;
 import io.ssafy.soupapi.global.common.response.OffsetPagination;
 import io.ssafy.soupapi.global.common.response.PageOffsetResponse;
 import io.ssafy.soupapi.global.exception.BaseExceptionHandler;
+import io.ssafy.soupapi.global.external.liveblocks.application.LiveblocksComponent;
 import io.ssafy.soupapi.global.security.user.UserSecurityDTO;
 import io.ssafy.soupapi.global.util.DateConverterUtil;
 import io.ssafy.soupapi.global.util.StringParserUtil;
@@ -39,6 +41,7 @@ import java.util.*;
 @RequiredArgsConstructor
 public class MProjectServiceImpl implements MProjectService {
     private final MProjectRepository mProjectRepository;
+    private final LiveblocksComponent liveblocksComponent;
     private final MongoTemplate mongoTemplate;
     private final Gson gson;
 
@@ -429,6 +432,16 @@ public class MProjectServiceImpl implements MProjectService {
         }
 
         return "삭제 실패";
+    }
+
+    @Transactional
+    @Override
+    public Object linkProjectVuerdWithLiveblocks(ObjectId projectId) {
+        var vuerdDoc = liveblocksComponent.getRoomStorageDocument(projectId.toHexString(), StepName.erd, Object.class);
+        if (Objects.isNull(vuerdDoc)) {
+            throw new BaseExceptionHandler(ErrorCode.LIVEBLOCK_DATA_IS_NULL);
+        }
+        return changeProjectVuerd(projectId, vuerdDoc);
     }
 
     @Override
