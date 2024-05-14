@@ -459,6 +459,11 @@ public class MProjectServiceImpl implements MProjectService {
     }
 
     @Override
+    public String liveProjectApiDoc(String projectId) {
+        return null;
+    }
+
+    @Override
     public void changeProjectImage(ObjectId projectId, UpdateProjectImage updateProjectImage) {
         try {
             Query query = new Query(Criteria.where("_id").is(projectId));
