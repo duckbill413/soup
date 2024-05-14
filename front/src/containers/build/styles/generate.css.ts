@@ -16,7 +16,6 @@ export const section = style({
 export const box = style({
   flex: '1 0 0',
   borderRadius: '10px',
-  padding: '12px',
   maxHeight: '80vh',
   overflowY: 'auto',
 
@@ -44,6 +43,10 @@ export const file = style({
 
 export const code = style({
   flex: 3,
+  borderRadius: '10px',
+  outline: 'none',
+  overflow: 'auto',
+  border: '1px solid #dedede',
 })
 
 export const list = style({

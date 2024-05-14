@@ -29,6 +29,7 @@ const tokenRefresh = async () => {
     const data = res.data.result
     setToken(data.accessToken, data.refreshToken)
   } catch (e) {
+    console.log('error==', e)
     tokenClear()
     window.location.href = '/'
   }
