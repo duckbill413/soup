@@ -53,7 +53,7 @@ public class ParticipateTeamService {
         addTeamMember(project, tempTeamMember.roles(), Member.builder().id(userSecurityDTO.getId()).build());
         liveblocksComponent.addMemberToAllStepRooms(userSecurityDTO.getId().toString(), project.getId());
 
-        return project.getName() + " 프로젝트에 참가 되었습니다.";
+        return project.getId();
     }
 
     private void addTeamMember(Project project, Set<ProjectRole> projectRoles, Member teamMember) {
