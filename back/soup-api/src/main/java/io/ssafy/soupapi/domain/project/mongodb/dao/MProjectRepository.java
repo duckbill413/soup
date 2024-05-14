@@ -27,7 +27,7 @@ public interface MProjectRepository extends MongoRepository<Project, ObjectId>, 
     Optional<Project> findVuerdById(ObjectId projectId);
 
     @Query(value = "{ _id: ?0 }", fields = "{ project_vuerd: 1 }")
-    @Update("{ '$set': { project_vuerd:  ?1} }")
+    @Update("{ $set: { project_vuerd:  ?1} }")
     void changeVuerdById(ObjectId projectId, Object vuerdDoc);
 
     @Query(value = "{ _id:  ?0 }", fields = "{project_info:  1, project_tools:  1}")

@@ -173,7 +173,7 @@ public class MProjectController {
             @PathVariable(name = "projectId") String projectId,
             @AuthenticationPrincipal UserSecurityDTO userSecurityDTO
     ) {
-        mProjectService.linkProjectVuerdWithLiveblocks(new ObjectId(projectId));
+        mProjectService.linkProjectVuerd(new ObjectId(projectId));
         return BaseResponse.success(
                 SuccessCode.SELECT_SUCCESS,
                 mProjectService.findProjectVuerd(new ObjectId(projectId))
@@ -203,7 +203,7 @@ public class MProjectController {
     ) {
         return BaseResponse.success(
                 SuccessCode.UPDATE_SUCCESS,
-                mProjectService.linkProjectVuerdWithLiveblocks(new ObjectId(projectId))
+                mProjectService.linkProjectVuerd(new ObjectId(projectId))
         );
     }
 
@@ -283,7 +283,7 @@ public class MProjectController {
             @PathVariable String projectId,
             @AuthenticationPrincipal UserSecurityDTO userSecurityDTO
     ) {
-        mProjectService.linkProjectVuerdWithLiveblocks(new ObjectId(projectId));
+        mProjectService.linkProjectVuerd(new ObjectId(projectId));
         return BaseResponse.success(
                 SuccessCode.SELECT_SUCCESS,
                 mProjectService.findProjectValidDomainNames(new ObjectId(projectId))

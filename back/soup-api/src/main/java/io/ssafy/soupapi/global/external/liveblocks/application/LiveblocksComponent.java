@@ -10,8 +10,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Component;
 
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * service + repository의 로직이 함께 있단 점을 고려해 service/repository가 아닌 componenet로 등록
@@ -46,7 +46,7 @@ public class LiveblocksComponent {
             updateRoomReq.usersAccesses().put(memberId, List.of("room:write"));
 
             ChangeRoomRes changeRoomRes = lbFeignClient.updateRoom(
-                projectId, stepName.name(), updateRoomReq
+                    projectId, stepName.name(), updateRoomReq
             );
 
             // TODO: 성공 실패 처리하면 될 듯
@@ -54,7 +54,7 @@ public class LiveblocksComponent {
     }
 
     public <T> T getRoomStorageDocument(String projectId, StepName stepName, Class<T> clazz) {
-        HashMap<String, Object> map = lbFeignClient.getRoomStorageDocument(projectId, stepName.name());
+        Map<String, Object> map = lbFeignClient.getRoomStorageDocument(projectId, stepName.name());
         Object object = map.get(stepName.name());
         return objectMapper.convertValue(object, clazz);
     }

@@ -1,6 +1,9 @@
 package io.ssafy.soupapi.domain.project.mongodb.application;
 
-import io.ssafy.soupapi.domain.project.mongodb.dto.request.*;
+import io.ssafy.soupapi.domain.project.mongodb.dto.request.UpdateApiDoc;
+import io.ssafy.soupapi.domain.project.mongodb.dto.request.UpdateProjectInfo;
+import io.ssafy.soupapi.domain.project.mongodb.dto.request.UpdateProjectJiraKey;
+import io.ssafy.soupapi.domain.project.mongodb.dto.request.UpdateProjectProposal;
 import io.ssafy.soupapi.domain.project.mongodb.dto.response.*;
 import io.ssafy.soupapi.domain.project.mongodb.entity.issue.ProjectIssue;
 import io.ssafy.soupapi.domain.project.usecase.dto.request.UpdateProjectImage;
@@ -49,5 +52,5 @@ public interface MProjectService {
 
     String deleteProjectApiDoc(ObjectId objectId, UUID apiDocId);
 
-    Object linkProjectVuerdWithLiveblocks(ObjectId projectId);
+    Object linkProjectVuerd(ObjectId projectId);
 }

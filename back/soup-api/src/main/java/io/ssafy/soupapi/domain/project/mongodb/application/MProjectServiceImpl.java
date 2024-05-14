@@ -1,5 +1,7 @@
 package io.ssafy.soupapi.domain.project.mongodb.application;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import io.ssafy.soupapi.domain.project.constant.StepName;
 import io.ssafy.soupapi.domain.project.mongodb.dao.MProjectRepository;
@@ -43,6 +45,7 @@ public class MProjectServiceImpl implements MProjectService {
     private final MProjectRepository mProjectRepository;
     private final LiveblocksComponent liveblocksComponent;
     private final MongoTemplate mongoTemplate;
+    private final ObjectMapper objectMapper;
     private final Gson gson;
 
     /**
@@ -263,9 +266,12 @@ public class MProjectServiceImpl implements MProjectService {
     public Object findProjectVuerd(ObjectId projectId) {
         var project = mProjectRepository.findVuerdById(projectId).orElseThrow(() ->
                 new BaseExceptionHandler(ErrorCode.NOT_FOUND_PROJECT));
+
         if (Objects.isNull(project.getVuerd())) {
             Object sampleVuerd = getSampleVuerdDoc();
-            mProjectRepository.changeVuerdById(projectId, sampleVuerd);
+            Query query = new Query(Criteria.where("_id").is(projectId));
+            Update update = new Update().set("project_vuerd", sampleVuerd);
+            mongoTemplate.updateFirst(query, update, Project.class);
             return sampleVuerd;
         }
 
@@ -285,17 +291,20 @@ public class MProjectServiceImpl implements MProjectService {
         var project = mProjectRepository.findVuerdById(projectId).orElseThrow(() ->
                 new BaseExceptionHandler(ErrorCode.NOT_FOUND_PROJECT));
 
-        mProjectRepository.changeVuerdById(projectId, vuerdDoc);
+        Query query = new Query(Criteria.where("_id").is(projectId));
+        Update update = new Update().set("project_vuerd", vuerdDoc);
+        mongoTemplate.updateFirst(query, update, Project.class);
 
         // 프로젝트 도메인 정보 업데이트
-        saveProjectDomainsByERD(projectId, project);
+        saveProjectDomainsByERD(projectId, vuerdDoc);
         return vuerdDoc;
     }
 
-    private void saveProjectDomainsByERD(ObjectId projectId, Project project) {
-        Query query = new Query(Criteria.where("_id").is(projectId));
+    private void saveProjectDomainsByERD(ObjectId projectId, Object vuerdDoc) {
+        var domains = getProjectDomainsFromERD(vuerdDoc);
         // update 수행
-        Update update = new Update().set("project_api_doc.usable_domains", getProjectDomainsFromERD(project));
+        Query query = new Query(Criteria.where("_id").is(projectId));
+        Update update = new Update().set("project_api_doc.usable_domains", domains);
         mongoTemplate.updateFirst(query, update, Project.class);
     }
 
@@ -381,6 +390,7 @@ public class MProjectServiceImpl implements MProjectService {
      * @param projectId 프로젝트 ID
      * @return ERD 기반 Domain 리스트 조회
      */
+    @Transactional(readOnly = true)
     @Override
     public List<String> findProjectValidDomainNames(ObjectId projectId) {
         Query query = new Query().addCriteria(Criteria.where("_id").is(projectId));
@@ -436,12 +446,16 @@ public class MProjectServiceImpl implements MProjectService {
 
     @Transactional
     @Override
-    public Object linkProjectVuerdWithLiveblocks(ObjectId projectId) {
+    public Object linkProjectVuerd(ObjectId projectId) {
         var vuerdDoc = liveblocksComponent.getRoomStorageDocument(projectId.toHexString(), StepName.erd, Object.class);
         if (Objects.isNull(vuerdDoc)) {
             throw new BaseExceptionHandler(ErrorCode.LIVEBLOCK_DATA_IS_NULL);
         }
-        return changeProjectVuerd(projectId, vuerdDoc);
+        try {
+            return changeProjectVuerd(projectId, objectMapper.readValue(((LinkedHashMap<?, ?>) vuerdDoc).get("json").toString(), Object.class));
+        } catch (JsonProcessingException e) {
+            throw new BaseExceptionHandler(ErrorCode.JSON_PARSE_ERROR);
+        }
     }
 
     @Override
@@ -458,37 +472,30 @@ public class MProjectServiceImpl implements MProjectService {
     /**
      * 프로젝트 도메인 리스트 정보
      *
-     * @param project 프로젝트 ID
+     * @param vuerdObj vuerd object
      * @return 프로젝트 도메인 리스트
      */
-    private List<String> getProjectDomainsFromERD(Project project) {
-        var vuerdObj = project.getVuerd();
+    private List<String> getProjectDomainsFromERD(Object vuerdObj) {
         var domains = new ArrayList<String>();
         if (vuerdObj instanceof LinkedHashMap<?, ?>) {
-            vuerdObj = ((LinkedHashMap<?, ?>) vuerdObj).get("$set");
+            var doc = ((LinkedHashMap<?, ?>) vuerdObj).get("doc");
+            if (doc instanceof LinkedHashMap<?, ?>) {
+                var tableIdsObj = ((LinkedHashMap<?, ?>) doc).get("tableIds");
 
-            if (vuerdObj instanceof LinkedHashMap<?, ?>) {
-                var doc = ((LinkedHashMap<?, ?>) vuerdObj).get("doc");
-                var collections = ((LinkedHashMap<?, ?>) vuerdObj).get("collections");
+                List<String> tableIds = new ArrayList<>();
+                if (tableIdsObj instanceof List<?>) {
+                    ((List<?>) tableIdsObj).forEach(tableId -> tableIds.add(tableId.toString()));
+                }
 
-                if (doc instanceof LinkedHashMap<?, ?>) {
-                    var tableIdsObj = ((LinkedHashMap<?, ?>) doc).get("tableIds");
+                var collectionObj = ((LinkedHashMap<?, ?>) vuerdObj).get("collections");
+                if (collectionObj instanceof LinkedHashMap<?, ?>) {
+                    var tableEntityObj = ((LinkedHashMap<?, ?>) collectionObj).get("tableEntities");
 
-                    List<String> tableIds = new ArrayList<>();
-                    if (tableIdsObj instanceof List<?>) {
-                        ((List<?>) tableIdsObj).forEach(tableId -> tableIds.add(tableId.toString()));
-                    }
-
-                    if (collections instanceof LinkedHashMap<?, ?>) {
-                        var tableEntities = ((LinkedHashMap<?, ?>) collections).get("tableEntities");
-
-                        if (tableEntities instanceof LinkedHashMap<?, ?>) {
-
-                            for (String tableId : tableIds) {
-                                var table = ((LinkedHashMap<?, ?>) tableEntities).get(tableId);
-                                if (table instanceof LinkedHashMap<?, ?>) {
-                                    domains.add((((LinkedHashMap<?, ?>) table).get("name")).toString().toLowerCase());
-                                }
+                    if (tableEntityObj instanceof LinkedHashMap<?, ?>) {
+                        for (String tableId : tableIds) {
+                            var table = ((LinkedHashMap<?, ?>) tableEntityObj).get(tableId);
+                            if (table instanceof LinkedHashMap<?, ?>) {
+                                domains.add(StringParserUtil.convertToSnakeCase(((LinkedHashMap<?, ?>) table).get("name").toString()));
                             }
                         }
                     }
