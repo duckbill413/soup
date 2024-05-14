@@ -672,60 +672,56 @@ public class ProjectBuilderRepositoryImpl implements ProjectBuilderRepository {
         Map<String, TableRelationDefinition> relations = new HashMap<>();
 
         if (vuerdObj instanceof LinkedHashMap<?, ?>) {
-            vuerdObj = ((LinkedHashMap<?, ?>) vuerdObj).get("$set");
+            var doc = ((LinkedHashMap<?, ?>) vuerdObj).get("doc");
+            if (doc instanceof LinkedHashMap<?, ?>) {
+                var tableIdsObj = ((LinkedHashMap<?, ?>) doc).get("tableIds");
+                if (tableIdsObj instanceof List<?>) {
+                    ((List<?>) tableIdsObj).forEach(tableId -> usableNames.add(tableId.toString()));
+                }
+                var relationshipIdsObj = ((LinkedHashMap<?, ?>) doc).get("relationshipIds");
+                if (relationshipIdsObj instanceof List<?>) {
+                    ((List<?>) relationshipIdsObj).forEach(relationshipId -> usableNames.add(relationshipId.toString()));
+                }
+            }
 
-            if (vuerdObj instanceof LinkedHashMap<?, ?>) {
-                var doc = ((LinkedHashMap<?, ?>) vuerdObj).get("doc");
-                if (doc instanceof LinkedHashMap<?, ?>) {
-                    var tableIdsObj = ((LinkedHashMap<?, ?>) doc).get("tableIds");
-                    if (tableIdsObj instanceof List<?>) {
-                        ((List<?>) tableIdsObj).forEach(tableId -> usableNames.add(tableId.toString()));
-                    }
-                    var relationshipIdsObj = ((LinkedHashMap<?, ?>) doc).get("relationshipIds");
-                    if (relationshipIdsObj instanceof List<?>) {
-                        ((List<?>) relationshipIdsObj).forEach(relationshipId -> usableNames.add(relationshipId.toString()));
+            // collections 파싱
+            var collections = ((LinkedHashMap<?, ?>) vuerdObj).get("collections");
+
+            if (collections instanceof LinkedHashMap<?, ?>) {
+                var tableEntities = ((LinkedHashMap<?, ?>) collections).get("tableEntities");
+                var tableColumnEntities = ((LinkedHashMap<?, ?>) collections).get("tableColumnEntities");
+                var relationshipEntities = ((LinkedHashMap<?, ?>) collections).get("relationshipEntities");
+
+                // 테이블 정보 파싱
+                if (tableEntities instanceof LinkedHashMap<?, ?>) {
+                    for (Object key : ((LinkedHashMap<?, ?>) tableEntities).keySet()) {
+                        if (!usableNames.contains(key.toString())) {
+                            continue;
+                        }
+                        var tableDefinition = objectMapper.convertValue(((LinkedHashMap<?, ?>) tableEntities).get(key), TableDefinition.class);
+                        tables.put(key.toString(), tableDefinition);
                     }
                 }
 
-                // collections 파싱
-                var collections = ((LinkedHashMap<?, ?>) vuerdObj).get("collections");
-
-                if (collections instanceof LinkedHashMap<?, ?>) {
-                    var tableEntities = ((LinkedHashMap<?, ?>) collections).get("tableEntities");
-                    var tableColumnEntities = ((LinkedHashMap<?, ?>) collections).get("tableColumnEntities");
-                    var relationshipEntities = ((LinkedHashMap<?, ?>) collections).get("relationshipEntities");
-
-                    // 테이블 정보 파싱
-                    if (tableEntities instanceof LinkedHashMap<?, ?>) {
-                        for (Object key : ((LinkedHashMap<?, ?>) tableEntities).keySet()) {
-                            if (!usableNames.contains(key.toString())) {
-                                continue;
-                            }
-                            var tableDefinition = objectMapper.convertValue(((LinkedHashMap<?, ?>) tableEntities).get(key), TableDefinition.class);
-                            tables.put(key.toString(), tableDefinition);
+                // 칼럼 정보 파싱
+                if (tableColumnEntities instanceof LinkedHashMap<?, ?>) {
+                    for (Object key : ((LinkedHashMap<?, ?>) tableColumnEntities).keySet()) {
+                        var tableColumnEntity = objectMapper.convertValue(((LinkedHashMap<?, ?>) tableColumnEntities).get(key), ColumnDefinition.class);
+                        // 테이블이 존재한다면
+                        if (tables.containsKey(tableColumnEntity.getTableId())) {
+                            tables.get(tableColumnEntity.getTableId()).getColumns().put(key.toString(), tableColumnEntity);
                         }
                     }
+                }
 
-                    // 칼럼 정보 파싱
-                    if (tableColumnEntities instanceof LinkedHashMap<?, ?>) {
-                        for (Object key : ((LinkedHashMap<?, ?>) tableColumnEntities).keySet()) {
-                            var tableColumnEntity = objectMapper.convertValue(((LinkedHashMap<?, ?>) tableColumnEntities).get(key), ColumnDefinition.class);
-                            // 테이블이 존재한다면
-                            if (tables.containsKey(tableColumnEntity.getTableId())) {
-                                tables.get(tableColumnEntity.getTableId()).getColumns().put(key.toString(), tableColumnEntity);
-                            }
+                // 릴레이션 정보 파싱
+                if (relationshipEntities instanceof LinkedHashMap<?, ?>) {
+                    for (Object key : ((LinkedHashMap<?, ?>) relationshipEntities).keySet()) {
+                        if (!usableNames.contains(key.toString())) {
+                            continue;
                         }
-                    }
-
-                    // 릴레이션 정보 파싱
-                    if (relationshipEntities instanceof LinkedHashMap<?, ?>) {
-                        for (Object key : ((LinkedHashMap<?, ?>) relationshipEntities).keySet()) {
-                            if (!usableNames.contains(key.toString())) {
-                                continue;
-                            }
-                            var tableRelationDefinition = objectMapper.convertValue(((LinkedHashMap<?, ?>) relationshipEntities).get(key), TableRelationDefinition.class);
-                            relations.put(key.toString(), tableRelationDefinition);
-                        }
+                        var tableRelationDefinition = objectMapper.convertValue(((LinkedHashMap<?, ?>) relationshipEntities).get(key), TableRelationDefinition.class);
+                        relations.put(key.toString(), tableRelationDefinition);
                     }
                 }
             }

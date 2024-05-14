@@ -7,9 +7,12 @@ import io.ssafy.soupapi.global.external.liveblocks.dto.request.UpdateRoomReq;
 import io.ssafy.soupapi.global.external.liveblocks.dto.response.ChangeRoomRes;
 import io.ssafy.soupapi.global.external.liveblocks.dto.response.GetUserIdTokenRes;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
-import java.util.HashMap;
+import java.util.Map;
 
 @FeignClient(
         name="liveblocksFeignClient",
@@ -41,7 +44,7 @@ public interface LbFeignClient {
     );
 
     @GetMapping(value = "/rooms/%2Fproject%2F{projectId}%2F{stepName}/storage?format=json", consumes = "application/json")
-    HashMap<String, Object> getRoomStorageDocument(
+    Map<String, Object> getRoomStorageDocument(
             @PathVariable("projectId") String projectId,
             @PathVariable("stepName") String stepName
     );
