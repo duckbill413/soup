@@ -18,7 +18,6 @@
     ]
   },
   "dependencies": {
-    "openvidu-browser": "^2.29.1",
     "@dineug/erd-editor": "^3.2.3",
     "@emotion/react": "^11.11.4",
     "@emotion/styled": "^11.11.5",
@@ -30,6 +29,7 @@
     "@mui/icons-material": "^5.15.15",
     "@mui/material": "^5.15.15",
     "@mui/x-date-pickers": "^7.2.0",
+    "@mui/x-tree-view": "^7.4.0",
     "@stomp/stompjs": "^7.0.0",
     "@toast-ui/editor": "^3.2.2",
     "@toast-ui/editor-plugin-code-syntax-highlight": "^3.1.0",
@@ -49,6 +49,7 @@
     "mermaid": "8.14.0",
     "next": "14.1.1",
     "nookies": "^2.5.2",
+    "openvidu-browser": "^2.29.1",
     "prismjs": "^1.29.0",
     "react": "^18",
     "react-dom": "^18",

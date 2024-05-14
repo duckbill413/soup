@@ -23,15 +23,13 @@ const tokenRefresh = async () => {
   })
 
   try {
-    console.log('내가 보낸 토큰==', token)
     const res = await instance.post('/auth/token/refresh', {
       refreshToken: token,
     })
     const data = res.data.result
-    console.log('받아온 데이터==', data)
     setToken(data.accessToken, data.refreshToken)
   } catch (e) {
-    console.log('refresh error==', e)
+    console.log('error==', e)
     tokenClear()
     window.location.href = '/'
   }

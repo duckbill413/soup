@@ -2,19 +2,18 @@
 
 import CursorChat from '@/components/cursor/CursorChat'
 import LiveCursors from '@/components/cursor/LiveCursors'
+import * as styles from '@/components/cursor/cursor.css'
 import { CursorMode, CursorState } from '@/types/cursor'
 import { ReactNode, useCallback, useEffect, useState } from 'react'
-import * as styles from "@/components/cursor/cursor.css"
 import { useMyPresence, useOthers } from '../../../liveblocks.config'
 
-function Live({children}:{children:ReactNode}) {
+function Live({ children }: { children: ReactNode }) {
   const others = useOthers()
   const [{ cursor }, updateMyPresence] = useMyPresence() as any
   const [cursorState, setCursorState] = useState<CursorState>({
     mode: CursorMode.Hidden,
   })
   const handlePointerMove = useCallback((event: React.PointerEvent) => {
-    event.preventDefault()
     const x = event.clientX - event.currentTarget.getBoundingClientRect().x
     const y = event.clientY - event.currentTarget.getBoundingClientRect().y
     updateMyPresence({ cursor: { x, y } })
