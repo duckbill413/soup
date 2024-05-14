@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.bson.types.ObjectId;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -34,6 +35,19 @@ public class ProjectBuilderController {
         return BaseResponse.success(
                 SuccessCode.INSERT_SUCCESS,
                 projectBuilderService.buildProject(projectId)
+        );
+    }
+
+    @Operation(summary = "빌드 완료된 파일 확인")
+    @GetMapping("/{projectId}/build/url")
+    @PreAuthorize("@authService.hasProjectRoleMember(#projectId, #userSecurityDTO.getId())")
+    public ResponseEntity<BaseResponse<String>> getBuildUrl(
+            @PathVariable String projectId,
+            @AuthenticationPrincipal UserSecurityDTO userSecurityDTO
+    ) {
+        return BaseResponse.success(
+                SuccessCode.SELECT_SUCCESS,
+                projectBuilderService.getBuildUrl(new ObjectId(projectId))
         );
     }
 

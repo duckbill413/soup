@@ -284,3 +284,4 @@ gradle-app.setting
 
 # Custom
 /src/main/resources/app.properties
+/src/test/java/
