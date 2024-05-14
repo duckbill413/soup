@@ -6,7 +6,6 @@ import MainPlan from '@/containers/main/components/mainDetails/MainPlan'
 import MainIntro from '@/containers/main/components/mainDetails/MainIntro'
 import MainFunc from '@/containers/main/components/mainDetails/MainFunc'
 import MainSpec from '@/containers/main/components/mainDetails/MainSpec'
-import '../styles/noScrollBar.css'
 
 export default function MainContent() {
   const outerDivRef = useRef<HTMLDivElement>(null)
