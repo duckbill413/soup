@@ -16,30 +16,50 @@ const baseAxios = axios.create({
   },
 })
 
+let isTokenRefreshing = false
+let refreshSubscribers: Array<Function> = []
+
+const onTokenRefreshed = (accessToken: string) => {
+  refreshSubscribers.map((callback) => callback(accessToken))
+  refreshSubscribers = []
+}
+
+const addRefreshSubscriber = (callback: Function) => {
+  refreshSubscribers.push(callback)
+}
+
 baseAxios.interceptors.response.use(
   (res) => res,
   async (err) => {
     if (err.response?.status !== 401) return Promise.reject(err)
-    const refreshToken = getRefreshToken()
-    if (!refreshToken) {
-      tokenClear()
-      window.location.href = '/main'
-    }
-
-    try {
-      await tokenRefresh()
-    } catch {
-      window.location.href = '/main'
-    }
-    const accessToken = getAccessToken()
     const newConfig = err.config
-    newConfig.headers = {
-      'Content-Type': 'application/json;charset=utf-8',
-      Authorization: `Bearer ${accessToken}`,
-    }
+    if (!isTokenRefreshing) {
+      isTokenRefreshing = true
+      const refreshToken = getRefreshToken()
+      if (!refreshToken) {
+        tokenClear()
+        window.location.href = '/main'
+      }
 
-    const response = await axios.request(newConfig)
-    return response
+      await tokenRefresh()
+      const accessToken = getAccessToken()
+      isTokenRefreshing = false
+      newConfig.headers = {
+        'Content-Type': 'application/json;charset=utf-8',
+        Authorization: `Bearer ${accessToken}`,
+      }
+      onTokenRefreshed(accessToken)
+
+      const response = await axios.request(newConfig)
+      return response
+    }
+    const retryOriginalRequest = new Promise((resolve) => {
+      addRefreshSubscriber((accessToken: string) => {
+        newConfig.headers.Authorization = `Bearer ${accessToken}`
+        resolve(axios(newConfig))
+      })
+    })
+    return retryOriginalRequest
   },
 )
 
