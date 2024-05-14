@@ -1,7 +1,9 @@
-import create from 'zustand';
+import {create} from 'zustand';
 import {MemberRes} from "@/containers/project/types/member";
 
 type Store = {
+    me: MemberRes | null;
+    setMe: (me: MemberRes) => void;
     members: MemberRes[];
     setMembers: (Members: MemberRes[]) => void;
     filteredMembers: MemberRes[];
@@ -11,7 +13,9 @@ type Store = {
     setIsMemberModalVisible: (isVisible: string) => void;
 };
 
-const useFuncDescStore = create<Store>((set) => ({
+const useMemberStore = create<Store>((set) => ({
+    me: null,
+    setMe: (me) => set({me} ),
     members: [],
     setMembers: (members) => set({ members }),
     filteredMembers: [],
@@ -29,4 +33,4 @@ const useFuncDescStore = create<Store>((set) => ({
 
 }));
 
-export default useFuncDescStore;
+export default useMemberStore;

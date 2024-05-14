@@ -8,13 +8,16 @@ import {createProject, getProjectList} from "@/apis/project/projectAPI";
 import {useEffect, useState} from "react";
 import {useRouter} from "next/navigation";
 import Loading from "@/app/loading";
+import {getMemberInfo} from "@/apis/member/memberAPI";
+import {MemberRes} from "@/containers/project/types/member";
+import useMemberStore from "@/stores/useMemberStore";
 
 
 export default function AfterAuth() {
     const [projects, setProjects] = useState<ProjectRes[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const router = useRouter();
-
+    const {setMe} = useMemberStore();
     useEffect(() => {
         async function fetchData() {
             try {
@@ -27,7 +30,15 @@ export default function AfterAuth() {
             }
         }
         fetchData();
-    }, []);
+        getMemberInfo().then(data=>{
+            const { memberId, ...tempWithoutMemberId } = data.result;
+            const temp: MemberRes = {
+                ...tempWithoutMemberId,
+                id: memberId
+            };
+            setMe(temp);
+        })
+    }, [setMe]);
 
     const handleCreateProject = async () => {
         setLoading(true);
