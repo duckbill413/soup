@@ -22,16 +22,17 @@ public class NotiController {
     // 유저가 /sub으로 구독하면, 백엔드에서 /sub/{memberId}로 구독된 것으로 처리
     @GetMapping(value = "/sub", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public SseEmitter subscribe(
-        @AuthenticationPrincipal UserSecurityDTO userSecurityDTO
+        @AuthenticationPrincipal UserSecurityDTO userSecurityDTO,
+        @RequestHeader(value = "Last-Event-ID", required = false, defaultValue = "") String lastEventId // SSE 연결이 시간 만료 등의 이유로 끊어졌는데 알림이 발생하면? 이를 방지하기 위해, 클라이언트가 마지막으로 수신한 데이터의 ID값을 받는다. 이를 이용해 유실된 데이터를 다시 보내줄 수 있다.
     ) {
         String memberId = String.valueOf(userSecurityDTO.getId());
-        return notiService.subscribe(memberId);
+        return notiService.subscribe(memberId, lastEventId);
     }
 
     @PostMapping("/send-data")
     public void sendData(@AuthenticationPrincipal UserSecurityDTO userSecurityDTO) {
         String memberId = String.valueOf(userSecurityDTO.getId());
-        notiService.notify(memberId, "data");
+        notiService.notify(memberId, "hi - " + System.currentTimeMillis());
     }
 
 }
