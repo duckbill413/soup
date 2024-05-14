@@ -436,7 +436,7 @@ public class MProjectServiceImpl implements MProjectService {
 
     @Transactional
     @Override
-    public Object changeProjectVuerdWithLiveblocks(ObjectId projectId) {
+    public Object linkProjectVuerdWithLiveblocks(ObjectId projectId) {
         var vuerdDoc = liveblocksComponent.getRoomStorageDocument(projectId.toHexString(), StepName.erd, Object.class);
         if (Objects.isNull(vuerdDoc)) {
             throw new BaseExceptionHandler(ErrorCode.LIVEBLOCK_DATA_IS_NULL);
