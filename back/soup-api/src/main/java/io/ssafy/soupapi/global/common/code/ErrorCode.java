@@ -105,7 +105,7 @@ public enum ErrorCode {
 
     // OpenVidu 관련 에러 (CODE: 800)
     NOT_FOUND_SESSION(404, "B800", "존재하지 않는 세션입니다."),
-    NOT_FOUND_EXPIRE_TIME(404,"B801","만료시간이 존재하지 않습니다."),
+    NOT_FOUND_EXPIRE_TIME(404, "B801", "만료시간이 존재하지 않습니다."),
 
     // API DOCS 관련 에러 (CODE: 900)
     NOT_FOUND_API_DOC(404, "B900", "찾을 수 없는 API 문서 입니다."),
@@ -117,7 +117,7 @@ public enum ErrorCode {
     NEED_PROJECT_BUILD_BUILDINFO(404, "B1103", "프로젝트 BUILD 정보가 필요합니다."),
     FAILED_TO_BUILD_PROJECT(404, "B1104", "프로젝트 빌드에 실패하였습니다."),
     NEED_PROJECT_BUILD_ERD(404, "B1105", "프로젝트 ERD 정보가 필요합니다."),
-
+    NOT_FOUND_BUILT_PROJECT(404, "B1106", "빌드 완료된 프로젝트를 찾을 수 없습니다."),
     ; // End
 
     /**

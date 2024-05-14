@@ -121,6 +121,21 @@ public class ProjectBuilderServiceImpl implements ProjectBuilderService {
         return GetProjectBuilderInfo.of(project.getProjectBuilderInfo());
     }
 
+    @Override
+    public String getBuildUrl(ObjectId projectId) {
+        Query query = new Query().addCriteria(Criteria.where("_id").is(projectId));
+        query.fields().include("project_builder_info.springboot_s3_url");
+
+        var project = mongoTemplate.findOne(query, Project.class);
+        if (project == null || project.getProjectBuilderInfo() == null) {
+            throw new BaseExceptionHandler(ErrorCode.NOT_FOUND_PROJECT);
+        }
+        if (project.getProjectBuilderInfo().getS3Url() == null) {
+            throw new BaseExceptionHandler(ErrorCode.NOT_FOUND_BUILT_PROJECT);
+        }
+        return project.getProjectBuilderInfo().getS3Url();
+    }
+
     /**
      * 프로젝트 빌드 정보가 없을 경우 기본 빌드 정보를 생성
      * isBasic이 True인 경우 반드시 선택되는 의존성 정보
