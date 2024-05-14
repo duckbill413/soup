@@ -7,6 +7,9 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.SQLRestriction;
 
+// PostgreSQL에 알림을 저장하기 위해 만든 entity 지만
+// 알림은 MongoDB에 저장하게 되어 사용하지 않게 된 class
+
 @Getter
 @Setter
 @Entity
