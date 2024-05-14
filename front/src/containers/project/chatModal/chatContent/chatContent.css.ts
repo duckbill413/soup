@@ -33,6 +33,7 @@ export const hrSect = style({
         lineHeight: '0px',
         margin: '0px 16px',
     }
+
 })
 
 
@@ -42,7 +43,6 @@ export const chatModalContentList = styleVariants({
     profile: [{ marginRight: vars.space.small,width:'10%'}],
     userArea: [{ display: 'flex', flexDirection: 'column', marginRight: vars.space.tiny }],
     content: [{
-
         padding: vars.space.tiny,
         margin: `0px 0px 5px 0px`,
         borderRadius: '10px',
