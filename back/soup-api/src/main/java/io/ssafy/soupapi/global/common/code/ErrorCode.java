@@ -118,6 +118,9 @@ public enum ErrorCode {
     FAILED_TO_BUILD_PROJECT(404, "B1104", "프로젝트 빌드에 실패하였습니다."),
     NEED_PROJECT_BUILD_ERD(404, "B1105", "프로젝트 ERD 정보가 필요합니다."),
     NOT_FOUND_BUILT_PROJECT(404, "B1106", "빌드 완료된 프로젝트를 찾을 수 없습니다."),
+
+    // LIVEBLOCK 에러 (CODE: 1200)
+    LIVEBLOCK_DATA_IS_NULL(404, "B1200", "검색한 Liveblock 데이터가 Null 입니다."),
     ; // End
 
     /**

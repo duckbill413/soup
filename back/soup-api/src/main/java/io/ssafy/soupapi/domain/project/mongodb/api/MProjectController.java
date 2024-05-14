@@ -193,6 +193,19 @@ public class MProjectController {
         );
     }
 
+    @Operation(summary = "Liveblocks 프로젝트 ERD 업데이트")
+    @PutMapping("/{projectId}/vuerd/live")
+    @PreAuthorize("@authService.hasProjectRoleMember(#projectId, #userSecurityDTO.getId())")
+    public ResponseEntity<BaseResponse<Object>> changeProjectVuerdWithLiveblocks(
+            @PathVariable String projectId,
+            @AuthenticationPrincipal UserSecurityDTO userSecurityDTO
+    ) {
+        return BaseResponse.success(
+                SuccessCode.UPDATE_SUCCESS,
+                mProjectService.changeProjectVuerdWithLiveblocks(new ObjectId(projectId))
+        );
+    }
+
     @Operation(summary = "프로젝트 API Doc 등록/업데이트")
     @PostMapping("/{projectId}/api-docs")
     @PreAuthorize("!@authService.hasViewerProjectRoleMember(#projectId, #userSecurityDTO.getId())")
@@ -269,6 +282,7 @@ public class MProjectController {
             @PathVariable String projectId,
             @AuthenticationPrincipal UserSecurityDTO userSecurityDTO
     ) {
+        mProjectService.changeProjectVuerdWithLiveblocks(new ObjectId(projectId));
         return BaseResponse.success(
                 SuccessCode.SELECT_SUCCESS,
                 mProjectService.findProjectValidDomainNames(new ObjectId(projectId))

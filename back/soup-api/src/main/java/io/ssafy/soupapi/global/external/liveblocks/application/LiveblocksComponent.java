@@ -56,9 +56,7 @@ public class LiveblocksComponent {
     public <T> T getRoomStorageDocument(String projectId, StepName stepName, Class<T> clazz) {
         HashMap<String, Object> map = lbFeignClient.getRoomStorageDocument(projectId, stepName.name());
         Object object = map.get(stepName.name());
-        T result = objectMapper.convertValue(object, clazz);
-//        log.info("result는.. {}", result);
-        return result;
+        return objectMapper.convertValue(object, clazz);
     }
 
 }
