@@ -103,7 +103,15 @@ export default function DetailContents({ idx }: Props) {
 
   return (
     <section className={styles.inputSection}>
-      <Dropbox title="도메인" isEssential options={domain ?? []} />
+      <Dropbox
+        title="도메인"
+        isEssential
+        options={domain ?? []}
+        value={initial ? initial[idx]?.domain : ''}
+        onChange={(e: ChangeEvent<HTMLInputElement>) =>
+          updateLiveblock('domain', e.target.value)
+        }
+      />
       <InputText
         title="API 이름"
         placeholder="[Swagger API] summary로 반영됩니다."
@@ -115,12 +123,14 @@ export default function DetailContents({ idx }: Props) {
       />
       <InputText
         title="method 이름"
-        placeholder="영어만 가능 / controller 메소드 이름으로 사용됩니다."
+        placeholder="(예) findSoup / 영어만 가능"
         isEssential
         value={initial ? initial[idx]?.method_name : ''}
-        onChange={(e: ChangeEvent<HTMLInputElement>) =>
-          updateLiveblock('method_name', e.target.value)
-        }
+        onChange={(e: ChangeEvent<HTMLInputElement>) => {
+          const check = /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/
+          const { value } = e.target
+          if (!check.test(value)) updateLiveblock('method_name', value)
+        }}
       />
       <MethodButton
         title="HTTP method 종류"
@@ -132,7 +142,7 @@ export default function DetailContents({ idx }: Props) {
       />
       <InputText
         title="URI path"
-        placeholder="(예) /users/{userId}"
+        placeholder="(예) /soup/{soupId}"
         isEssential
         value={initial ? initial[idx]?.uri : ''}
         onChange={(e: ChangeEvent<HTMLInputElement>) =>

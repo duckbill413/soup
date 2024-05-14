@@ -98,6 +98,7 @@ export default function Generate() {
   }
 
   const handleClose = () => {
+    setCode({ code: '' })
     setOpen(false)
   }
 

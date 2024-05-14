@@ -13,6 +13,16 @@ export default function Dependencies() {
   const dragItem = useRef<{ type: string; idx: number } | null>(null)
   const dragOverItem = useRef<{ type: string; idx: number } | null>(null)
 
+  let initialInnerHeight: any
+  let el: any
+
+  if (typeof window !== 'undefined') {
+    initialInnerHeight = window.innerHeight
+  }
+  if (typeof document !== 'undefined') {
+    el = document.getElementById('rightBox')
+  }
+
   // 전체 dependency 목록
   const [all, setAll] = useState<Array<Dependency>>([])
 
@@ -39,6 +49,13 @@ export default function Dependencies() {
     else console.log('없는 id')
   }, [])
 
+  const handleTouch = () => {
+    const { innerHeight } = window
+    const heightGap = initialInnerHeight - innerHeight
+    const topHeight = heightGap
+    el.scrollTo({ top: topHeight, behavior: 'smooth' })
+  }
+
   const dragStart = (t: string, i: number) => {
     dragItem.current = { type: t, idx: i }
   }
@@ -55,6 +72,7 @@ export default function Dependencies() {
     ) {
       if (dragOverItem.current.type === 'left') {
         handleDelete(dragItem.current.idx)
+        handleTouch()
       } else {
         handleChange(dragItem.current.idx)
       }
@@ -105,7 +123,7 @@ export default function Dependencies() {
           })}
         </div>
         <KeyboardArrowRight />
-        <div className={`${styles.box} ${styles.greenBox}`}>
+        <div className={`${styles.box} ${styles.greenBox}`} id="rightBox">
           {all.length > 0 &&
             selectedIdList?.map((num) => {
               const findIndex = all.findIndex((item) => num === item.id)

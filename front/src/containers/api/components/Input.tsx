@@ -55,13 +55,20 @@ export function InputText({
   )
 }
 
-export function Dropbox({ title, isEssential, options }: APIInput) {
+export function Dropbox({
+  title,
+  isEssential,
+  options,
+  value,
+  onChange,
+}: APIInput) {
   return (
     <InputLabel title={title} isEssential={isEssential}>
       <Select
-        value={options ?? null}
+        value={value}
         displayEmpty
         sx={{ width: 'fit-content', minWidth: '200px' }}
+        onChange={onChange}
       >
         {options?.map((item) => (
           <MenuItem value={item} key={item}>
