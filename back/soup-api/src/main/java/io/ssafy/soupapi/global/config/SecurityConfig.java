@@ -23,6 +23,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -61,7 +62,7 @@ public class SecurityConfig {
         return request -> {
             CorsConfiguration config = new CorsConfiguration();
             config.setAllowedHeaders(allowedHeaders);
-            config.setAllowedMethods(Collections.singletonList("*"));
+            config.setAllowedMethods(Arrays.asList("GET", "POST", "OPTIONS", "PUT", "DELETE", "PATCH", "CONNECT", "HEAD", "TRACE"));
             config.setAllowedOriginPatterns(allowedOriginPatterns); // 허용할 origin
             config.setAllowCredentials(true);
             return config;
