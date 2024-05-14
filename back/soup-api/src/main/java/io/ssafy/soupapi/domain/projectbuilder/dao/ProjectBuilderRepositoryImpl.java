@@ -16,10 +16,13 @@ import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
-import java.io.*;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.*;
 
-import static io.ssafy.soupapi.global.util.BuildFileUtil.getLeafFiles;
+import static io.ssafy.soupapi.global.util.BuildFileUtil.*;
 import static io.ssafy.soupapi.global.util.StringParserUtil.*;
 
 @Log4j2
@@ -34,12 +37,12 @@ public class ProjectBuilderRepositoryImpl implements ProjectBuilderRepository {
     private String domainPath;
     @Value("${springbuilder.global-path}")
     private String globalPath;
+    @Value("${springbuilder.build-path}")
+    private String saveRootPath;
     final Map<String, String> baseDtoPackage = new HashMap<>(Map.of(
             "REQUEST", "import %s.dto.request.*;",
             "RESPONSE", "import %s.dto.response.*;"
     ));
-    @Value("${springbuilder.build-path}")
-    private String saveRootPath;
 
     /**
      * 프로젝트 패키지 구조 설정
@@ -73,7 +76,7 @@ public class ProjectBuilderRepositoryImpl implements ProjectBuilderRepository {
      * @throws IOException 파일 입출력 에러
      */
     private void createStarterClass(String destination, ProjectBuilderInfo projectBuilderInfo) throws IOException {
-        String basicPath = destination + "\\src\\main\\java";
+        String basicPath = destination + File.separator + "src" + File.separator + "main" + File.separator + "java";
         String[] path = projectBuilderInfo.getPackageName().split("\\.");
         StringBuilder folderPath = new StringBuilder(basicPath);
 
@@ -211,8 +214,8 @@ public class ProjectBuilderRepositoryImpl implements ProjectBuilderRepository {
     private String getProjectMainAbsolutePath(Project project, MainPath mainPath) {
         StringBuilder destination = new StringBuilder(getDestination(project));
         String[] path = project.getProjectBuilderInfo().getPackageName().split("\\.");
-        destination.append("\\src\\main\\java\\");
-        destination.append(String.join("\\", path));
+        destination.append(File.separator).append("src").append(File.separator).append("main").append(File.separator).append("java").append(File.separator);
+        destination.append(String.join(File.separator, path));
         destination.append(File.separator).append(mainPath.name());
         return destination.toString();
     }
@@ -322,7 +325,6 @@ public class ProjectBuilderRepositoryImpl implements ProjectBuilderRepository {
     public void createDtoClassFiles(Project project) throws IOException {
         String domainPackage = project.getProjectBuilderInfo().getPackageName() + ".domain";
         String domainAbsolutePath = getProjectMainAbsolutePath(project, MainPath.domain);
-        ApiDocs apiDocs = project.getApiDocs();
 
         Set<String> domainReqDtoPackage = new HashSet<>();
         Set<String> domainResDtoPackage = new HashSet<>();
@@ -346,8 +348,8 @@ public class ProjectBuilderRepositoryImpl implements ProjectBuilderRepository {
                     domainReqDtoPackage.add(apiDoc.getDomain());
                     String importStrPath = domainAbsolutePath + File.separator + convertToSnakeCase(apiDoc.getDomain()) + File.separator;
                     String importStr = String.format(baseDtoPackage.get("REQUEST"), domainPackage + "." + convertToSnakeCase(apiDoc.getDomain()));
-                    insertImportIntoFile(new File(importStrPath + String.format("api\\%s", convertToPascalCase(apiDoc.getDomain()) + "Controller.java")), importStr);
-                    insertImportIntoFile(new File(importStrPath + String.format("application\\%s", convertToPascalCase(apiDoc.getDomain()) + "Service.java")), importStr);
+                    insertImportIntoFile(new File(importStrPath + "api" + File.separator + convertToPascalCase(apiDoc.getDomain()) + "Controller.java"), importStr);
+                    insertImportIntoFile(new File(importStrPath + "application" + File.separator + convertToPascalCase(apiDoc.getDomain()) + "Service.java"), importStr);
                 }
             }
 
@@ -365,8 +367,8 @@ public class ProjectBuilderRepositoryImpl implements ProjectBuilderRepository {
                     domainResDtoPackage.add(apiDoc.getDomain());
                     String importStrPath = domainAbsolutePath + File.separator + convertToSnakeCase(apiDoc.getDomain()) + File.separator;
                     String importStr = String.format(baseDtoPackage.get("RESPONSE"), domainPackage + "." + convertToSnakeCase(apiDoc.getDomain()));
-                    insertImportIntoFile(new File(importStrPath + String.format("api\\%s", convertToPascalCase(apiDoc.getDomain()) + "Controller.java")), importStr);
-                    insertImportIntoFile(new File(importStrPath + String.format("application\\%s", convertToPascalCase(apiDoc.getDomain()) + "Service.java")), importStr);
+                    insertImportIntoFile(new File(importStrPath + "api" + File.separator + convertToPascalCase(apiDoc.getDomain()) + "Controller.java"), importStr);
+                    insertImportIntoFile(new File(importStrPath + "application" + File.separator + convertToPascalCase(apiDoc.getDomain()) + "Service.java"), importStr);
                 }
             }
         }
@@ -561,6 +563,7 @@ public class ProjectBuilderRepositoryImpl implements ProjectBuilderRepository {
             try {
                 columns.put(column.getValidParamName(), column.getColumnVariable());
             } catch (Exception e) {
+                e.printStackTrace();
                 log.info("[빌드] 칼럼명: " + column.getName() + " 생성 실패");
             }
         }
@@ -635,110 +638,6 @@ public class ProjectBuilderRepositoryImpl implements ProjectBuilderRepository {
         // 최하위 노드의 파일 목록 출력
         for (File file : leafFiles) {
             replaceFileVariables(file, variables);
-        }
-    }
-
-    /**
-     * 파일 변수 치환
-     * 파일 정보 및 치환할 변수 맵을 이용하여 파일 문자열 치환
-     *
-     * @param file      파일 정보
-     * @param variables 치환할 문자 맵
-     * @throws IOException 파일 입출력 에러
-     */
-    private static void replaceFileVariables(File file, Map<String, String> variables) throws IOException {
-        FileReader fileReader = new FileReader(file.getAbsolutePath());
-        try (BufferedReader br = new BufferedReader(fileReader)) {
-            StringBuilder sb = new StringBuilder();
-            String line;
-            while ((line = br.readLine()) != null) {
-                sb.append(line).append('\n');
-            }
-            var mapUtil = new MapStringReplace(sb.toString());
-            mapUtil.addAllValues(variables);
-
-            File newFile = new File(file.getAbsolutePath());
-            try (BufferedWriter bw = new BufferedWriter(new FileWriter(newFile))) {
-                bw.write(mapUtil.replace());
-                bw.flush();
-            }
-        }
-    }
-
-    /**
-     * 파일 메소드 삽입
-     * 파일 정보 및 메소드 문자열을 이용해 메소드 삽입
-     *
-     * @param file      파일 정보
-     * @param methodStr 삽입할 함수 문자열
-     * @throws IOException 파일 입출력 에러
-     */
-    private void insertMethodIntoFile(File file, String methodStr) throws IOException {
-        FileReader fileReader = new FileReader(file.getAbsolutePath());
-        try (BufferedReader br = new BufferedReader(fileReader)) {
-            StringBuilder sb = new StringBuilder();
-            String line;
-            while ((line = br.readLine()) != null) {
-                sb.append(line).append('\n');
-            }
-
-            int closingBraceIndex = sb.toString().lastIndexOf('}');
-            if (closingBraceIndex != -1) {
-                sb.insert(closingBraceIndex, "\n" + methodStr);
-            }
-
-            File newFile = new File(file.getAbsolutePath());
-            try (BufferedWriter bw = new BufferedWriter(new FileWriter(newFile))) {
-                bw.write(sb.toString());
-                bw.flush();
-            }
-        }
-    }
-
-    private void insertImportIntoFile(File file, String importStr) throws IOException {
-        FileReader fileReader = new FileReader(file.getAbsolutePath());
-        try (BufferedReader br = new BufferedReader(fileReader)) {
-            StringBuilder sb = new StringBuilder();
-            String line;
-            while ((line = br.readLine()) != null) {
-                sb.append(line).append('\n');
-            }
-
-            int packageIndex = sb.indexOf("package");
-            if (packageIndex == -1) {
-                packageIndex = 0;
-            }
-
-            int insertIndex = sb.indexOf(";", packageIndex) + 1;
-            sb.insert(insertIndex, '\n' + importStr);
-
-            File newFile = new File(file.getAbsolutePath());
-            try (BufferedWriter bw = new BufferedWriter(new FileWriter(newFile))) {
-                bw.write(sb.toString());
-                bw.flush();
-            }
-        }
-    }
-
-    private void insertRelationIntoFile(File file, String relationStr) throws IOException {
-        FileReader fileReader = new FileReader(file.getAbsolutePath());
-        try (BufferedReader br = new BufferedReader(fileReader)) {
-            StringBuilder sb = new StringBuilder();
-            String line;
-            while ((line = br.readLine()) != null) {
-                sb.append(line).append('\n');
-            }
-
-            int closingBraceIndex = sb.toString().lastIndexOf('}');
-            if (closingBraceIndex != -1) {
-                sb.insert(closingBraceIndex, "\n" + relationStr);
-            }
-
-            File newFile = new File(file.getAbsolutePath());
-            try (BufferedWriter bw = new BufferedWriter(new FileWriter(newFile))) {
-                bw.write(sb.toString());
-                bw.flush();
-            }
         }
     }
 

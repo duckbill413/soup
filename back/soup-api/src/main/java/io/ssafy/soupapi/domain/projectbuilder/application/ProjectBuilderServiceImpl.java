@@ -96,7 +96,7 @@ public class ProjectBuilderServiceImpl implements ProjectBuilderService {
                 .set("project_builder_info.springboot_s3_url", s3Url);
 
         var result = mongoTemplate.updateFirst(query, update, Project.class);
-        if (result.wasAcknowledged() && result.getModifiedCount() > 0) {
+        if (result.wasAcknowledged() && (result.getMatchedCount() > 0 || result.getModifiedCount() > 0)) {
             return;
         }
         throw new BaseExceptionHandler(ErrorCode.FAILED_TO_UPDATE_PROJECT);
@@ -119,6 +119,21 @@ public class ProjectBuilderServiceImpl implements ProjectBuilderService {
         }
 
         return GetProjectBuilderInfo.of(project.getProjectBuilderInfo());
+    }
+
+    @Override
+    public String getBuildUrl(ObjectId projectId) {
+        Query query = new Query().addCriteria(Criteria.where("_id").is(projectId));
+        query.fields().include("project_builder_info.springboot_s3_url");
+
+        var project = mongoTemplate.findOne(query, Project.class);
+        if (project == null || project.getProjectBuilderInfo() == null) {
+            throw new BaseExceptionHandler(ErrorCode.NOT_FOUND_PROJECT);
+        }
+        if (project.getProjectBuilderInfo().getS3Url() == null) {
+            throw new BaseExceptionHandler(ErrorCode.NOT_FOUND_BUILT_PROJECT);
+        }
+        return project.getProjectBuilderInfo().getS3Url();
     }
 
     /**
