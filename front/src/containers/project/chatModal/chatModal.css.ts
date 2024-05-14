@@ -36,7 +36,7 @@ export const chatModal = style({
   backgroundColor: vars.color.white,
   boxShadow: 'rgba(0, 0, 0, 0.24) 0px 3px 8px',
   borderRadius: '3px',
-
+  zIndex:100
 })
 
 export const chatModalAnimation = styleVariants({
@@ -45,16 +45,34 @@ export const chatModalAnimation = styleVariants({
   after: [{ animation: `${scaleUpDown} 0.4s forwards` }],
 })
 
-
 export const chatModalContent = styleVariants({
   header: [{ padding: vars.space.small, fontWeight: 'bold', fontSize: vars.fontSize.medium }],
-  background: [{ width: '100%', height: '95%', backgroundColor: vars.color.lightGray }],
+  background: [{ width: '100%', height: '95%', backgroundColor: vars.color.lightGray ,overflowY: 'auto',
+    display:'flex',
+    flexDirection: 'column-reverse'
+    ,
+    '::-webkit-scrollbar': {
+      width: vars.space.tiny,
+    },
+
+    '::-webkit-scrollbar-thumb': {
+      height: '5%',
+      background: '#D3D3D3',
+      backgroundClip: 'padding-box',
+      borderWidth: '5px 2px',
+      borderStyle: 'solid',
+      borderColor: 'transparent',
+      borderRadius: '15px',
+    },},
+
+  ],
   send: [{
     height: '9%',
     display: 'flex',
     alignItems: 'center',
     padding: `${vars.space.tiny} ${vars.space.base} ${vars.space.tiny} ${vars.space.base}`,
   }],
+
 })
 globalStyle(`${chatModalContent.background} > div`, {
   padding: vars.space.small,
@@ -71,27 +89,6 @@ globalStyle(`${chatModalContent.send} > div`, {
 })
 
 
-export const chatModalContentList = styleVariants({
-  layout: [{ display: 'flex', paddingBottom: vars.space.base }],
-  profile: [{ marginRight: vars.space.tiny }],
-  userArea: [{ display: 'flex', flexDirection: 'column', marginRight: vars.space.tiny }],
-  content: [{
-    padding: vars.space.tiny,
-    margin: `0px 0px 5px 0px`,
-    borderRadius: '10px',
-    backgroundColor: vars.color.white,
-  }],
-  nickname: [{ margin: `0px 0px 5px 0px` }],
-  time: [{ display: 'flex', alignItems: 'flex-end', fontSize: vars.fontSize.caption, color: vars.color.deepGray }],
-})
-globalStyle(`${chatModalContentList.profile} > img`, {
-  width: '50px',
-  borderRadius: '50%',
-})
-
-globalStyle(`${chatModalContentList.userArea} > div`, {
-  display: 'flex',
-})
 export const input = style({
   width: '90%',
   borderWidth: 0,

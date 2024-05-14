@@ -1,4 +1,4 @@
-import create from 'zustand';
+import {create} from 'zustand';
 import { Category, FuncDescResWithColor } from '@/containers/func/types/functionDesc';
 import { getLowestIndexMissingColor } from "@/utils/getLightColorByIndex";
 

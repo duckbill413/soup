@@ -14,9 +14,10 @@ const getPreviousOption = (options: Option[], selected: string): string => {
     return options[(currentIndex - 1 + options.length) % options.length].id;
 };
 
-const itemsToOptions = <T extends { id?: string; functionId?: string; }>(items: T[]): Option[] => items.map(item => {
-        const itemId = item.functionId || item.id || '';
+const itemsToOptions = <T extends { id?: string; functionId?: string; memberId?:string }>(items: T[]): Option[] => items.map(item => {
+        const itemId = item.functionId || item.id ||  item.memberId || '';
         return {
+
             id: itemId,
         };
     });
@@ -29,7 +30,9 @@ export default function useHandleKeys<T extends { [key: string]: any }>(
     const options = itemsToOptions(items);
     const [selected, setSelected] = useState<string>(initialSelected);
     const [action, setAction] = useState<string>('');
+
     const handleKey = (event: React.KeyboardEvent<HTMLInputElement>) => {
+        if(!options || options.length<=0) return;
         switch (event.key) {
             case 'ArrowDown':
                 setSelected(getNextOption(options, selected));
@@ -39,14 +42,7 @@ export default function useHandleKeys<T extends { [key: string]: any }>(
                 setSelected(getPreviousOption(options, selected));
                 setAction('up');
                 break;
-            case 'ArrowLeft':
-                setSelected(getPreviousOption(options, selected));
-                setAction('left');
-                break;
-            case 'ArrowRight':
-                setSelected(getNextOption(options, selected));
-                setAction('right');
-                break;
+
             case 'Enter':
                 setAction('enter');
                 break;
