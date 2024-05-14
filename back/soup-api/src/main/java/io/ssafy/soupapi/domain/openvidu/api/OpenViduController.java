@@ -61,7 +61,7 @@ public class OpenViduController {
     ) throws OpenViduJavaClientException, OpenViduHttpException {
         return BaseResponse.success(
                 SuccessCode.UPDATE_SUCCESS,
-                openViduService.getUserConnection(sessionId)
+                openViduService.getUserConnection(sessionId, projectId)
                 );
     }
 
