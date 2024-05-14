@@ -51,6 +51,19 @@ export const chatModalContentList = styleVariants({
     nickname: [{ margin: `0px 0px 5px 0px` }],
     time: [{ display: 'flex', alignItems: 'flex-end', fontSize: vars.fontSize.caption, color: vars.color.deepGray,marginRight:'10px' }],
 })
+export const mentioned = style({
+    padding: '0 3px 0 3px',
+    color: vars.color.blue,
+    backgroundColor: vars.color.skyBlue,
+    borderRadius:'5px'
+
+})
+export const myMention = style({
+    padding: '0 3px 0 3px',
+    color: vars.color.blue,
+    backgroundColor: vars.color.lightOrange,
+    borderRadius:'5px'
+})
 globalStyle(`${chatModalContentList.profile} > img`, {
     borderRadius: '50%',
 })

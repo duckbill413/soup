@@ -21,7 +21,9 @@ export type ChatRes={
 export type ChatContentProps={
     chatMessageId: string;
     header:string;
-    me:boolean
+    me:boolean;
+    myNickname:string|undefined;
+    memberNicknames: string[];
     mentionedMemberIds: string[];
     message: string;
     nickname: string;
