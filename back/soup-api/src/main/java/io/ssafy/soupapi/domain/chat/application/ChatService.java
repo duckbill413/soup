@@ -6,7 +6,8 @@ import io.ssafy.soupapi.domain.chat.dto.request.ChatMessageReq;
 import io.ssafy.soupapi.domain.chat.dto.response.ChatMessageRes;
 import io.ssafy.soupapi.domain.member.entity.Member;
 import io.ssafy.soupapi.domain.noti.application.NotiService;
-import io.ssafy.soupapi.domain.noti.dto.RMentionNoti;
+import io.ssafy.soupapi.domain.noti.dao.NotiRepository;
+import io.ssafy.soupapi.domain.noti.entity.MNoti;
 import io.ssafy.soupapi.domain.project.mongodb.dao.MProjectRepository;
 import io.ssafy.soupapi.domain.project.mongodb.entity.ChatMessage;
 import io.ssafy.soupapi.global.common.request.PageOffsetRequest;
@@ -29,6 +30,7 @@ public class ChatService {
     private final MProjectRepository mProjectRepository;
     private final RChatRepository rChatRepository;
     private final NotiService notiService;
+    private final NotiRepository notiRepository;
     private final FindEntityUtil findEntityUtil;
 
     // 대화 저장
@@ -46,21 +48,25 @@ public class ChatService {
 
         // 2. 태그 알림
         for (String mentioneeId : chatMessageReq.mentionedMemberIds()) {
-            RMentionNoti RMentionNoti = notiService.generateMentionNotiRedis(
-                    RChatMessage.chatMessageId(), chatMessageReq.sender().getMemberId(), mentioneeId
-            );
+//            RMentionNoti RMentionNoti = notiService.generateMentionNotiRedis(
+//                    RChatMessage.chatMessageId(), chatMessageReq.sender().getMemberId(), mentioneeId
+//            );
 
-            // TODO: 2-1. 태그 알림 -> PostgreSQL 저장
+            MNoti mnoti = notiService.generateMNoti(chatroomId, chatMessageId, chatMessageReq, mentioneeId);
+
+            // TODO: 2-1. 태그 알림 -> MongoDb 저장
+            notiRepository.save(mnoti);
 
             // 2-2. 태그 알림 -> Redis 저장
-            notiService.saveMentionNotiToRedis(chatroomId, RMentionNoti, sentAtLong);
+//            notiService.saveMentionNotiToRedis(chatroomId, RMentionNoti, sentAtLong);
+
+            // 2-3. SSE 알림 전송
+            notiService.notify(mentioneeId, mnoti);
         }
 
         // 3. 채팅 메시지 -> Redis 저장
         rChatRepository.saveMessageToRedis(chatroomId, RChatMessage, sentAtLong);
 
-//        ZonedDateTime sentAtZdt = DateConverterUtil.instantToKstZdt(sentAtInstant);
-//        log.info("sentAt -> [Instant] {} / [ZonedDateTime] {}", sentAtInstant, sentAtZdt);
         return generateChatMessageRes(RChatMessage.chatMessageId(), chatMessageReq, sentAtInstant);
     }
 
@@ -115,7 +121,9 @@ public class ChatService {
         return result;
     }
 
-    private ChatMessageRes generateChatMessageRes(String chatMessageId, ChatMessageReq chatMessageReq, Instant sentAt) {
+    private ChatMessageRes generateChatMessageRes(
+            String chatMessageId, ChatMessageReq chatMessageReq, Instant sentAt
+    ) {
         return ChatMessageRes.builder()
                 .chatMessageId(chatMessageId)
                 .sender(chatMessageReq.sender())

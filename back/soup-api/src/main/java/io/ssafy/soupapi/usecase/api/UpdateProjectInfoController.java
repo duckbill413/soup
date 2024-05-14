@@ -42,7 +42,7 @@ public class UpdateProjectInfoController {
         "<ul><li>프로젝트 이름</li><li>프로젝트 설명</li><li>프로젝트 이미지 링크</li><li>프로젝트 시작일</li><li>프로젝트 종료일</li><li>프로젝트 사용툴</li></ul>"
     )
     @PutMapping("/api/projects/{projectId}/info")
-    @PreAuthorize("!@authService.hasViewerProjectRoleMember(#projectId, #userSecurityDTO.getId())")
+    @PreAuthorize("@authService.hasProjectRoleMember(#projectId, #userSecurityDTO.getId())")
     public ResponseEntity<BaseResponse<GetProjectInfo>> updateProjectInfo(
             @PathVariable(name = "projectId") String projectId,
             @RequestBody UpdateProjectInfo updateProjectInfo,

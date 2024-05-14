@@ -83,7 +83,7 @@ public class MProjectController {
      */
     @Operation(summary = "프로젝트 제안서 업데이트", description = "프로젝트 기획서 정보 업데이트")
     @PutMapping("/{projectId}/proposal")
-    @PreAuthorize("!@authService.hasViewerProjectRoleMember(#projectId, #userSecurityDTO.getId())")
+    @PreAuthorize("@authService.hasProjectRoleMember(#projectId, #userSecurityDTO.getId())")
     public ResponseEntity<BaseResponse<GetProjectProposal>> changeProjectProposal(
             @PathVariable(name = "projectId") String projectId,
             @Valid @RequestBody UpdateProjectProposal updateProjectProposal,
@@ -182,7 +182,7 @@ public class MProjectController {
 
     @Operation(summary = "프로젝트 ERD 수정")
     @PutMapping("/{projectId}/vuerd")
-    @PreAuthorize("!@authService.hasViewerProjectRoleMember(#projectId, #userSecurityDTO.getId())")
+    @PreAuthorize("@authService.hasProjectRoleMember(#projectId, #userSecurityDTO.getId())")
     public ResponseEntity<BaseResponse<Object>> changeProjectVuerd(
             @PathVariable(name = "projectId") String projectId,
             @RequestBody Object vuerdDoc,
@@ -209,7 +209,7 @@ public class MProjectController {
 
     @Operation(summary = "프로젝트 API Doc 등록/업데이트")
     @PostMapping("/{projectId}/api-docs")
-    @PreAuthorize("!@authService.hasViewerProjectRoleMember(#projectId, #userSecurityDTO.getId())")
+    @PreAuthorize("@authService.hasProjectRoleMember(#projectId, #userSecurityDTO.getId())")
     public ResponseEntity<BaseResponse<String>> insertProjectApiDoc(
             @PathVariable String projectId,
             @RequestBody UpdateApiDoc updateApiDoc,

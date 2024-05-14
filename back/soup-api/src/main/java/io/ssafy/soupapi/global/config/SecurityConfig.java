@@ -23,6 +23,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -54,13 +55,14 @@ public class SecurityConfig {
                 "http://localhost:8080",
                 "http://localhost:3000",
                 "https://so-up.store",
-                "https://jiangxy.github.io" // websocket stomp 테스팅 : https://github.com/jiangxy/websocket-debug-tool
+                "https://jiangxy.github.io", // websocket stomp 테스팅 : https://github.com/jiangxy/websocket-debug-tool
+                "http://70.12.246.249:3000" // for ziu
         );
 
         return request -> {
             CorsConfiguration config = new CorsConfiguration();
             config.setAllowedHeaders(allowedHeaders);
-            config.setAllowedMethods(Collections.singletonList("*"));
+            config.setAllowedMethods(Arrays.asList("GET", "POST", "OPTIONS", "PUT", "DELETE", "PATCH", "CONNECT", "HEAD", "TRACE"));
             config.setAllowedOriginPatterns(allowedOriginPatterns); // 허용할 origin
             config.setAllowCredentials(true);
             return config;
