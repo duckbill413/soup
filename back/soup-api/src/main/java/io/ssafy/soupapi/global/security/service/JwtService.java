@@ -107,9 +107,12 @@ public class JwtService {
     public TokenDto regenerateJwtTokens(String refreshToken) throws RefreshTokenException{
         Claims claims = verifyJwtToken(refreshToken);
         String id = claims.getSubject();
+        log.info("claim에 있는 id는: {}", id);
 
         // 서버에 저장된 refreshToken과 request로 주어진 refreshToken이 일치하는지 확인
+        log.info("요청 받은 rt: {}", refreshToken);
         boolean matchOrigin = jwtUtil.matchOrigin(UUID.fromString(id), refreshToken);
+        log.info("matchOrigin: {}", matchOrigin);
         if (!matchOrigin) {
             throw new RefreshTokenException(RefreshTokenException.REFRESH_TOKEN_ERROR.BAD_REFRESH);
         }
@@ -117,6 +120,7 @@ public class JwtService {
         UserSecurityDTO userSecurityDTO = userDetailsService.loadUserByUsername(id);
         String newAccessToken = createAccessToken(userSecurityDTO);
         String newRefreshToken = createRefreshToken(userSecurityDTO);
+        log.info("새로 발급된 토큰은 at {} / rf {}", newAccessToken, newRefreshToken);
 
         return new TokenDto(newAccessToken, newRefreshToken);
     }

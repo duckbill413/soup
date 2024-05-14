@@ -83,6 +83,7 @@ public class JwtUtil {
     }
 
     public boolean matchOrigin(UUID id, String refreshToken) {
+        log.info("access token에 있던 uuid: {}", id);
         return tokenRedisDao.matchOrigin(id, refreshToken);
     }
 
