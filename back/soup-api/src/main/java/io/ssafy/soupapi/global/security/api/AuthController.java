@@ -32,6 +32,7 @@ public class AuthController {
         @RequestBody RefreshTokenDto refreshTokenDto
     ) {
         TokenDto tokenDto = jwtService.regenerateJwtTokens(refreshTokenDto.refreshToken());
+        log.info("tokenDto 나갑니다 {}", tokenDto);
         return BaseResponse.success(
             SuccessCode.SELECT_SUCCESS,
             tokenDto
