@@ -12,6 +12,8 @@ import {getMemberInfo} from "@/apis/member/memberAPI";
 import {MemberRes} from "@/containers/project/types/member";
 import useMemberStore from "@/stores/useMemberStore";
 import InviteModal from '@/containers/main/components/modals/InviteModal'
+import { ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css';
 
 
 export default function AfterAuth() {
@@ -41,7 +43,7 @@ export default function AfterAuth() {
             };
             setMe(temp);
         })
-    }, [setMe]);
+    }, [setMe,showModal]);
 
     const handleCreateProject = async () => {
         setLoading(true);
@@ -78,6 +80,7 @@ export default function AfterAuth() {
               </div>
           </div>
           {showModal && <InviteModal clickModal={clickModal}/>}
+          <ToastContainer/>
       </div>
     )
 }

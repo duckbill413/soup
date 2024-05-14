@@ -3,11 +3,11 @@ import Image from 'next/image'
 import closeIcon from '#/assets/icons/modals/closeIcon.svg'
 import { inviteProjectAPI } from '@/apis/project/projectAPI'
 import { useState } from 'react'
+import { Toast } from '@/utils/toast'
 
 function InviteModal (props: { clickModal: () => void }) {
   const { clickModal } = props;
   const [inviteCode, setInviteCode] = useState('')
-
   const handleOuterClick = (e: React.MouseEvent) => {
     if (e.target === e.currentTarget) {
       clickModal();
@@ -15,8 +15,14 @@ function InviteModal (props: { clickModal: () => void }) {
   };
 
   const handleInvite = () => {
-    const data = inviteProjectAPI(inviteCode)
-    console.log(data)
+    inviteProjectAPI(inviteCode).then(response=> {
+      if(response.status === 201) {
+        Toast.success('초대 코드 확인되었습니다.')
+        setTimeout(()=>{
+          clickModal();
+        },1200)
+      }
+    }).catch(error=>alert(`초대하기 실패: , ${error.message}`))
   }
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
