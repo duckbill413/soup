@@ -24,7 +24,7 @@ public class InviteTeamMemberController {
 
     @Operation(summary = "프로젝트 팀원 초대")
     @PostMapping("/api/projects/{projectId}/teams")
-    @PreAuthorize("@authService.hasPrimaryProjectRoleMember(#projectId, #userSecurityDTO.getId())")
+    @PreAuthorize("@authService.hasProjectRoleMember(#projectId, #userSecurityDTO.getId())")
     public ResponseEntity<BaseResponse<String>> inviteTeamMember(
             @PathVariable(name = "projectId") String projectId,
             @RequestBody InviteTeamMember inviteTeamMember,

@@ -27,7 +27,7 @@ public class ProjectBuilderController {
 
     @Operation(summary = "프로젝트 빌드")
     @PostMapping("/{projectId}/builder")
-    @PreAuthorize("!@authService.hasViewerProjectRoleMember(#projectId, #userSecurityDTO.getId())")
+    @PreAuthorize("@authService.hasProjectRoleMember(#projectId, #userSecurityDTO.getId())")
     public ResponseEntity<BaseResponse<String>> buildProject(
             @PathVariable String projectId,
             @AuthenticationPrincipal UserSecurityDTO userSecurityDTO
@@ -53,7 +53,7 @@ public class ProjectBuilderController {
 
     @Operation(summary = "프로젝트 빌드 관련 정보 업데이트")
     @PutMapping("/{projectId}/builder")
-    @PreAuthorize("!@authService.hasViewerProjectRoleMember(#projectId, #userSecurityDTO.getId())")
+    @PreAuthorize("@authService.hasProjectRoleMember(#projectId, #userSecurityDTO.getId())")
     public ResponseEntity<BaseResponse<GetProjectBuilderInfo>> changeProjectBuilderInfo(
             @PathVariable String projectId,
             @Valid @RequestBody ChangeProjectBuilderInfo changeProjectBuilderInfo,
