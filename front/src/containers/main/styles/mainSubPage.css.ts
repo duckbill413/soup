@@ -6,7 +6,7 @@ export const container = style({
   width: '100%',
   display: 'flex',
   alignItems: 'center',
-  justifyContent: 'flex-end',
+  justifyContent: 'space-around',
   backgroundColor: '#f7f6cf',
 });
 
@@ -22,13 +22,18 @@ export const text = style({
 });
 
 export const planDiv = style({
-  marginLeft: '17%',
 });
 
 export const funcContainer = style({
   height: '90vh',
   display: 'flex',
   alignItems: 'center',
-  justifyContent: 'flex-start',
+  justifyContent: 'space-around',
   backgroundColor: '#f4cfdf',
 });
+
+export const funcSubDiv = style ({
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'flex-end',
+})

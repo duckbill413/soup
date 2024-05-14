@@ -24,3 +24,11 @@ export const createProject = async (): Promise<string> => {
     }
 }
 
+export const inviteProjectAPI = async (codeInput:string) => {
+    try {
+        const response = await baseAxios.post(`/projects/participation`, {code:codeInput})
+        return response.data.result
+    } catch (error) {
+        return handleApiError('프로젝트 초대를 하는 중 오류 발생: ', error)
+    }
+}

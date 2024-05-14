@@ -11,11 +11,14 @@ import Loading from "@/app/loading";
 import {getMemberInfo} from "@/apis/member/memberAPI";
 import {MemberRes} from "@/containers/project/types/member";
 import useMemberStore from "@/stores/useMemberStore";
+import InviteModal from '@/containers/main/components/modals/InviteModal'
 
 
 export default function AfterAuth() {
     const [projects, setProjects] = useState<ProjectRes[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
+    const [showModal, setShowModal] = useState(false)
+    const clickModal = () => setShowModal(!showModal)
     const router = useRouter();
     const {setMe} = useMemberStore();
     useEffect(() => {
@@ -52,22 +55,29 @@ export default function AfterAuth() {
         }
     };
 
-    return (
-        <div className={styles.container}>
-            {loading && <div className={styles.loading}><Loading/></div>}
-            <Header theme="black" useVoice={false}/>
-            <div className={styles.content}>
-                <div>
-                    <p>내 프로젝트</p>
-                    <button type='button' onClick={handleCreateProject}>+ 새 프로젝트</button>
-                </div>
-                    <div className={styles.projects}>
-                        {projects.map(project => (
-                            <Project key={project.id} {...project} />
-                        ))}
-                    </div>
+    const handleInvite = () => {
+        setShowModal(!showModal)
+    }
 
-            </div>
-        </div>
+    return (
+      <div className={styles.container}>
+          {loading && <div className={styles.loading}><Loading/></div>}
+          <Header theme="black" useVoice={false}/>
+          <div className={styles.content}>
+              <div>
+                  <p>내 프로젝트</p>
+                  <span>
+                        <button type='button' onClick={handleInvite}>초대 코드</button>
+                        <button type='button' onClick={handleCreateProject}>+ 새 프로젝트</button>
+                    </span>
+              </div>
+              <div className={styles.projects}>
+                  {projects.map(project => (
+                    <Project key={project.id} {...project} />
+                  ))}
+              </div>
+          </div>
+          {showModal && <InviteModal clickModal={clickModal}/>}
+      </div>
     )
 }

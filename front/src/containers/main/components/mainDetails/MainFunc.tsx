@@ -9,14 +9,7 @@ function MainFunc() {
       <div>
         <Image src={Func} alt="Func" width={700} height={513} />
       </div>
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'flex-end',
-          marginLeft: '17%',
-        }}
-      >
+      <div className={styles.funcSubDiv}>
         <p className={styles.boldText}>기능 명세서를 팀원과 동시에 작성하고</p>
         <p className={styles.boldText}>JIRA와 연동해보세요.</p>
         <p className={styles.text}>
