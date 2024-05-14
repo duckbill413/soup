@@ -50,7 +50,7 @@ export default function ChatContent({chatMessageId,header, me, message, nickname
                             {nickname}
                         </p>
                         <p className={styles.chatModalContentList.content}>
-                            {message}
+                            {highlightMention(message)}
                         </p>
                     </div>
 
