@@ -75,7 +75,7 @@ export default function APITable() {
   return (
     <div>
       <Table headers={tableHeaders}>
-        {data &&
+        {data?.length ? (
           data.map((item, key) => (
             <tr
               key={item.id}
@@ -106,7 +106,21 @@ export default function APITable() {
                 setAnchorEl={setAnchorEl}
               />
             </tr>
-          ))}
+          ))
+        ) : (
+          <tr>
+            <td
+              className="newLine"
+              colSpan={tableHeaders.reduce(
+                (result, item) =>
+                  result + (item.colSpan ? item.colSpan - 1 : 0),
+                tableHeaders.length,
+              )}
+            >
+              등록된 API가 없습니다.
+            </td>
+          </tr>
+        )}
         <tr>
           <td
             className="newLine"
