@@ -7,7 +7,9 @@ import io.ssafy.soupapi.global.exception.BaseExceptionHandler;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
 import java.time.Duration;
+import java.util.Date;
 
 @Service
 public class OpenViduService {
@@ -31,18 +33,29 @@ public class OpenViduService {
     public String getSessionId(String projectId) throws OpenViduJavaClientException, OpenViduHttpException {
         // Redis에서 세션 ID를 가져옴
         String sessionId = getSessionIdFromRedis(projectId);
-        // 세션 ID가 없는 경우, 새 세션을 생성함
-        if (sessionId == null) {
+        // 세션 ID가 null이거나 비활성 상태인 경우 새로운 세션을 생성
+        if (sessionId == null || isSessionInactive(sessionId)) {
+            // 기존 세션이 존재하면 Redis에서 삭제
+            deleteExistingSessionIfPresent(sessionId, projectId);
             sessionId = createSession(projectId);
         }
         return sessionId;
     }
 
-    /**
-     * Redis에서 프로젝트 ID를 기반으로 세션 ID를 가져옵니다.
-     * @param projectId 프로젝트 식별자
-     * @return 세션 ID
-     */
+    // 세션이 비활성 상태인지 확인하는 헬퍼 메서드
+    private boolean isSessionInactive(String sessionId) {
+        return openVidu.getActiveSession(sessionId) == null;
+    }
+
+    // 기존 세션을 Redis에서 삭제하는 헬퍼 메서드
+    private void deleteExistingSessionIfPresent(String sessionId, String projectId) {
+        if (sessionId != null) {
+            redisTemplate.delete(OPENVIDU_REDIS_HASH + projectId);
+        }
+    }
+
+
+    // Redis에서 프로젝트 ID를 기반으로 세션 ID를 가져옵니다.
     private String getSessionIdFromRedis(String projectId) {
         return redisTemplate.opsForValue().get(OPENVIDU_REDIS_HASH + projectId);
     }
@@ -79,15 +92,16 @@ public class OpenViduService {
     /**
      * 세션에 대한 연결 정보를 가져오고 만료 시간을 연장하여 사용자 연결 정보를 반환합니다.
      * @param sessionId 세션 ID
+     * @param projectId 프로젝트 식별자
      * @return 사용자 연결 정보
      */
-    public UserConnection getUserConnection(String sessionId) throws OpenViduJavaClientException, OpenViduHttpException {
+    public UserConnection getUserConnection(String sessionId, String projectId) throws OpenViduJavaClientException, OpenViduHttpException {
         // 세션 가져오기
         Session session = getSession(sessionId);
         // 세션 만료 시간 연장
-        extendSessionExpiration(sessionId);
+        long expireTime=extendSessionExpiration(projectId);
         // 사용자 연결 정보 생성
-        return createUserConnection(session, sessionId);
+        return createUserConnection(session, sessionId, expireTime);
     }
 
     /**
@@ -106,11 +120,11 @@ public class OpenViduService {
 
     /**
      * 세션의 만료 시간을 연장합니다.
-     * @param sessionId 세션 ID
+     * @param projectId 프로젝트 식별자
      */
-    private void extendSessionExpiration(String sessionId) {
+    private long extendSessionExpiration(String projectId) {
         // 세션의 만료 시간을 가져옴
-        Long expireTime = getSessionExpireTime(sessionId);
+        Long expireTime = getSessionExpireTime(projectId);
         // 만료 시간이 없는 경우 예외 처리
         if (expireTime == null) {
             throw new BaseExceptionHandler(ErrorCode.NOT_FOUND_EXPIRE_TIME);
@@ -118,17 +132,16 @@ public class OpenViduService {
         // 만료 시간 연장
         if (expireTime > 0 && expireTime < 8 * 3600) {
             long newExpiration = expireTime + ADDITIONAL_EXPIRE_SECONDS;
-            redisTemplate.expire(OPENVIDU_REDIS_HASH + sessionId, Duration.ofSeconds(newExpiration));
+            redisTemplate.expire(OPENVIDU_REDIS_HASH + projectId, Duration.ofSeconds(newExpiration));
+            return newExpiration;
         }
+        return expireTime;
     }
 
-    /**
-     * 세션의 만료 시간을 가져옵니다.
-     * @param sessionId 세션 ID
-     * @return 세션의 만료 시간
-     */
-    private Long getSessionExpireTime(String sessionId) {
-        return redisTemplate.getExpire(OPENVIDU_REDIS_HASH + sessionId);
+
+    // 세션의 만료 시간을 가져옵니다.
+    private Long getSessionExpireTime(String projectId) {
+        return redisTemplate.getExpire(OPENVIDU_REDIS_HASH + projectId);
     }
 
     /**
@@ -137,7 +150,7 @@ public class OpenViduService {
      * @param sessionId 세션 ID
      * @return 사용자 연결 정보
      */
-    private UserConnection createUserConnection(Session session, String sessionId) throws OpenViduJavaClientException, OpenViduHttpException {
+    private UserConnection createUserConnection(Session session, String sessionId, Long expireTime) throws OpenViduJavaClientException, OpenViduHttpException {
         // 연결 속성 설정
         ConnectionProperties properties = new ConnectionProperties.Builder()
                 .type(ConnectionType.WEBRTC)
@@ -146,12 +159,15 @@ public class OpenViduService {
         // 세션에 연결 생성
         Connection connection = session.createConnection(properties);
 
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
         // 사용자 연결 정보 반환
         return UserConnection.builder()
                 .sessionId(sessionId)
                 .token(connection.getToken())
                 .connectionId(connection.getConnectionId())
-                .createdAt(connection.createdAt())
+                .createdAt(dateFormat.format(new Date(connection.createdAt())))
+                .expireTime(expireTime)
                 .build();
     }
 
