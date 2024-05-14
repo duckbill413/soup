@@ -2,7 +2,6 @@
 
 import { RoomProvider } from '@/../liveblocks.config'
 import Loading from '@/app/loading'
-import { Dependency } from '@/types/dependency'
 import { LiveList, LiveObject } from '@liveblocks/client'
 import { ClientSideSuspense } from '@liveblocks/react'
 import { usePathname } from 'next/navigation'
@@ -17,19 +16,17 @@ export default function Room({ children }: { children: ReactNode }) {
       initialPresence={{}}
       initialStorage={{
         build: new LiveObject({
-          project: 'Gradle - Groovy',
+          type: 'Gradle-Groovy',
           language: 'Java',
-          springVersion: '3.3.0 (SNAPSHOT)',
-          metadata: new LiveObject({
-            group: 'com.example',
-            artifact: 'demo',
-            name: 'demo',
-            description: 'Demo project for Spring Boot',
-            packageName: 'com.example.demo',
-          }),
+          languageVersion: '17',
+          version: '3.3.0-SNAPSHOT',
           packaging: 'Jar',
-          javaVersion: '17',
-          dependencies: new LiveList<Dependency>(),
+          group: 'com.example',
+          artifact: 'demo',
+          name: 'demo',
+          description: 'demo project with soup!',
+          packageName: 'com.example.demo',
+          dependencies: new LiveList<number>(),
         }),
       }}
     >

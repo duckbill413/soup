@@ -1,20 +1,15 @@
-import { Dependency } from '@/types/dependency'
-import { LiveList, LiveObject } from '@liveblocks/client'
+import { LiveList } from '@liveblocks/client'
 
-export type ProjectMetadata = {
+export type BuildStorage = {
+  type: string
+  language: string
+  languageVersion: string
+  version: string
+  packaging: string
   group: string
   artifact: string
   name: string
   description: string
   packageName: string
-}
-
-export type BuildStorage = {
-  project: string
-  language: string
-  springVersion: string
-  metadata: LiveObject<ProjectMetadata>
-  packaging: string
-  javaVersion: string
-  dependencies: LiveList<Dependency>
+  dependencies: LiveList<number>
 }
