@@ -4,21 +4,23 @@ import io.ssafy.soupapi.domain.chat.dto.request.ChatMessageReq;
 import io.ssafy.soupapi.domain.member.entity.Member;
 import io.ssafy.soupapi.domain.noti.dao.EmitterRepository;
 import io.ssafy.soupapi.domain.noti.dao.NotiRepository;
-import io.ssafy.soupapi.domain.noti.dao.NotiUnreadNumRes;
 import io.ssafy.soupapi.domain.noti.dto.RMentionNoti;
+import io.ssafy.soupapi.domain.noti.dto.response.GetNotiRes;
+import io.ssafy.soupapi.domain.noti.dto.response.NewNotiRes;
+import io.ssafy.soupapi.domain.noti.dto.response.SseNotiRes;
 import io.ssafy.soupapi.domain.noti.entity.MNoti;
 import io.ssafy.soupapi.global.util.FindEntityUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.bson.types.ObjectId;
+import org.springframework.data.mongodb.core.mapping.Field;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -55,10 +57,56 @@ public class NotiService {
         return MNoti.builder()
                 .title(title)
                 .content(chatMessageReq.message())
+                .senderId(chatMessageReq.sender().getMemberId())
                 .receiverId(mentioneeId)
                 .projectId(chatroomId)
                 .chatMessageId(chatMessageId)
                 .build();
+    }
+
+    public NewNotiRes generateNewNotiRes(MNoti mNoti, String notiPhotoUrl) {
+        return mNoti.generateNewNotiRes(notiPhotoUrl);
+    }
+
+    /*------------------------------------ MongoDB 조회 ------------------------------------*/
+
+    public GetNotiRes getNotis(String memberId, Boolean isRead) {
+        List<MNoti> notiList;
+
+        if (Objects.isNull(isRead)) {
+            notiList = notiRepository.findByReceiverId(memberId);
+        } else {
+            notiList = notiRepository.findByReceiverIdAndIsRead(memberId, isRead);
+        }
+
+        return generateGetNotiResFromMNotiList(notiList);
+    }
+
+    public boolean readNoti(String notiId) {
+        notiRepository.updateIsReadById(new ObjectId(notiId), true);
+        return true;
+    }
+
+    private GetNotiRes generateGetNotiResFromMNotiList(List<MNoti> notiList) {
+        Set<String> senderIdSet = new HashSet<>();
+        for (MNoti mNoti : notiList) {
+            senderIdSet.add(mNoti.getSenderId());
+        }
+
+        Map<String, String> senderMap = new HashMap<>();
+        for (String senderId : senderIdSet) {
+            String senderProfileImage = findEntityUtil.findMemberById(UUID.fromString(senderId)).getProfileImageUrl();
+            senderMap.put(senderId, senderProfileImage);
+        }
+
+        GetNotiRes response = GetNotiRes.builder().build();
+        for (MNoti mNoti : notiList) {
+            response.getNotiList().add(
+                mNoti.generateNewNotiRes(senderMap.get(mNoti.getSenderId()))
+            );
+        }
+
+        return response;
     }
 
     /*------------------------------------ SSE 푸시 알림 ------------------------------------*/
@@ -96,7 +144,7 @@ public class NotiService {
     }
 
     // 안 읽은 알림이 몇 개인지 구독한 client에 전달
-    public void notify(String receiverId, Object event) {
+    public void notify(String receiverId, Object data) {
         Map<String, SseEmitter> sseEmitters = emitterRepository.findAllStartWithById(receiverId);
         log.info("notify에서 sseEmitter는 {}개", sseEmitters.size());
         sseEmitters.forEach(
@@ -104,16 +152,18 @@ public class NotiService {
                 // 데이터 캐시 저장 (유실된 데이터 처리하기 위함)
                 // TODO: 이벤트 캐시 해야 되는 듯?
 
-                List<MNoti> notiList = notiRepository.findByReceiverId(receiverId);
-                sendToClient(emitter, key, NotiUnreadNumRes.builder().num(notiList.size()).build());
+                if (data instanceof NewNotiRes newNotiRes) {
+                    List<MNoti> unreadNotiList = notiRepository.findByReceiverIdAndIsRead(receiverId, false);
+                    SseNotiRes response = SseNotiRes.builder()
+                            .unreadNotiNum(unreadNotiList.size())
+                            .newlyAddedNoti(newNotiRes)
+                            .build();
+                    sendToClient(emitter, key, response);
+                }
             }
         );
     }
 
-    /**
-     * 클라이언트에 데이터를 전송
-     * @param data 전송할 데이터
-     */
     private void sendToClient(SseEmitter emitter, String emitterId, Object data) {
         if (emitter != null) {
             try {
