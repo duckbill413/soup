@@ -54,5 +54,5 @@ public interface MProjectService {
 
     Object linkProjectVuerd(ObjectId projectId);
 
-    String liveProjectApiDoc(String projectId);
+    List<GetSimpleApiDoc> liveProjectApiDoc(String projectId);
 }

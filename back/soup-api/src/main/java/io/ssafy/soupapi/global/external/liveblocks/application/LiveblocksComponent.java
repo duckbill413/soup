@@ -59,4 +59,13 @@ public class LiveblocksComponent {
         return objectMapper.convertValue(object, clazz);
     }
 
+    public <T> List<T> getRoomStorageDocuments(String projectId, StepName stepName, Class<T> clazz) {
+        Map<String, Object> map = lbFeignClient.getRoomStorageDocument(projectId, stepName.getRoomName());
+        Object object = map.get(stepName.getJsonName());
+        if (object instanceof List<?>) {
+            List<T> result = (List<T>) object;
+            return result.stream().map(t -> objectMapper.convertValue(t, clazz)).toList();
+        }
+        return List.of();
+    }
 }

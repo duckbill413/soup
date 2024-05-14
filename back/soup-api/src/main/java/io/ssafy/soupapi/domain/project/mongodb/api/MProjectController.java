@@ -224,7 +224,7 @@ public class MProjectController {
     @Operation(summary = "Liveblocks API DOC 업데이트")
     @PostMapping("/{projectId}/api-docs/live")
     @PreAuthorize("@authService.hasProjectRoleMember(#projectId, #userSecurityDTO.getId())")
-    public ResponseEntity<BaseResponse<String>> liveProjectApiDoc(
+    public ResponseEntity<BaseResponse<List<GetSimpleApiDoc>>> liveProjectApiDoc(
             @PathVariable String projectId,
             @AuthenticationPrincipal UserSecurityDTO userSecurityDTO
     ) {
