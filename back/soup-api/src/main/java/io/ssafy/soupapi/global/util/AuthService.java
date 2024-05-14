@@ -23,7 +23,6 @@ public class AuthService {
     private final FindEntityUtil findEntityUtil;
     private final ProjectAuthRepository projectAuthRepository;
     private static final ProjectRole[] PRIMARY_PROJECT_ROLE = {ProjectRole.ADMIN, ProjectRole.MAINTAINER};
-    private static final ProjectRole VIEWER_PROJECT_ROLE = ProjectRole.VIEWER;
 
     /**
      * 검색한 프로젝트에 대해 어떠한 권한을 가지고 있는지 확인
@@ -58,21 +57,6 @@ public class AuthService {
         }
         return false;
     }
-
-    public boolean hasViewerProjectRoleMember(String projectId, UUID memberId) {
-        var projectAuths = projectAuthRepository.findByMemberAndProject(
-                Member.builder().id(memberId).build(),
-                Project.builder().id(projectId).build()
-        );
-
-        for (ProjectAuth projectAuth : projectAuths) {
-            if (projectAuth.getRoles().contains(VIEWER_PROJECT_ROLE)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
 
     public boolean hasChatProjectRoleMember(String projectId, UUID memberId) {
         var projectAuths = projectAuthRepository.findByMemberAndProject(
