@@ -4,8 +4,22 @@ import Image from "next/image";
 import defaultImage from "#/assets/images/defaultProfile.png";
 import * as styles from "./chatContent.css";
 
-export default function ChatContent({chatMessageId,header, me, message, nickname, profileImageUrl, sentAt}:ChatContentProps){
+export default function ChatContent({chatMessageId,header, me, message, nickname, profileImageUrl, sentAt,myNickname,memberNicknames}:ChatContentProps){
 
+    const highlightMention = (text:string) => {
+        const regex = /(@\S+)/g;
+
+        return text.split(regex).map((part, index) => {
+            if (part.match(regex) && memberNicknames.find(data=>data===part.slice(1))) {
+                if(myNickname===part.slice(1)){
+                    return <span key={index} className={styles.myMention}>{part}</span>;
+                }
+                return <span key={index} className={styles.mentioned}>{part}</span>;
+            } 
+                return part;
+            
+        });
+    };
     return(<div key={chatMessageId}>
             <div className={styles.chatHeader}>
                 {header === new Date().toISOString().slice(0, 10) &&
@@ -64,7 +78,7 @@ export default function ChatContent({chatMessageId,header, me, message, nickname
                     }
                     <div className={styles.chatModalContentList.userArea}>
                         <p className={styles.chatModalContentList.content}>
-                            {message}
+                            {highlightMention(message)}
                         </p>
                     </div>
                 </div>}

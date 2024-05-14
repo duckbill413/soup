@@ -139,7 +139,7 @@ export default function ChatModal({isVisible, projectId}: Props) {
                     <div className={styles.chatModalContent.background}>
                         <div>
                             {updatedChatList.map((chat) => (
-                                <ChatContent {...chat} key={chat.chatMessageId} nickname={chat.nickname} header={chat.header} profileImageUrl={chat.profileImageUrl}/>
+                                <ChatContent {...chat} key={chat.chatMessageId} memberNicknames={members.map(data=>data.nickname)} myNickname={me?.nickname} nickname={chat.nickname} header={chat.header} profileImageUrl={chat.profileImageUrl}/>
                             ))}
                         </div>
                     </div>
