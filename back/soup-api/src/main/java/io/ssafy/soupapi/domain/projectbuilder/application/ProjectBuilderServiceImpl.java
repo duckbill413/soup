@@ -96,7 +96,7 @@ public class ProjectBuilderServiceImpl implements ProjectBuilderService {
                 .set("project_builder_info.springboot_s3_url", s3Url);
 
         var result = mongoTemplate.updateFirst(query, update, Project.class);
-        if (result.wasAcknowledged() && result.getModifiedCount() > 0) {
+        if (result.wasAcknowledged() && (result.getMatchedCount() > 0 || result.getModifiedCount() > 0)) {
             return;
         }
         throw new BaseExceptionHandler(ErrorCode.FAILED_TO_UPDATE_PROJECT);
