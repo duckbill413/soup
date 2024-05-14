@@ -13,7 +13,6 @@ const baseAxios = axios.create({
   headers: {
     'Content-Type': 'application/json;charset=utf-8',
     Authorization: `Bearer ${TOKEN}`,
-
   },
 })
 
@@ -27,7 +26,11 @@ baseAxios.interceptors.response.use(
       window.location.href = '/main'
     }
 
-    await tokenRefresh()
+    try {
+      await tokenRefresh()
+    } catch {
+      window.location.href = '/main'
+    }
     const accessToken = getAccessToken()
     const newConfig = err.config
     newConfig.headers = {
