@@ -2,8 +2,10 @@ package io.ssafy.soupapi.usecase.api;
 
 import io.ssafy.soupapi.domain.project.mongodb.application.MProjectService;
 import io.ssafy.soupapi.domain.projectbuilder.application.ProjectBuilderService;
+import io.ssafy.soupapi.global.common.code.ErrorCode;
 import io.ssafy.soupapi.global.common.code.SuccessCode;
 import io.ssafy.soupapi.global.common.response.BaseResponse;
+import io.ssafy.soupapi.global.exception.BaseExceptionHandler;
 import io.ssafy.soupapi.global.security.user.UserSecurityDTO;
 import io.ssafy.soupapi.usecase.application.UpdateProjectInfoService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -19,6 +21,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
 @Log4j2
 @RestController
 @RequestMapping("/api/projects")
@@ -28,6 +34,7 @@ public class BuildProjectController {
     private final UpdateProjectInfoService updateProjectInfoService;
     private final MProjectService mProjectService;
     private final ProjectBuilderService projectBuilderService;
+    private final ConcurrentHashMap<String, Lock> locks = new ConcurrentHashMap<>();
 
     @Operation(summary = "프로젝트 빌드")
     @PostMapping("/{projectId}/builder")
@@ -36,12 +43,27 @@ public class BuildProjectController {
             @PathVariable String projectId,
             @AuthenticationPrincipal UserSecurityDTO userSecurityDTO
     ) {
-        updateProjectInfoService.liveUpdateProjectInfo(projectId);
-        mProjectService.liveProjectVuerd(new ObjectId(projectId));
-        projectBuilderService.liveChangeBuilderInfo(projectId);
-        return BaseResponse.success(
-                SuccessCode.INSERT_SUCCESS,
-                projectBuilderService.buildProject(projectId)
-        );
+        Lock lock = locks.computeIfAbsent(projectId, k -> new ReentrantLock());
+
+        if (lock.tryLock()) {
+            try {
+                // 프로젝트 정보 동기화
+                updateProjectInfoService.liveUpdateProjectInfo(projectId);
+                // 프로젝트 ERD 동기화
+                mProjectService.liveProjectVuerd(new ObjectId(projectId));
+                // 프로젝트 API 문서 동기화
+                mProjectService.liveProjectApiDoc(projectId);
+                // 프로젝트 빌드 정보 동기화
+                projectBuilderService.liveChangeBuilderInfo(projectId);
+                return BaseResponse.success(
+                        SuccessCode.INSERT_SUCCESS,
+                        projectBuilderService.buildProject(projectId)
+                );
+            } finally {
+                lock.unlock();
+            }
+        } else {
+            throw new BaseExceptionHandler(ErrorCode.PROJECT_IS_NOW_BUILDING);
+        }
     }
 }

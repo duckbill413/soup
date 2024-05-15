@@ -213,7 +213,7 @@ public class ProjectBuilderServiceImpl implements ProjectBuilderService {
 
     @Override
     public GetProjectBuilderInfo liveChangeBuilderInfo(String projectId) {
-        var liveBuilderInfo = liveblocksComponent.getRoomStorageDocument(projectId, StepName.build, LiveChangeProjectBuilderInfo.class);
+        var liveBuilderInfo = liveblocksComponent.getRoomStorageDocument(projectId, StepName.BUILD, LiveChangeProjectBuilderInfo.class);
         var dependencies = dependencyRepository.findByIdIsInOrBasicIsTrue(liveBuilderInfo.dependencies());
         var buildInfo = LiveChangeProjectBuilderInfo.toProjectBuilderInfo(liveBuilderInfo, dependencies);
         mProjectRepository.changeProjectBuildInfo(new ObjectId(projectId), buildInfo);

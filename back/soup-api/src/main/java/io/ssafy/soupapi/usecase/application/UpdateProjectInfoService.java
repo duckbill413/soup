@@ -25,7 +25,7 @@ public class UpdateProjectInfoService {
     }
 
     public GetProjectInfo liveUpdateProjectInfo(String projectId) {
-        var liveProjectInfo = liveblocksComponent.getRoomStorageDocument(projectId, StepName.outline, LiveUpdateProjectInfo.class);
+        var liveProjectInfo = liveblocksComponent.getRoomStorageDocument(projectId, StepName.OUTLINE, LiveUpdateProjectInfo.class);
         var updateProjectInfo = LiveUpdateProjectInfo.toUpdateProjectInfo(liveProjectInfo);
         var projectInfo = mProjectService.updateProjectInfo(new ObjectId(projectId), updateProjectInfo);
         pProjectService.updateProjectInfo(projectId, updateProjectInfo);
