@@ -23,9 +23,9 @@ export default function ChatContent({chatMessageId,header, me, message, nickname
     return(<div key={chatMessageId}>
             <div className={styles.chatHeader}>
                 {header === new Date().toISOString().slice(0, 10) &&
-                    <span className={styles.hrSect}>오늘</span>}
+                    <span className={styles.hrSect}>{dayjs(header).format('MM-DD')}</span>}
                 {(header !== new Date().toISOString().slice(0, 10) && header) &&
-                    <span className={styles.hrSect}>{dayjs(header).fromNow(true)}</span>}
+                    <span className={styles.hrSect}>오늘</span>}
             </div>
             {!me ?
                 <div
@@ -57,9 +57,7 @@ export default function ChatContent({chatMessageId,header, me, message, nickname
                     {sentAt &&
 
                         <p className={styles.chatModalContentList.time}>
-                            {dayjs(sentAt.slice(0, 10)).isSame(dayjs(), 'day')
-                                ? dayjs(sentAt).format('HH:mm')
-                                : dayjs(sentAt).format('MM-DD')}
+                            {dayjs(sentAt).format('HH:mm')}
                         </p>
                     }
                 </div>
@@ -70,10 +68,7 @@ export default function ChatContent({chatMessageId,header, me, message, nickname
                     <div className={styles.chatModalContentList.profile} />
                     {sentAt &&
                         <p className={styles.chatModalContentList.time}>
-
-                            {dayjs(sentAt.slice(0, 10)).isSame(dayjs(), 'day')
-                                ? dayjs(sentAt).format('HH:mm')
-                                : dayjs(sentAt).format('MM-DD')}
+                            {dayjs(sentAt).format('HH:mm')}
                         </p>
                     }
                     <div className={styles.chatModalContentList.userArea}>
