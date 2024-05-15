@@ -117,14 +117,14 @@ public class NotiService {
         SseEmitter emitter = createEmitter(emitterId);
 
         // SSE 연결이 이뤄진 후 하나의 데이터도 전송되지 않고 SseEmitter의 유효 시간이 끝나면 503 응답이 발생한다. 그래서 연결 시 더미 데이터를 한 번 보내준다.
-        sendToClient(emitter, emitterId, "EventStream이 생성되었습니다 (memberId=" + memberId + ")");
+        sendToClient(emitter, emitterId, "sse", "EventStream이 생성되었습니다 (memberId=" + memberId + ")");
 
         // 클라이언트가 미수신한 event 목록이 존재할 경우 전송하여 event 유실을 예방
         if (!lastEventId.isEmpty()) {
             Map<String, SseEmitter> events = emitterRepository.findAllEventCacheStartWithId(memberId);
             events.entrySet().stream()
                     .filter(entry -> lastEventId.compareTo(entry.getKey()) < 0)
-                    .forEach(entry -> sendToClient(emitter, entry.getKey(), entry.getValue()));
+                    .forEach(entry -> sendToClient(emitter, entry.getKey(), "mention", entry.getValue()));
         }
 
         return emitter;
@@ -144,7 +144,7 @@ public class NotiService {
     }
 
     // 안 읽은 알림이 몇 개인지 구독한 client에 전달
-    public void notify(String receiverId, Object data) {
+    public void notify(String receiverId, Object data, String eventName) {
         Map<String, SseEmitter> sseEmitters = emitterRepository.findAllStartWithById(receiverId);
         log.info("notify에서 sseEmitter는 {}개", sseEmitters.size());
         sseEmitters.forEach(
@@ -158,18 +158,18 @@ public class NotiService {
                             .unreadNotiNum(unreadNotiList.size())
                             .newlyAddedNoti(newNotiRes)
                             .build();
-                    sendToClient(emitter, key, response);
+                    sendToClient(emitter, key, eventName, response);
                 }
             }
         );
     }
 
-    private void sendToClient(SseEmitter emitter, String emitterId, Object data) {
+    private void sendToClient(SseEmitter emitter, String emitterId, String eventName, Object data) {
         if (emitter != null) {
             try {
                 emitter.send(SseEmitter.event()
                         .id(emitterId)
-                        .name("sse")
+                        .name(eventName)
                         .data(data)
                 );
             } catch (IOException e) {
