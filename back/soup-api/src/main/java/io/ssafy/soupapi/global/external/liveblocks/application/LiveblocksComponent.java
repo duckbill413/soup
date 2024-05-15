@@ -30,7 +30,7 @@ public class LiveblocksComponent {
 
         for (StepName stepName : StepName.values()) {
             CreateRoomReq createRoomReq = CreateRoomReq.builder()
-                    .id(roomIdBase + stepName) // roomId: /project/{projectID}/outline
+                    .id(roomIdBase + stepName.getRoomName()) // roomId: /project/{projectID}/outline
                     .build();
             createRoomReq.usersAccesses().put(memberId, List.of("room:write"));
 
@@ -46,7 +46,7 @@ public class LiveblocksComponent {
             updateRoomReq.usersAccesses().put(memberId, List.of("room:write"));
 
             ChangeRoomRes changeRoomRes = lbFeignClient.updateRoom(
-                    projectId, stepName.name(), updateRoomReq
+                    projectId, stepName.getRoomName(), updateRoomReq
             );
 
             // TODO: 성공 실패 처리하면 될 듯
@@ -54,9 +54,16 @@ public class LiveblocksComponent {
     }
 
     public <T> T getRoomStorageDocument(String projectId, StepName stepName, Class<T> clazz) {
-        Map<String, Object> map = lbFeignClient.getRoomStorageDocument(projectId, stepName.name());
-        Object object = map.get(stepName.name());
+        Map<String, Object> map = lbFeignClient.getRoomStorageDocument(projectId, stepName.getRoomName());
+        Object object = map.get(stepName.getJsonName());
         return objectMapper.convertValue(object, clazz);
     }
 
+    public <T> List<T> getRoomStorageDocuments(String projectId, StepName stepName, Class<T> clazz) {
+        Map<String, Object> map = lbFeignClient.getRoomStorageDocument(projectId, stepName.getRoomName());
+        if (map.get(stepName.getJsonName()) instanceof List<?>) {
+            return ((List<?>) map.get(stepName.getJsonName())).stream().map(t -> objectMapper.convertValue(t, clazz)).toList();
+        }
+        return List.of();
+    }
 }

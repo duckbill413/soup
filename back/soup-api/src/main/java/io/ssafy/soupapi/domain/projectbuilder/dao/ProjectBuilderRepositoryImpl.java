@@ -438,8 +438,8 @@ public class ProjectBuilderRepositoryImpl implements ProjectBuilderRepository {
                 """;
 
         var mapUtil = new MapStringReplace(controllerMethod);
-        mapUtil.addValue("api-summary", apiDoc.getName() != null ? apiDoc.getName() : null);
-        mapUtil.addValue("api-description", apiDoc.getDescription() != null ? apiDoc.getDescription() : null);
+        mapUtil.addValue("api-summary", apiDoc.getName() != null ? apiDoc.getName() : "");
+        mapUtil.addValue("api-description", apiDoc.getDescription() != null ? apiDoc.getDescription() : "");
         mapUtil.addValue("api-http-method", apiDoc.getHttpMethod());
         mapUtil.addValue("api-uri", apiDoc.getApiUriPath() != null ? apiDoc.getApiUriPath().replaceAll(" ", "") : "");
         mapUtil.addValue("responsebody-name", apiDoc.getResponseBodyName());
