@@ -308,16 +308,16 @@ public class ProjectBuilderRepositoryImpl implements ProjectBuilderRepository {
             String parentImportBuilder = schema.getParentImportBuilder(relation.getId(), domainPackage);
             String parentRelationBuilder = schema.getParentRelationBuilder(relation.getId());
 
-            insertImportIntoFile(new File(parentEntityPath), parentImportBuilder);
-            insertRelationIntoFile(new File(parentEntityPath), parentRelationBuilder);
+            insertStartOfClass(new File(parentEntityPath), parentImportBuilder);
+            insertEndOfClass(new File(parentEntityPath), parentRelationBuilder);
 
             // 자식 Entity 파일 경로
             var childEntityPath = domainAbsolutePath + File.separator + convertToSnakeCase(child.getName()) + File.separator + "entity" + File.separator + convertToPascalCase(child.getName()) + ".java";
             String childImportBuilder = schema.getChildImportBuilder(relation.getId(), domainPackage);
             String childRelationBuilder = schema.getChildRelationBuilder(relation.getId());
 
-            insertImportIntoFile(new File(childEntityPath), childImportBuilder);
-            insertRelationIntoFile(new File(childEntityPath), childRelationBuilder);
+            insertStartOfClass(new File(childEntityPath), childImportBuilder);
+            insertEndOfClass(new File(childEntityPath), childRelationBuilder);
         }
     }
 
@@ -329,7 +329,10 @@ public class ProjectBuilderRepositoryImpl implements ProjectBuilderRepository {
         Set<String> domainReqDtoPackage = new HashSet<>();
         Set<String> domainResDtoPackage = new HashSet<>();
 
-        List<ApiDoc> apiDocList = project.getApiDocs().getApiDocList();
+        var apiDocs = project.getApiDocs();
+        if (Objects.isNull(apiDocs) || Objects.isNull(apiDocs.getApiDocList())) return;
+
+        List<ApiDoc> apiDocList = apiDocs.getApiDocList();
         for (ApiDoc apiDoc : apiDocList) {
             String subDomainPackage = domainPackage + String.format(".%s.dto", convertToSnakeCase(apiDoc.getDomain()));
             String subDomainAbsoluteDtoPath = domainAbsolutePath + File.separator + convertToSnakeCase(apiDoc.getDomain()) + File.separator + "dto";
@@ -348,8 +351,8 @@ public class ProjectBuilderRepositoryImpl implements ProjectBuilderRepository {
                     domainReqDtoPackage.add(apiDoc.getDomain());
                     String importStrPath = domainAbsolutePath + File.separator + convertToSnakeCase(apiDoc.getDomain()) + File.separator;
                     String importStr = String.format(baseDtoPackage.get("REQUEST"), domainPackage + "." + convertToSnakeCase(apiDoc.getDomain()));
-                    insertImportIntoFile(new File(importStrPath + "api" + File.separator + convertToPascalCase(apiDoc.getDomain()) + "Controller.java"), importStr);
-                    insertImportIntoFile(new File(importStrPath + "application" + File.separator + convertToPascalCase(apiDoc.getDomain()) + "Service.java"), importStr);
+                    insertStartOfClass(new File(importStrPath + "api" + File.separator + convertToPascalCase(apiDoc.getDomain()) + "Controller.java"), importStr);
+                    insertStartOfClass(new File(importStrPath + "application" + File.separator + convertToPascalCase(apiDoc.getDomain()) + "Service.java"), importStr);
                 }
             }
 
@@ -367,8 +370,8 @@ public class ProjectBuilderRepositoryImpl implements ProjectBuilderRepository {
                     domainResDtoPackage.add(apiDoc.getDomain());
                     String importStrPath = domainAbsolutePath + File.separator + convertToSnakeCase(apiDoc.getDomain()) + File.separator;
                     String importStr = String.format(baseDtoPackage.get("RESPONSE"), domainPackage + "." + convertToSnakeCase(apiDoc.getDomain()));
-                    insertImportIntoFile(new File(importStrPath + "api" + File.separator + convertToPascalCase(apiDoc.getDomain()) + "Controller.java"), importStr);
-                    insertImportIntoFile(new File(importStrPath + "application" + File.separator + convertToPascalCase(apiDoc.getDomain()) + "Service.java"), importStr);
+                    insertStartOfClass(new File(importStrPath + "api" + File.separator + convertToPascalCase(apiDoc.getDomain()) + "Controller.java"), importStr);
+                    insertStartOfClass(new File(importStrPath + "application" + File.separator + convertToPascalCase(apiDoc.getDomain()) + "Service.java"), importStr);
                 }
             }
         }
@@ -378,6 +381,8 @@ public class ProjectBuilderRepositoryImpl implements ProjectBuilderRepository {
     public void projectMethodBuilder(Project project) throws IOException {
         String domainPath = getProjectMainAbsolutePath(project, MainPath.domain);
         ApiDocs apiDocs = project.getApiDocs();
+        if (Objects.isNull(apiDocs) || Objects.isNull(apiDocs.getApiDocList())) return;
+
         var apiDocList = project.getApiDocs().getApiDocList();
         var usableDomains = new HashSet<>(apiDocs.getDomains().stream().map(String::toUpperCase).toList());
 
@@ -392,13 +397,13 @@ public class ProjectBuilderRepositoryImpl implements ProjectBuilderRepository {
             String controllerMethod = createControllerMethod(apiDoc);
             List<File> cFiles = getLeafFiles(new File(domainSubPath + "api"));
             for (File cFile : cFiles) {
-                insertMethodIntoFile(cFile, controllerMethod);
+                insertEndOfClass(cFile, controllerMethod);
             }
 
             String serviceMethod = createServiceMethod(apiDoc);
             List<File> sFiles = getLeafFiles(new File(domainSubPath + "application"));
             for (File sFile : sFiles) {
-                insertMethodIntoFile(sFile, serviceMethod);
+                insertEndOfClass(sFile, serviceMethod);
             }
         }
     }
@@ -634,6 +639,8 @@ public class ProjectBuilderRepositoryImpl implements ProjectBuilderRepository {
 
         Map<String, String> variables = new HashMap<>();
         variables.put("springboot-project_package", project.getProjectBuilderInfo().getPackageName());
+        variables.put("springboot-project-name", project.getInfo().getName());
+        variables.put("springboot-project-description", project.getInfo().getDescription());
 
         // 최하위 노드의 파일 목록 출력
         for (File file : leafFiles) {

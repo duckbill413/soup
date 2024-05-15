@@ -44,98 +44,77 @@ public class BuildFileUtil {
      * @throws IOException 파일 입출력 에러
      */
     public static void replaceFileVariables(File file, Map<String, String> variables) throws IOException {
-        FileReader fileReader = new FileReader(file.getAbsolutePath());
-        try (BufferedReader br = new BufferedReader(fileReader)) {
-            StringBuilder sb = new StringBuilder();
-            String line;
-            while ((line = br.readLine()) != null) {
-                sb.append(line).append('\n');
-            }
-            var mapUtil = new MapStringReplace(sb.toString());
-            mapUtil.addAllValues(variables);
+        StringBuilder sb = new StringBuilder(readAllFile(file));
+        var mapUtil = new MapStringReplace(sb.toString());
+        mapUtil.addAllValues(variables);
 
-            File newFile = new File(file.getAbsolutePath());
-            try (BufferedWriter bw = new BufferedWriter(new FileWriter(newFile))) {
-                bw.write(mapUtil.replace());
-                bw.flush();
-            }
+        File newFile = new File(file.getAbsolutePath());
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(newFile))) {
+            bw.write(mapUtil.replace());
+            bw.flush();
         }
     }
 
     /**
-     * 파일 메소드 삽입
-     * 파일 정보 및 메소드 문자열을 이용해 메소드 삽입
+     * 클래스 파일의 마지막에 문자열 삽입
      *
      * @param file      파일 정보
      * @param methodStr 삽입할 함수 문자열
      * @throws IOException 파일 입출력 에러
      */
-    public static void insertMethodIntoFile(File file, String methodStr) throws IOException {
-        FileReader fileReader = new FileReader(file.getAbsolutePath());
-        try (BufferedReader br = new BufferedReader(fileReader)) {
-            StringBuilder sb = new StringBuilder();
-            String line;
-            while ((line = br.readLine()) != null) {
-                sb.append(line).append('\n');
-            }
+    public static void insertEndOfClass(File file, String methodStr) throws IOException {
+        StringBuilder sb = new StringBuilder(readAllFile(file));
+        int closingBraceIndex = sb.toString().lastIndexOf('}');
+        if (closingBraceIndex != -1) {
+            sb.insert(closingBraceIndex, "\n" + methodStr);
+        }
 
-            int closingBraceIndex = sb.toString().lastIndexOf('}');
-            if (closingBraceIndex != -1) {
-                sb.insert(closingBraceIndex, "\n" + methodStr);
-            }
-
-            File newFile = new File(file.getAbsolutePath());
-            try (BufferedWriter bw = new BufferedWriter(new FileWriter(newFile))) {
-                bw.write(sb.toString());
-                bw.flush();
-            }
+        File newFile = new File(file.getAbsolutePath());
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(newFile))) {
+            bw.write(sb.toString());
+            bw.flush();
         }
     }
 
-    public static void insertImportIntoFile(File file, String importStr) throws IOException {
-        FileReader fileReader = new FileReader(file.getAbsolutePath());
-        try (BufferedReader br = new BufferedReader(fileReader)) {
-            StringBuilder sb = new StringBuilder();
-            String line;
-            while ((line = br.readLine()) != null) {
-                sb.append(line).append('\n');
-            }
+    public static void insertStartOfClass(File file, String importStr) throws IOException {
+        StringBuilder sb = new StringBuilder(readAllFile(file));
+        int packageIndex = sb.indexOf("package");
+        if (packageIndex == -1) {
+            packageIndex = 0;
+        }
 
-            int packageIndex = sb.indexOf("package");
-            if (packageIndex == -1) {
-                packageIndex = 0;
-            }
+        int insertIndex = sb.indexOf(";", packageIndex) + 1;
+        sb.insert(insertIndex, '\n' + importStr);
 
-            int insertIndex = sb.indexOf(";", packageIndex) + 1;
-            sb.insert(insertIndex, '\n' + importStr);
-
-            File newFile = new File(file.getAbsolutePath());
-            try (BufferedWriter bw = new BufferedWriter(new FileWriter(newFile))) {
-                bw.write(sb.toString());
-                bw.flush();
-            }
+        File newFile = new File(file.getAbsolutePath());
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(newFile))) {
+            bw.write(sb.toString());
+            bw.flush();
         }
     }
 
-    public static void insertRelationIntoFile(File file, String relationStr) throws IOException {
-        FileReader fileReader = new FileReader(file.getAbsolutePath());
-        try (BufferedReader br = new BufferedReader(fileReader)) {
-            StringBuilder sb = new StringBuilder();
+    public static String readAllFile(File file) throws IOException {
+        StringBuilder sb = new StringBuilder();
+        try (BufferedReader br = new BufferedReader(new FileReader(file.getAbsolutePath()))) {
             String line;
             while ((line = br.readLine()) != null) {
                 sb.append(line).append('\n');
             }
-
-            int closingBraceIndex = sb.toString().lastIndexOf('}');
-            if (closingBraceIndex != -1) {
-                sb.insert(closingBraceIndex, "\n" + relationStr);
-            }
-
-            File newFile = new File(file.getAbsolutePath());
-            try (BufferedWriter bw = new BufferedWriter(new FileWriter(newFile))) {
-                bw.write(sb.toString());
-                bw.flush();
-            }
         }
+        return sb.toString();
+    }
+
+    /**
+     * File의 확장자 정보 조회
+     * @param file
+     * @return
+     */
+    public static String getFileExtension(File file) {
+        String fileName = file.getName();
+        int dotIndex = fileName.lastIndexOf('.');
+        if (dotIndex > 0 && dotIndex < fileName.length() - 1) {
+            return fileName.substring(dotIndex + 1).toLowerCase();
+        }
+        return "";
     }
 }
