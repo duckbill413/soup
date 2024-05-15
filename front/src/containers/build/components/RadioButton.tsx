@@ -1,8 +1,10 @@
 'use client'
 
+import { getSpringBootVersionsAPI } from '@/apis/build'
 import * as styles from '@/containers/build/styles/radioButton.css'
 import { RadioProps } from '@/types/radio'
 import { FormControlLabel, Radio, RadioGroup } from '@mui/material'
+import { useEffect, useState } from 'react'
 import { useMutation, useStorage } from '../../../../liveblocks.config'
 
 export function RadioButton({ checked, label }: RadioProps) {
@@ -20,41 +22,38 @@ export function RadioButton({ checked, label }: RadioProps) {
 }
 
 export function RadioButtonGroup() {
+  const [versions, setVersions] = useState([])
   const data = useStorage((root) => root.build)
 
   const handleChange = useMutation(({ storage }, e) => {
-    storage.get('build')?.set('springVersion', e.target.value)
+    storage.get('build')?.set('version', e.target.value)
+  }, [])
+
+  const getVersions = async () => {
+    const res = await getSpringBootVersionsAPI()
+    setVersions(res.result)
+  }
+
+  useEffect(() => {
+    getVersions()
   }, [])
 
   return (
     <RadioGroup
       row
-      value={data?.springVersion}
+      value={data?.version}
       name="radio-buttons-group"
       onChange={handleChange}
     >
-      <FormControlLabel
-        value="3.3.0 (SNAPSHOT)"
-        control={<Radio />}
-        label="3.3.0 (SNAPSHOT)"
-      />
-      <FormControlLabel
-        value="3.3.0 (M3)"
-        control={<Radio />}
-        label="3.3.0 (M3)"
-      />
-      <FormControlLabel
-        value="3.2.5 (SNAPSHOT)"
-        control={<Radio />}
-        label="3.2.5 (SNAPSHOT)"
-      />
-      <FormControlLabel value="3.2.4" control={<Radio />} label="3.2.4" />
-      <FormControlLabel
-        value="3.1.11 (SNAPSHOT)"
-        control={<Radio />}
-        label="3.1.11 (SNAPSHOT)"
-      />
-      <FormControlLabel value="3.1.10" control={<Radio />} label="3.1.10" />
+      {versions.length > 0
+        ? versions.map((item) => (
+            <FormControlLabel
+              value={item.version}
+              control={<Radio />}
+              label={item.version}
+            />
+          ))
+        : null}
     </RadioGroup>
   )
 }

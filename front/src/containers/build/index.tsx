@@ -31,18 +31,18 @@ export function Metadata() {
   const data = useStorage((root) => root.build)
 
   const handleChange = useMutation(({ storage }, key, value) => {
-    storage.get('build')?.get('metadata')?.set(key, value)
+    storage.get('build')?.set(key, value)
   }, [])
 
   const handleChangeGroup = useMutation(({ storage }, e) => {
-    storage.get('build')?.get('metadata')?.set('group', e.target.value)
-    const artifact = storage.get('build')?.get('metadata').get('artifact')
+    storage.get('build')?.set('group', e.target.value)
+    const artifact = storage.get('build')?.get('artifact')
     handleChange('packageName', `${e.target.value}.${artifact}`)
   }, [])
 
   const handleChangeArtifact = useMutation(({ storage }, e) => {
-    storage.get('build')?.get('metadata')?.set('artifact', e.target.value)
-    const group = storage.get('build')?.get('metadata').get('group')
+    storage.get('build')?.set('artifact', e.target.value)
+    const group = storage.get('build')?.get('group')
     handleChange('packageName', `${group}.${e.target.value}`)
     handleChange('name', `${e.target.value}`)
   }, [])
@@ -54,35 +54,35 @@ export function Metadata() {
         label="Group"
         variant="filled"
         size="small"
-        value={data?.metadata.group}
+        value={data?.group}
         onChange={handleChangeGroup}
       />
       <TextField
         label="Artifact"
         variant="filled"
         size="small"
-        value={data?.metadata.artifact}
+        value={data?.artifact}
         onChange={handleChangeArtifact}
       />
       <TextField
         label="Name"
         variant="filled"
         size="small"
-        value={data?.metadata.name}
+        value={data?.name}
         onChange={(e) => handleChange('name', e.target.value)}
       />
       <TextField
         label="Description"
         variant="filled"
         size="small"
-        value={data?.metadata.description}
+        value={data?.description}
         onChange={(e) => handleChange('description', e.target.value)}
       />
       <TextField
         label="Package name"
         variant="filled"
         size="small"
-        value={data?.metadata.packageName}
+        value={data?.packageName}
         onChange={(e) => handleChange('packageName', e.target.value)}
       />
       <div className={styles.rowRadio}>
@@ -91,7 +91,7 @@ export function Metadata() {
       </div>
       <div className={styles.rowRadio}>
         <span>Java</span>
-        <RadioButton checked label={data?.javaVersion ?? '17'} />
+        <RadioButton checked label={data?.languageVersion ?? '17'} />
       </div>
     </div>
   )

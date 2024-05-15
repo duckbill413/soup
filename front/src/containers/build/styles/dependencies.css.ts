@@ -68,6 +68,16 @@ export const name = style({
   fontWeight: 600,
 })
 
+export const desc = style({
+  display: 'block',
+  padding: '2px 10px',
+  wordBreak: 'break-all',
+
+  color: vars.color.deepGray,
+  fontSize: vars.fontSize.caption,
+  fontWeight: 600,
+})
+
 export const white = style({
   borderBottom: `2px solid ${vars.color.gray}`,
   ':hover': {
