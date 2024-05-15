@@ -13,13 +13,13 @@ import io.ssafy.soupapi.global.util.FindEntityUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
-import org.springframework.data.mongodb.core.mapping.Field;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.io.IOException;
+import java.time.Instant;
 import java.util.*;
 
 @Slf4j
@@ -50,7 +50,7 @@ public class NotiService {
 
     public MNoti generateMNoti(
             String chatroomId, String chatMessageId,
-            ChatMessageReq chatMessageReq, String mentioneeId
+            ChatMessageReq chatMessageReq, String mentioneeId, Instant createdAt
     ) {
         Member mentionee = findEntityUtil.findMemberById(UUID.fromString(mentioneeId));
         String title = chatMessageReq.sender().getNickname() + "님이 " + mentionee.getNickname() + "님을 언급했습니다";
@@ -61,6 +61,7 @@ public class NotiService {
                 .receiverId(mentioneeId)
                 .projectId(chatroomId)
                 .chatMessageId(chatMessageId)
+                .createdAt(createdAt)
                 .build();
     }
 
@@ -74,9 +75,9 @@ public class NotiService {
         List<MNoti> notiList;
 
         if (Objects.isNull(isRead)) {
-            notiList = notiRepository.findByReceiverId(memberId);
+            notiList = notiRepository.findByReceiverIdOrderByCreatedAtDesc(memberId);
         } else {
-            notiList = notiRepository.findByReceiverIdAndIsRead(memberId, isRead);
+            notiList = notiRepository.findByReceiverIdAndIsReadOrderByCreatedAtDesc(memberId, isRead);
         }
 
         return generateGetNotiResFromMNotiList(notiList);
@@ -153,7 +154,7 @@ public class NotiService {
                 // TODO: 이벤트 캐시 해야 되는 듯?
 
                 if (data instanceof NewNotiRes newNotiRes) {
-                    List<MNoti> unreadNotiList = notiRepository.findByReceiverIdAndIsRead(receiverId, false);
+                    List<MNoti> unreadNotiList = notiRepository.findByReceiverIdAndIsReadOrderByCreatedAtDesc(receiverId, false);
                     SseNotiRes response = SseNotiRes.builder()
                             .unreadNotiNum(unreadNotiList.size())
                             .newlyAddedNoti(newNotiRes)

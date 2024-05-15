@@ -26,7 +26,7 @@ public class SchedulerService {
         LocalDateTime curLdt = Instant.ofEpochMilli(curMs).atZone(ZoneId.of("Asia/Seoul")).toLocalDateTime();
         LocalDateTime hourAgoLdt = curLdt.minusHours(1).withSecond(0).withNano(0);
         long hourAgoScore = hourAgoLdt.atZone(ZoneId.of("Asia/Seoul")).toInstant().toEpochMilli();
-        log.info("현재 {}, redis 청소 작업을 시작합니다 (대상: {} 까지)", curLdt, hourAgoScore);
+        log.info("현재 {}, redis에서 채팅 메시지 데이터 청소 작업을 시작합니다 (대상: {} 까지)", curLdt, hourAgoScore);
 
         rChatRepository.deleteMessageFromRedis(Long.MIN_VALUE, hourAgoScore);
     }

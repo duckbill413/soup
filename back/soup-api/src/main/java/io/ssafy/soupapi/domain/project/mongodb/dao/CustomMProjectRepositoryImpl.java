@@ -16,7 +16,7 @@ public class CustomMProjectRepositoryImpl implements CustomMProjectRepository {
     private final MongoTemplate mongoTemplate;
 
     /**
-     * projectId 프로젝트의 채팅 메시지 중에서, afterTimestamp 이후에 만들어진 size1 개의 채팅 메시지를 반환한다.
+     * projectId 프로젝트의 채팅 메시지 중에서, beforeTime 이전에 만들어진 size개의 채팅 메시지를 반환한다.
      */
     @Override
     public List<ChatMessage> getNChatMessagesBefore(String projectId, Instant beforeTime, int size) {

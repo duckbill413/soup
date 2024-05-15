@@ -57,7 +57,7 @@ public class ChatService {
 //                    RChatMessage.chatMessageId(), chatMessageReq.sender().getMemberId(), mentioneeId
 //            );
 
-            MNoti mNoti = notiService.generateMNoti(chatroomId, chatMessageId, chatMessageReq, mentioneeId);
+            MNoti mNoti = notiService.generateMNoti(chatroomId, chatMessageId, chatMessageReq, mentioneeId, sentAtInstant);
             mNotiList.add(mNoti);
         }
 
@@ -114,6 +114,10 @@ public class ChatService {
                 senderMap.put(mChatMessage.getSenderId(), null);
                 result.add(mChatMessage.toGetChatMessageRes());
             }
+
+            // MongoDB에서 조회한 데이터는 Redis에 저장 (캐싱)
+
+
         }
 
         for (String memberId : senderMap.keySet()) {

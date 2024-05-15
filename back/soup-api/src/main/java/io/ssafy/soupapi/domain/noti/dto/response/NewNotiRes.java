@@ -4,6 +4,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.ZonedDateTime;
+
 @Getter
 @Setter
 @Builder
@@ -15,4 +17,5 @@ public class NewNotiRes {
     private String notiPhotoUrl;
     private String projectId;
     private String chatMessageId;
+    private ZonedDateTime createdTime;
 }
