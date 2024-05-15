@@ -30,7 +30,7 @@ public class CustomMProjectRepositoryImpl implements CustomMProjectRepository {
         """);
 
         AggregationOperation opFilterByTimeAfter = Aggregation.stage("""
-            { $match: { "project_chats.chat_message_timestamp": { $lt: "#beforeTime#" } } }
+            { $match: { "project_chats.chat_message_timestamp": { $lt: new ISODate("#beforeTime#") } } }
         """.replace("#beforeTime#", String.valueOf(beforeTime)));
 
         AggregationOperation opSortDesc = Aggregation.stage("""
