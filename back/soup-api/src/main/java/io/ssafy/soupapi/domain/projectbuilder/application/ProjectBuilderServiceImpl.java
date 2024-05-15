@@ -6,8 +6,10 @@ import io.ssafy.soupapi.domain.project.mongodb.entity.Project;
 import io.ssafy.soupapi.domain.project.mongodb.entity.builder.ProjectBuilderDependency;
 import io.ssafy.soupapi.domain.project.mongodb.entity.builder.ProjectBuilderInfo;
 import io.ssafy.soupapi.domain.projectbuilder.dao.ProjectBuilderRepository;
+import io.ssafy.soupapi.domain.projectbuilder.dao.ProjectStructureRepository;
 import io.ssafy.soupapi.domain.projectbuilder.dto.liveblock.LiveChangeProjectBuilderInfo;
 import io.ssafy.soupapi.domain.projectbuilder.dto.request.ChangeProjectBuilderInfo;
+import io.ssafy.soupapi.domain.projectbuilder.dto.response.BuiltStructure;
 import io.ssafy.soupapi.domain.projectbuilder.dto.response.GetProjectBuilderInfo;
 import io.ssafy.soupapi.domain.springinfo.dao.SpringDependencyRepository;
 import io.ssafy.soupapi.global.common.code.ErrorCode;
@@ -36,6 +38,7 @@ public class ProjectBuilderServiceImpl implements ProjectBuilderService {
     private final MProjectRepository mProjectRepository;
     private final SpringDependencyRepository dependencyRepository;
     private final ProjectBuilderRepository projectBuilderRepository;
+    private final ProjectStructureRepository projectStructureRepository;
     private final S3FileService s3FileService;
     private final MongoTemplate mongoTemplate;
     private final LiveblocksComponent liveblocksComponent;
@@ -69,11 +72,11 @@ public class ProjectBuilderServiceImpl implements ProjectBuilderService {
             // class files
             projectBuilderRepository.replaceClassesVariables(project);
             // create method in controller and service
-            projectBuilderRepository.projectMethodBuilder(project);
+            projectBuilderRepository.projectMethodBuilder(project); // apidoc
             // create entity relationship
             projectBuilderRepository.insertEntityRelationShip(project);
             // create dto files
-            projectBuilderRepository.createDtoClassFiles(project);
+            projectBuilderRepository.createDtoClassFiles(project); // apidoc
             // update local file to s3 cloud
             return uploadLocalProjectFile(project, destinationFolder);
         } catch (Exception e) {
@@ -140,6 +143,20 @@ public class ProjectBuilderServiceImpl implements ProjectBuilderService {
         return project.getProjectBuilderInfo().getS3Url();
     }
 
+    @Transactional(readOnly = true)
+    @Override
+    public BuiltStructure findProjectBuiltInfo(String projectId) {
+        // 빌드 정보 불러 오기
+        var buildInfo = findBuilderInfo(projectId);
+        if (Objects.isNull(buildInfo.s3Url())) {
+            throw new BaseExceptionHandler(ErrorCode.NOT_FOUND_BUILT_PROJECT);
+        }
+
+
+        var structure = projectStructureRepository.findProjectStructure(projectId, buildInfo);
+        return new BuiltStructure(buildInfo, structure);
+    }
+
     /**
      * 프로젝트 빌드 정보가 없을 경우 기본 빌드 정보를 생성
      * isBasic이 True인 경우 반드시 선택되는 의존성 정보
@@ -169,6 +186,7 @@ public class ProjectBuilderServiceImpl implements ProjectBuilderService {
                 )
                 .description("demo project with soup!")
                 .packageName("com.example.demo")
+                .s3Url(null)
                 .build();
         mProjectRepository.changeProjectBuildInfo(new ObjectId(projectId), buildInfo);
         return GetProjectBuilderInfo.of(buildInfo);
