@@ -99,9 +99,6 @@ export default function Dependencies() {
 
   const handleTouch = () => {
     if (initialInnerHeight && el) {
-      const { innerHeight } = window
-      const heightGap = initialInnerHeight + innerHeight
-      const topHeight = heightGap
       el.scrollTo({ top: el.scrollHeight, behavior: 'smooth' })
     }
   }

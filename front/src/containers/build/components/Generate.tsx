@@ -12,7 +12,7 @@ import { SimpleTreeView, TreeItem } from '@mui/x-tree-view'
 import { langs } from '@uiw/codemirror-extensions-langs'
 import { vscodeDark } from '@uiw/codemirror-theme-vscode'
 import CodeMirror from '@uiw/react-codemirror'
-import { ReactElement, Ref, forwardRef, useState, SyntheticEvent } from 'react'
+import { ReactElement, Ref, forwardRef, useState } from 'react'
 
 // TODO: 샘플 데이터 삭제
 const sampleData = {
