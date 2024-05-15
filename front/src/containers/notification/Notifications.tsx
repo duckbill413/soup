@@ -14,8 +14,6 @@ import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.share
 import { elapsedTime } from '@/utils/elapsedTime'
 import { NotiEvent, Notification } from './notification'
 
-type Props = { theme: 'white' | 'black' }
-
 let router: AppRouterInstance
 let path: string
 
@@ -57,6 +55,8 @@ function Card(item: Notification, handleClose: Function) {
       className={styles.notification}
       key={notiId}
       onClick={readNoti}
+      onKeyDown={readNoti}
+      role="presentation"
     >
       <Image
         unoptimized
@@ -77,7 +77,7 @@ function Card(item: Notification, handleClose: Function) {
   )
 }
 
-export default function Notifications({ theme }: Props) {
+export default function Notifications() {
   const [open, setOpen] = useState<boolean>(false)
   const [unreadCnt, setUnreadCnt] = useState<number>(0)
   const [notis, setNotis] = useState<Array<Notification>>([])
@@ -111,7 +111,7 @@ export default function Notifications({ theme }: Props) {
     // sse 연결
     eventSource.addEventListener('sse', (event: any) => {
       const obj: NotiEvent = JSON.parse(event.data)
-      const unreadNotiNum = obj.unreadNotiNum
+      const { unreadNotiNum } = obj
 
       setUnreadCnt(unreadNotiNum)
     })
@@ -119,7 +119,7 @@ export default function Notifications({ theme }: Props) {
     // 읽음 이벤트 발생
     eventSource.addEventListener('read-noti', (event: any) => {
       const obj: NotiEvent = JSON.parse(event.data)
-      const unreadNotiNum = obj.unreadNotiNum
+      const { unreadNotiNum } = obj
 
       setUnreadCnt(unreadNotiNum)
     })
@@ -127,13 +127,14 @@ export default function Notifications({ theme }: Props) {
     // 언급 이벤트 발생
     eventSource.addEventListener('mention', (event: any) => {
       const obj: NotiEvent = JSON.parse(event.data)
-      const unreadNotiNum = obj.unreadNotiNum
-      const newNoti: Notification = obj.newlyAddedNoti
+      const { unreadNotiNum, newlyAddedNoti } = obj
 
       setUnreadCnt(unreadNotiNum)
 
-      const alreadyIn = notis.filter((item) => item.notiId === newNoti.notiId)
-      if (alreadyIn.length === 0) setNotis((prev) => [newNoti, ...prev])
+      const alreadyIn = notis.filter(
+        (item) => item.notiId === newlyAddedNoti.notiId,
+      )
+      if (alreadyIn.length === 0) setNotis((prev) => [newlyAddedNoti, ...prev])
     })
   }
 

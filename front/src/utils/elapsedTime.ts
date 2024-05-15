@@ -14,7 +14,7 @@ const elapsedTime = (date: string) => {
   const days = hours / 24
   if (days < 7) return `${Math.floor(days)}일 전`
 
-  return `${('0' + (start.getMonth() + 1)).slice(-2)}-${start.getDate()}`
+  return `${`0${start.getMonth() + 1}`.slice(-2)}-${start.getDate()}`
 }
 
 export { elapsedTime }

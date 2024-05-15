@@ -51,7 +51,7 @@ export default function Header({ theme, useVoice }: Props) {
               alt="음성 채팅"
             />
           ))}
-        <Notifications theme={theme} />
+        <Notifications />
         <Image
           unoptimized
           src={me?.profileImageUrl ? me?.profileImageUrl : defaultImage}
