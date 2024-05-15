@@ -70,7 +70,7 @@ public class ChatService {
         // 2-3. SSE 알림 전송
         for (MNoti mNoti : mNotiList) {
             NewNotiRes newNotiRes = notiService.generateNewNotiRes(mNoti, chatMessageReq.sender().getProfileImageUrl());
-            notiService.notify(mNoti.getReceiverId(), newNotiRes);
+            notiService.notify(mNoti.getReceiverId(), newNotiRes, "mention");
         }
 
         // 3. 채팅 메시지 -> Redis 저장
