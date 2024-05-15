@@ -1,11 +1,13 @@
 package io.ssafy.soupapi.domain.project.mongodb.dto.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Builder;
 
 import java.time.Instant;
 import java.util.List;
 import java.util.Objects;
 
+@Builder
 @Schema(description = "프로젝트 정보 업데이트")
 public record UpdateProjectInfo(
         @Schema(description = "프로젝트 이름")
