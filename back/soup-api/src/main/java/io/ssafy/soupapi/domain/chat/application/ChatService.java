@@ -100,14 +100,14 @@ public class ChatService {
         if (rDataSize < pageOffsetRequest.size()) {
             int mDataSize = pageOffsetRequest.size() - rDataSize;
 
-            Instant mLdt; // redis에서 earliest 메시지의 sentAt
-            if (rDataSize == 0) { // redis에 (기준 시간 상관 없이) earlliest 메시지의 sentAt 조회해야
-                rChatMessageList = rChatRepository.getMessageByIndex(chatroomId, 0, 1);
+            Instant rLdt;
+            if (rDataSize == 0) {
+                rLdt = DateConverterUtil.kstLdtToInstant(standardTime);
+            } else {
+                rLdt = rChatMessageList.get(0).sentAt(); // redis에서 earliest 메시지의 sentAt
             }
-//            mLdt = DateConverterUtil.utcStringToInstant(rChatMessageList.get(0).sentAt());
-            mLdt = rChatMessageList.get(0).sentAt();
 
-            mChatMessageList = mProjectRepository.getNChatMessagesBefore(chatroomId, mLdt, mDataSize);
+            mChatMessageList = mProjectRepository.getNChatMessagesBefore(chatroomId, rLdt, mDataSize);
 //            log.info("getChatMessages() -> mongoDB에서 {}개 획득", mChatMessageList.size());
 
             for (ChatMessage mChatMessage : mChatMessageList) {
