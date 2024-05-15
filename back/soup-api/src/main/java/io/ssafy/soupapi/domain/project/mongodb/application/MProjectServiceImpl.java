@@ -467,6 +467,9 @@ public class MProjectServiceImpl implements MProjectService {
             try {
                 apiDocs.add(APIListDetail.toApiDoc(apiListDetail));
             } catch (Exception e) {
+                if (e instanceof BaseExceptionHandler) {
+                    log.info(e.getMessage());
+                }
                 log.trace(apiListDetail.name() + " APIListDetail 파싱 실패!");
             }
         }

@@ -104,4 +104,13 @@ public class StringParserUtil {
         return str.isEmpty();
     }
 
+    public static boolean isJsonNullOrEmpty(String json) {
+        if (isNullOrEmpty(json)) {
+            return true;
+        }
+        Pattern pattern = Pattern.compile("\\{(.*?)\\}");
+        Matcher matcher = pattern.matcher(json);
+
+        return matcher.find();
+    }
 }

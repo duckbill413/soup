@@ -110,6 +110,7 @@ public enum ErrorCode {
     // API DOCS 관련 에러 (CODE: 900)
     NOT_FOUND_API_DOC(404, "B900", "찾을 수 없는 API 문서 입니다."),
     FAILED_TO_UPDATE_API_DOCS(404, "B901", "API 문서 리스트 업데이트 실패."),
+    UNABLE_TO_USE_THIS_API_DOC(404, "B902", "유효하지 않은 APIListDetail 입니다."),
 
     // Project Build 관련 에러 (CODE: 1100)
     NEED_MORE_PROJECT_BUILD_DATA(404, "B1100", "빌드를 위한 프로젝트 정보가 더 필요합니다."),

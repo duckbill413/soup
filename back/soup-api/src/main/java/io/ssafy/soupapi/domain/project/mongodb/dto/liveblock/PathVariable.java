@@ -2,9 +2,13 @@ package io.ssafy.soupapi.domain.project.mongodb.dto.liveblock;
 
 import io.ssafy.soupapi.domain.project.mongodb.entity.apidocs.ApiVariable;
 import io.ssafy.soupapi.domain.project.mongodb.entity.apidocs.ApiVariableType;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
 public record PathVariable(
+        @NotBlank(message = "name은 필수입니다.")
         String name,
+        @Size(max = 5, message = "type은 0~5 사이입니다.")
         int type,
         String desc
 ) {
