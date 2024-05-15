@@ -65,6 +65,19 @@ public class ProjectBuilderController {
         );
     }
 
+    @Operation(summary = "Liveblocks 프로젝트 빌드 관련 정보 업데이트")
+    @PutMapping("/{projectId}/builder/live")
+    @PreAuthorize("@authService.hasProjectRoleMember(#projectId, #userSecurityDTO.getId())")
+    public ResponseEntity<BaseResponse<GetProjectBuilderInfo>> liveChangeProjectBuilderInfo(
+            @PathVariable String projectId,
+            @AuthenticationPrincipal UserSecurityDTO userSecurityDTO
+    ) {
+        return BaseResponse.success(
+                SuccessCode.UPDATE_SUCCESS,
+                projectBuilderService.liveChangeBuilderInfo(projectId)
+        );
+    }
+
     @Operation(summary = "프로젝트 빌드 관련 정보 조회")
     @GetMapping("/{projectId}/builder")
     @PreAuthorize("@authService.hasProjectRoleMember(#projectId, #userSecurityDTO.getId())")
