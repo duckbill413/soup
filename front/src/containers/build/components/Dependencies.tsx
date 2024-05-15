@@ -37,7 +37,6 @@ export default function Dependencies() {
         ?.find((num) => num === id)
     )
       storage.get('build')?.get('dependencies')?.push(id)
-    else console.log('이미 있는 id')
   }, [])
 
   const handleDelete = useMutation(({ storage }, id) => {
@@ -48,13 +47,6 @@ export default function Dependencies() {
     if (valueIndex) storage.get('build')?.get('dependencies').delete(valueIndex)
     else console.log('없는 id')
   }, [])
-
-  const handleTouch = () => {
-    const { innerHeight } = window
-    const heightGap = initialInnerHeight - innerHeight
-    const topHeight = heightGap
-    el.scrollTo({ top: topHeight, behavior: 'smooth' })
-  }
 
   const dragStart = (t: string, i: number) => {
     dragItem.current = { type: t, idx: i }
@@ -72,7 +64,6 @@ export default function Dependencies() {
     ) {
       if (dragOverItem.current.type === 'left') {
         handleDelete(dragItem.current.idx)
-        handleTouch()
       } else {
         handleChange(dragItem.current.idx)
       }
@@ -106,9 +97,22 @@ export default function Dependencies() {
     temp.forEach((item) => (item.basic ? handleChange(item.id) : null))
   }
 
+  const handleTouch = () => {
+    if (initialInnerHeight && el) {
+      const { innerHeight } = window
+      const heightGap = initialInnerHeight + innerHeight
+      const topHeight = heightGap
+      el.scrollTo({ top: el.scrollHeight, behavior: 'smooth' })
+    }
+  }
+
   useEffect(() => {
     fetchData()
   }, [])
+
+  useEffect(() => {
+    handleTouch()
+  }, [el, selectedIdList])
 
   return (
     <div className={styles.dependencies}>
