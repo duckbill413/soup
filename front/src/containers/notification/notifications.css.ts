@@ -71,6 +71,7 @@ export const notiTitle = style({
 export const date = style({
   fontSize: vars.fontSize.caption,
   color: vars.color.deepGray,
+  minWidth: 'fit-content',
 })
 
 export const notiTop = style({

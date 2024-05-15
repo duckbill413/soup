@@ -9,16 +9,17 @@ import { useEffect, useState } from 'react'
 import { EventSourcePolyfill, NativeEventSource } from 'event-source-polyfill'
 import { getAccessToken } from '@/utils/token'
 import { getNotisAPI, readNotisAPI } from '@/apis/notification'
-import { NotiEvent, Notification } from './notification'
 import { usePathname, useRouter } from 'next/navigation'
 import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime'
+import { elapsedTime } from '@/utils/elapsedTime'
+import { NotiEvent, Notification } from './notification'
 
 type Props = { theme: 'white' | 'black' }
 
 let router: AppRouterInstance
 let path: string
 
-function Card(item: Notification) {
+function Card(item: Notification, handleClose: Function) {
   const {
     notiId,
     title,
@@ -38,9 +39,11 @@ function Card(item: Notification) {
     if (path === '/') {
       router.push(`/project/${projectId}/outline`)
     }
-    // 프로젝트 안에서 읽었을 때는 채팅 id로 이동
+    // 프로젝트 안에서 읽었을 때는 채팅 메세지로 이동
     else {
-      router.push('/project/66430391e5d4871d5f41bd35/api')
+      handleClose()
+      // TODO: 채팅 메세지로 이동 추가
+      console.log('chatMessageId===', chatMessageId)
     }
   }
 
@@ -66,7 +69,7 @@ function Card(item: Notification) {
       <div className={styles.contents}>
         <div className={styles.notiTop}>
           <span className={styles.notiTitle}>{title}</span>
-          <span className={styles.date}>{createdTime}</span>
+          <span className={styles.date}>{elapsedTime(createdTime)}</span>
         </div>
         <p>{content}</p>
       </div>
@@ -105,13 +108,32 @@ export default function Notifications({ theme }: Props) {
       },
     )
 
+    // sse 연결
+    eventSource.addEventListener('sse', (event: any) => {
+      const obj: NotiEvent = JSON.parse(event.data)
+      const unreadNotiNum = obj.unreadNotiNum
+
+      setUnreadCnt(unreadNotiNum)
+    })
+
+    // 읽음 이벤트 발생
+    eventSource.addEventListener('read-noti', (event: any) => {
+      const obj: NotiEvent = JSON.parse(event.data)
+      const unreadNotiNum = obj.unreadNotiNum
+
+      setUnreadCnt(unreadNotiNum)
+    })
+
+    // 언급 이벤트 발생
     eventSource.addEventListener('mention', (event: any) => {
       const obj: NotiEvent = JSON.parse(event.data)
       const unreadNotiNum = obj.unreadNotiNum
       const newNoti: Notification = obj.newlyAddedNoti
 
       setUnreadCnt(unreadNotiNum)
-      setNotis((prev) => [newNoti, ...prev])
+
+      const alreadyIn = notis.filter((item) => item.notiId === newNoti.notiId)
+      if (alreadyIn.length === 0) setNotis((prev) => [newNoti, ...prev])
     })
   }
 
@@ -167,11 +189,13 @@ export default function Notifications({ theme }: Props) {
             <div className={styles.top}>
               <span className={styles.title}>알림</span>
               <span className={styles.sub}>
-                읽지 않은 알림이{' '}
+                <span>{`읽지 않은 알림이 `}</span>
                 <span className={styles.green}>{unreadCnt}</span>개 있습니다.
               </span>
             </div>
-            <div className={styles.list}>{notis.map((item) => Card(item))}</div>
+            <div className={styles.list}>
+              {notis.map((item) => Card(item, handleMenu))}
+            </div>
           </div>
         </div>
       )}
