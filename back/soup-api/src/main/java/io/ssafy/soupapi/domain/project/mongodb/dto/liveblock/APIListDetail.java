@@ -19,6 +19,8 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import static io.ssafy.soupapi.global.util.StringParserUtil.isJsonNullOrEmpty;
+
 @Log4j2
 public record APIListDetail(
         String id,
@@ -55,12 +57,12 @@ public record APIListDetail(
                             HttpMethodType.valueOf(apiListDetail.httpMethod()) :
                             null)
                     .apiUriPath(apiListDetail.uri())
-                    .requestBody(apiListDetail.requestBody() != null
-                            ? apiListDetail.requestBody().data()
-                            : null)
-                    .responseBody(apiListDetail.responseBody() != null
-                            ? apiListDetail.responseBody().data()
-                            : null)
+                    .requestBody(isJsonNullOrEmpty(apiListDetail.requestBody().data())
+                            ? null
+                            : apiListDetail.requestBody().data())
+                    .responseBody(isJsonNullOrEmpty(apiListDetail.responseBody().data())
+                            ? null
+                            : apiListDetail.responseBody().data())
                     .pathVariables(apiListDetail.pathVariable() != null
                             ? apiListDetail.pathVariable().stream().map(PathVariable::toApiVariable).toList()
                             : List.of())
