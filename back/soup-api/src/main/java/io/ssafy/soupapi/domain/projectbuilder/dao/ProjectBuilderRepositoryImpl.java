@@ -7,6 +7,7 @@ import io.ssafy.soupapi.domain.project.mongodb.entity.apidocs.ApiDocs;
 import io.ssafy.soupapi.domain.project.mongodb.entity.apidocs.ApiVariable;
 import io.ssafy.soupapi.domain.project.mongodb.entity.builder.ProjectBuilderInfo;
 import io.ssafy.soupapi.domain.projectbuilder.entity.MainPath;
+import io.ssafy.soupapi.global.util.BuildFileUtil;
 import io.ssafy.soupapi.global.util.MapStringReplace;
 import io.ssafy.soupapi.global.util.RecordClassGenerator;
 import io.ssafy.soupapi.global.util.StringParserUtil;
@@ -373,6 +374,18 @@ public class ProjectBuilderRepositoryImpl implements ProjectBuilderRepository {
                     insertStartOfClass(new File(importStrPath + "api" + File.separator + convertToPascalCase(apiDoc.getDomain()) + "Controller.java"), importStr);
                     insertStartOfClass(new File(importStrPath + "application" + File.separator + convertToPascalCase(apiDoc.getDomain()) + "Service.java"), importStr);
                 }
+            }
+        }
+    }
+
+    @Override
+    public void deleteGitKeepFile(Project project) {
+        String projectFolderPath = getDestination(project);
+
+        List<File> files = BuildFileUtil.getLeafFiles(new File(projectFolderPath));
+        for (File file : files) {
+            if (file.getName().equals(".gitkeep")) {
+                file.delete();
             }
         }
     }
