@@ -98,22 +98,25 @@ export default function Generate() {
   }
 
   const handleClose = () => {
+    setCode({ code: '' })
     setOpen(false)
   }
 
-  const renderTree = (fileObj: object, nth: number) => {
+  const renderTree = (fileObj: object, nth: number, id: string) => {
     const entryArray = Object.entries(fileObj)
+    const itemId = id + entryArray[0][0] + nth
 
     if (nth === 4)
-      return entryArray.map((value) => renderTree(value[1], nth + 1))
+      return entryArray.map((value, idx) =>
+        renderTree(value[1], nth + 1, itemId + idx),
+      )
 
     if (typeof entryArray[0][1] === 'string') {
-      const id = crypto.randomUUID()
       return (
         <TreeItem
-          itemId={id}
+          itemId={itemId + entryArray[0][1]}
           label={entryArray[0][1]}
-          key={id}
+          key={itemId + entryArray[0][1]}
           onClick={() => {
             setCode({ code: entryArray[2][1] })
           }}
@@ -130,12 +133,8 @@ export default function Generate() {
       )
         return null
       return (
-        <TreeItem
-          itemId={crypto.randomUUID()}
-          label={key}
-          key={crypto.randomUUID()}
-        >
-          {renderTree(value, nth + 1)}
+        <TreeItem itemId={itemId + key} label={key} key={itemId + key}>
+          {renderTree(value, nth + 1, itemId + key)}
         </TreeItem>
       )
     })
@@ -189,7 +188,7 @@ export default function Generate() {
                 endIcon: Description,
               }}
             >
-              {renderTree(sampleData, 1)}
+              {renderTree(sampleData, 1, '')}
             </SimpleTreeView>
           </div>
           <div className={`${styles.box} ${styles.code}`}>

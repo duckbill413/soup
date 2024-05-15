@@ -75,7 +75,7 @@ export default function APITable() {
   return (
     <div>
       <Table headers={tableHeaders}>
-        {data &&
+        {data?.length ? (
           data.map((item, key) => (
             <tr
               key={item.id}
@@ -90,13 +90,17 @@ export default function APITable() {
                 }
               }}
             >
-              <td>
-                {item.domain ? (
-                  <span className={styles.domain}>{item.domain}</span>
-                ) : null}
-              </td>
+              <td>{item.domain}</td>
               <td>{item.name}</td>
-              <td>{item.http_method}</td>
+              <td>
+                {item.http_method ? (
+                  <span className={`${styles.method} ${item.http_method}`}>
+                    {item.http_method}
+                  </span>
+                ) : (
+                  ''
+                )}
+              </td>
               <td>{item.uri}</td>
               <td colSpan={2}>{item.desc}</td>
               <ContextMenu
@@ -106,7 +110,21 @@ export default function APITable() {
                 setAnchorEl={setAnchorEl}
               />
             </tr>
-          ))}
+          ))
+        ) : (
+          <tr>
+            <td
+              className="newLine"
+              colSpan={tableHeaders.reduce(
+                (result, item) =>
+                  result + (item.colSpan ? item.colSpan - 1 : 0),
+                tableHeaders.length,
+              )}
+            >
+              등록된 API가 없습니다.
+            </td>
+          </tr>
+        )}
         <tr>
           <td
             className="newLine"

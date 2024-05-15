@@ -13,6 +13,16 @@ export default function Dependencies() {
   const dragItem = useRef<{ type: string; idx: number } | null>(null)
   const dragOverItem = useRef<{ type: string; idx: number } | null>(null)
 
+  let initialInnerHeight: any
+  let el: any
+
+  if (typeof window !== 'undefined') {
+    initialInnerHeight = window.innerHeight
+  }
+  if (typeof document !== 'undefined') {
+    el = document.getElementById('rightBox')
+  }
+
   // 전체 dependency 목록
   const [all, setAll] = useState<Array<Dependency>>([])
 
@@ -27,7 +37,6 @@ export default function Dependencies() {
         ?.find((num) => num === id)
     )
       storage.get('build')?.get('dependencies')?.push(id)
-    else console.log('이미 있는 id')
   }, [])
 
   const handleDelete = useMutation(({ storage }, id) => {
@@ -88,9 +97,19 @@ export default function Dependencies() {
     temp.forEach((item) => (item.basic ? handleChange(item.id) : null))
   }
 
+  const handleTouch = () => {
+    if (initialInnerHeight && el) {
+      el.scrollTo({ top: el.scrollHeight, behavior: 'smooth' })
+    }
+  }
+
   useEffect(() => {
     fetchData()
   }, [])
+
+  useEffect(() => {
+    handleTouch()
+  }, [el, selectedIdList])
 
   return (
     <div className={styles.dependencies}>
@@ -105,7 +124,7 @@ export default function Dependencies() {
           })}
         </div>
         <KeyboardArrowRight />
-        <div className={`${styles.box} ${styles.greenBox}`}>
+        <div className={`${styles.box} ${styles.greenBox}`} id="rightBox">
           {all.length > 0 &&
             selectedIdList?.map((num) => {
               const findIndex = all.findIndex((item) => num === item.id)

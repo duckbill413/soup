@@ -1,4 +1,4 @@
-import { ErrorIcon, FilterIcon } from '@/../public/assets/icons'
+import { FilterIcon } from '@/../public/assets/icons'
 import Room from '@/app/(after-auth)/project/[projectId]/api/Room'
 import IconButton from '@/components/IconButton'
 import { StepTitleWithGuide } from '@/components/StepTitle/StepTitle'
@@ -21,11 +21,6 @@ export default function ApiSpecification() {
             <IconButton name="정렬 기준" eventHandler="/">
               <FilterIcon color="currentColor" />
             </IconButton>
-            <div className={style.right}>
-              <IconButton name="에러 처리" eventHandler="api/error">
-                <ErrorIcon color="currentColor" />
-              </IconButton>
-            </div>
           </div>
           <APITable />
         </div>

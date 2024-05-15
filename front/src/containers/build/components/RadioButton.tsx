@@ -42,12 +42,14 @@ export function RadioButtonGroup() {
     <RadioGroup
       row
       value={data?.version}
+      defaultValue="3.3.0-SNAPSHOT"
       name="radio-buttons-group"
       onChange={handleChange}
     >
       {versions.length > 0
         ? versions.map((item) => (
             <FormControlLabel
+              key={crypto.randomUUID()}
               value={item.version}
               control={<Radio />}
               label={item.version}

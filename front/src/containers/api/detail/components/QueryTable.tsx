@@ -83,68 +83,80 @@ export default function QueryTable({ idx }: Props) {
 
   return (
     <Table headers={queryTableHeaders}>
-      {initial
-        ? initial[idx].query_param?.map((item, index) => (
-            <tr
-              key={index}
-              onContextMenu={(e) => e.preventDefault()}
-              onMouseDown={(e) => {
-                if (e.button === 2) {
-                  setAnchorEl({ selectedIndex: index, el: e.currentTarget })
-                }
-              }}
-            >
-              <td colSpan={1} aria-label="required">
-                <Checkbox
-                  checked={initial[idx].query_param?.[index].required}
-                  onChange={() => toggleRequired(index)}
-                  inputProps={{ 'aria-label': 'controlled' }}
-                />
-              </td>
-              <td colSpan={2} aria-label="name">
-                <TextareaAutosize
-                  placeholder="이름 입력"
-                  value={initial[idx].query_param?.[index].name}
-                  onChange={(e) =>
-                    updateQueryParam(index, 'name', e.target.value)
-                  }
-                />
-              </td>
-              <td colSpan={2} aria-label="type">
-                <SelectType
-                  idx={item.type}
-                  clickMenu={(typeIndex: number) =>
-                    updateQueryParam(index, 'type', typeIndex)
-                  }
-                />
-              </td>
-              <td colSpan={3} aria-label="description">
-                <TextareaAutosize
-                  placeholder="설명 입력"
-                  value={initial[idx].query_param?.[index].desc}
-                  onChange={(e) =>
-                    updateQueryParam(index, 'desc', e.target.value)
-                  }
-                />
-              </td>
-              <td colSpan={2} aria-label="default">
-                <TextareaAutosize
-                  placeholder="기본값 입력"
-                  value={initial[idx].query_param?.[index].default}
-                  onChange={(e) =>
-                    updateQueryParam(index, 'default', e.target.value)
-                  }
-                />
-              </td>
-              <ContextMenu
-                handleDelete={deleteRow}
-                index={index}
-                anchorEl={anchorEl}
-                setAnchorEl={setAnchorEl}
+      {initial && initial[idx].query_param?.length ? (
+        initial[idx].query_param?.map((item, index) => (
+          <tr
+            key={index}
+            onContextMenu={(e) => e.preventDefault()}
+            onMouseDown={(e) => {
+              if (e.button === 2) {
+                setAnchorEl({ selectedIndex: index, el: e.currentTarget })
+              }
+            }}
+          >
+            <td colSpan={1} aria-label="required">
+              <Checkbox
+                checked={initial[idx].query_param?.[index].required}
+                onChange={() => toggleRequired(index)}
+                inputProps={{ 'aria-label': 'controlled' }}
               />
-            </tr>
-          ))
-        : null}
+            </td>
+            <td colSpan={2} aria-label="name">
+              <TextareaAutosize
+                placeholder="이름 입력"
+                value={initial[idx].query_param?.[index].name}
+                onChange={(e) =>
+                  updateQueryParam(index, 'name', e.target.value)
+                }
+              />
+            </td>
+            <td colSpan={2} aria-label="type">
+              <SelectType
+                idx={item.type}
+                clickMenu={(typeIndex: number) =>
+                  updateQueryParam(index, 'type', typeIndex)
+                }
+              />
+            </td>
+            <td colSpan={3} aria-label="description">
+              <TextareaAutosize
+                placeholder="설명 입력"
+                value={initial[idx].query_param?.[index].desc}
+                onChange={(e) =>
+                  updateQueryParam(index, 'desc', e.target.value)
+                }
+              />
+            </td>
+            <td colSpan={2} aria-label="default">
+              <TextareaAutosize
+                placeholder="기본값 입력"
+                value={initial[idx].query_param?.[index].default}
+                onChange={(e) =>
+                  updateQueryParam(index, 'default', e.target.value)
+                }
+              />
+            </td>
+            <ContextMenu
+              handleDelete={deleteRow}
+              index={index}
+              anchorEl={anchorEl}
+              setAnchorEl={setAnchorEl}
+            />
+          </tr>
+        ))
+      ) : (
+        <tr>
+          <td
+            className="newLine"
+            colSpan={queryTableHeaders.reduce(
+              (result, item) => result + (item.colSpan ? item.colSpan - 1 : 0),
+              queryTableHeaders.length,
+            )}
+          >
+            등록된 Query Parameter가 없습니다.
+          </td>
+        </tr>
+      )}
       <tr>
         <td
           className="newLine"
