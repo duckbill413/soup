@@ -12,4 +12,6 @@ public interface ProjectBuilderService {
     GetProjectBuilderInfo findBuilderInfo(String projectId);
 
     String getBuildUrl(ObjectId projectId);
+
+    GetProjectBuilderInfo liveChangeBuilderInfo(String projectId);
 }
