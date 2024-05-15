@@ -8,38 +8,15 @@ import Image from 'next/image'
 import { useEffect, useState } from 'react'
 import { EventSourcePolyfill, NativeEventSource } from 'event-source-polyfill'
 import { getAccessToken } from '@/utils/token'
-import { getNotisAPI } from '@/apis/notification'
+import { getNotisAPI, readNotisAPI } from '@/apis/notification'
 import { NotiEvent, Notification } from './notification'
+import { usePathname, useRouter } from 'next/navigation'
+import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime'
 
 type Props = { theme: 'white' | 'black' }
 
-// TODO: sampleData 삭제
-const sampleData = [
-  {
-    notiId: 1,
-    title: '정우현님이 나를 언급했습니다.',
-    createdTime: '04-01 22:21',
-    content:
-      '@최지우 지우야 여기 기획서 키워드에 편리함이 빠진 것 같은데 다시 확인해줄 수 있어?',
-    notiPhotoUrl:
-      'https://m.media-amazon.com/images/I/71OyIoeDa4L._AC_UF1000,1000_QL80_.jpg',
-    projectId: '663b23d4fd804b719071533e',
-    chatMessageId: 'f932cfe2-115f-4b15-ad03-8e742742ef94',
-    read: false,
-  },
-  {
-    notiId: 2,
-    title: '정우현님이 나를 언급했습니다.',
-    createdTime: '04-01 22:21',
-    content:
-      '@최지우 지우야 여기 기획서 키워드에 편리함이 빠진 것 같은데 다시 확인해줄 수 있어?',
-    notiPhotoUrl:
-      'https://m.media-amazon.com/images/I/71OyIoeDa4L._AC_UF1000,1000_QL80_.jpg',
-    projectId: '663b23d4fd804b719071533e',
-    chatMessageId: 'f932cfe2-115f-4b15-ad03-8e742742ef94',
-    read: true,
-  },
-]
+let router: AppRouterInstance
+let path: string
 
 function Card(item: Notification) {
   const {
@@ -52,6 +29,21 @@ function Card(item: Notification) {
     chatMessageId,
     read,
   } = item
+
+  const readNoti = async () => {
+    // 알림 읽음 처리
+    await readNotisAPI(notiId)
+
+    // 홈에서 읽었을 때는 해당 프로젝트의 outline으로 이동
+    if (path === '/') {
+      router.push(`/project/${projectId}/outline`)
+    }
+    // 프로젝트 안에서 읽었을 때는 채팅 id로 이동
+    else {
+      router.push('/project/66430391e5d4871d5f41bd35/api')
+    }
+  }
+
   return (
     <div
       style={
@@ -61,6 +53,7 @@ function Card(item: Notification) {
       }
       className={styles.notification}
       key={notiId}
+      onClick={readNoti}
     >
       <Image
         unoptimized
@@ -85,6 +78,9 @@ export default function Notifications({ theme }: Props) {
   const [open, setOpen] = useState<boolean>(false)
   const [unreadCnt, setUnreadCnt] = useState<number>(0)
   const [notis, setNotis] = useState<Array<Notification>>([])
+
+  router = useRouter()
+  path = usePathname()
 
   const handleMenu = () => {
     if (open) {
@@ -128,6 +124,12 @@ export default function Notifications({ theme }: Props) {
     getNotis()
     connectNoti()
   }, [])
+
+  useEffect(() => {
+    if (open) {
+      getNotis()
+    }
+  }, [open])
 
   return (
     <div className={styles.button}>
