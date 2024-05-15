@@ -13,10 +13,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Log4j2
 @RestController
@@ -49,8 +46,19 @@ public class UpdateProjectInfoController {
             @AuthenticationPrincipal UserSecurityDTO userSecurityDTO
     ) {
         return BaseResponse.success(
-                SuccessCode.SELECT_SUCCESS,
+                SuccessCode.UPDATE_SUCCESS,
                 updateProjectInfoService.updateProjectInfo(projectId, updateProjectInfo)
+        );
+    }
+    @Operation(summary = "Liveblocks 프로젝트 정보 연동", description = "Liveblocks 프로젝트 개요 화면 정보 수정")
+    @PostMapping("/api/projects/{projectId}/info/live")
+    public ResponseEntity<BaseResponse<GetProjectInfo>> liveUpdateProjectInfo(
+            @PathVariable String projectId,
+            @AuthenticationPrincipal UserSecurityDTO userSecurityDTO
+    ) {
+        return BaseResponse.success(
+                SuccessCode.UPDATE_SUCCESS,
+                updateProjectInfoService.liveUpdateProjectInfo(projectId)
         );
     }
 }
