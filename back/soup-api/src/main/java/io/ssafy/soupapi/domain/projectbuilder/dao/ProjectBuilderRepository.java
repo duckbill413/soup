@@ -20,4 +20,5 @@ public interface ProjectBuilderRepository {
 
     void insertEntityRelationShip(Project project) throws IOException;
     void createDtoClassFiles(Project project) throws IOException;
+    void deleteGitKeepFile(Project project);
 }

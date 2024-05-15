@@ -69,6 +69,8 @@ public class ProjectBuilderServiceImpl implements ProjectBuilderService {
             projectBuilderRepository.createGlobalGroup(project);
             // domain package 생성
             projectBuilderRepository.createDomainPackages(project);
+            // .gitkeep 파일 삭제
+            projectBuilderRepository.deleteGitKeepFile(project);
             // class files
             projectBuilderRepository.replaceClassesVariables(project);
             // create method in controller and service
