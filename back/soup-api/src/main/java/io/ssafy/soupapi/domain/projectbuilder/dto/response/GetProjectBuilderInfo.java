@@ -31,7 +31,9 @@ public record GetProjectBuilderInfo(
         @Schema(description = "springboot_package_name")
         String packageName,
         @Schema(description = "springboot_dependencies")
-        List<GetDependency> dependencies
+        List<GetDependency> dependencies,
+        @Schema(description = "built_project_s3_uri")
+        String s3Url
 ) {
     public static GetProjectBuilderInfo of(ProjectBuilderInfo builderInfo) {
         return GetProjectBuilderInfo.builder()
@@ -46,6 +48,7 @@ public record GetProjectBuilderInfo(
                 .dependencies(builderInfo.getDependencies().stream().map(GetDependency::of).toList())
                 .description(builderInfo.getDescription())
                 .packageName(builderInfo.getPackageName())
+                .s3Url(builderInfo.getS3Url())
                 .build();
     }
 }

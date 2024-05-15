@@ -2,6 +2,7 @@ package io.ssafy.soupapi.domain.projectbuilder.api;
 
 import io.ssafy.soupapi.domain.projectbuilder.application.ProjectBuilderService;
 import io.ssafy.soupapi.domain.projectbuilder.dto.request.ChangeProjectBuilderInfo;
+import io.ssafy.soupapi.domain.projectbuilder.dto.response.BuiltStructure;
 import io.ssafy.soupapi.domain.projectbuilder.dto.response.GetProjectBuilderInfo;
 import io.ssafy.soupapi.global.common.code.SuccessCode;
 import io.ssafy.soupapi.global.common.response.BaseResponse;
@@ -88,6 +89,19 @@ public class ProjectBuilderController {
         return BaseResponse.success(
                 SuccessCode.SELECT_SUCCESS,
                 projectBuilderService.findBuilderInfo(projectId)
+        );
+    }
+
+    @Operation(summary = "빌드 완료된 프로젝트 구조 탐색")
+    @GetMapping("/{projectId}/builder/structure")
+    @PreAuthorize("@authService.hasProjectRoleMember(#projectId, #userSecurityDTO.getId())")
+    public ResponseEntity<BaseResponse<BuiltStructure>> findProjectBuiltInfo(
+            @PathVariable String projectId,
+            @AuthenticationPrincipal UserSecurityDTO userSecurityDTO
+    ) {
+        return BaseResponse.success(
+                SuccessCode.SELECT_SUCCESS,
+                projectBuilderService.findProjectBuiltInfo(projectId)
         );
     }
 }

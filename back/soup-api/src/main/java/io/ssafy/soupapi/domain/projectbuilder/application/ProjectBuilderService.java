@@ -1,6 +1,7 @@
 package io.ssafy.soupapi.domain.projectbuilder.application;
 
 import io.ssafy.soupapi.domain.projectbuilder.dto.request.ChangeProjectBuilderInfo;
+import io.ssafy.soupapi.domain.projectbuilder.dto.response.BuiltStructure;
 import io.ssafy.soupapi.domain.projectbuilder.dto.response.GetProjectBuilderInfo;
 import org.bson.types.ObjectId;
 
@@ -14,4 +15,6 @@ public interface ProjectBuilderService {
     String getBuildUrl(ObjectId projectId);
 
     GetProjectBuilderInfo liveChangeBuilderInfo(String projectId);
+
+    BuiltStructure findProjectBuiltInfo(String projectId);
 }
