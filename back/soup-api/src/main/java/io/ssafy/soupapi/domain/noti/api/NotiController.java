@@ -52,7 +52,7 @@ public class NotiController {
         "read 없이 요청 시, 읽은 거나 안 읽은 거나, 모든 알림을 조회한다.")
     @GetMapping(value="")
     public ResponseEntity<BaseResponse<GetNotiRes>> getNotis(
-            @RequestParam(value = "read", required = false) boolean read,
+            @RequestParam(value = "read", required = false) Boolean read,
             @AuthenticationPrincipal UserSecurityDTO userSecurityDTO
     ) {
         return BaseResponse.success(
@@ -69,7 +69,7 @@ public class NotiController {
     ) {
         return BaseResponse.success(
                 SuccessCode.SELECT_SUCCESS,
-                notiService.readNoti(notiId)
+                notiService.readNoti(userSecurityDTO.getId().toString(), notiId)
         );
     }
 

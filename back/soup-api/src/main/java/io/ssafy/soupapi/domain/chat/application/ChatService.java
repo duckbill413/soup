@@ -61,7 +61,7 @@ public class ChatService {
             mNotiList.add(mNoti);
         }
 
-        // TODO: 2-1. 태그 알림 -> MongoDb 저장
+        // 2-1. 태그 알림 -> MongoDb 저장
         notiRepository.saveAll(mNotiList);
 
         // 2-2. 태그 알림 -> Redis 저장
@@ -116,7 +116,11 @@ public class ChatService {
             }
 
             // MongoDB에서 조회한 데이터는 Redis에 저장 (캐싱)
-
+            List<RChatMessage> rChatMessageToSave = new ArrayList<>();
+            for (ChatMessage mChatMessage : mChatMessageList) {
+                rChatMessageToSave.add(mChatMessage.toRChatMessage());
+            }
+            rChatRepository.saveMessagesToRedis(chatroomId, rChatMessageToSave, null);
 
         }
 

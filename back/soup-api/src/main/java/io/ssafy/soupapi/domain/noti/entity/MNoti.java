@@ -11,6 +11,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.time.Instant;
+import java.time.ZonedDateTime;
 
 @Getter
 @Setter
@@ -50,7 +51,7 @@ public class MNoti {
                 .notiPhotoUrl(notiPhotoUrl)
                 .projectId(projectId)
                 .chatMessageId(chatMessageId)
-                .createdTime(DateConverterUtil.instantToKstZdt(createdAt))
+                .createdTime(createdAt == null ? ZonedDateTime.now() : DateConverterUtil.instantToKstZdt(createdAt))
                 .build();
     }
 }

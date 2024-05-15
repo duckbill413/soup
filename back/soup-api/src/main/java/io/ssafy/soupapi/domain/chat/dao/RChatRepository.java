@@ -3,10 +3,19 @@ package io.ssafy.soupapi.domain.chat.dao;
 import io.ssafy.soupapi.domain.chat.dto.RChatMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.connection.RedisServer;
+import org.springframework.data.redis.connection.zset.DefaultTuple;
+import org.springframework.data.redis.connection.zset.Tuple;
+import org.springframework.data.redis.core.DefaultTypedTuple;
+import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ZSetOperations;
+import org.springframework.data.redis.serializer.RedisSerializationContext;
+import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -20,8 +29,29 @@ public class RChatRepository {
 
     private final RedisTemplate<String, RChatMessage> redisTemplateChatMessage;
 
-    public void saveMessageToRedis(String chatroomId, RChatMessage RChatMessage, long sentAt) {
-        redisTemplateChatMessage.opsForZSet().add(CHATROOM_HASH + chatroomId, RChatMessage, sentAt);
+    public void saveMessageToRedis(String chatroomId, RChatMessage rChatMessage, long sentAt) {
+        redisTemplateChatMessage.opsForZSet().add(CHATROOM_HASH + chatroomId, rChatMessage, sentAt);
+    }
+
+    public void saveMessagesToRedis(String chatroomId, List<RChatMessage> rChatMessages, List<Long> scores) {
+//        Set<ZSetOperations.TypedTuple<RChatMessage>> tuples = new HashSet<>();
+        Set<Tuple> tupleSet = new HashSet<>();
+        RedisSerializer<RChatMessage> serializer = (RedisSerializer<RChatMessage>) redisTemplateChatMessage.getValueSerializer();
+
+        if (scores == null || scores.isEmpty()) {
+            Double curTime = Long.valueOf(System.currentTimeMillis()).doubleValue();
+            for (RChatMessage rChatMessage : rChatMessages) {
+//                tuples.add(new DefaultTypedTuple<>(rChatMessage, curTime));
+                byte[] serializedMessage = serializer.serialize(rChatMessage);
+                tupleSet.add(new DefaultTuple(serializedMessage, curTime));
+            }
+        }
+
+        redisTemplateChatMessage.executePipelined( (RedisCallback<Object>)connection -> {
+            connection.zAdd((CHATROOM_HASH + chatroomId).getBytes(), tupleSet);
+            return null;
+        });
+
     }
 
     public List<RChatMessage> getMessageByIndex(String chatroomId, int startIndex, int endIndex) {
