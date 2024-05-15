@@ -1,15 +1,18 @@
 package io.ssafy.soupapi.domain.projectbuilder.application;
 
+import io.ssafy.soupapi.domain.project.constant.StepName;
 import io.ssafy.soupapi.domain.project.mongodb.dao.MProjectRepository;
 import io.ssafy.soupapi.domain.project.mongodb.entity.Project;
 import io.ssafy.soupapi.domain.project.mongodb.entity.builder.ProjectBuilderDependency;
 import io.ssafy.soupapi.domain.project.mongodb.entity.builder.ProjectBuilderInfo;
 import io.ssafy.soupapi.domain.projectbuilder.dao.ProjectBuilderRepository;
+import io.ssafy.soupapi.domain.projectbuilder.dto.liveblock.LiveChangeProjectBuilderInfo;
 import io.ssafy.soupapi.domain.projectbuilder.dto.request.ChangeProjectBuilderInfo;
 import io.ssafy.soupapi.domain.projectbuilder.dto.response.GetProjectBuilderInfo;
 import io.ssafy.soupapi.domain.springinfo.dao.SpringDependencyRepository;
 import io.ssafy.soupapi.global.common.code.ErrorCode;
 import io.ssafy.soupapi.global.exception.BaseExceptionHandler;
+import io.ssafy.soupapi.global.external.liveblocks.application.LiveblocksComponent;
 import io.ssafy.soupapi.global.external.s3.application.S3FileService;
 import io.ssafy.soupapi.global.util.FolderZipper;
 import lombok.RequiredArgsConstructor;
@@ -35,6 +38,7 @@ public class ProjectBuilderServiceImpl implements ProjectBuilderService {
     private final ProjectBuilderRepository projectBuilderRepository;
     private final S3FileService s3FileService;
     private final MongoTemplate mongoTemplate;
+    private final LiveblocksComponent liveblocksComponent;
 
     @Override
     public String buildProject(String projectId) {
@@ -183,6 +187,15 @@ public class ProjectBuilderServiceImpl implements ProjectBuilderService {
     public GetProjectBuilderInfo changeBuilderInfo(String projectId, ChangeProjectBuilderInfo changeProjectBuilderInfo) {
         var dependencies = dependencyRepository.findByIdIsInOrBasicIsTrue(changeProjectBuilderInfo.dependencies());
         var buildInfo = ChangeProjectBuilderInfo.to(changeProjectBuilderInfo, dependencies);
+        mProjectRepository.changeProjectBuildInfo(new ObjectId(projectId), buildInfo);
+        return GetProjectBuilderInfo.of(buildInfo);
+    }
+
+    @Override
+    public GetProjectBuilderInfo liveChangeBuilderInfo(String projectId) {
+        var liveBuilderInfo = liveblocksComponent.getRoomStorageDocument(projectId, StepName.build, LiveChangeProjectBuilderInfo.class);
+        var dependencies = dependencyRepository.findByIdIsInOrBasicIsTrue(liveBuilderInfo.dependencies());
+        var buildInfo = LiveChangeProjectBuilderInfo.toProjectBuilderInfo(liveBuilderInfo, dependencies);
         mProjectRepository.changeProjectBuildInfo(new ObjectId(projectId), buildInfo);
         return GetProjectBuilderInfo.of(buildInfo);
     }
