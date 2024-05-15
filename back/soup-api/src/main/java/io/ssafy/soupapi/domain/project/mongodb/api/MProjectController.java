@@ -195,7 +195,7 @@ public class MProjectController {
     }
 
     @Operation(summary = "Liveblocks 프로젝트 ERD 업데이트")
-    @PutMapping("/{projectId}/vuerd/live")
+    @PostMapping("/{projectId}/vuerd/live")
     @PreAuthorize("@authService.hasProjectRoleMember(#projectId, #userSecurityDTO.getId())")
     public ResponseEntity<BaseResponse<Object>> changeProjectVuerdWithLiveblocks(
             @PathVariable String projectId,
@@ -218,6 +218,19 @@ public class MProjectController {
         return BaseResponse.success(
                 SuccessCode.INSERT_SUCCESS,
                 mProjectService.updateProjectApiDoc(projectId, updateApiDoc)
+        );
+    }
+
+    @Operation(summary = "Liveblocks API DOC 업데이트")
+    @PostMapping("/{projectId}/api-docs/live")
+    @PreAuthorize("@authService.hasProjectRoleMember(#projectId, #userSecurityDTO.getId())")
+    public ResponseEntity<BaseResponse<List<GetSimpleApiDoc>>> liveProjectApiDoc(
+            @PathVariable String projectId,
+            @AuthenticationPrincipal UserSecurityDTO userSecurityDTO
+    ) {
+        return BaseResponse.success(
+                SuccessCode.UPDATE_SUCCESS,
+                mProjectService.liveProjectApiDoc(projectId)
         );
     }
 
