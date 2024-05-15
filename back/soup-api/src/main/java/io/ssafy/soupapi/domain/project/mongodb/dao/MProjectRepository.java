@@ -61,6 +61,6 @@ public interface MProjectRepository extends MongoRepository<Project, ObjectId>, 
 
     @Query(value = "{ '_id': ?0 }", fields = "{ 'project_chats': 1 }")
     @Update("{ '$push': { 'project_chats': { '$each': ?1 } } }")
-    void addChatMessageList(ObjectId projectId, List<ChatMessage> chatMessageList);
+    void addChatMessages(ObjectId projectId, List<ChatMessage> chatMessageList);
 
 }

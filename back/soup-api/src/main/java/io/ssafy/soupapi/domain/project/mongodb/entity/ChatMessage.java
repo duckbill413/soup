@@ -1,5 +1,6 @@
 package io.ssafy.soupapi.domain.project.mongodb.entity;
 
+import io.ssafy.soupapi.domain.chat.dto.RChatMessage;
 import io.ssafy.soupapi.domain.chat.dto.response.ChatMessageRes;
 import io.ssafy.soupapi.global.util.DateConverterUtil;
 import lombok.Builder;
@@ -30,6 +31,15 @@ public class ChatMessage {
                 .build();
         res.getSender().setMemberId(senderId);
         return res;
+    }
+
+    public RChatMessage toRChatMessage() {
+        return RChatMessage.builder()
+                .chatMessageId(id)
+                .senderId(senderId)
+                .message(content)
+                .sentAt(timestamp)
+                .build();
     }
 
 }

@@ -1,6 +1,7 @@
 package io.ssafy.soupapi.domain.noti.entity;
 
 import io.ssafy.soupapi.domain.noti.dto.response.NewNotiRes;
+import io.ssafy.soupapi.global.util.DateConverterUtil;
 import jakarta.persistence.Id;
 import lombok.Builder;
 import lombok.Getter;
@@ -8,6 +9,9 @@ import lombok.Setter;
 import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
+
+import java.time.Instant;
+import java.time.ZonedDateTime;
 
 @Getter
 @Setter
@@ -29,6 +33,9 @@ public class MNoti {
     @Field("noti_receiver_id")
     private String receiverId;
 
+    @Field("noti_created_at")
+    private Instant createdAt;
+
     // 팀원 태그로 언급된 알림일 경우
     @Field("noti_mentioned_project_id")
     private String projectId;
@@ -44,6 +51,7 @@ public class MNoti {
                 .notiPhotoUrl(notiPhotoUrl)
                 .projectId(projectId)
                 .chatMessageId(chatMessageId)
+                .createdTime(createdAt == null ? ZonedDateTime.now() : DateConverterUtil.instantToKstZdt(createdAt))
                 .build();
     }
 }

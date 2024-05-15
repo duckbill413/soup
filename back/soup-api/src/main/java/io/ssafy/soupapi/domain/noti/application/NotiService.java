@@ -13,13 +13,13 @@ import io.ssafy.soupapi.global.util.FindEntityUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
-import org.springframework.data.mongodb.core.mapping.Field;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.io.IOException;
+import java.time.Instant;
 import java.util.*;
 
 @Slf4j
@@ -50,7 +50,7 @@ public class NotiService {
 
     public MNoti generateMNoti(
             String chatroomId, String chatMessageId,
-            ChatMessageReq chatMessageReq, String mentioneeId
+            ChatMessageReq chatMessageReq, String mentioneeId, Instant createdAt
     ) {
         Member mentionee = findEntityUtil.findMemberById(UUID.fromString(mentioneeId));
         String title = chatMessageReq.sender().getNickname() + "님이 " + mentionee.getNickname() + "님을 언급했습니다";
@@ -61,6 +61,7 @@ public class NotiService {
                 .receiverId(mentioneeId)
                 .projectId(chatroomId)
                 .chatMessageId(chatMessageId)
+                .createdAt(createdAt)
                 .build();
     }
 
@@ -71,19 +72,17 @@ public class NotiService {
     /*------------------------------------ MongoDB 조회 ------------------------------------*/
 
     public GetNotiRes getNotis(String memberId, Boolean isRead) {
-        List<MNoti> notiList;
-
-        if (Objects.isNull(isRead)) {
-            notiList = notiRepository.findByReceiverId(memberId);
-        } else {
-            notiList = notiRepository.findByReceiverIdAndIsRead(memberId, isRead);
-        }
-
+        List<MNoti> notiList = getNotiListByIsRead(memberId, isRead);
         return generateGetNotiResFromMNotiList(notiList);
     }
 
-    public boolean readNoti(String notiId) {
+    public boolean readNoti(String memberId, String notiId) {
         notiRepository.updateIsReadById(new ObjectId(notiId), true);
+        notify(
+                memberId,
+                SseNotiRes.builder().unreadNotiNum(getNotiListByIsRead(memberId, false).size()).build(),
+                "read-noti"
+        );
         return true;
     }
 
@@ -109,6 +108,14 @@ public class NotiService {
         return response;
     }
 
+    private List<MNoti> getNotiListByIsRead(String memberId, Boolean isRead) {
+        if (Objects.isNull(isRead)) {
+            return notiRepository.findByReceiverIdOrderByCreatedAtDesc(memberId);
+        } else {
+            return notiRepository.findByReceiverIdAndIsReadOrderByCreatedAtDesc(memberId, isRead);
+        }
+    }
+
     /*------------------------------------ SSE 푸시 알림 ------------------------------------*/
 
     // 클라이언트가 구독을 위해 호출
@@ -117,7 +124,9 @@ public class NotiService {
         SseEmitter emitter = createEmitter(emitterId);
 
         // SSE 연결이 이뤄진 후 하나의 데이터도 전송되지 않고 SseEmitter의 유효 시간이 끝나면 503 응답이 발생한다. 그래서 연결 시 더미 데이터를 한 번 보내준다.
-        sendToClient(emitter, emitterId, "sse", "EventStream이 생성되었습니다 (memberId=" + memberId + ")");
+        // 더미 데이터는 안 읽은 알림의 개수 전달
+        SseNotiRes subRes = SseNotiRes.builder().unreadNotiNum(getNotiListByIsRead(memberId, false).size()).build();
+        sendToClient(emitter, emitterId, "sse", subRes);
 
         // 클라이언트가 미수신한 event 목록이 존재할 경우 전송하여 event 유실을 예방
         if (!lastEventId.isEmpty()) {
@@ -153,12 +162,16 @@ public class NotiService {
                 // TODO: 이벤트 캐시 해야 되는 듯?
 
                 if (data instanceof NewNotiRes newNotiRes) {
-                    List<MNoti> unreadNotiList = notiRepository.findByReceiverIdAndIsRead(receiverId, false);
+                    List<MNoti> unreadNotiList = notiRepository.findByReceiverIdAndIsReadOrderByCreatedAtDesc(receiverId, false);
                     SseNotiRes response = SseNotiRes.builder()
                             .unreadNotiNum(unreadNotiList.size())
                             .newlyAddedNoti(newNotiRes)
                             .build();
                     sendToClient(emitter, key, eventName, response);
+                }
+
+                else {
+                    sendToClient(emitter, key, eventName, data);
                 }
             }
         );
