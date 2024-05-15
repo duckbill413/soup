@@ -7,6 +7,8 @@ export const button = style({
 
 export const icon = style({
   height: '44px',
+  display: 'flex',
+  alignItems: 'center',
 })
 
 export const backdrop = style({
@@ -69,6 +71,7 @@ export const notiTitle = style({
 export const date = style({
   fontSize: vars.fontSize.caption,
   color: vars.color.deepGray,
+  minWidth: 'fit-content',
 })
 
 export const notiTop = style({
@@ -101,8 +104,8 @@ export const notification = style({
   display: 'flex',
   gap: '16px',
 
-  color: vars.color.black,
-  background: 'white',
+  color: 'inherit',
+  background: 'inherit',
   margin: '12px 0',
   padding: '12px',
 
