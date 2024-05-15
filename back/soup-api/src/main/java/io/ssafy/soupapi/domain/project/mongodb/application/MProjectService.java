@@ -52,5 +52,5 @@ public interface MProjectService {
 
     String deleteProjectApiDoc(ObjectId objectId, UUID apiDocId);
 
-    Object linkProjectVuerd(ObjectId projectId);
+    Object liveProjectVuerd(ObjectId projectId);
 }

@@ -26,19 +26,6 @@ import org.springframework.web.bind.annotation.*;
 public class ProjectBuilderController {
     private final ProjectBuilderService projectBuilderService;
 
-    @Operation(summary = "프로젝트 빌드")
-    @PostMapping("/{projectId}/builder")
-    @PreAuthorize("@authService.hasProjectRoleMember(#projectId, #userSecurityDTO.getId())")
-    public ResponseEntity<BaseResponse<String>> buildProject(
-            @PathVariable String projectId,
-            @AuthenticationPrincipal UserSecurityDTO userSecurityDTO
-    ) {
-        return BaseResponse.success(
-                SuccessCode.INSERT_SUCCESS,
-                projectBuilderService.buildProject(projectId)
-        );
-    }
-
     @Operation(summary = "빌드 완료된 파일 확인")
     @GetMapping("/{projectId}/build/url")
     @PreAuthorize("@authService.hasProjectRoleMember(#projectId, #userSecurityDTO.getId())")
