@@ -46,14 +46,15 @@ public class ProjectStructureRepositoryImpl implements ProjectStructureRepositor
                         File[] subFiles = folder.listFiles(File::isFile);
                         assert subFiles != null;
                         for (File subFile : subFiles) {
-                            if (BuildFileUtil.getFileExtension(subFile).equals("java")) {
-                                try {
-                                    var classFileInfo = new ClassFileInfo(subFile.getName(), BuildFileUtil.readAllFile(subFile));
-                                    ((Map<String, Object>) structure).put(folder.getName(), classFileInfo);
-                                    break;
-                                } catch (IOException e) {
-                                    log.info(e.getMessage());
-                                }
+                            // java 파일이 아닌 경우 읽지 않음
+                            if (!BuildFileUtil.getFileExtension(subFile).equals("java")) {
+                                continue;
+                            }
+                            try {
+                                var classFileInfo = new ClassFileInfo(subFile.getName(), BuildFileUtil.readAllFile(subFile));
+                                ((Map<String, Object>) structure).put(folder.getName(), classFileInfo);
+                            } catch (IOException e) {
+                                log.info(e.getMessage());
                             }
                         }
                     } else {
@@ -70,6 +71,10 @@ public class ProjectStructureRepositoryImpl implements ProjectStructureRepositor
             }
             ((List<Object>) structure).addAll(Arrays.stream(files).map(file ->
                     {
+                        // java 파일이 아닌 경우 읽지 않음
+                        if (!BuildFileUtil.getFileExtension(file).equals("java")) {
+                            return null;
+                        }
                         try {
                             return new ClassFileInfo(file.getName(), BuildFileUtil.readAllFile(file));
                         } catch (IOException e) {
