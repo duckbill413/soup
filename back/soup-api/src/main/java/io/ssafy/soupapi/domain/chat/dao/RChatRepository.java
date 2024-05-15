@@ -34,21 +34,20 @@ public class RChatRepository {
     }
 
     public void saveMessagesToRedis(String chatroomId, List<RChatMessage> rChatMessages, List<Long> scores) {
-//        Set<ZSetOperations.TypedTuple<RChatMessage>> tuples = new HashSet<>();
-        Set<Tuple> tupleSet = new HashSet<>();
-        RedisSerializer<RChatMessage> serializer = (RedisSerializer<RChatMessage>) redisTemplateChatMessage.getValueSerializer();
-
-        if (scores == null || scores.isEmpty()) {
-            Double curTime = Long.valueOf(System.currentTimeMillis()).doubleValue();
-            for (RChatMessage rChatMessage : rChatMessages) {
-//                tuples.add(new DefaultTypedTuple<>(rChatMessage, curTime));
-                byte[] serializedMessage = serializer.serialize(rChatMessage);
-                tupleSet.add(new DefaultTuple(serializedMessage, curTime));
-            }
-        }
+        RedisSerializer keySerializer = redisTemplateChatMessage.getKeySerializer();
+        RedisSerializer valueSerializer = redisTemplateChatMessage.getValueSerializer();
 
         redisTemplateChatMessage.executePipelined( (RedisCallback<Object>)connection -> {
-            connection.zAdd((CHATROOM_HASH + chatroomId).getBytes(), tupleSet);
+            if (scores == null || scores.isEmpty()) {
+                Double score = Long.valueOf(System.currentTimeMillis()).doubleValue(); // 현재 시간
+                rChatMessages.forEach(rChatMessage -> {
+                    connection.zAdd(
+                            keySerializer.serialize(CHATROOM_HASH + chatroomId),
+                            score,
+                            valueSerializer.serialize(rChatMessage)
+                    );
+                });
+            }
             return null;
         });
 

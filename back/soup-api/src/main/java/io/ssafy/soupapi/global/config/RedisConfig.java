@@ -58,6 +58,7 @@ public class RedisConfig {
 
         Jackson2JsonRedisSerializer<Object> serializer = new Jackson2JsonRedisSerializer<>(objectMapper, Object.class);
         redisTemplate.setValueSerializer(serializer);
+        redisTemplate.afterPropertiesSet();
         return redisTemplate;
     }
 
@@ -72,6 +73,7 @@ public class RedisConfig {
         Jackson2JsonRedisSerializer<RChatMessage> serializer = new Jackson2JsonRedisSerializer<>(objectMapper, RChatMessage.class);
         redisTemplate.setValueSerializer(serializer);
         redisTemplate.setHashValueSerializer(serializer);
+        redisTemplate.afterPropertiesSet();
         return redisTemplate;
     }
 
@@ -85,6 +87,7 @@ public class RedisConfig {
         Jackson2JsonRedisSerializer<ChatMessageRes> serializer = new Jackson2JsonRedisSerializer<>(objectMapper, ChatMessageRes.class);
         redisTemplate.setValueSerializer(serializer);
         redisTemplate.setHashValueSerializer(serializer);
+        redisTemplate.afterPropertiesSet();
         return redisTemplate;
     }
 
