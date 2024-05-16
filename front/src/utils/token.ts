@@ -7,13 +7,13 @@ const getAccessToken = () => parseCookies().accessToken
 const getRefreshToken = () => parseCookies().refreshToken
 
 const setToken = (accessToken: any, refreshToken: any) => {
-  setCookie(null, 'accessToken', accessToken)
-  setCookie(null, 'refreshToken', refreshToken)
+  setCookie(null, 'accessToken', accessToken, { path: '/' })
+  setCookie(null, 'refreshToken', refreshToken, { path: '/' })
 }
 
 const tokenClear = () => {
-  destroyCookie(null, ACCESS_TOKEN)
-  destroyCookie(null, REFRESH_TOKEN)
+  destroyCookie(null, ACCESS_TOKEN, { path: '/' })
+  destroyCookie(null, REFRESH_TOKEN, { path: '/' })
 }
 
 const tokenRefresh = async () => {
