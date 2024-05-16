@@ -74,6 +74,16 @@ export const date = style({
   minWidth: 'fit-content',
 })
 
+export const name = style({
+  fontSize: vars.fontSize.caption,
+  color: vars.color.deepGray,
+  display: 'inline-block',
+  padding: '0 8px',
+  margin: '0 0 12px',
+  borderRadius: '5px',
+  background: vars.color.lightGray,
+})
+
 export const notiTop = style({
   display: 'flex',
   justifyContent: 'space-between',
@@ -106,8 +116,8 @@ export const notification = style({
 
   color: 'inherit',
   background: 'inherit',
-  margin: '12px 0',
-  padding: '12px',
+  // margin: '12px 0',
+  // padding: '12px',
 
   boxSizing: 'border-box',
 })
