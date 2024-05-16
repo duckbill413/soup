@@ -96,6 +96,26 @@ public class MProjectController {
     }
 
     /**
+     * 프로젝트 제안서 Liveblocks 연동
+     *
+     * @param projectId             업데이트하는 프로젝트의 Id
+     * @param userSecurityDTO       업데이트하는 멤버 정보
+     * @return 업데이트 완료된 프로젝트 제안서 정보
+     */
+    @Operation(summary = "Liveblocks 프로젝트 제안서 업데이트", description = "Liveblocks 프로젝트 기획서 정보 연동")
+    @PostMapping("/{projectId}/proposal/live")
+    @PreAuthorize("@authService.hasProjectRoleMember(#projectId, #userSecurityDTO.getId())")
+    public ResponseEntity<BaseResponse<GetProjectProposal>> liveUpdateProjectProposal(
+            @PathVariable(name = "projectId") String projectId,
+            @AuthenticationPrincipal UserSecurityDTO userSecurityDTO
+    ) {
+        return BaseResponse.success(
+                SuccessCode.UPDATE_SUCCESS,
+                mProjectService.liveUpdateProjectProposal(new ObjectId(projectId))
+        );
+    }
+
+    /**
      * 프로젝트 지라 키 정보 요청
      *
      * @param projectId       키 정보를 요청할 프로젝트 아이디

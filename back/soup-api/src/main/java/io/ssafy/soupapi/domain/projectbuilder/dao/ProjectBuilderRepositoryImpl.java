@@ -150,11 +150,19 @@ public class ProjectBuilderRepositoryImpl implements ProjectBuilderRepository {
         variables.put("springboot-version", project.getProjectBuilderInfo().getVersion());
         variables.put("springboot-group", project.getProjectBuilderInfo().getGroup());
         variables.put("springboot-java-version", project.getProjectBuilderInfo().getLanguageVersion());
-        variables.put("springboot-project-readme", StringParserUtil.isNullOrEmpty(project.getReadme()) ?
-                "" :
-                project.getReadme() + "\n\n---\n\n");
-
+        // Readme 변수 설정
+        variables.put("springboot-project-readme", getReadmeVariable(project));
         // dependency 변수 설정
+        variables.put("springboot-dependencies", getDependenciesVariable(project));
+
+
+        List<File> leafFiles = getLeafFiles(destinationFolder);
+        for (File file : leafFiles) {
+            replaceFileVariables(file, variables);
+        }
+    }
+
+    private static String getDependenciesVariable(Project project) {
         var dependencies = project.getProjectBuilderInfo().getDependencies();
         StringBuilder sb = new StringBuilder();
         dependencies.forEach(v -> {
@@ -164,13 +172,35 @@ public class ProjectBuilderRepositoryImpl implements ProjectBuilderRepository {
             }
         });
         sb.append('\n');
-        variables.put("springboot-dependencies", sb.toString());
+        return sb.toString();
+    }
 
-
-        List<File> leafFiles = getLeafFiles(destinationFolder);
-        for (File file : leafFiles) {
-            replaceFileVariables(file, variables);
+    private static String getReadmeVariable(Project project) {
+        StringBuilder readme = new StringBuilder();
+        if (!StringParserUtil.isNullOrEmpty(project.getReadme())) {
+            readme.append(project.getReadme()).append('\n');
         }
+        if (Objects.nonNull(project.getProposal())) {
+            readme.append("\n## 기획서\n");
+            if (!StringParserUtil.isNullOrEmpty(project.getProposal().getBackground())) {
+                readme.append("\n### 기획 배경\n");
+                readme.append(project.getProposal().getBackground()).append('\n');
+            }
+            if (!StringParserUtil.isNullOrEmpty(project.getProposal().getIntroduce())) {
+                readme.append("\n### 서비스 소개\n");
+                readme.append(project.getProposal().getIntroduce()).append('\n');
+            }
+            if (!StringParserUtil.isNullOrEmpty(project.getProposal().getTarget())) {
+                readme.append("\n### 서비스 타겟\n");
+                readme.append(project.getProposal().getTarget()).append('\n');
+            }
+            if (!StringParserUtil.isNullOrEmpty(project.getProposal().getExpectation())) {
+                readme.append("\n### 기대 효과\n");
+                readme.append(project.getProposal().getExpectation()).append('\n');
+            }
+        }
+        readme.append("\n\n---\n\n");
+        return readme.toString();
     }
 
     /**

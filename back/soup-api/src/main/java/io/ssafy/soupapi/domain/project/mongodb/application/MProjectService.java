@@ -57,4 +57,6 @@ public interface MProjectService {
     List<GetSimpleApiDoc> liveProjectApiDoc(ObjectId projectId);
 
     String liveUpdateProjectReadme(ObjectId projectId);
+
+    GetProjectProposal liveUpdateProjectProposal(ObjectId projectId);
 }
