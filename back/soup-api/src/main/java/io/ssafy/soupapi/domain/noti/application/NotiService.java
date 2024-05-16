@@ -4,7 +4,7 @@ import io.ssafy.soupapi.domain.chat.dto.request.ChatMessageReq;
 import io.ssafy.soupapi.domain.member.entity.Member;
 import io.ssafy.soupapi.domain.noti.dao.EmitterRepository;
 import io.ssafy.soupapi.domain.noti.dao.NotiRepository;
-import io.ssafy.soupapi.domain.noti.dto.RMentionNoti;
+import io.ssafy.soupapi.domain.noti.dao.RNotiRepository;
 import io.ssafy.soupapi.domain.noti.dto.response.GetNotiRes;
 import io.ssafy.soupapi.domain.noti.dto.response.NewNotiRes;
 import io.ssafy.soupapi.domain.noti.dto.response.SseNotiRes;
@@ -13,8 +13,6 @@ import io.ssafy.soupapi.global.util.FindEntityUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
@@ -28,32 +26,107 @@ import java.util.*;
 public class NotiService {
 
     private final FindEntityUtil findEntityUtil;
-    private static final String MENTION_NOTI_HASH = "mention-noti:";
-    private final RedisTemplate redisTemplateJackson;
 
     private static final Long DEFAULT_TIMEOUT = 60L * 1000 * 60; // 기본 타임 아웃
     private final EmitterRepository emitterRepository;
     private final NotiRepository notiRepository;
+    private final RNotiRepository rNotiRepository;
 
-    public void saveMentionNotiToRedis(String chatroomId, RMentionNoti RMentionNoti, long sentAt) {
-        redisTemplateJackson.setValueSerializer(new Jackson2JsonRedisSerializer<>(RMentionNoti.class));
-        redisTemplateJackson.opsForZSet().add(MENTION_NOTI_HASH + chatroomId, RMentionNoti, sentAt);
+    public GetNotiRes getNotis(String memberId, Boolean isRead) {
+        List<MNoti> result;
+        List<MNoti> rNotiList = new ArrayList<>();
+        List<MNoti> mNotiList = new ArrayList<>();
+
+        Map<String, Member> mentionerMap = new HashMap<>();
+        Map<String, String> projectNameMap = new HashMap<>();
+
+        /*------------------------------------ 1. Redis 탐색 ------------------------------------*/
+        if (Objects.isNull(isRead)) {
+            rNotiList = rNotiRepository.getNoti(memberId);
+//            log.info("[수신 알림 조회] redis에서 {}개 발견", rNotiList.size());
+        } else {
+            // todo
+        }
+        for (MNoti mNoti : rNotiList) {
+            mentionerMap.put(mNoti.getSenderId(), null);
+            projectNameMap.put(mNoti.getProjectId(), null);
+        }
+        result = new ArrayList<>(rNotiList);
+
+        /*------------------------------------ 2. MongoDB 탐색 ------------------------------------*/
+        Instant mBeforeTime;
+        if (rNotiList.isEmpty()) {
+            mBeforeTime = Instant.now();
+        } else {
+            mBeforeTime = rNotiList.get(rNotiList.size() - 1).getCreatedAt();
+        }
+//        log.info("mBeforeTime은 {}", mBeforeTime);
+
+        if (Objects.isNull(isRead)) {
+            mNotiList = notiRepository.findByReceiverIdAndCreatedAtBeforeOrderByCreatedAtDesc(memberId, mBeforeTime);
+        } else {
+            mNotiList = notiRepository.findByReceiverIdAndIsReadOrderByCreatedAtDesc(memberId, isRead);
+        }
+        for (MNoti mNoti : mNotiList) {
+            mentionerMap.put(mNoti.getSenderId(), null);
+            projectNameMap.put(mNoti.getProjectId(), null);
+        }
+        result.addAll(mNotiList);
+//        log.info("[수신 알림 조회] MongoDB에서 {}개 발견", mNotiList.size());
+
+        /*----------------------------- 3. 알림 관련 추가적인 정보 조회 및 응답 가공 -----------------------------*/
+        List<UUID> mentionerIdList = mentionerMap.keySet().stream()
+                .map(UUID::fromString)
+                .toList();
+        mentionerMap = findEntityUtil.findAllMemberByIdAndGenerateMap(mentionerIdList);
+
+        List<String> projectIdList = projectNameMap.keySet().stream().toList();
+        projectNameMap = findEntityUtil.findAllProjectByIdAndGenerateMap(projectIdList);
+
+        GetNotiRes response = GetNotiRes.builder().build();
+        for (MNoti mNoti : result) {
+            NewNotiRes newNotiRes = mNoti.generateNewNotiRes(
+                mentionerMap.get(mNoti.getSenderId()).getProfileImageUrl(),
+                projectNameMap.get(mNoti.getProjectId())
+            );
+            response.getNotiList().add(newNotiRes);
+        }
+
+        return response;
     }
 
-    public RMentionNoti generateMentionNotiRedis(String chatMessageId, String senderId, String mentioneeId) {
-        return RMentionNoti.builder()
-                .chatMessageId(chatMessageId)
-                .mentionerId(senderId)
-                .mentioneeId(mentioneeId)
-                .build();
+    public boolean readNoti(String memberId, ObjectId notiId) {
+        MNoti mNoti = rNotiRepository.findByNotiId(memberId, notiId);
+        if (mNoti != null) {
+            log.info("mNoti 나왔다!", mNoti);
+            rNotiRepository.updateIsRead(mNoti, true);
+        }
+
+        notiRepository.updateIsReadById(notiId, true);
+
+        List<MNoti> unreadNotis = notiRepository.findByReceiverIdAndIsReadOrderByCreatedAtDesc(memberId, false);
+        notify(
+            memberId,
+            SseNotiRes.builder().unreadNotiNum(unreadNotis.size()).build(),
+            "read-noti"
+        );
+        return true;
     }
+
+    /*------------------------------------ Redis ------------------------------------*/
+
+//    public NewNotiRes generateNewNotiRes(MNoti mNoti, String notiPhotoUrl) {
+//        return mNoti.generateNewNotiRes(notiPhotoUrl);
+//    }
+
+    /*------------------------------------ MongoDB ------------------------------------*/
 
     public MNoti generateMNoti(
             String chatroomId, String chatMessageId,
             ChatMessageReq chatMessageReq, String mentioneeId, Instant createdAt
     ) {
         Member mentionee = findEntityUtil.findMemberById(UUID.fromString(mentioneeId));
-        String title = chatMessageReq.sender().getNickname() + "님이 " + mentionee.getNickname() + "님을 언급했습니다";
+        String title = chatMessageReq.sender().getNickname() + "님이 " + mentionee.getNickname() + "님을 언급했습니다.";
         return MNoti.builder()
                 .title(title)
                 .content(chatMessageReq.message())
@@ -65,57 +138,6 @@ public class NotiService {
                 .build();
     }
 
-    public NewNotiRes generateNewNotiRes(MNoti mNoti, String notiPhotoUrl) {
-        return mNoti.generateNewNotiRes(notiPhotoUrl);
-    }
-
-    /*------------------------------------ MongoDB 조회 ------------------------------------*/
-
-    public GetNotiRes getNotis(String memberId, Boolean isRead) {
-        List<MNoti> notiList = getNotiListByIsRead(memberId, isRead);
-        return generateGetNotiResFromMNotiList(notiList);
-    }
-
-    public boolean readNoti(String memberId, String notiId) {
-        notiRepository.updateIsReadById(new ObjectId(notiId), true);
-        notify(
-                memberId,
-                SseNotiRes.builder().unreadNotiNum(getNotiListByIsRead(memberId, false).size()).build(),
-                "read-noti"
-        );
-        return true;
-    }
-
-    private GetNotiRes generateGetNotiResFromMNotiList(List<MNoti> notiList) {
-        Set<String> senderIdSet = new HashSet<>();
-        for (MNoti mNoti : notiList) {
-            senderIdSet.add(mNoti.getSenderId());
-        }
-
-        Map<String, String> senderMap = new HashMap<>();
-        for (String senderId : senderIdSet) {
-            String senderProfileImage = findEntityUtil.findMemberById(UUID.fromString(senderId)).getProfileImageUrl();
-            senderMap.put(senderId, senderProfileImage);
-        }
-
-        GetNotiRes response = GetNotiRes.builder().build();
-        for (MNoti mNoti : notiList) {
-            response.getNotiList().add(
-                mNoti.generateNewNotiRes(senderMap.get(mNoti.getSenderId()))
-            );
-        }
-
-        return response;
-    }
-
-    private List<MNoti> getNotiListByIsRead(String memberId, Boolean isRead) {
-        if (Objects.isNull(isRead)) {
-            return notiRepository.findByReceiverIdOrderByCreatedAtDesc(memberId);
-        } else {
-            return notiRepository.findByReceiverIdAndIsReadOrderByCreatedAtDesc(memberId, isRead);
-        }
-    }
-
     /*------------------------------------ SSE 푸시 알림 ------------------------------------*/
 
     // 클라이언트가 구독을 위해 호출
@@ -125,7 +147,8 @@ public class NotiService {
 
         // SSE 연결이 이뤄진 후 하나의 데이터도 전송되지 않고 SseEmitter의 유효 시간이 끝나면 503 응답이 발생한다. 그래서 연결 시 더미 데이터를 한 번 보내준다.
         // 더미 데이터는 안 읽은 알림의 개수 전달
-        SseNotiRes subRes = SseNotiRes.builder().unreadNotiNum(getNotiListByIsRead(memberId, false).size()).build();
+        List<MNoti> unreadNotis = notiRepository.findByReceiverIdAndIsReadOrderByCreatedAtDesc(memberId, false);
+        SseNotiRes subRes = SseNotiRes.builder().unreadNotiNum(unreadNotis.size()).build();
         sendToClient(emitter, emitterId, "sse", subRes);
 
         // 클라이언트가 미수신한 event 목록이 존재할 경우 전송하여 event 유실을 예방

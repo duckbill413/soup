@@ -10,6 +10,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -38,10 +41,30 @@ public class FindEntityUtil {
     }
 
     @Transactional(readOnly = true)
+    public Map<String, Member> findAllMemberByIdAndGenerateMap(List<UUID> memberIdList) {
+        List<Member> senderList = memberRepository.findAllById(memberIdList);
+        Map<String, Member> memberMap = new HashMap<>();
+        for (Member m : senderList) {
+            memberMap.put(String.valueOf(m.getId()), m);
+        }
+        return memberMap;
+    }
+
+    @Transactional(readOnly = true)
     public Project findPProjectById(String projectId) {
         return projectRepository.findById(projectId).orElseThrow(() ->
                 new BaseExceptionHandler(ErrorCode.NOT_FOUND_PROJECT)
         );
+    }
+
+    @Transactional(readOnly = true)
+    public Map<String, String> findAllProjectByIdAndGenerateMap(List<String> projectIdList) {
+        List<Project> projectList = projectRepository.findAllById(projectIdList);
+        Map<String, String> projectNameMap = new HashMap<>();
+        for (Project p : projectList) {
+            projectNameMap.put(p.getId(), p.getName());
+        }
+        return projectNameMap;
     }
 
 }
