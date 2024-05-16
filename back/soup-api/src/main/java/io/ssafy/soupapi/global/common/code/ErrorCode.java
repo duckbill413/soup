@@ -106,6 +106,8 @@ public enum ErrorCode {
     // OpenVidu 관련 에러 (CODE: 800)
     NOT_FOUND_SESSION(404, "B800", "존재하지 않는 세션입니다."),
     NOT_FOUND_EXPIRE_TIME(404, "B801", "만료시간이 존재하지 않습니다."),
+    OPENVIDU_SERVER_ERROR(500,"B802","Openvidu 서버에 연걸되지 않습니다."),
+    NOT_FOUND_CONNECTION(404,"B803","Openvidu Connection 찾을 수 없습니다."),
 
     // API DOCS 관련 에러 (CODE: 900)
     NOT_FOUND_API_DOC(404, "B900", "찾을 수 없는 API 문서 입니다."),
