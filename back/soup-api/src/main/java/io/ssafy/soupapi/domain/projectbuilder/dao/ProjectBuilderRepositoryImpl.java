@@ -372,7 +372,7 @@ public class ProjectBuilderRepositoryImpl implements ProjectBuilderRepository {
             String subDomainAbsoluteDtoPath = domainAbsolutePath + File.separator + convertToSnakeCase(apiDoc.getDomain()) + File.separator + "dto";
 
             // Generate RequestBody
-            if (apiDoc.getResponseBody() != null && !apiDoc.getRequestBody().isBlank()) {
+            if (apiDoc.getRequestBody() != null && !apiDoc.getRequestBody().isBlank()) {
                 recordClassGenerator.generateRecordClasses(
                         apiDoc.getRequestBody(),
                         apiDoc.getRequestBodyName(),
