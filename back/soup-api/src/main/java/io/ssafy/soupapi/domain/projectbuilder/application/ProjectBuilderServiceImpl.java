@@ -29,6 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.Objects;
 
@@ -104,7 +105,7 @@ public class ProjectBuilderServiceImpl implements ProjectBuilderService {
                 .set("project_builder_info.springboot_file_path", filePath)
                 .set("project_builder_info.springboot_zip_file_path", zipFilePath)
                 .set("project_builder_info.springboot_s3_url", s3Url)
-                .set("project_builder_info.project_built_at", LocalDateTime.now());
+                .set("project_builder_info.project_built_at", LocalDateTime.now(ZoneId.of("Asia/Seoul")));
 
         var result = mongoTemplate.updateFirst(query, update, Project.class);
         if (result.wasAcknowledged() && (result.getMatchedCount() > 0 || result.getModifiedCount() > 0)) {
