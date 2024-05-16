@@ -39,7 +39,22 @@ export const useStyles = makeStyles({
         height:'10px',
       },
       '& fieldset': {
-        borderRadius: '15px',
+        borderRadius: '10px',
+      },
+    },
+    '& .MuiInputLabel-root': {
+      fontSize: '0.9rem',
+      top: '-11%',
+    },
+  },
+  role : {
+    '& .MuiOutlinedInput-root': {
+        width:'125px',
+      '& input':{
+        height:'10px',
+      },
+      '& fieldset': {
+        borderRadius: '10px',
       },
     },
     '& .MuiInputLabel-root': {
