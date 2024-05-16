@@ -1,5 +1,6 @@
 'use client'
 
+import { getNotisAPI, readNotisAPI } from '@/apis/notification'
 import * as styles from '@/containers/notification/notifications.css'
 import vars from '@/styles/variables.css'
 import Badge from '@mui/material/Badge'

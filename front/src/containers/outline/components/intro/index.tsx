@@ -4,6 +4,7 @@ import * as styles from "@/containers/outline/styles/intro/outlineIntro.css"
 import basic from '#/assets/icons/outline/basicPhoto.svg'
 import { useRef } from 'react'
 import { changePhotoAPI } from '@/apis/outline/outlineAPI'
+import { TextField } from '@mui/material'
 import { useMutation, useStorage } from '../../../../../liveblocks.config'
 
 function OutlineIntro () {
@@ -54,16 +55,16 @@ function OutlineIntro () {
       </div>
       <div className={styles.introDivision}>
         <p>프로젝트 이름</p>
-        <input
-          placeholder="프로젝트 이름"
+        <TextField
+          label="프로젝트 이름"
           value={initialProject?.project_name}
-          className={styles.input}
           onChange={(e) => updateProject('project_name', e.target.value)}
         />
         <p>프로젝트 설명</p>
-        <textarea
-          placeholder="프로젝트 설명"
-          className={styles.textarea}
+        <TextField
+          multiline
+          rows={4}
+          label="프로젝트 설명"
           value={initialProject?.project_description}
           onChange={(e) => updateProject('project_description', e.target.value)}
         />
