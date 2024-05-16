@@ -57,57 +57,32 @@ export const middleSubDiv = style ({
   display: 'flex', flexDirection: 'column'
 })
 
-export const roleInput = style ({
-  width:'18%',
-  height:'50%',
-  padding:'0.1rem',
-  paddingLeft:'0.6rem',
-  border:'none',
-  borderRadius:'5px',
-  borderBottom:'1px solid #F4F4F4',
-  boxShadow:vars.boxShadow.customInner,
-  outline: 'none'
+export const middleRoleDiv = style ({
+  width:'20%'
 })
 
-export const nameInput = style({
-  width:'10%',
-  height:'50%',
-  padding:'0.1rem',
-  paddingLeft:'0.6rem',
-  border:'none',
-  borderRadius:'5px',
-  borderBottom:'1px solid #F4F4F4',
-  boxShadow:vars.boxShadow.customInner,
-  backgroundColor:'#F4F4F4', outline: 'none'
+export const middleNameDiv = style ({
+  width:'15%'
 })
 
-export const emailInput = style({
-  width:'30%',
-  height:'50%',
-  padding:'0.1rem',
-  paddingLeft:'0.6rem',
-  border:'none',
-  borderRadius:'5px',
-  borderBottom:'1px solid #F4F4F4',
-  boxShadow:vars.boxShadow.customInner,
-  backgroundColor:'#F4F4F4', outline: 'none'
+export const middleEmailDiv = style ({
+  width:'30%'
 })
-
 export const invite = style ({
   width:"15%",
-  height:'50%',
-  borderRadius:'15px',
+  height:'60%',
+  borderRadius:'10px',
   backgroundColor:'#FF7E20',
+  boxShadow: '0 4px #C65102',
   color:'white',
   textAlign:'center',
-  boxShadow:vars.boxShadow.customOuter,
+  transition: 'all 0.3s ease',
   ':hover': {
-    transform: 'scale(1.05)',
-    transitionDuration: '300ms',
+    backgroundColor: '#E76E0A',
   },
   ':active': {
-    transform: 'scale(0.90)',
-    transitionDuration: '300ms'
+    boxShadow: '0 2px #D15C00',
+    transform: 'translateY(3px)'
   }
 })
 
@@ -126,10 +101,6 @@ export const bottomProfile = style ({
   display:'flex'
 })
 
-export const profileImg = style ({
-  borderRadius:'50%'
-})
-
 export const profileDetail = style ({
   display:'flex',
   flexDirection:'column',
@@ -143,16 +114,26 @@ export const roleSubDiv = style ({
 })
 
 export const role = style ({
+  display:'flex',
+  alignItems:'center',
   background:'#DEB06E',
+  boxShadow:'rgba(0, 0, 0, 0.24) 0px 3px 3px',
   borderRadius:'5px',
   padding:'0.3rem',
   fontWeight:'bold',
   margin:'0.3rem'
 })
 
+export const deleteButton = style({
+  marginLeft:'5px',
+  color: '#515455',
+  fontSize:'0.8rem'
+})
+
 export const invitedRole = style ({
   background:'#B2D1FF',
   borderRadius:'5px',
+  boxShadow:'rgba(0, 0, 0, 0.24) 0px 3px 3px',
   padding:'0.3rem',
   fontWeight:'bold',
   margin:'0.3rem'

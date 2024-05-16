@@ -7,6 +7,8 @@ import { LiveObject } from '@liveblocks/client'
 import { ProjectMember } from '@/containers/outline/types/outlineStorage'
 import { Toast } from '@/utils/toast'
 import { useParams } from 'next/navigation'
+import { TextField } from "@mui/material"
+import { useStyles } from '@/containers/outline/styles/outlineMUI'
 import { useMutation, useStorage } from '../../../../../../liveblocks.config'
 
 function OutlineTeamModal (props: { clickModal: () => void }) {
@@ -97,21 +99,28 @@ function OutlineTeamModal (props: { clickModal: () => void }) {
               <option value="ADMIN">Yes</option>
             </select>
           </div>
-          <input className={styles.roleInput} placeholder="엔터로 역할 추가"
-                 value={roleInput}
-                 onChange={changeInput(setRoleInput)}
-                 onKeyDown={addHashtag}
-                 onCompositionStart={handleComposition}
-                 onCompositionEnd={handleComposition}
-          />
-          <input className={styles.nameInput} placeholder="이름"
-                 value={nameInput}
-                 onChange={changeInput(setNameInput)}
-          />
-          <input className={styles.emailInput} placeholder="e-mail 주소"
-                 value={emailInput}
-                 onChange={changeInput(setEmailInput)}
-          />
+          <div className={styles.middleRoleDiv}>
+            <TextField className={useStyles().teamModalRole}
+                   label="엔터로 역할 추가"
+                   value={roleInput}
+                   onChange={changeInput(setRoleInput)}
+                   onKeyDown={addHashtag}
+                   onCompositionStart={handleComposition}
+                   onCompositionEnd={handleComposition}
+            />
+          </div>
+          <div className={styles.middleNameDiv}>
+            <TextField label="이름" className={useStyles().teamModalRole}
+                   value={nameInput}
+                   onChange={changeInput(setNameInput)}
+            />
+          </div>
+          <div className={styles.middleEmailDiv}>
+            <TextField  label="e-mail 주소" className={useStyles().teamModalRole}
+                   value={emailInput}
+                   onChange={changeInput(setEmailInput)}
+            />
+          </div>
           <button type="button" className={styles.invite} onClick={invite}>초대하기</button>
         </div>
 
@@ -119,7 +128,7 @@ function OutlineTeamModal (props: { clickModal: () => void }) {
           {tags.map(tag => (
             <div key={tag.id} className={styles.role}>
             {tag.role_name}
-            <button type="button" style={{ color: '#515455' }} onClick={() => removeTag(tag.id)}>✖</button>
+            <button type="button" className={styles.deleteButton} onClick={() => removeTag(tag.id)}>✖</button>
             </div>
           ))}
         </div>

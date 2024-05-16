@@ -33,6 +33,7 @@ export const hrSect = style({
         lineHeight: '0px',
         margin: '0px 16px',
     }
+
 })
 
 
@@ -42,7 +43,6 @@ export const chatModalContentList = styleVariants({
     profile: [{ marginRight: vars.space.small,width:'10%'}],
     userArea: [{ display: 'flex', flexDirection: 'column', marginRight: vars.space.tiny }],
     content: [{
-
         padding: vars.space.tiny,
         margin: `0px 0px 5px 0px`,
         borderRadius: '10px',
@@ -50,6 +50,19 @@ export const chatModalContentList = styleVariants({
     }],
     nickname: [{ margin: `0px 0px 5px 0px` }],
     time: [{ display: 'flex', alignItems: 'flex-end', fontSize: vars.fontSize.caption, color: vars.color.deepGray,marginRight:'10px' }],
+})
+export const mentioned = style({
+    padding: '0 3px 0 3px',
+    color: vars.color.blue,
+    backgroundColor: vars.color.skyBlue,
+    borderRadius:'5px'
+
+})
+export const myMention = style({
+    padding: '0 3px 0 3px',
+    color: vars.color.blue,
+    backgroundColor: vars.color.lightOrange,
+    borderRadius:'5px'
 })
 globalStyle(`${chatModalContentList.profile} > img`, {
     borderRadius: '50%',

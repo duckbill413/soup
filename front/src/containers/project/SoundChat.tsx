@@ -1,71 +1,67 @@
-'use client';
+'use client'
 
-import { getToken } from '@/apis/openVidu/openViduAPI';
-import { useEffect, useState } from 'react';
-import { OpenViduRes } from '@/containers/project/types/openVidu';
-import { OpenVidu, Publisher, Session,
-    StreamManager, } from 'openvidu-browser';
+import { getToken } from "@/apis/openVidu/openViduAPI";
+import { useEffect, useRef } from "react";
+import { OpenViduRes } from "@/containers/project/types/openVidu";
+import {
+    OpenVidu,
+} from "openvidu-browser";
+import useAudioStore from "@/stores/useAudioStore";
+import useMemberStore from "@/stores/useMemberStore";
 
 type Props = {
     projectId: string;
-};
+}
 
 export default function SoundChat({ projectId }: Props) {
-    const [OV, setOV] = useState<OpenVidu | null>(null);
-    const [session, setSession] = useState<Session | null>(null);
-    const [localStreamManager, setLocalStreamManager] = useState<StreamManager | null>(null);
-
+    const {setLocalStreamManager} = useAudioStore();
+    const remoteStreamRef = useRef<HTMLVideoElement>(null); // 참여자 비디오 스트림을 나타내기 위한 ref
+    const {me} = useMemberStore();
     const joinSession = async (sessionData: OpenViduRes) => {
         if (!sessionData) return;
-        setOV(new OpenVidu());
-        if(!OV) return;
-        const newSession = OV.initSession();
-        setSession(newSession);
+
+        const OV = new OpenVidu();
+        const session = OV.initSession();
+        session.on('streamCreated', (event: any) => {
+            const subscriber = session.subscribe(event.stream, undefined);
+            if (remoteStreamRef.current) {
+                subscriber.addVideoElement(remoteStreamRef.current);
+            }
+        });
+
         try {
             const publisher = OV.initPublisher(undefined, {
                 audioSource: true,
                 videoSource: false
             });
-            await newSession.connect(sessionData.token, { clientData: 'Your client name' });
-            await newSession.publish(publisher);
+
+            await session.connect(sessionData.token, { clientData: me?.id });
+            session.publish(publisher);
             setLocalStreamManager(publisher);
         } catch (error) {
             console.error('Error connecting to session:', error);
         }
-    };
 
+    };
     useEffect(() => {
         const fetchData = async () => {
             try {
                 const sessionData = await getToken(projectId);
                 await joinSession(sessionData);
             } catch (error) {
-                console.log(error);
+                console.error('Error fetching session:', error);
             }
         };
         fetchData();
-        return () => {
-            if (session) {
-                session.disconnect();
-            }
-        };
+
     }, [projectId]);
 
-    // 오디오 토글 함수
-    const toggleAudio = () => {
-        if (localStreamManager && localStreamManager instanceof Publisher) { // Publisher 인스턴스인지 확인
-            const isAudioEnabled = localStreamManager.stream.audioActive;
-            localStreamManager.publishAudio(!isAudioEnabled); // 오디오 상태 토글
-            console.log(`Audio is now ${isAudioEnabled ? 'disabled' : 'enabled'}.`);
-        }
-    };
+
+
 
 
     return (
-        <div>
-            <button type="button" onClick={toggleAudio}>
-                {localStreamManager && localStreamManager.stream.audioActive ? 'Mute' : 'Unmute'}
-            </button>
-        </div>
+        <>
+        </>
     );
 }

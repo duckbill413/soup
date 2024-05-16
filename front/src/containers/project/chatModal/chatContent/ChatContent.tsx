@@ -4,14 +4,27 @@ import Image from "next/image";
 import defaultImage from "#/assets/images/defaultProfile.png";
 import * as styles from "./chatContent.css";
 
-export default function ChatContent({chatMessageId,header, me, message, nickname, profileImageUrl, sentAt}:ChatContentProps){
+export default function ChatContent({chatMessageId,header, me, message, nickname, profileImageUrl, sentAt,myNickname,memberNicknames}:ChatContentProps){
+    const highlightMention = (text:string) => {
+        const regex = /(@\S+)/g;
 
-    return(<div key={chatMessageId}>
+        return text.split(regex).map((part, index) => {
+            if (part.match(regex) && memberNicknames.find(data=>data===part.slice(1))) {
+                if(myNickname===part.slice(1)){
+                    return <span key={index} className={styles.myMention}>{part}</span>;
+                }
+                return <span key={index} className={styles.mentioned}>{part}</span>;
+            } 
+                return part;
+            
+        });
+    };
+    return(<div className={`a${chatMessageId}`} key={chatMessageId}>
             <div className={styles.chatHeader}>
                 {header === new Date().toISOString().slice(0, 10) &&
-                    <span className={styles.hrSect}>오늘</span>}
+                    <span className={styles.hrSect}>{dayjs(header).format('MM-DD')}</span>}
                 {(header !== new Date().toISOString().slice(0, 10) && header) &&
-                    <span className={styles.hrSect}>{dayjs(header).fromNow(true)}</span>}
+                    <span className={styles.hrSect}>오늘</span>}
             </div>
             {!me ?
                 <div
@@ -36,16 +49,14 @@ export default function ChatContent({chatMessageId,header, me, message, nickname
                             {nickname}
                         </p>
                         <p className={styles.chatModalContentList.content}>
-                            {message}
+                            {highlightMention(message)}
                         </p>
                     </div>
 
                     {sentAt &&
 
                         <p className={styles.chatModalContentList.time}>
-                            {dayjs(sentAt.slice(0, 10)).isSame(dayjs(), 'day')
-                                ? dayjs(sentAt).format('HH:mm')
-                                : dayjs(sentAt).format('MM-DD')}
+                            {dayjs(sentAt).format('HH:mm')}
                         </p>
                     }
                 </div>
@@ -56,15 +67,12 @@ export default function ChatContent({chatMessageId,header, me, message, nickname
                     <div className={styles.chatModalContentList.profile} />
                     {sentAt &&
                         <p className={styles.chatModalContentList.time}>
-
-                            {dayjs(sentAt.slice(0, 10)).isSame(dayjs(), 'day')
-                                ? dayjs(sentAt).format('HH:mm')
-                                : dayjs(sentAt).format('MM-DD')}
+                            {dayjs(sentAt).format('HH:mm')}
                         </p>
                     }
                     <div className={styles.chatModalContentList.userArea}>
                         <p className={styles.chatModalContentList.content}>
-                            {message}
+                            {highlightMention(message)}
                         </p>
                     </div>
                 </div>}

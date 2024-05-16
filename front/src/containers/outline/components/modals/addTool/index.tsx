@@ -5,6 +5,8 @@ import { useState } from 'react'
 import { LiveObject } from '@liveblocks/client'
 import { ProjectTool } from '@/containers/outline/types/outlineStorage'
 import { Toast } from '@/utils/toast'
+import { TextField } from '@mui/material'
+import { useStyles } from '@/containers/outline/styles/outlineMUI'
 import { useMutation } from '../../../../../../liveblocks.config'
 
 function OutlineToolModal (props: { clickModal: () => void }) {
@@ -14,7 +16,6 @@ function OutlineToolModal (props: { clickModal: () => void }) {
   const addTool = useMutation(({ storage }, tool) => {
     storage.get("outline")?.get("project_tools").push(new LiveObject<ProjectTool>(tool))
   }, []);
-
 
   const handleAddTool = () => {
     if (toolName) {
@@ -49,11 +50,12 @@ function OutlineToolModal (props: { clickModal: () => void }) {
         <hr />
 
         <div className={styles.inputMainDiv}>
-          <input placeholder="툴 이름을 입력해주세요." className={styles.toolInput} value={toolName}
-                 onChange={(e) => setToolName(e.target.value)}/>
-          <input placeholder="URL 주소를 입력해주세요." className={styles.urlInput}  value={toolURL}
-                 onChange={(e) => setToolURL(e.target.value)}
-                 onKeyDown={handleKeyPress}
+          <TextField label="툴 이름을 입력해주세요."
+                     className={useStyles().toolInput}
+                     value={toolName} onChange={(e) => setToolName(e.target.value)}/>
+          <TextField label="URL 주소를 입력해주세요."
+                     className={useStyles().urlInput}
+                     value={toolURL} onChange={(e) => setToolURL(e.target.value)} onKeyDown={handleKeyPress}
           />
           <div className={styles.inputSubDiv}>
             <button type="button" className={styles.button} onClick={handleAddTool}>등록</button>

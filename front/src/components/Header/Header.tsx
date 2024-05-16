@@ -1,13 +1,15 @@
 'use client'
 
 import voicechat from '@/../public/assets/icons/voicechat.svg'
+import unvoicechat from '@/../public/assets/icons/unvoicechat.svg'
 import * as styles from '@/components/Header/header.css'
 import Logo from '@/components/Logo/Logo'
-import Notifications from '@/containers/Notifications'
+import Notifications from '@/containers/notification/Notifications'
 import vars from '@/styles/variables.css'
 import Image from 'next/image'
-import useMemberStore from "@/stores/useMemberStore";
-import defaultImage from "#/assets/images/defaultProfile.png";
+import useMemberStore from '@/stores/useMemberStore'
+import defaultImage from '#/assets/images/defaultProfile.png'
+import useAudioStore from '@/stores/useAudioStore'
 
 const projectName = '스타트 프로젝트, 스프'
 
@@ -16,7 +18,9 @@ type Props = {
   useVoice: boolean
 }
 export default function Header({ theme, useVoice }: Props) {
-  const {me} = useMemberStore();
+  const { me } = useMemberStore()
+  const { localStreamManager, toggleAudio } = useAudioStore()
+
   return (
     <div
       className={`${theme === 'white' ? styles.whiteTheme : ''} ${styles.container}`}
@@ -29,10 +33,25 @@ export default function Header({ theme, useVoice }: Props) {
         <p>{projectName}</p>
       </div>
       <div className={styles.assistant}>
-        {useVoice && (
-          <Image src={voicechat} width={44} height={44} alt="음성 채팅" />
-        )}
-        <Notifications theme={theme} />
+        {useVoice &&
+          (localStreamManager?.stream.audioActive ? (
+            <Image
+              onClick={toggleAudio}
+              src={voicechat}
+              width={44}
+              height={44}
+              alt="음성 채팅"
+            />
+          ) : (
+            <Image
+              onClick={toggleAudio}
+              src={unvoicechat}
+              width={44}
+              height={44}
+              alt="음성 채팅"
+            />
+          ))}
+        <Notifications />
         <Image
           unoptimized
           src={me?.profileImageUrl ? me?.profileImageUrl : defaultImage}

@@ -6,8 +6,8 @@ import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import {faker} from "@faker-js/faker";
 
-const PROJECT_IMAGE_WIDTH = 450
-const PROJECT_IMAGE_HIGHT = 300
+const PROJECT_IMAGE_WIDTH = 380
+const PROJECT_IMAGE_HIGHT = 250
 const MEMBER_IMAGE = 44
 
 export default function Project({ id,name,imgUrl,projectMemberImageUrls }: ProjectRes) {

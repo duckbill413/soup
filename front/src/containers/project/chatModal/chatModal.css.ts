@@ -74,6 +74,9 @@ export const chatModalContent = styleVariants({
   }],
 
 })
+export const hidden = style({
+  visibility:'hidden'
+})
 globalStyle(`${chatModalContent.background} > div`, {
   padding: vars.space.small,
 })
