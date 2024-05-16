@@ -36,6 +36,8 @@ public class Project {
     private Object vuerd;
     @Field("project_api_doc")
     private ApiDocs apiDocs;
+    @Field("project_readme")
+    private String readme;
     @Field("project_builder_info")
     private ProjectBuilderInfo projectBuilderInfo;
     @Builder.Default

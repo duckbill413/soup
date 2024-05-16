@@ -150,6 +150,9 @@ public class ProjectBuilderRepositoryImpl implements ProjectBuilderRepository {
         variables.put("springboot-version", project.getProjectBuilderInfo().getVersion());
         variables.put("springboot-group", project.getProjectBuilderInfo().getGroup());
         variables.put("springboot-java-version", project.getProjectBuilderInfo().getLanguageVersion());
+        variables.put("springboot-project-readme", StringParserUtil.isNullOrEmpty(project.getReadme()) ?
+                "" :
+                project.getReadme() + "\n\n---\n\n");
 
         // dependency 변수 설정
         var dependencies = project.getProjectBuilderInfo().getDependencies();

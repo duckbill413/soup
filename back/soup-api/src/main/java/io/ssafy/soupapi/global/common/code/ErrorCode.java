@@ -126,7 +126,8 @@ public enum ErrorCode {
     // LIVEBLOCK 에러 (CODE: 1200)
     LIVEBLOCK_DATA_IS_NULL(404, "B1200", "검색한 Liveblock 데이터가 Null 입니다."),
 
-
+    // README 에러 (CODE: 1300)
+    FAILED_TO_UPDATE_README(404, "B1300", "Liveblock Readme 업데이트 실패"),
     ; // End
 
     /**

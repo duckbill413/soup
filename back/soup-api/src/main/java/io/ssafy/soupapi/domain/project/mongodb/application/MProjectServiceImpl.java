@@ -6,6 +6,7 @@ import com.google.gson.Gson;
 import io.ssafy.soupapi.domain.project.constant.StepName;
 import io.ssafy.soupapi.domain.project.mongodb.dao.MProjectRepository;
 import io.ssafy.soupapi.domain.project.mongodb.dto.liveblock.LiveApiDetail;
+import io.ssafy.soupapi.domain.project.mongodb.dto.liveblock.LiveReadme;
 import io.ssafy.soupapi.domain.project.mongodb.dto.request.*;
 import io.ssafy.soupapi.domain.project.mongodb.dto.response.*;
 import io.ssafy.soupapi.domain.project.mongodb.entity.Info;
@@ -460,8 +461,8 @@ public class MProjectServiceImpl implements MProjectService {
     }
 
     @Override
-    public List<GetSimpleApiDoc> liveProjectApiDoc(String projectId) {
-        List<LiveApiDetail> liveApiDto = liveblocksComponent.getRoomStorageDocuments(projectId, StepName.API, LiveApiDetail.class);
+    public List<GetSimpleApiDoc> liveProjectApiDoc(ObjectId projectId) {
+        List<LiveApiDetail> liveApiDto = liveblocksComponent.getRoomStorageDocuments(projectId.toHexString(), StepName.API, LiveApiDetail.class);
 //        LiveApiDto liveApiDto = liveblocksComponent.getRoomStorageDocument(projectId, StepName.API, LiveApiDto.class);
         List<ApiDoc> apiDocs = new ArrayList<>();
         for (LiveApiDetail liveApiDetail : liveApiDto) {
@@ -482,6 +483,27 @@ public class MProjectServiceImpl implements MProjectService {
             return apiDocs.stream().map(GetSimpleApiDoc::of).toList();
         }
         throw new BaseExceptionHandler(ErrorCode.FAILED_TO_UPDATE_API_DOCS);
+    }
+
+    /**
+     * 프로젝트 Readme Liveblocks 연동
+     * @param projectId 프로젝트 ID
+     * @return Readme Data
+     */
+    @Override
+    public String liveUpdateProjectReadme(ObjectId projectId) {
+        LiveReadme liveReadme = liveblocksComponent.getRoomStorageDocument(projectId.toHexString(), StepName.README, LiveReadme.class);
+        if (StringParserUtil.isNullOrEmpty(liveReadme.json())) {
+            return "";
+        }
+
+        Query query = new Query(Criteria.where("_id").is(projectId));
+        Update update = new Update().set("project_readme", liveReadme.json());
+        var result = mongoTemplate.updateFirst(query, update, Project.class);
+        if (result.wasAcknowledged() && (result.getMatchedCount() > 0 || result.getModifiedCount() > 0)) {
+            return liveReadme.json();
+        }
+        throw new BaseExceptionHandler(ErrorCode.FAILED_TO_UPDATE_README);
     }
 
     @Override
