@@ -3,16 +3,21 @@ import * as Stomp from "@stomp/stompjs";
 import {ChatReq, ChatRes} from "@/containers/project/types/chat";
 
 
-type SocketState = {
+type Store = {
     client: Stomp.Client | null;
     connect: (projectId: string) => void;
     chatList: ChatRes[];
     setChatList: (chatList: ChatRes[]) => void;
     send: (projectId:string,{sender,message,mentionedMemberIds}:ChatReq) => void;
     disconnect: (client:Stomp.Client)=>void;
+    isVisible: boolean;
+    setIsVisible: (isVisible:boolean)=>void;
+    tempChatMessageId: string;
+    setTempChatMessageId: (chatMessageId:string)=>void;
+    moveChatMessageId: (chatMessageId:string)=>void;
 };
 
-export const useMessageSocketStore = create<SocketState>((set) => ({
+export const useMessageSocketStore = create<Store>((set) => ({
     client: null,
     chatList: [],
     setChatList: (chatList) => set({ chatList }),
@@ -62,6 +67,16 @@ export const useMessageSocketStore = create<SocketState>((set) => ({
             return state;
         });
     },
+    isVisible: false,
+    setIsVisible: (isVisible) => set({ isVisible }),
+    tempChatMessageId:"",
+    setTempChatMessageId:(chatMessageId)=>set({tempChatMessageId:chatMessageId}),
+    moveChatMessageId: (chatMessageId) => {
+        const chatMessage = document.querySelector(`.a${chatMessageId}`);
+        if (chatMessage) {
+            chatMessage.scrollIntoView({ behavior: 'smooth' });
+        }
 
-
+        set(() => ({ tempChatMessageId: '' }));
+    }
 }));

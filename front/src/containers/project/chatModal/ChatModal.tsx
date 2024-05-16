@@ -22,18 +22,16 @@ dayjs.locale('ko')
 
 
 type Props = {
-    isVisible: boolean | null,
     projectId: string
 }
 
-export default function ChatModal({isVisible, projectId}: Props) {
-    const {send, chatList} = useMessageSocketStore();
+export default function ChatModal({projectId}: Props) {
+    const {send, chatList,moveChatMessageId,isVisible,tempChatMessageId} = useMessageSocketStore();
     const {me, members} = useMemberStore();
     const [message, setMessage] = useState<string>("");
     const { isSenderModalVisible,setIsSenderModalVisible,filteredSenders,searchSender} = useMentionStore();
     const { selected,setSelected, handleKey } = useHandleKeys(filteredSenders,
         filteredSenders.length > 0 ? filteredSenders[0].memberId : "");
-
     const [cursorIndex, setCursorIndex] = useState<number>(0);
 
     // Animation상태는 세 종류 1.첫 시작(first) 2. 열 때(after), 3. 닫을 때(before)
@@ -132,7 +130,7 @@ export default function ChatModal({isVisible, projectId}: Props) {
         prevYearMonth = chat.sentAt.slice(0, 10);
     }
     return (
-        <div className={`${isVisible !== null && styles.chatModal} ${getModalStyle()}`}>
+        <div className={`${styles.chatModal} ${getModalStyle()}`} onAnimationEnd={()=>moveChatMessageId(tempChatMessageId)}>
             {isVisible && (
                 <>
                     <div className={styles.chatModalContent.header}>채팅</div>
@@ -167,8 +165,8 @@ export default function ChatModal({isVisible, projectId}: Props) {
                             />
                         </div>
                     </div>
-                </>
-            )}
+</>
+                )}
         </div>
     )
 }
