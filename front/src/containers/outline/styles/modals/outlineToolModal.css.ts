@@ -49,46 +49,22 @@ export const button = style({
   width:"30%",
   borderRadius:'10px',
   backgroundColor:'#FF7E20',
+  boxShadow: '0 6px #C65102',
   color:'white',
   textAlign:'center',
-  boxShadow:vars.boxShadow.customOuter,
+  transition: 'all 0.3s ease',
   ':hover': {
-    transform: 'scale(1.10)',
-    transitionDuration: '300ms',
+    backgroundColor: '#E76E0A',
   },
   ':active': {
-    transform: 'scale(0.90)',
-    transitionDuration: '300ms'
+    boxShadow: '0 2px #D15C00',
+    transform: 'translateY(5px)'
   }
-})
-
-export const toolInput = style ({
-  width:'47%',
-  height:'12%',
-  padding:'0.1rem',
-  paddingLeft:'0.8rem',
-  border:'none',
-  borderRadius:'5px',
-  borderBottom:'1px solid #F4F4F4',
-  boxShadow:vars.boxShadow.customInner,
-  backgroundColor:'#F4F4F4', outline: 'none'
-})
-
-export const urlInput = style ({
-  width:'90%',
-  height:'12%',
-  padding:'0.1rem',
-  paddingLeft:'0.8rem',
-  border:'none',
-  borderRadius:'5px',
-  borderBottom:'1px solid #F4F4F4',
-  boxShadow:vars.boxShadow.customInner,
-  backgroundColor:'#F4F4F4', outline: 'none'
 })
 
 export const inputMainDiv = style ({
   width:'95%',
-  height:'80%',
+  height:'70%',
   display:'flex',
   flexDirection:'column',
   justifyContent : 'space-evenly',
@@ -97,8 +73,7 @@ export const inputMainDiv = style ({
 })
 
 export const inputSubDiv = style ({
-  height:'15%',
+  height:'18%',
   display:'flex',
   justifyContent:'center',
-  marginTop:'10%'
 })

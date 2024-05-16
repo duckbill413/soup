@@ -7,7 +7,9 @@ import { ProjectTags } from '@/containers/plan/types/planStorage'
 import makeAIPlan from '@/apis/plan/planAPI'
 import { Toast } from '@/utils/toast'
 import { useParams } from 'next/navigation'
+import { TextField } from '@mui/material'
 import { useMutation, useStorage } from '../../../../../liveblocks.config'
+import { useStyles } from '../../styles/planMUI'
 
 function PlanBeforeAI () {
   const {projectId} = useParams()
@@ -80,8 +82,9 @@ function PlanBeforeAI () {
   return (
     <div className={styles.beforeAIContainer}>
       <p>기획 배경</p>
-      <input type="text" placeholder="기획 배경 키워드를 입력해주세요. 엔터키를 눌러 추가하세요."
+      <TextField type="text" label="기획 배경 키워드를 입력해주세요. 엔터키를 눌러 추가하세요."
         value={backgroundInput}
+        className={useStyles().input}
         onChange={onChangeInput(setBackgroundInput)}
         onKeyDown={addHashtag(backgroundInput, "background", setBackgroundInput,isComposingBackground)}
         onCompositionStart={e => handleComposition(setIsComposingBackground)(e)}
@@ -92,13 +95,14 @@ function PlanBeforeAI () {
           <span key={tag.id} className={styles.tagContainer}>
             <span className={styles.tagDivision}>{tag.content}</span>
             <button type="button" onClick={() => updateTags("delete", "project_background", tag.id)}
-                    style={{ color: '#515455' }}>✖</button>
+                    className={styles.deleteButton}>✖</button>
           </span>
         ))}
       </div>
 
       <p>서비스 소개</p>
-      <input type="text" placeholder="서비스 소개 키워드를 입력해주세요. 엔터키를 눌러 추가하세요."
+      <TextField type="text" label="서비스 소개 키워드를 입력해주세요. 엔터키를 눌러 추가하세요."
+             className={useStyles().input}
              value={introInput}
              onChange={onChangeInput(setIntroInput)}
              onKeyDown={addHashtag(introInput, 'intro', setIntroInput, isComposingIntro)}
@@ -110,13 +114,14 @@ function PlanBeforeAI () {
           <span key={tag.id} className={styles.tagContainer}>
             <span className={styles.tagDivision}>{tag.content}</span>
             <button type="button" onClick={() => updateTags("delete", "project_intro", tag.id)}
-                    style={{ color: '#515455' }}>✖</button>
+                    className={styles.deleteButton}>✖</button>
           </span>
         ))}
       </div>
 
       <p>서비스 타겟</p>
-      <input type="text" placeholder="서비스 타겟 키워드를 입력해주세요. 엔터키를 눌러 추가하세요."
+      <TextField type="text" label="서비스 타겟 키워드를 입력해주세요. 엔터키를 눌러 추가하세요."
+             className={useStyles().input}
              value={targetInput}
              onChange={onChangeInput(setTargetInput)}
              onKeyDown={addHashtag(targetInput, 'target', setTargetInput, isComposingTarget)}
@@ -127,7 +132,7 @@ function PlanBeforeAI () {
         {initialProject?.before?.project_target.map((tag: ProjectTags) => (
           <span key={tag.id} className={styles.tagContainer}>
             <span className={styles.tagDivision}>{tag.content}</span>
-            <button type="button" style={{ color: '#515455' }}
+            <button type="button" className={styles.deleteButton}
               onClick={() => updateTags("delete", "project_target", tag.id)}
             >✖</button>
           </span>
@@ -135,7 +140,8 @@ function PlanBeforeAI () {
       </div>
 
       <p>기대 효과</p>
-      <input type="text" placeholder="기대 효과 키워드를 입력해주세요. 엔터키를 눌러 추가하세요."
+      <TextField type="text" label="기대 효과 키워드를 입력해주세요. 엔터키를 눌러 추가하세요."
+             className={useStyles().input}
              value={effectInput}
              onChange={onChangeInput(setEffectInput)}
              onKeyDown={addHashtag(effectInput, 'effect', setEffectInput, isComposingEffect)}
@@ -147,7 +153,7 @@ function PlanBeforeAI () {
           <span key={tag.id} className={styles.tagContainer}>
             <span className={styles.tagDivision}>{tag.content}</span>
             <button type="button" onClick={() => updateTags("delete", "project_effect", tag.id)}
-                    style={{ color: '#515455' }}>✖</button>
+                    className={styles.deleteButton}>✖</button>
           </span>
         ))}
       </div>
