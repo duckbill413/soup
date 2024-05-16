@@ -4,15 +4,22 @@ import io.ssafy.soupapi.domain.project.mongodb.entity.builder.ProjectBuilderDepe
 import io.ssafy.soupapi.domain.project.mongodb.entity.builder.ProjectBuilderInfo;
 import io.ssafy.soupapi.domain.project.mongodb.entity.builder.SpringPackaging;
 import io.ssafy.soupapi.domain.springinfo.entity.Dependency;
+import io.ssafy.soupapi.global.common.code.ErrorCode;
+import io.ssafy.soupapi.global.exception.BaseExceptionHandler;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validation;
+import jakarta.validation.Validator;
+import jakarta.validation.ValidatorFactory;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
-public record LiveChangeProjectBuilderInfo(
+public record LiveProjectBuilderInfo(
         @NotNull(message = "type 값이 null일 수 없습니다.")
         @NotEmpty(message = "type 값이 공백 입니다.")
         String type,
@@ -47,13 +54,14 @@ public record LiveChangeProjectBuilderInfo(
         List<Long> dependencies
 ) {
     @Builder
-    public LiveChangeProjectBuilderInfo {
+    public LiveProjectBuilderInfo {
         if (Objects.isNull(dependencies)) {
             dependencies = List.of();
         }
     }
 
-    public static ProjectBuilderInfo toProjectBuilderInfo(LiveChangeProjectBuilderInfo builderInfo, List<Dependency> dependencies) {
+    public static ProjectBuilderInfo toProjectBuilderInfo(LiveProjectBuilderInfo builderInfo, List<Dependency> dependencies) {
+        isValid(builderInfo);
         return ProjectBuilderInfo.builder()
                 .type(builderInfo.type())
                 .language(builderInfo.language())
@@ -75,5 +83,20 @@ public record LiveChangeProjectBuilderInfo(
                         .build()).toList()
                 )
                 .build();
+    }
+
+    private static boolean isValid(LiveProjectBuilderInfo builderInfo) {
+        ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+        Validator validator = factory.getValidator();
+        Set<ConstraintViolation<LiveProjectBuilderInfo>> violations = validator.validate(builderInfo);
+        if (!violations.isEmpty()) {
+            StringBuilder sb = new StringBuilder();
+            for (ConstraintViolation<LiveProjectBuilderInfo> violation : violations) {
+                sb.append(violation.getMessage()).append(", ");
+            }
+            throw new BaseExceptionHandler(ErrorCode.UNABLE_TO_USE_THIS_BUILDER_INFO, "유효성 검사 실패: " + sb);
+        }
+
+        return true;
     }
 }
