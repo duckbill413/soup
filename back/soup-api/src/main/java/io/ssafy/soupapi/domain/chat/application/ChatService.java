@@ -67,7 +67,10 @@ public class ChatService {
 
         // 4. 태그 알림 -> SSE 알림 전송
         for (MNoti mNoti : mNotiList) {
-            NewNotiRes newNotiRes = notiService.generateNewNotiRes(mNoti, chatMessageReq.sender().getProfileImageUrl());
+            String projectName = findEntityUtil.findPProjectById(mNoti.getProjectId()).getName();
+            NewNotiRes newNotiRes = mNoti.generateNewNotiRes(
+                chatMessageReq.sender().getProfileImageUrl(), projectName
+            );
             notiService.notify(mNoti.getReceiverId(), newNotiRes, "mention");
         }
 

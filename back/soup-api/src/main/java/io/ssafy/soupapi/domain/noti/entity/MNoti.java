@@ -44,7 +44,7 @@ public class MNoti {
     @Field("noti_mentioned_chat_message_id")
     private String chatMessageId;
 
-    public NewNotiRes generateNewNotiRes(String notiPhotoUrl) {
+    public NewNotiRes generateNewNotiRes(String notiPhotoUrl, String projectName) {
         return NewNotiRes.builder()
                 .notiId(id.toString())
                 .title(title)
@@ -52,6 +52,7 @@ public class MNoti {
                 .isRead(isRead)
                 .notiPhotoUrl(notiPhotoUrl)
                 .projectId(projectId)
+                .projectName(projectName)
                 .chatMessageId(chatMessageId)
                 .createdTime(createdAt == null ? ZonedDateTime.now() : DateConverterUtil.instantToKstZdt(createdAt))
                 .build();

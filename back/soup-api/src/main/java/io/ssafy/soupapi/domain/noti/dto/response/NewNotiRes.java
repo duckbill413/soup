@@ -16,6 +16,7 @@ public class NewNotiRes {
     private Boolean isRead;
     private String notiPhotoUrl;
     private String projectId;
+    private String projectName;
     private String chatMessageId;
     private ZonedDateTime createdTime;
 }

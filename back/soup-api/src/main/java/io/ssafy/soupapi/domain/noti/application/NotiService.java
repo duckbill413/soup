@@ -36,7 +36,9 @@ public class NotiService {
         List<MNoti> result;
         List<MNoti> rNotiList = new ArrayList<>();
         List<MNoti> mNotiList = new ArrayList<>();
+
         Map<String, Member> mentionerMap = new HashMap<>();
+        Map<String, String> projectNameMap = new HashMap<>();
 
         /*------------------------------------ 1. Redis 탐색 ------------------------------------*/
         if (Objects.isNull(isRead)) {
@@ -47,6 +49,7 @@ public class NotiService {
         }
         for (MNoti mNoti : rNotiList) {
             mentionerMap.put(mNoti.getSenderId(), null);
+            projectNameMap.put(mNoti.getProjectId(), null);
         }
         result = new ArrayList<>(rNotiList);
 
@@ -66,22 +69,29 @@ public class NotiService {
         }
         for (MNoti mNoti : mNotiList) {
             mentionerMap.put(mNoti.getSenderId(), null);
+            projectNameMap.put(mNoti.getProjectId(), null);
         }
         result.addAll(mNotiList);
 //        log.info("[수신 알림 조회] MongoDB에서 {}개 발견", mNotiList.size());
 
-        /*----------------------------- 3. 알림 사진 전달 위해 mentioner 유저 정보 조회 -----------------------------*/
+        /*----------------------------- 3. 알림 관련 추가적인 정보 조회 및 응답 가공 -----------------------------*/
         List<UUID> mentionerIdList = mentionerMap.keySet().stream()
                 .map(UUID::fromString)
                 .toList();
         mentionerMap = findEntityUtil.findAllMemberByIdAndGenerateMap(mentionerIdList);
 
+        List<String> projectIdList = projectNameMap.keySet().stream().toList();
+        projectNameMap = findEntityUtil.findAllProjectByIdAndGenerateMap(projectIdList);
+
         GetNotiRes response = GetNotiRes.builder().build();
         for (MNoti mNoti : result) {
-            response.getNotiList().add(
-                    mNoti.generateNewNotiRes(mentionerMap.get(mNoti.getSenderId()).getProfileImageUrl())
+            NewNotiRes newNotiRes = mNoti.generateNewNotiRes(
+                mentionerMap.get(mNoti.getSenderId()).getProfileImageUrl(),
+                projectNameMap.get(mNoti.getProjectId())
             );
+            response.getNotiList().add(newNotiRes);
         }
+
         return response;
     }
 
@@ -105,9 +115,9 @@ public class NotiService {
 
     /*------------------------------------ Redis ------------------------------------*/
 
-    public NewNotiRes generateNewNotiRes(MNoti mNoti, String notiPhotoUrl) {
-        return mNoti.generateNewNotiRes(notiPhotoUrl);
-    }
+//    public NewNotiRes generateNewNotiRes(MNoti mNoti, String notiPhotoUrl) {
+//        return mNoti.generateNewNotiRes(notiPhotoUrl);
+//    }
 
     /*------------------------------------ MongoDB ------------------------------------*/
 

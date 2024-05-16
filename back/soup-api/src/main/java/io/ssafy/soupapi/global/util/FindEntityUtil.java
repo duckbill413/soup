@@ -57,4 +57,14 @@ public class FindEntityUtil {
         );
     }
 
+    @Transactional(readOnly = true)
+    public Map<String, String> findAllProjectByIdAndGenerateMap(List<String> projectIdList) {
+        List<Project> projectList = projectRepository.findAllById(projectIdList);
+        Map<String, String> projectNameMap = new HashMap<>();
+        for (Project p : projectList) {
+            projectNameMap.put(p.getId(), p.getName());
+        }
+        return projectNameMap;
+    }
+
 }
