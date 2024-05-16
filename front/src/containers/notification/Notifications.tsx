@@ -2,23 +2,27 @@
 
 import { getNotisAPI, readNotisAPI } from '@/apis/notification'
 import * as styles from '@/containers/notification/notifications.css'
+import { useMessageSocketStore } from '@/stores/useMessageSocketStore'
 import vars from '@/styles/variables.css'
-import Badge from '@mui/material/Badge'
-import NotificationsIcon from '@mui/icons-material/Notifications'
-import Image from 'next/image'
-import { useEffect, useState } from 'react'
-import { EventSourcePolyfill, NativeEventSource } from 'event-source-polyfill'
-import { getAccessToken } from '@/utils/token'
-import { getNotisAPI, readNotisAPI } from '@/apis/notification'
-import {useParams,  useRouter} from 'next/navigation'
-import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime'
 import { elapsedTime } from '@/utils/elapsedTime'
-import {useMessageSocketStore} from "@/stores/useMessageSocketStore";
+import { getAccessToken } from '@/utils/token'
+import NotificationsIcon from '@mui/icons-material/Notifications'
+import Badge from '@mui/material/Badge'
+import { EventSourcePolyfill, NativeEventSource } from 'event-source-polyfill'
+import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime'
+import Image from 'next/image'
+import { useParams, useRouter } from 'next/navigation'
+import { useEffect, useState } from 'react'
 import { NotiEvent, Notification } from './notification'
 
 let router: AppRouterInstance
 
-function Card(item: Notification, handleClose: Function,handleChatModal:(chatMessageId:string)=>void,currProjectId:string) {
+function Card(
+  item: Notification,
+  handleClose: Function,
+  handleChatModal: (chatMessageId: string) => void,
+  currProjectId: string,
+) {
   const {
     notiId,
     title,
@@ -34,13 +38,13 @@ function Card(item: Notification, handleClose: Function,handleChatModal:(chatMes
     // 알림 읽음 처리
     await readNotisAPI(notiId)
     // 홈에서 읽었을 때는 해당 프로젝트의 outline으로 이동
-    if (currProjectId!==projectId) {
+    if (currProjectId !== projectId) {
       router.push(`/project/${projectId}/outline`)
     }
     // 프로젝트 안에서 읽었을 때는 채팅 메세지로 이동
     else {
-      handleClose();
-      handleChatModal(chatMessageId);
+      handleClose()
+      handleChatModal(chatMessageId)
     }
   }
 
@@ -76,26 +80,24 @@ function Card(item: Notification, handleClose: Function,handleChatModal:(chatMes
   )
 }
 type RouteParams = {
-  projectId:string;
+  projectId: string
 }
 export default function Notifications() {
-  const {projectId} = useParams<RouteParams>();
-  const [open, setOpen] = useState<boolean>(false);
-  const [unreadCnt, setUnreadCnt] = useState<number>(0);
-  const [notis, setNotis] = useState<Array<Notification>>([]);
+  const { projectId } = useParams<RouteParams>()
+  const [open, setOpen] = useState<boolean>(false)
+  const [unreadCnt, setUnreadCnt] = useState<number>(0)
+  const [notis, setNotis] = useState<Array<Notification>>([])
 
-  const {setIsVisible,setTempChatMessageId,moveChatMessageId,isVisible} = useMessageSocketStore();
+  const { setIsVisible, setTempChatMessageId, moveChatMessageId, isVisible } =
+    useMessageSocketStore()
   router = useRouter()
-  const handleChatModal = (chatMessageModal:string)=>{
-    if(isVisible){
-      moveChatMessageId(chatMessageModal);
-      return;
+  const handleChatModal = (chatMessageModal: string) => {
+    if (isVisible) {
+      moveChatMessageId(chatMessageModal)
+      return
     }
-    setIsVisible(true);
-    setTempChatMessageId(chatMessageModal);
-
-
-
+    setIsVisible(true)
+    setTempChatMessageId(chatMessageModal)
   }
   const handleMenu = () => {
     if (open) {
@@ -207,7 +209,9 @@ export default function Notifications() {
               </span>
             </div>
             <div className={styles.list}>
-              {notis.map((item) => Card(item, handleMenu,handleChatModal, projectId))}
+              {notis.map((item) =>
+                Card(item, handleMenu, handleChatModal, projectId),
+              )}
             </div>
           </div>
         </div>
