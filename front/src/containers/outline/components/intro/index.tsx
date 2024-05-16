@@ -56,7 +56,7 @@ function OutlineIntro () {
       <div className={styles.introDivision}>
         <p>프로젝트 이름</p>
         <TextField
-          label="프로젝트 이름"
+          label="이름을 작성해주세요"
           value={initialProject?.project_name}
           onChange={(e) => updateProject('project_name', e.target.value)}
         />
@@ -64,7 +64,7 @@ function OutlineIntro () {
         <TextField
           multiline
           rows={4}
-          label="프로젝트 설명"
+          label="설명을 작성해주세요"
           value={initialProject?.project_description}
           onChange={(e) => updateProject('project_description', e.target.value)}
         />

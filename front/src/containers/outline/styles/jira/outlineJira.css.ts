@@ -1,6 +1,15 @@
 import vars from '@/styles/variables.css';
 import { style, globalStyle } from '@vanilla-extract/css';
 
+export const jiraMainDiv = style ({
+  display: 'flex'
+})
+
+export const jiraSubDiv = style ({
+  width: '18%',
+  marginRight:'3%'
+})
+
 export const toggleSwitch = style({
   width: '60px',
   height: '30px',
@@ -30,7 +39,8 @@ globalStyle(`${toggleSwitch}.toggled .${slider}`, {
 });
 
 export const mainDiv = style ({
-  display:'flex'
+  display:'flex',
+  alignItems:'center'
 })
 
 export const toggleDiv = style ({
@@ -52,7 +62,7 @@ export const button = style({
   margin:'3%',
   marginLeft:'74%',
   width:"7%",
-  height:'54px',
+  height:'45px',
   borderRadius:'10px',
   backgroundColor:'#FF7E20',
   color:'white',
