@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.mongodb.core.mapping.Field;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
@@ -39,4 +40,6 @@ public class ProjectBuilderInfo {
     private String zipFilePath;
     @Field("springboot_s3_url")
     private String s3Url;
+    @Field("project_built_at")
+    private LocalDateTime builtAt;
 }

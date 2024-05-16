@@ -28,6 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 
@@ -102,7 +103,8 @@ public class ProjectBuilderServiceImpl implements ProjectBuilderService {
         Update update = new Update()
                 .set("project_builder_info.springboot_file_path", filePath)
                 .set("project_builder_info.springboot_zip_file_path", zipFilePath)
-                .set("project_builder_info.springboot_s3_url", s3Url);
+                .set("project_builder_info.springboot_s3_url", s3Url)
+                .set("project_builder_info.project_built_at", LocalDateTime.now());
 
         var result = mongoTemplate.updateFirst(query, update, Project.class);
         if (result.wasAcknowledged() && (result.getMatchedCount() > 0 || result.getModifiedCount() > 0)) {
@@ -153,7 +155,6 @@ public class ProjectBuilderServiceImpl implements ProjectBuilderService {
         if (Objects.isNull(buildInfo.s3Url())) {
             throw new BaseExceptionHandler(ErrorCode.NOT_FOUND_BUILT_PROJECT);
         }
-
 
         var structure = projectStructureRepository.findProjectStructure(projectId, buildInfo);
         return new BuiltStructure(buildInfo, structure);
