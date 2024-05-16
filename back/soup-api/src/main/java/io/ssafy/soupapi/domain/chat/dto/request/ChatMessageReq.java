@@ -18,6 +18,7 @@ public record ChatMessageReq(
         return RChatMessage.builder()
                 .chatMessageId(chatMessageId)
                 .senderId(sender.getMemberId()).message(message).sentAt(sentAt)
+                .mentioneeIds(mentionedMemberIds)
                 .build();
     }
 
@@ -25,6 +26,7 @@ public record ChatMessageReq(
         return ChatMessage.builder()
                 .id(chatMessageId)
                 .senderId(sender.getMemberId()).content(message).timestamp(sentAt)
+                .mentioneeIds(mentionedMemberIds)
                 .build();
     }
 

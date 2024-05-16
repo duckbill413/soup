@@ -7,12 +7,12 @@ import java.util.List;
 
 public interface S3FileService {
 
-    public String generateFileName(String originalFileName);
+    String generateFileName(String originalFileName);
 
     String uploadFile(String defaultPath, String localFilePath) throws IOException;
 
-    public String uploadFile(MultipartFile file);
+    String uploadFile(MultipartFile file);
 
-    public List<String> uploadFileList(List<MultipartFile> fileList);
+    List<String> uploadFileList(List<MultipartFile> fileList);
 
 }

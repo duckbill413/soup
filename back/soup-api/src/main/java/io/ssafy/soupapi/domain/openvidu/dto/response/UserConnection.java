@@ -2,8 +2,6 @@ package io.ssafy.soupapi.domain.openvidu.dto.response;
 
 import lombok.*;
 
-import java.time.LocalDateTime;
-
 @Getter
 @Setter
 @Builder

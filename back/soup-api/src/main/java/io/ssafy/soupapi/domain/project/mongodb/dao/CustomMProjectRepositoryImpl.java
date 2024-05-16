@@ -48,7 +48,8 @@ public class CustomMProjectRepositoryImpl implements CustomMProjectRepository {
                      chat_message_id: "$project_chats.chat_message_id",
                      chat_message_sender_id: "$project_chats.chat_message_sender_id",
                      chat_message_content: "$project_chats.chat_message_content",
-                     chat_message_timestamp: "$project_chats.chat_message_timestamp"
+                     chat_message_timestamp: "$project_chats.chat_message_timestamp",
+                     chat_message_mentionee_list: "$project_chats.chat_message_mentionee_list"
                  }
              }
         """);

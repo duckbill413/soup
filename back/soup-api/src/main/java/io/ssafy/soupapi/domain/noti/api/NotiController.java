@@ -1,16 +1,12 @@
 package io.ssafy.soupapi.domain.noti.api;
 
-import io.ssafy.soupapi.domain.chat.dto.response.ChatMessageRes;
 import io.ssafy.soupapi.domain.noti.application.NotiService;
 import io.ssafy.soupapi.domain.noti.dto.response.GetNotiRes;
 import io.ssafy.soupapi.global.common.code.SuccessCode;
-import io.ssafy.soupapi.global.common.request.PageOffsetRequest;
 import io.ssafy.soupapi.global.common.response.BaseResponse;
 import io.ssafy.soupapi.global.security.user.UserSecurityDTO;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.MediaType;
@@ -18,9 +14,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
-
-import java.time.LocalDateTime;
-import java.util.List;
 
 @Log4j2
 @RestController

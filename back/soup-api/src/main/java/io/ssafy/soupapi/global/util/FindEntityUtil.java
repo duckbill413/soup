@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -35,6 +36,11 @@ public class FindEntityUtil {
         return memberRepository.findById(memberId).orElseThrow(() ->
                 new BaseExceptionHandler(ErrorCode.NOT_FOUND_USER)
         );
+    }
+
+    @Transactional(readOnly = true)
+    public List<Member> findAllMemberById(List<UUID> memberIdList) {
+        return memberRepository.findAllById(memberIdList);
     }
 
     @Transactional(readOnly = true)

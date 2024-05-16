@@ -101,26 +101,24 @@ public class ChatService {
             if (rDataSize == 0) rLdt = DateConverterUtil.kstLdtToInstant(standardTime);
             else rLdt = rChatMessageList.get(0).sentAt(); // redis에서 earliest 메시지의 sentAt
 
-            mChatMessageList = mProjectRepository.getNChatMessagesBefore(chatroomId, rLdt, mDataSize);
-            log.info("getChatMessages() -> mongoDB에서 {}개 획득", mChatMessageList.size());
-
-            for (ChatMessage mChatMessage : mChatMessageList) {
-                senderMap.put(mChatMessage.getSenderId(), null);
-                result.add(mChatMessage.toGetChatMessageRes());
-            }
-
-            // MongoDB에서 조회한 데이터는 Redis에 저장 (캐싱)
-            List<RChatMessage> rChatMessagesToSave = new ArrayList<>();
-            for (ChatMessage mChatMessage : mChatMessageList) {
-                rChatMessagesToSave.add(mChatMessage.toRChatMessage());
-            }
-            rChatRepository.insertMessages(chatroomId, rChatMessagesToSave);
+            findChatMessageFromMongodb(
+                mChatMessageList, senderMap, result,
+                chatroomId, rLdt, mDataSize
+            );
         }
 
-        for (String memberId : senderMap.keySet()) {
-            Member member = findEntityUtil.findMemberById(UUID.fromString(memberId));
-            senderMap.put(memberId, member);
+        List<UUID> senderIdList = senderMap.keySet().stream()
+            .map(UUID::fromString)
+            .toList();
+        List<Member> senderList = findEntityUtil.findAllMemberById(senderIdList);
+        for (Member m : senderList) {
+            senderMap.put(String.valueOf(m.getId()), m);
         }
+
+//        for (String memberId : senderMap.keySet()) {
+//            Member member = findEntityUtil.findMemberById(UUID.fromString(memberId));
+//            senderMap.put(memberId, member);
+//        }
 
         for (ChatMessageRes res : result) {
             String senderId = res.getSender().getMemberId();
@@ -142,6 +140,26 @@ public class ChatService {
             senderMap.put(rChatMessage.senderId(), null);
             result.add(rChatMessage.toChatMessageRes());
         }
+    }
+
+    private void findChatMessageFromMongodb(
+            List<ChatMessage> mChatMessageList, Map<String, Member> senderMap, List<ChatMessageRes> result,
+            String chatroomId, Instant beforeTime, int mDataSize
+    ) {
+        mChatMessageList = mProjectRepository.getNChatMessagesBefore(chatroomId, beforeTime, mDataSize);
+        log.info("getChatMessages() -> mongoDB에서 {}개 획득", mChatMessageList.size());
+
+        for (ChatMessage mChatMessage : mChatMessageList) {
+            senderMap.put(mChatMessage.getSenderId(), null);
+            result.add(mChatMessage.toGetChatMessageRes());
+        }
+
+        // MongoDB에서 조회한 데이터는 Redis에 저장 (캐싱)
+        List<RChatMessage> rChatMessagesToSave = new ArrayList<>();
+        for (ChatMessage mChatMessage : mChatMessageList) {
+            rChatMessagesToSave.add(mChatMessage.toRChatMessage());
+        }
+        rChatRepository.insertMessages(chatroomId, rChatMessagesToSave);
     }
 
     private ChatMessageRes generateChatMessageRes(
