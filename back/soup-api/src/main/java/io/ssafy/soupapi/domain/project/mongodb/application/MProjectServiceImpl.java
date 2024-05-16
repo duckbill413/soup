@@ -5,7 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import io.ssafy.soupapi.domain.project.constant.StepName;
 import io.ssafy.soupapi.domain.project.mongodb.dao.MProjectRepository;
-import io.ssafy.soupapi.domain.project.mongodb.dto.liveblock.APIListDetail;
+import io.ssafy.soupapi.domain.project.mongodb.dto.liveblock.LiveApiDetail;
+import io.ssafy.soupapi.domain.project.mongodb.dto.liveblock.LiveApiDto;
 import io.ssafy.soupapi.domain.project.mongodb.dto.request.*;
 import io.ssafy.soupapi.domain.project.mongodb.dto.response.*;
 import io.ssafy.soupapi.domain.project.mongodb.entity.Info;
@@ -447,7 +448,7 @@ public class MProjectServiceImpl implements MProjectService {
 
     @Transactional
     @Override
-    public Object linkProjectVuerd(ObjectId projectId) {
+    public Object liveProjectVuerd(ObjectId projectId) {
         var vuerdDoc = liveblocksComponent.getRoomStorageDocument(projectId.toHexString(), StepName.ERD, Object.class);
         if (Objects.isNull(vuerdDoc)) {
             throw new BaseExceptionHandler(ErrorCode.LIVEBLOCK_DATA_IS_NULL);
@@ -461,16 +462,16 @@ public class MProjectServiceImpl implements MProjectService {
 
     @Override
     public List<GetSimpleApiDoc> liveProjectApiDoc(String projectId) {
-        List<APIListDetail> apiList = liveblocksComponent.getRoomStorageDocuments(projectId, StepName.API, APIListDetail.class);
+        LiveApiDto liveApiDto = liveblocksComponent.getRoomStorageDocument(projectId, StepName.API, LiveApiDto.class);
         List<ApiDoc> apiDocs = new ArrayList<>();
-        for (APIListDetail apiListDetail : apiList) {
+        for (LiveApiDetail liveApiDetail : liveApiDto.apiDetails()) {
             try {
-                apiDocs.add(APIListDetail.toApiDoc(apiListDetail));
+                apiDocs.add(LiveApiDetail.toApiDoc(liveApiDetail));
             } catch (Exception e) {
                 if (e instanceof BaseExceptionHandler) {
                     log.info(e.getMessage());
                 }
-                log.trace(apiListDetail.name() + " APIListDetail 파싱 실패!");
+                log.trace(liveApiDetail.name() + " APIListDetail 파싱 실패!");
             }
         }
 

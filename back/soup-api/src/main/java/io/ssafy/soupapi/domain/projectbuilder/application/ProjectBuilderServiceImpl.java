@@ -7,7 +7,7 @@ import io.ssafy.soupapi.domain.project.mongodb.entity.builder.ProjectBuilderDepe
 import io.ssafy.soupapi.domain.project.mongodb.entity.builder.ProjectBuilderInfo;
 import io.ssafy.soupapi.domain.projectbuilder.dao.ProjectBuilderRepository;
 import io.ssafy.soupapi.domain.projectbuilder.dao.ProjectStructureRepository;
-import io.ssafy.soupapi.domain.projectbuilder.dto.liveblock.LiveChangeProjectBuilderInfo;
+import io.ssafy.soupapi.domain.projectbuilder.dto.liveblock.LiveProjectBuilderInfo;
 import io.ssafy.soupapi.domain.projectbuilder.dto.request.ChangeProjectBuilderInfo;
 import io.ssafy.soupapi.domain.projectbuilder.dto.response.BuiltStructure;
 import io.ssafy.soupapi.domain.projectbuilder.dto.response.GetProjectBuilderInfo;
@@ -213,9 +213,9 @@ public class ProjectBuilderServiceImpl implements ProjectBuilderService {
 
     @Override
     public GetProjectBuilderInfo liveChangeBuilderInfo(String projectId) {
-        var liveBuilderInfo = liveblocksComponent.getRoomStorageDocument(projectId, StepName.build, LiveChangeProjectBuilderInfo.class);
+        var liveBuilderInfo = liveblocksComponent.getRoomStorageDocument(projectId, StepName.BUILD, LiveProjectBuilderInfo.class);
         var dependencies = dependencyRepository.findByIdIsInOrBasicIsTrue(liveBuilderInfo.dependencies());
-        var buildInfo = LiveChangeProjectBuilderInfo.toProjectBuilderInfo(liveBuilderInfo, dependencies);
+        var buildInfo = LiveProjectBuilderInfo.toProjectBuilderInfo(liveBuilderInfo, dependencies);
         mProjectRepository.changeProjectBuildInfo(new ObjectId(projectId), buildInfo);
         return GetProjectBuilderInfo.of(buildInfo);
     }

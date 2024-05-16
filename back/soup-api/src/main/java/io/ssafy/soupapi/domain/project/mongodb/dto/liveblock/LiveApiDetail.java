@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 import static io.ssafy.soupapi.global.util.StringParserUtil.isJsonNullOrEmpty;
 
 @Log4j2
-public record APIListDetail(
+public record LiveApiDetail(
         String id,
         @NotBlank(message = "domain은 필수입니다.")
         String domain,
@@ -45,29 +45,29 @@ public record APIListDetail(
         @JsonProperty("response_body")
         Body responseBody
 ) {
-    public static ApiDoc toApiDoc(APIListDetail apiListDetail) {
-        if (isValid(apiListDetail)) {
+    public static ApiDoc toApiDoc(LiveApiDetail liveApiDetail) {
+        if (isValid(liveApiDetail)) {
             return ApiDoc.builder()
-                    .id(UUID.fromString(apiListDetail.id()))
-                    .domain(apiListDetail.domain())
-                    .name(apiListDetail.name())
-                    .methodName(apiListDetail.methodName())
-                    .description(apiListDetail.desc())
-                    .httpMethodType(apiListDetail.httpMethod() != null ?
-                            HttpMethodType.valueOf(apiListDetail.httpMethod()) :
+                    .id(UUID.fromString(liveApiDetail.id()))
+                    .domain(liveApiDetail.domain())
+                    .name(liveApiDetail.name())
+                    .methodName(liveApiDetail.methodName())
+                    .description(liveApiDetail.desc())
+                    .httpMethodType(liveApiDetail.httpMethod() != null ?
+                            HttpMethodType.valueOf(liveApiDetail.httpMethod()) :
                             null)
-                    .apiUriPath(apiListDetail.uri())
-                    .requestBody(isJsonNullOrEmpty(apiListDetail.requestBody().data())
+                    .apiUriPath(liveApiDetail.uri())
+                    .requestBody(isJsonNullOrEmpty(liveApiDetail.requestBody().data())
                             ? null
-                            : apiListDetail.requestBody().data())
-                    .responseBody(isJsonNullOrEmpty(apiListDetail.responseBody().data())
+                            : liveApiDetail.requestBody().data())
+                    .responseBody(isJsonNullOrEmpty(liveApiDetail.responseBody().data())
                             ? null
-                            : apiListDetail.responseBody().data())
-                    .pathVariables(apiListDetail.pathVariable() != null
-                            ? apiListDetail.pathVariable().stream().map(PathVariable::toApiVariable).toList()
+                            : liveApiDetail.responseBody().data())
+                    .pathVariables(liveApiDetail.pathVariable() != null
+                            ? liveApiDetail.pathVariable().stream().map(PathVariable::toApiVariable).toList()
                             : List.of())
-                    .queryParameters(apiListDetail.queryParam() != null
-                            ? apiListDetail.queryParam().stream().map(QueryParam::toApiVariable).toList()
+                    .queryParameters(liveApiDetail.queryParam() != null
+                            ? liveApiDetail.queryParam().stream().map(QueryParam::toApiVariable).toList()
                             : List.of())
                     .build();
         }
@@ -76,20 +76,20 @@ public record APIListDetail(
     }
 
 
-    private static boolean isValid(APIListDetail apiListDetail) {
+    private static boolean isValid(LiveApiDetail liveApiDetail) {
         ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
         Validator validator = factory.getValidator();
-        Set<ConstraintViolation<APIListDetail>> violations = validator.validate(apiListDetail);
+        Set<ConstraintViolation<LiveApiDetail>> violations = validator.validate(liveApiDetail);
         if (!violations.isEmpty()) {
             StringBuilder sb = new StringBuilder();
-            for (ConstraintViolation<APIListDetail> violation : violations) {
+            for (ConstraintViolation<LiveApiDetail> violation : violations) {
                 sb.append(violation.getMessage()).append(", ");
             }
             throw new BaseExceptionHandler(ErrorCode.UNABLE_TO_USE_THIS_API_DOC, "유효성 검사 실패: " + sb);
         }
 
-        List<String> needKeys = StringParserUtil.extractBracketsContent(apiListDetail.uri());
-        Set<String> pathKey = apiListDetail.pathVariable().stream().map(p -> p.name().toUpperCase()).collect(Collectors.toSet());
+        List<String> needKeys = StringParserUtil.extractBracketsContent(liveApiDetail.uri());
+        Set<String> pathKey = liveApiDetail.pathVariable().stream().map(p -> p.name().toUpperCase()).collect(Collectors.toSet());
         for (String needKey : needKeys) {
             if (!pathKey.contains(needKey.toUpperCase())) {
                 throw new BaseExceptionHandler(ErrorCode.UNABLE_TO_USE_THIS_API_DOC, "유효성 검사 실패: PathVariable 정보 부족 " + needKey);

@@ -3,6 +3,7 @@ package io.ssafy.soupapi.usecase.dto.liveblock;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.ssafy.soupapi.domain.project.mongodb.dto.request.UpdateProjectInfo;
 import io.ssafy.soupapi.domain.project.mongodb.dto.request.UpdateProjectTool;
+import io.ssafy.soupapi.global.util.StringParserUtil;
 
 import java.time.Instant;
 import java.util.List;
@@ -42,8 +43,12 @@ public record LiveUpdateProjectInfo(
                 .name(projectInfo.projectName())
                 .description(projectInfo.projectDescription())
                 .imgUrl(projectInfo.projectPhoto())
-                .startDate(Instant.parse(projectInfo.projectStartDate()))
-                .endDate(Instant.parse(projectInfo.projectEndDate()))
+                .startDate(StringParserUtil.isNullOrEmpty(projectInfo.projectStartDate()) ?
+                        null :
+                        Instant.parse(projectInfo.projectStartDate()))
+                .endDate(StringParserUtil.isNullOrEmpty(projectInfo.projectEndDate()) ?
+                        null :
+                        Instant.parse(projectInfo.projectEndDate()))
                 .tools(tools)
                 .build();
     }
