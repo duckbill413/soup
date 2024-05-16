@@ -182,19 +182,19 @@ public class ProjectBuilderRepositoryImpl implements ProjectBuilderRepository {
         }
         if (Objects.nonNull(project.getProposal())) {
             readme.append("\n## 기획서\n");
-            if (StringParserUtil.isNullOrEmpty(project.getProposal().getBackground())) {
+            if (!StringParserUtil.isNullOrEmpty(project.getProposal().getBackground())) {
                 readme.append("\n### 기획 배경\n");
                 readme.append(project.getProposal().getBackground()).append('\n');
             }
-            if (StringParserUtil.isNullOrEmpty(project.getProposal().getIntroduce())) {
+            if (!StringParserUtil.isNullOrEmpty(project.getProposal().getIntroduce())) {
                 readme.append("\n### 서비스 소개\n");
                 readme.append(project.getProposal().getIntroduce()).append('\n');
             }
-            if (StringParserUtil.isNullOrEmpty(project.getProposal().getTarget())) {
+            if (!StringParserUtil.isNullOrEmpty(project.getProposal().getTarget())) {
                 readme.append("\n### 서비스 타겟\n");
                 readme.append(project.getProposal().getTarget()).append('\n');
             }
-            if (StringParserUtil.isNullOrEmpty(project.getProposal().getExpectation())) {
+            if (!StringParserUtil.isNullOrEmpty(project.getProposal().getExpectation())) {
                 readme.append("\n### 기대 효과\n");
                 readme.append(project.getProposal().getExpectation()).append('\n');
             }
