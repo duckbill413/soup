@@ -32,7 +32,7 @@ function Card(
     projectId,
     projectName,
     chatMessageId,
-    read,
+    isRead,
   } = item
 
   const readNoti = async () => {
@@ -51,29 +51,29 @@ function Card(
 
   return (
     <div
+      className={styles.notiList}
+      key={notiId}
+      onClick={readNoti}
+      onKeyDown={readNoti}
+      role="presentation"
       style={
-        read
-          ? { backgroundColor: vars.color.gray, color: vars.color.deepGray }
+        isRead
+          ? {
+              backgroundColor: vars.color.gray,
+              color: vars.color.deepGray,
+            }
           : {
               backgroundColor: 'white',
               color: vars.color.black,
-              padding: '12px',
-              margin: '12px 0',
             }
       }
     >
-      <div
-        className={styles.notification}
-        key={notiId}
-        onClick={readNoti}
-        onKeyDown={readNoti}
-        role="presentation"
-      >
+      <div className={styles.notification}>
         <Image
           unoptimized
           src={notiPhotoUrl}
-          width={44}
-          height={44}
+          width={36}
+          height={36}
           alt="프로필"
           className={styles.profile}
         />
@@ -82,10 +82,23 @@ function Card(
             <span className={styles.notiTitle}>{title}</span>
             <span className={styles.date}>{elapsedTime(createdTime)}</span>
           </div>
-          <p>
-            <span className={styles.name}>{`${projectName}`}</span>
-            {content}
-          </p>
+          <span
+            className={styles.name}
+            style={
+              isRead
+                ? {
+                    backgroundColor: vars.color.lightGray,
+                    color: vars.color.deepGray,
+                  }
+                : {
+                    backgroundColor: vars.color.cream,
+                    color: vars.color.black,
+                  }
+            }
+          >
+            {projectName}
+          </span>
+          <p>{content}</p>
         </div>
       </div>
     </div>
@@ -138,7 +151,7 @@ export default function Notifications() {
     eventSource.addEventListener('sse', (event: any) => {
       const obj: NotiEvent = JSON.parse(event.data)
       const { unreadNotiNum } = obj
-
+      console.log('??')
       setUnreadCnt(unreadNotiNum)
     })
 

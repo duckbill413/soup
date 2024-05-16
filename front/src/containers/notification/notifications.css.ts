@@ -63,9 +63,15 @@ export const profile = style({
   aspectRatio: '1/1',
 })
 
+export const notiList = style({
+  padding: '16px',
+  margin: '8px 0',
+})
+
 export const notiTitle = style({
   fontSize: vars.fontSize.small,
   fontWeight: 600,
+  alignmentBaseline: 'baseline',
 })
 
 export const date = style({
@@ -76,17 +82,20 @@ export const date = style({
 
 export const name = style({
   fontSize: vars.fontSize.caption,
-  color: vars.color.deepGray,
+  color: 'white',
   display: 'inline-block',
   padding: '0 8px',
-  margin: '0 0 12px',
+  margin: '6px 0 0',
   borderRadius: '5px',
-  background: vars.color.lightGray,
+  background: vars.color.deepGray,
+  width: 'fit-content',
 })
 
 export const notiTop = style({
   display: 'flex',
   justifyContent: 'space-between',
+  alignItems: 'baseline',
+  gap: '4px',
 })
 
 export const list = style({
@@ -112,18 +121,16 @@ export const list = style({
 
 export const notification = style({
   display: 'flex',
-  gap: '16px',
-
-  color: 'inherit',
-  background: 'inherit',
-  // margin: '12px 0',
-  // padding: '12px',
+  gap: '10px',
 
   boxSizing: 'border-box',
 })
 
 export const contents = style({
-  width: 'calc(100% - 60px)',
+  width: 'calc(100% - 45px)',
+  display: 'flex',
+  flexDirection: 'column',
+  // gap: 'px',
 })
 
 globalStyle(`${notification} p`, {

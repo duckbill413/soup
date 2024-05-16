@@ -7,7 +7,7 @@ export type Notification = {
   projectName: string
   chatMessageId: string
   createdTime: string
-  read: boolean
+  isRead: boolean
 }
 
 export type NotiEvent = {
