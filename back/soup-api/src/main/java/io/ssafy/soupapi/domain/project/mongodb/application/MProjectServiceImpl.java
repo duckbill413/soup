@@ -6,11 +6,13 @@ import com.google.gson.Gson;
 import io.ssafy.soupapi.domain.project.constant.StepName;
 import io.ssafy.soupapi.domain.project.mongodb.dao.MProjectRepository;
 import io.ssafy.soupapi.domain.project.mongodb.dto.liveblock.LiveApiDetail;
+import io.ssafy.soupapi.domain.project.mongodb.dto.liveblock.LiveProposal;
 import io.ssafy.soupapi.domain.project.mongodb.dto.liveblock.LiveReadme;
 import io.ssafy.soupapi.domain.project.mongodb.dto.request.*;
 import io.ssafy.soupapi.domain.project.mongodb.dto.response.*;
 import io.ssafy.soupapi.domain.project.mongodb.entity.Info;
 import io.ssafy.soupapi.domain.project.mongodb.entity.Project;
+import io.ssafy.soupapi.domain.project.mongodb.entity.Proposal;
 import io.ssafy.soupapi.domain.project.mongodb.entity.apidocs.ApiDoc;
 import io.ssafy.soupapi.domain.project.mongodb.entity.issue.ProjectIssue;
 import io.ssafy.soupapi.domain.project.usecase.dto.request.UpdateProjectImage;
@@ -100,6 +102,15 @@ public class MProjectServiceImpl implements MProjectService {
         return GetProjectProposal.toProjectProposalDto(projectId, project.getProposal());
     }
 
+    @Override
+    public GetProjectProposal liveUpdateProjectProposal(ObjectId projectId) {
+        LiveProposal liveProposal = liveblocksComponent.getRoomStorageDocument(projectId.toHexString(), StepName.PLAN, LiveProposal.class);
+        Proposal proposal = LiveProposal.toProposal(liveProposal);
+
+        mProjectRepository.updateProposal(projectId, proposal);
+        return GetProjectProposal.toProjectProposalDto(projectId, proposal);
+    }
+
     /**
      * 프로젝트 제안서 업데이트
      *
@@ -139,8 +150,8 @@ public class MProjectServiceImpl implements MProjectService {
         mProjectRepository.save(project);
         return GetProjectInfo.toProjectInfoDto(project);
     }
-
     // null로 요청이 들어온 변수는 update 하지 않는다
+
     private Info generateInfo(Project project, UpdateProjectInfo updateProjectInfo) {
         return Info.builder()
                 .name(updateProjectInfo.name() == null ?
