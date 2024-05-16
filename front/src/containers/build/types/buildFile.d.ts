@@ -16,3 +16,5 @@ export type BuildDto = {
   request: Array<BuildFile>
   response: Array<BuildFile>
 }
+
+export type Versions = Array<{ version: string }>
