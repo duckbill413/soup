@@ -7,7 +7,7 @@ import vars from '@/styles/variables.css'
 import { elapsedTime } from '@/utils/elapsedTime'
 import { getAccessToken } from '@/utils/token'
 import NotificationsIcon from '@mui/icons-material/Notifications'
-import Badge from '@mui/material/Badge'
+import { Badge, Fade } from '@mui/material'
 import { EventSourcePolyfill, NativeEventSource } from 'event-source-polyfill'
 import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime'
 import Image from 'next/image'
@@ -30,8 +30,9 @@ function Card(
     content,
     notiPhotoUrl,
     projectId,
+    projectName,
     chatMessageId,
-    read,
+    isRead,
   } = item
 
   const readNoti = async () => {
@@ -50,31 +51,55 @@ function Card(
 
   return (
     <div
-      style={
-        read
-          ? { backgroundColor: vars.color.gray, color: vars.color.deepGray }
-          : { backgroundColor: 'white', color: vars.color.black }
-      }
-      className={styles.notification}
+      className={styles.notiList}
       key={notiId}
       onClick={readNoti}
       onKeyDown={readNoti}
       role="presentation"
+      style={
+        isRead
+          ? {
+              backgroundColor: vars.color.gray,
+              color: vars.color.deepGray,
+            }
+          : {
+              backgroundColor: 'white',
+              color: vars.color.black,
+            }
+      }
     >
-      <Image
-        unoptimized
-        src={notiPhotoUrl}
-        width={44}
-        height={44}
-        alt="프로필"
-        className={styles.profile}
-      />
-      <div className={styles.contents}>
-        <div className={styles.notiTop}>
-          <span className={styles.notiTitle}>{title}</span>
-          <span className={styles.date}>{elapsedTime(createdTime)}</span>
+      <div className={styles.notification}>
+        <Image
+          unoptimized
+          src={notiPhotoUrl}
+          width={36}
+          height={36}
+          alt="프로필"
+          className={styles.profile}
+        />
+        <div className={styles.contents}>
+          <div className={styles.notiTop}>
+            <span className={styles.notiTitle}>{title}</span>
+            <span className={styles.date}>{elapsedTime(createdTime)}</span>
+          </div>
+          <span
+            className={styles.name}
+            style={
+              isRead
+                ? {
+                    backgroundColor: vars.color.lightGray,
+                    color: vars.color.deepGray,
+                  }
+                : {
+                    backgroundColor: vars.color.cream,
+                    color: vars.color.black,
+                  }
+            }
+          >
+            {projectName}
+          </span>
+          <p>{content}</p>
         </div>
-        <p>{content}</p>
       </div>
     </div>
   )
@@ -126,7 +151,7 @@ export default function Notifications() {
     eventSource.addEventListener('sse', (event: any) => {
       const obj: NotiEvent = JSON.parse(event.data)
       const { unreadNotiNum } = obj
-
+      console.log('??')
       setUnreadCnt(unreadNotiNum)
     })
 
@@ -188,7 +213,7 @@ export default function Notifications() {
           />
         </Badge>
       </div>
-      {open && (
+      <Fade in={open}>
         <div
           className={styles.backdrop}
           onClick={handleMenu}
@@ -215,7 +240,7 @@ export default function Notifications() {
             </div>
           </div>
         </div>
-      )}
+      </Fade>
     </div>
   )
 }
