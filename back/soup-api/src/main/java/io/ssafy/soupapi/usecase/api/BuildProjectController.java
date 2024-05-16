@@ -52,7 +52,7 @@ public class BuildProjectController {
                 // 프로젝트 ERD 동기화
                 mProjectService.liveProjectVuerd(new ObjectId(projectId));
                 // 프로젝트 API 문서 동기화
-                mProjectService.liveProjectApiDoc(projectId);
+                mProjectService.liveProjectApiDoc(new ObjectId(projectId));
                 // 프로젝트 빌드 정보 동기화
                 projectBuilderService.liveChangeBuilderInfo(projectId);
                 // 프로젝트 빌드 작업

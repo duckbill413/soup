@@ -230,7 +230,7 @@ public class MProjectController {
     ) {
         return BaseResponse.success(
                 SuccessCode.UPDATE_SUCCESS,
-                mProjectService.liveProjectApiDoc(projectId)
+                mProjectService.liveProjectApiDoc(new ObjectId(projectId))
         );
     }
 
@@ -300,6 +300,19 @@ public class MProjectController {
         return BaseResponse.success(
                 SuccessCode.SELECT_SUCCESS,
                 mProjectService.findProjectValidDomainNames(new ObjectId(projectId))
+        );
+    }
+
+    @Operation(summary = "Liveblocks 프로젝트 Readme 업데이트")
+    @PostMapping("/{projectId}/readme/live")
+    @PreAuthorize("@authService.hasProjectRoleMember(#projectId, #userSecurityDTO.getId())")
+    public ResponseEntity<BaseResponse<String>> liveUpdateProjectReadme(
+            @PathVariable String projectId,
+            @AuthenticationPrincipal UserSecurityDTO userSecurityDTO
+    ) {
+        return BaseResponse.success(
+                SuccessCode.UPDATE_SUCCESS,
+                mProjectService.liveUpdateProjectReadme(new ObjectId(projectId))
         );
     }
 }
