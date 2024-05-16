@@ -18,17 +18,21 @@ public class SchedulerService {
     private final RChatRepository rChatRepository;
 
     /**
-     * 실행 시간 1시간 전보다 전에 발행된 채팅 메시지들은 (redis에서) 삭제 (MongoDB엔 남아있음)
+     * 실행 시간 1시간 전보다 전에 저장된 채팅 메시지들을 (redis에서) 삭제 (MongoDB엔 남아있음)
      */
-    @Scheduled(fixedDelay = 600000) // 10분마다 실행
+//    @Scheduled(fixedDelay = 60000) // 1분마다 실행
+    @Scheduled(fixedRate = 86400000) // 24시간(86400000밀리초)마다 실행
     public void deleteChatMessagesFromRedis() {
         long curMs = System.currentTimeMillis();
         LocalDateTime curLdt = Instant.ofEpochMilli(curMs).atZone(ZoneId.of("Asia/Seoul")).toLocalDateTime();
-        LocalDateTime hourAgoLdt = curLdt.minusHours(1).withSecond(0).withNano(0);
-        long hourAgoScore = hourAgoLdt.atZone(ZoneId.of("Asia/Seoul")).toInstant().toEpochMilli();
-        log.info("현재 {}, redis에서 채팅 메시지 데이터 청소 작업을 시작합니다 (대상: {} 까지)", curLdt, hourAgoScore);
 
-        rChatRepository.deleteMessageFromRedis(Long.MIN_VALUE, hourAgoScore);
+//        LocalDateTime hourAgoLdt = curLdt.minusHours(1).withSecond(0).withNano(0);
+//        long hourAgoScore = hourAgoLdt.atZone(ZoneId.of("Asia/Seoul")).toInstant().toEpochMilli();
+//        log.info("현재 {}, redis에서 채팅 메시지 데이터 청소 작업을 시작합니다 (대상: {} 까지)", curLdt, curMs);
+//        rChatRepository.deleteMessageFromRedis(Long.MIN_VALUE, hourAgoScore);
+
+        log.info("현재 {}, redis에서 채팅 메시지 데이터 청소 작업을 시작합니다.", curLdt);
+        rChatRepository.deleteChatMessageOverSize();
     }
 
 }

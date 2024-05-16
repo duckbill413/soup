@@ -1,7 +1,7 @@
 package io.ssafy.soupapi.domain.chat.dto.request;
 
 import io.ssafy.soupapi.domain.chat.dto.ChatSender;
-import io.ssafy.soupapi.domain.chat.dto.RChatMessage;
+import io.ssafy.soupapi.domain.chat.entity.RChatMessage;
 import io.ssafy.soupapi.domain.project.mongodb.entity.ChatMessage;
 
 import java.time.Instant;

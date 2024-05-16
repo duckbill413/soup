@@ -1,4 +1,4 @@
-package io.ssafy.soupapi.domain.chat.dto;
+package io.ssafy.soupapi.domain.chat.entity;
 
 import io.ssafy.soupapi.domain.chat.dto.response.ChatMessageRes;
 import io.ssafy.soupapi.global.util.DateConverterUtil;

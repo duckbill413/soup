@@ -1,7 +1,7 @@
 package io.ssafy.soupapi.global.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.ssafy.soupapi.domain.chat.dto.RChatMessage;
+import io.ssafy.soupapi.domain.chat.entity.RChatMessage;
 import io.ssafy.soupapi.domain.chat.dto.response.ChatMessageRes;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;

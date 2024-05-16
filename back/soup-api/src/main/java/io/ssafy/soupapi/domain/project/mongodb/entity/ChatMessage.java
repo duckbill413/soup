@@ -1,6 +1,6 @@
 package io.ssafy.soupapi.domain.project.mongodb.entity;
 
-import io.ssafy.soupapi.domain.chat.dto.RChatMessage;
+import io.ssafy.soupapi.domain.chat.entity.RChatMessage;
 import io.ssafy.soupapi.domain.chat.dto.response.ChatMessageRes;
 import io.ssafy.soupapi.global.util.DateConverterUtil;
 import lombok.Builder;
