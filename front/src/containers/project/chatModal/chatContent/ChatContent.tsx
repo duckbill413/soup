@@ -5,7 +5,6 @@ import defaultImage from "#/assets/images/defaultProfile.png";
 import * as styles from "./chatContent.css";
 
 export default function ChatContent({chatMessageId,header, me, message, nickname, profileImageUrl, sentAt,myNickname,memberNicknames}:ChatContentProps){
-
     const highlightMention = (text:string) => {
         const regex = /(@\S+)/g;
 
@@ -20,7 +19,7 @@ export default function ChatContent({chatMessageId,header, me, message, nickname
             
         });
     };
-    return(<div key={chatMessageId}>
+    return(<div className={`a${chatMessageId}`} key={chatMessageId}>
             <div className={styles.chatHeader}>
                 {header === new Date().toISOString().slice(0, 10) &&
                     <span className={styles.hrSect}>{dayjs(header).format('MM-DD')}</span>}

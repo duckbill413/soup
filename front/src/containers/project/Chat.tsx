@@ -4,7 +4,7 @@ import chatSvg from '#/assets/icons/chat/chat.svg'
 import chatXSvg from '#/assets/icons/chat/chatX.svg'
 import Image from 'next/image'
 import styles from '@/containers/project/chat.css'
-import {useEffect, useState} from 'react'
+import {useEffect} from 'react'
 import ChatModal from '@/containers/project/chatModal/ChatModal'
 import {getProjectMembers,getMemberInfo} from "@/apis/member/memberAPI";
 import useMemberStore from "@/stores/useMemberStore";
@@ -20,9 +20,8 @@ type Props = {
 const SVG_SIZE = 90
 
 export default function Chat({projectId}: Props) {
-    // Modal을 보여주는 상태관리 null타입은 첫 상태이고 이 후 true false가 된다.
-    const [isVisible, setIsVisible] = useState<boolean | null>(null)
-    const {connect, disconnect, client,setChatList} = useMessageSocketStore();
+
+    const {connect, disconnect, client,setChatList,isVisible,setIsVisible} = useMessageSocketStore();
     const {setMembers,setMe} = useMemberStore();
     const {setSenders} = useMentionStore();
     const handleVisible = () => {
@@ -59,12 +58,14 @@ export default function Chat({projectId}: Props) {
                 disconnect(client);
             }
         });
-
+    return()=>{
+        setIsVisible(false);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [projectId,connect]);
     return (
         <>
-            <ChatModal isVisible={isVisible} projectId={projectId}/>
+            <ChatModal projectId={projectId}/>
             <button type='button' onClick={handleVisible}>
                 {!isVisible ? (
                     <Image
