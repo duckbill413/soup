@@ -52,7 +52,7 @@ function OutlineAddJira () {
     <div>
       <br /><br />
       <div className={styles.mainDiv}>
-        <p>※ 선택 : 지라 추가</p>
+        <p>※ 선택 : Jira 추가</p>
         <div className={styles.toggleDiv}>
           {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions */}
           <div className={`${styles.toggleSwitch} ${isJira ? 'toggled' : ''}`} onClick={handleToggle}>
@@ -64,7 +64,7 @@ function OutlineAddJira () {
       <div>
         <div className={styles.jiraMainDiv}>
           <div className={styles.jiraSubDiv}>
-            <TextField label="JIRA HOST"
+            <TextField label="Jira HOST"
                        value={hostInput}
                        onChange={changeInput(setHostInput)}
             />
@@ -76,7 +76,7 @@ function OutlineAddJira () {
             />
           </div>
           <div className={styles.jiraSubDiv}>
-            <TextField label="JIRA email"
+            <TextField label="Jira email"
                        value={emailInput}
                        onChange={changeInput(setEmailInput)}
             />
@@ -89,7 +89,7 @@ function OutlineAddJira () {
           </div>
         </div>
         <div>
-        <button type="button" className={styles.button} onClick={register}>JIRA 연동</button>
+        <button type="button" className={styles.button} onClick={register}>Jira 연동</button>
         </div>
       </div>
       )}

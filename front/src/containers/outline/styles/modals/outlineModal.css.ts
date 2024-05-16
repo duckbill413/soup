@@ -19,6 +19,9 @@ export const modalSubContainer = style ({
   borderRadius:'10px',
   width:'45%',
   height:'60%',
+})
+
+export const middleContainer = style ({
   overflowY:'auto',
   '::-webkit-scrollbar':{
     width: vars.space.tiny,
@@ -27,11 +30,13 @@ export const modalSubContainer = style ({
     height: '5%',
     background: '#D3D3D3',
   },
+  height:'86%',
 })
 
 export const topDivision = style ({
   display:'flex',
-  justifyContent:'space-between'
+  justifyContent:'space-between',
+  height:'10%'
 })
 
 export const topSubTitle = style ({
@@ -47,30 +52,45 @@ export const topSubXDiv = style ({
 
 export const middleDiv = style ({
   width:'100%',
-  height:'15%',
   display:'flex',
-  justifyContent:'space-around',
-  alignItems:'center'
+  flexDirection:'column',
 })
 
 export const middleSubDiv = style ({
   display: 'flex', flexDirection: 'column'
 })
 
+export const mainRoleDiv = style ({
+  display: 'flex',
+  marginBottom:'3%',
+  marginTop:'3%'
+})
+
+export const mainInviteDiv = style ({
+  display: 'flex',
+  justifyContent:'space-evenly'
+})
+
 export const middleRoleDiv = style ({
-  width:'20%'
+  width:'125px',
+  marginLeft:'3%',
+  marginRight:'1%'
 })
 
 export const middleNameDiv = style ({
-  width:'15%'
+  width:'15%',
+  display:'flex',
+  alignItems:'center'
 })
 
 export const middleEmailDiv = style ({
-  width:'30%'
+  width:'30%',
+  display:'flex',
+  alignItems:'center'
 })
 export const invite = style ({
   width:"15%",
-  height:'60%',
+  height:'40px',
   borderRadius:'10px',
   backgroundColor:'#FF7E20',
   boxShadow: '0 4px #C65102',
@@ -120,6 +140,8 @@ export const role = style ({
   boxShadow:'rgba(0, 0, 0, 0.24) 0px 3px 3px',
   borderRadius:'5px',
   padding:'0.3rem',
+  paddingRight:'0.4rem',
+  paddingLeft:'0.4rem',
   fontWeight:'bold',
   margin:'0.3rem'
 })
@@ -138,7 +160,6 @@ export const invitedRole = style ({
   fontWeight:'bold',
   margin:'0.3rem'
 })
-
 
 export const roleShow = style ({
   display: 'flex',

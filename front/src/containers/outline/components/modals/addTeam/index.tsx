@@ -91,68 +91,73 @@ function OutlineTeamModal (props: { clickModal: () => void }) {
         </div>
         <hr/>
         {/* 역할, 이메일, 초대하기 */}
-        <div className={styles.middleDiv}>
-          <div className={styles.middleSubDiv}>
-            <div>JIRA 권한</div>
-            <select style={{ borderRadius: '8px' }} onChange={changeAuth}>
-              <option value="DEVELOPER">No</option>
-              <option value="ADMIN">Yes</option>
-            </select>
-          </div>
-          <div className={styles.middleRoleDiv}>
-            <TextField className={useStyles().teamModalRole}
-                   label="엔터로 역할 추가"
-                   value={roleInput}
-                   onChange={changeInput(setRoleInput)}
-                   onKeyDown={addHashtag}
-                   onCompositionStart={handleComposition}
-                   onCompositionEnd={handleComposition}
-            />
-          </div>
-          <div className={styles.middleNameDiv}>
-            <TextField label="이름" className={useStyles().teamModalRole}
-                   value={nameInput}
-                   onChange={changeInput(setNameInput)}
-            />
-          </div>
-          <div className={styles.middleEmailDiv}>
-            <TextField  label="e-mail 주소" className={useStyles().teamModalRole}
-                   value={emailInput}
-                   onChange={changeInput(setEmailInput)}
-            />
-          </div>
-          <button type="button" className={styles.invite} onClick={invite}>초대하기</button>
-        </div>
+        <div className={styles.middleContainer}>
 
-        <div className={styles.roleShow}>
-          {tags.map(tag => (
-            <div key={tag.id} className={styles.role}>
-            {tag.role_name}
-            <button type="button" className={styles.deleteButton} onClick={() => removeTag(tag.id)}>✖</button>
+          <div className={styles.middleDiv}>
+            <div className={styles.mainRoleDiv}>
+              <div className={styles.middleRoleDiv}>
+                <TextField className={useStyles().role}
+                           label="엔터로 역할 추가"
+                           value={roleInput}
+                           onChange={changeInput(setRoleInput)}
+                           onKeyDown={addHashtag}
+                           onCompositionStart={handleComposition}
+                           onCompositionEnd={handleComposition}
+                />
+              </div>
+              <div className={styles.roleShow}>
+                {tags.map(tag => (
+                  <div key={tag.id} className={styles.role}>
+                    {tag.role_name}
+                    <button type="button" className={styles.deleteButton} onClick={() => removeTag(tag.id)}>✖</button>
+                  </div>
+                ))}
+              </div>
             </div>
-          ))}
-        </div>
-
-        {/* 초대된 팀원 */}
-        <p className={styles.nowTeamTitle}>현재 초대된 팀원</p>
-
-        {invitedTeam?.project_team.toReversed().map(member => (
-        <div key={member.id} className={styles.bottomDivision}>
-          <div className={styles.bottomProfile}>
-            <div className={styles.profileDetail}>
-              <p style={{fontWeight:'bold'}}>{member.name}</p>
-              <p>{member.email}</p>
+            <div className={styles.mainInviteDiv}>
+              <div className={styles.middleSubDiv}>
+                <div>JIRA 권한</div>
+                <select style={{ borderRadius: '8px' }} onChange={changeAuth}>
+                  <option value="DEVELOPER">No</option>
+                  <option value="ADMIN">Yes</option>
+                </select>
+              </div>
+              <div className={styles.middleNameDiv}>
+                <TextField label="이름" className={useStyles().teamModalRole}
+                       value={nameInput}
+                       onChange={changeInput(setNameInput)}
+                />
+              </div>
+              <div className={styles.middleEmailDiv}>
+                <TextField label="e-mail 주소" className={useStyles().teamModalRole}
+                       value={emailInput}
+                       onChange={changeInput(setEmailInput)}
+                />
+              </div>
+              <button type="button" className={styles.invite} onClick={invite}>초대하기</button>
             </div>
           </div>
 
-          <div className={styles.roleSubDiv}>
-          {member?.roles.map((role, index) => (
-            <div key={`${role.role_id}-${index}`} className={styles.invitedRole}>{role.role_name}</div>
-          ))}
-          </div>
-        </div>
-        ))}
+          {/* 초대된 팀원 */}
+          <p className={styles.nowTeamTitle}>현재 초대된 팀원</p>
 
+          {invitedTeam?.project_team.toReversed().map(member => (
+          <div key={member.id} className={styles.bottomDivision}>
+            <div className={styles.bottomProfile}>
+              <div className={styles.profileDetail}>
+                <p style={{fontWeight:'bold'}}>{member.name}</p>
+                <p>{member.email}</p>
+              </div>
+            </div>
+
+            <div className={styles.roleSubDiv}>
+            {member?.roles.map((role, index) => (
+              <div key={`${role.role_id}-${index}`} className={styles.invitedRole}>{role.role_name}</div>
+            ))}
+            </div>
+          </div>
+          ))}
+        </div>
       </div>
     </div>
   );
