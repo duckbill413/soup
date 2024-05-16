@@ -6,7 +6,6 @@ import com.google.gson.Gson;
 import io.ssafy.soupapi.domain.project.constant.StepName;
 import io.ssafy.soupapi.domain.project.mongodb.dao.MProjectRepository;
 import io.ssafy.soupapi.domain.project.mongodb.dto.liveblock.LiveApiDetail;
-import io.ssafy.soupapi.domain.project.mongodb.dto.liveblock.LiveApiDto;
 import io.ssafy.soupapi.domain.project.mongodb.dto.request.*;
 import io.ssafy.soupapi.domain.project.mongodb.dto.response.*;
 import io.ssafy.soupapi.domain.project.mongodb.entity.Info;
@@ -462,9 +461,10 @@ public class MProjectServiceImpl implements MProjectService {
 
     @Override
     public List<GetSimpleApiDoc> liveProjectApiDoc(String projectId) {
-        LiveApiDto liveApiDto = liveblocksComponent.getRoomStorageDocument(projectId, StepName.API, LiveApiDto.class);
+        List<LiveApiDetail> liveApiDto = liveblocksComponent.getRoomStorageDocuments(projectId, StepName.API, LiveApiDetail.class);
+//        LiveApiDto liveApiDto = liveblocksComponent.getRoomStorageDocument(projectId, StepName.API, LiveApiDto.class);
         List<ApiDoc> apiDocs = new ArrayList<>();
-        for (LiveApiDetail liveApiDetail : liveApiDto.apiDetails()) {
+        for (LiveApiDetail liveApiDetail : liveApiDto) {
             try {
                 apiDocs.add(LiveApiDetail.toApiDoc(liveApiDetail));
             } catch (Exception e) {

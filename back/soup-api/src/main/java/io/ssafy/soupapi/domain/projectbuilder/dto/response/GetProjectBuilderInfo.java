@@ -5,6 +5,7 @@ import io.ssafy.soupapi.domain.project.mongodb.entity.builder.SpringPackaging;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Builder
@@ -33,7 +34,9 @@ public record GetProjectBuilderInfo(
         @Schema(description = "springboot_dependencies")
         List<GetDependency> dependencies,
         @Schema(description = "built_project_s3_uri")
-        String s3Url
+        String s3Url,
+        @Schema(description = "project 빌드 완료 시간")
+        LocalDateTime builtAt
 ) {
     public static GetProjectBuilderInfo of(ProjectBuilderInfo builderInfo) {
         return GetProjectBuilderInfo.builder()
@@ -49,6 +52,7 @@ public record GetProjectBuilderInfo(
                 .description(builderInfo.getDescription())
                 .packageName(builderInfo.getPackageName())
                 .s3Url(builderInfo.getS3Url())
+                .builtAt(builderInfo.getBuiltAt())
                 .build();
     }
 }
