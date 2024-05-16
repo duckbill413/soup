@@ -71,7 +71,7 @@ function OutlineTeamModal (props: { clickModal: () => void }) {
             setEmailInput('');
             setNameInput('');
           }
-        }).catch(error=>alert(`초대하기 실패: , ${error.message}`))
+        }).catch(error=>Toast.error(`초대하기 실패: ${error.message}`))
     } else if(nameInput) {
         Toast.error('이메일을 입력하세요')
     } else {

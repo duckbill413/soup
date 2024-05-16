@@ -5,6 +5,7 @@ import * as styles from "@/containers/outline/styles/jira/outlineJira.css"
 import { Toast } from '@/utils/toast'
 import { addJiraAPI } from '@/apis/outline/outlineAPI'
 import { useParams } from 'next/navigation'
+import { TextField } from '@mui/material'
 
 function OutlineAddJira () {
   const {projectId} = useParams()
@@ -51,7 +52,7 @@ function OutlineAddJira () {
     <div>
       <br /><br />
       <div className={styles.mainDiv}>
-        <p>지라 추가</p>
+        <p>※ 선택 : 지라 추가</p>
         <div className={styles.toggleDiv}>
           {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions */}
           <div className={`${styles.toggleSwitch} ${isJira ? 'toggled' : ''}`} onClick={handleToggle}>
@@ -61,26 +62,34 @@ function OutlineAddJira () {
       </div>
       {isJira && (
       <div>
-        <div>
-        <input className={styles.input} placeholder="JIRA HOST"
-               value={hostInput}
-               onChange={changeInput(setHostInput)}
-        />
-        <input className={styles.input} placeholder="Project Key"
-               value={projectKeyInput}
-               onChange={changeInput(setProjectKeyInput)}
-        />
-        <input className={styles.input} placeholder="JIRA email"
-               value={emailInput}
-               onChange={changeInput(setEmailInput)}
-        />
-        <input className={styles.input} placeholder="사용자 KEY값"
-               value={userKeyInput}
-               onChange={changeInput(setUserKeyInput)}
-        />
+        <div className={styles.jiraMainDiv}>
+          <div className={styles.jiraSubDiv}>
+            <TextField label="JIRA HOST"
+                       value={hostInput}
+                       onChange={changeInput(setHostInput)}
+            />
+          </div>
+          <div className={styles.jiraSubDiv}>
+            <TextField label="Project Key"
+                       value={projectKeyInput}
+                       onChange={changeInput(setProjectKeyInput)}
+            />
+          </div>
+          <div className={styles.jiraSubDiv}>
+            <TextField label="JIRA email"
+                       value={emailInput}
+                       onChange={changeInput(setEmailInput)}
+            />
+          </div>
+          <div className={styles.jiraSubDiv}>
+            <TextField label="사용자 KEY값"
+                       value={userKeyInput}
+                       onChange={changeInput(setUserKeyInput)}
+            />
+          </div>
         </div>
         <div>
-          <button type="button" className={styles.button} onClick={register}>등록하기</button>
+        <button type="button" className={styles.button} onClick={register}>JIRA 연동</button>
         </div>
       </div>
       )}
