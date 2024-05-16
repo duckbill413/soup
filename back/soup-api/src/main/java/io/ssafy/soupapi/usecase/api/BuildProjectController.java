@@ -49,6 +49,8 @@ public class BuildProjectController {
             try {
                 // 프로젝트 정보 동기화
                 updateProjectInfoService.liveUpdateProjectInfo(projectId);
+                // 프로젝트 기획서 동기화
+                mProjectService.liveUpdateProjectProposal(new ObjectId(projectId));
                 // 프로젝트 ERD 동기화
                 mProjectService.liveProjectVuerd(new ObjectId(projectId));
                 // 프로젝트 API 문서 동기화
