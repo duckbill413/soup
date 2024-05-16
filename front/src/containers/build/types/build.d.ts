@@ -12,4 +12,6 @@ export type BuildStorage = {
   description: string
   packageName: string
   dependencies: LiveList<number>
+  builtAt: string
+  building: boolean
 }

@@ -1,20 +1,6 @@
-export type BuildFile = {
-  name: string
-  package: string
-  data: string
-}
-
-export type BuildFileSystem = {
-  api: BuildFile
-  application: BuildFile
-  dao: BuildFile
-  dto: BuildDto
-  entity: BuildFile
-}
-
-export type BuildDto = {
-  request: Array<BuildFile>
-  response: Array<BuildFile>
-}
-
 export type Versions = Array<{ version: string }>
+
+export type BuildResult = {
+  info: { s3Url: string; builtAt: string }
+  build: object
+}

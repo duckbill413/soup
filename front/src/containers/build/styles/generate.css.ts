@@ -5,6 +5,7 @@ export const container = style({
   display: 'flex',
   justifyContent: 'center',
   margin: `${vars.space.large} 0 ${vars.space.base}`,
+  gap: vars.space.small,
 })
 
 export const section = style({
