@@ -109,6 +109,8 @@ public enum ErrorCode {
 
     // API DOCS 관련 에러 (CODE: 900)
     NOT_FOUND_API_DOC(404, "B900", "찾을 수 없는 API 문서 입니다."),
+    FAILED_TO_UPDATE_API_DOCS(404, "B901", "API 문서 리스트 업데이트 실패."),
+    UNABLE_TO_USE_THIS_API_DOC(404, "B902", "유효하지 않은 APIListDetail 입니다."),
 
     // Project Build 관련 에러 (CODE: 1100)
     NEED_MORE_PROJECT_BUILD_DATA(404, "B1100", "빌드를 위한 프로젝트 정보가 더 필요합니다."),
@@ -118,9 +120,14 @@ public enum ErrorCode {
     FAILED_TO_BUILD_PROJECT(404, "B1104", "프로젝트 빌드에 실패하였습니다."),
     NEED_PROJECT_BUILD_ERD(404, "B1105", "프로젝트 ERD 정보가 필요합니다."),
     NOT_FOUND_BUILT_PROJECT(404, "B1106", "빌드 완료된 프로젝트를 찾을 수 없습니다."),
+    PROJECT_IS_NOW_BUILDING(404, "B1107", "다른 팀원이 프로젝트를 빌드하고 있습니다."),
+    UNABLE_TO_USE_THIS_BUILDER_INFO(404, "B1108", "유효하지 않은 Builder Info 입니다."),
 
     // LIVEBLOCK 에러 (CODE: 1200)
     LIVEBLOCK_DATA_IS_NULL(404, "B1200", "검색한 Liveblock 데이터가 Null 입니다."),
+
+    // README 에러 (CODE: 1300)
+    FAILED_TO_UPDATE_README(404, "B1300", "Liveblock Readme 업데이트 실패"),
     ; // End
 
     /**
