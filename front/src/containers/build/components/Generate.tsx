@@ -102,14 +102,18 @@ export default function Generate() {
     setOpen(false)
   }
 
-  const renderTree = (fileObj: object, nth: number, id: string) => {
+  const renderTree = (
+    fileObj: object,
+    nth: number,
+    id: string,
+  ): JSX.Element | (JSX.Element | null)[] => {
     const entryArray = Object.entries(fileObj)
     const itemId = id + entryArray[0][0] + nth
 
     if (nth === 4)
-      return entryArray.map((value, idx) =>
-        renderTree(value[1], nth + 1, itemId + idx),
-      )
+      return entryArray.map((value, idx) => (
+        <>{renderTree(value[1], nth + 1, itemId + idx)}</>
+      ))
 
     if (typeof entryArray[0][1] === 'string') {
       return (
