@@ -13,7 +13,7 @@ public class NewNotiRes {
     private String notiId;
     private String title;
     private String content;
-    private boolean isRead;
+    private Boolean isRead;
     private String notiPhotoUrl;
     private String projectId;
     private String chatMessageId;

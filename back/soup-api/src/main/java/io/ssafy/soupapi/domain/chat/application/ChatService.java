@@ -7,6 +7,8 @@ import io.ssafy.soupapi.domain.chat.dto.response.ChatMessageRes;
 import io.ssafy.soupapi.domain.member.entity.Member;
 import io.ssafy.soupapi.domain.noti.application.NotiService;
 import io.ssafy.soupapi.domain.noti.dao.NotiRepository;
+import io.ssafy.soupapi.domain.noti.dao.RNotiRepository;
+import io.ssafy.soupapi.domain.noti.dto.RMentionNoti;
 import io.ssafy.soupapi.domain.noti.dto.response.NewNotiRes;
 import io.ssafy.soupapi.domain.noti.entity.MNoti;
 import io.ssafy.soupapi.domain.project.mongodb.dao.MProjectRepository;
@@ -33,6 +35,7 @@ public class ChatService {
     private final RChatRepository rChatRepository;
     private final NotiService notiService;
     private final NotiRepository notiRepository;
+    private final RNotiRepository rNotiRepository;
     private final FindEntityUtil findEntityUtil;
 
     // 대화 저장
@@ -41,6 +44,7 @@ public class ChatService {
         Long sentAtLong = System.currentTimeMillis();
         Instant sentAtInstant = Instant.ofEpochMilli(sentAtLong);
 
+        // 채팅 메시지
         String chatMessageId = UUID.randomUUID().toString();
         RChatMessage rChatMessage = chatMessageReq.toRChatMessage(chatMessageId, sentAtInstant);
         ChatMessage chatMessage = chatMessageReq.toMChatMessage(chatMessageId, sentAtInstant);
@@ -48,31 +52,26 @@ public class ChatService {
         // 1. 채팅 메시지 -> MongoDB 저장
         mProjectRepository.addChatMessage(new ObjectId(chatroomId), chatMessage);
 
-        // 2. 태그 알림
+        // 태그 알림
         List<MNoti> mNotiList = new ArrayList<>();
-
         for (String mentioneeId : chatMessageReq.mentionedMemberIds()) {
-//            RMentionNoti RMentionNoti = notiService.generateMentionNotiRedis(
-//                    RChatMessage.chatMessageId(), chatMessageReq.sender().getMemberId(), mentioneeId
-//            );
-
             MNoti mNoti = notiService.generateMNoti(chatroomId, chatMessageId, chatMessageReq, mentioneeId, sentAtInstant);
             mNotiList.add(mNoti);
         }
 
-        // 2-1. 태그 알림 -> MongoDb 저장
+        // 2. 태그 알림 -> MongoDb 저장
         notiRepository.saveAll(mNotiList);
 
-        // 2-2. 태그 알림 -> Redis 저장
-//            notiService.saveMentionNotiToRedis(chatroomId, RMentionNoti, sentAtLong);
+        // 3. 태그 알림 -> Redis 저장
+        rNotiRepository.saveNotisToRedis(mNotiList);
 
-        // 2-3. SSE 알림 전송
+        // 4. 태그 알림 -> SSE 알림 전송
         for (MNoti mNoti : mNotiList) {
             NewNotiRes newNotiRes = notiService.generateNewNotiRes(mNoti, chatMessageReq.sender().getProfileImageUrl());
             notiService.notify(mNoti.getReceiverId(), newNotiRes, "mention");
         }
 
-        // 3. 채팅 메시지 -> Redis 저장
+        // 5. 채팅 메시지 -> Redis 저장
         rChatRepository.insertMessage(chatroomId, rChatMessage);
 
         return generateChatMessageRes(rChatMessage.chatMessageId(), chatMessageReq, sentAtInstant);
@@ -110,15 +109,7 @@ public class ChatService {
         List<UUID> senderIdList = senderMap.keySet().stream()
             .map(UUID::fromString)
             .toList();
-        List<Member> senderList = findEntityUtil.findAllMemberById(senderIdList);
-        for (Member m : senderList) {
-            senderMap.put(String.valueOf(m.getId()), m);
-        }
-
-//        for (String memberId : senderMap.keySet()) {
-//            Member member = findEntityUtil.findMemberById(UUID.fromString(memberId));
-//            senderMap.put(memberId, member);
-//        }
+        senderMap = findEntityUtil.findAllMemberByIdAndGenerateMap(senderIdList);
 
         for (ChatMessageRes res : result) {
             String senderId = res.getSender().getMemberId();

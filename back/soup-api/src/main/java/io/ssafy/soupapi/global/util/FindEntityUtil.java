@@ -10,7 +10,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -39,8 +41,13 @@ public class FindEntityUtil {
     }
 
     @Transactional(readOnly = true)
-    public List<Member> findAllMemberById(List<UUID> memberIdList) {
-        return memberRepository.findAllById(memberIdList);
+    public Map<String, Member> findAllMemberByIdAndGenerateMap(List<UUID> memberIdList) {
+        List<Member> senderList = memberRepository.findAllById(memberIdList);
+        Map<String, Member> memberMap = new HashMap<>();
+        for (Member m : senderList) {
+            memberMap.put(String.valueOf(m.getId()), m);
+        }
+        return memberMap;
     }
 
     @Transactional(readOnly = true)
