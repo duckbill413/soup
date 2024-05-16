@@ -1,5 +1,6 @@
 package io.ssafy.soupapi.domain.project.mongodb.application;
 
+import io.ssafy.soupapi.domain.project.mongodb.dto.liveblock.LiveFlowChart;
 import io.ssafy.soupapi.domain.project.mongodb.dto.request.UpdateApiDoc;
 import io.ssafy.soupapi.domain.project.mongodb.dto.request.UpdateProjectInfo;
 import io.ssafy.soupapi.domain.project.mongodb.dto.request.UpdateProjectJiraKey;
@@ -59,4 +60,6 @@ public interface MProjectService {
     String liveUpdateProjectReadme(ObjectId projectId);
 
     GetProjectProposal liveUpdateProjectProposal(ObjectId projectId);
+
+    LiveFlowChart liveUpdateProjectFlowChart(ObjectId projectId);
 }

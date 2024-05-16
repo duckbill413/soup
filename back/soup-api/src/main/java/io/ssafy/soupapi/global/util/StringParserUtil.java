@@ -113,4 +113,30 @@ public class StringParserUtil {
 
         return matcher.find();
     }
+
+    public static String formatMermaid(String mermaidStr) {
+        // 입력 문자열에서 이스케이프 문자 제거
+        String unescapedString = mermaidStr.trim().replace("\\n", "\n").replace("\\`", "`");
+
+        // 반복적인 개행 문자 제거
+        String cleanedString = unescapedString.replaceAll("(\\n)+", "\n");
+
+        // mermaid 코드 블록이 있는지 확인
+        if (cleanedString.startsWith("```mermaid") && cleanedString.endsWith("```")) {
+            return cleanedString;
+        }
+
+        // mermaid 코드 블록이 없다면 추가
+        String[] lines = cleanedString.split("\\r?\\n");
+        StringBuilder formattedString = new StringBuilder();
+        formattedString.append("```mermaid\n");
+        for (String line : lines) {
+            if (line.contains("```")) {
+                continue;
+            }
+            formattedString.append(line).append("\n");
+        }
+        formattedString.append("```");
+        return formattedString.toString();
+    }
 }
