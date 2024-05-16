@@ -14,11 +14,11 @@ export default function ProjectDetailLayout({children, params}: Props) {
 
     return (
         <div className={styles.container}>
+            <SoundChat projectId={projectId}/>
             <Navigation/>
             <Header theme='black' useVoice/>
             <div className={styles.content}>{children}</div>
             <Chat projectId={projectId}/>
-            <SoundChat projectId={projectId}/>
         </div>
     )
 }

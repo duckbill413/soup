@@ -1,67 +1,105 @@
 'use client'
 
-import { getToken } from "@/apis/openVidu/openViduAPI";
-import { useEffect, useRef } from "react";
-import { OpenViduRes } from "@/containers/project/types/openVidu";
+import {getToken} from "@/apis/openVidu/openViduAPI";
+import {useCallback, useEffect,  useState} from "react";
+
 import {
     OpenVidu,
-} from "openvidu-browser";
+    Session as OVSession,
+    Subscriber,
+} from 'openvidu-browser';
 import useAudioStore from "@/stores/useAudioStore";
-import useMemberStore from "@/stores/useMemberStore";
+import Session from './Session';
 
 type Props = {
     projectId: string;
 }
 
-export default function SoundChat({ projectId }: Props) {
-    const {setLocalStreamManager} = useAudioStore();
-    const remoteStreamRef = useRef<HTMLVideoElement>(null); // 참여자 비디오 스트림을 나타내기 위한 ref
-    const {me} = useMemberStore();
-    const joinSession = async (sessionData: OpenViduRes) => {
-        if (!sessionData) return;
+export default function SoundChat({projectId}: Props) {
+    const {setLocalStreamManager,setToggleAudio} = useAudioStore();
+    const [session, setSession] = useState<OVSession | ''>('');
+    const [, setSessionId] = useState<string>('');
+    const [subscriber, setSubscriber] = useState<Subscriber | null>(null);
+    const [OV, setOV] = useState<OpenVidu | null>(null);
+    const [token, setToken] = useState<string>('');
 
-        const OV = new OpenVidu();
-        const session = OV.initSession();
-        session.on('streamCreated', (event: any) => {
-            const subscriber = session.subscribe(event.stream, undefined);
-            if (remoteStreamRef.current) {
-                subscriber.addVideoElement(remoteStreamRef.current);
-            }
+    const leaveSession = useCallback(() => {
+        if (session) session.disconnect();
+        setOV(null);
+        setSession('');
+        setSessionId('');
+        setSubscriber(null);
+        setLocalStreamManager(null);
+        setToggleAudio(false);
+    }, [session]);
+
+    const joinSession = async () => {
+        if (!token) return;
+        if (!session) return;
+        if (!OV) return;
+
+        session.on('streamCreated', event => {
+            const subscribers = session.subscribe(event.stream, '');
+            setSubscriber(subscribers);
         });
 
-        try {
-            const publisher = OV.initPublisher(undefined, {
-                audioSource: true,
-                videoSource: false
-            });
-
-            await session.connect(sessionData.token, { clientData: me?.id });
-            session.publish(publisher);
-            setLocalStreamManager(publisher);
-        } catch (error) {
-            console.error('Error connecting to session:', error);
-        }
+        await session.connect(token)
+            .then(() => {
+                if (OV) {
+                    const publishers = OV.initPublisher(undefined, {
+                        videoSource: false,
+                        publishAudio: false,
+                    });
+                    setLocalStreamManager(publishers);
+                    session
+                        .publish(publishers)
+                        .then(() => {
+                        })
+                        .catch(() => {
+                        });
+                }
+            })
 
     };
+    const createSession = async () => {
+        const OVs = new OpenVidu();
+        OVs.enableProdMode();
+        setOV(OVs);
+        setSession(OVs.initSession());
+        await joinSession();
+    };
+
+
+
     useEffect(() => {
+        createSession();
         const fetchData = async () => {
             try {
                 const sessionData = await getToken(projectId);
-                await joinSession(sessionData);
+                if (sessionData) setToken(sessionData.token);
             } catch (error) {
                 console.error('Error fetching session:', error);
             }
         };
         fetchData();
-
+        return () => {
+            leaveSession();
+        }
     }, [projectId]);
 
 
-
+    useEffect(() => {
+        createSession();
+    }, [token]);
 
 
     return (
-        <>
-        </>
+        <div>
+            {session && (
+                <Session
+                    subscriber={subscriber as Subscriber}
+                />
+            )}
+        </div>
     );
 }
