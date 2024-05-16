@@ -17,18 +17,6 @@ export const introDivision = style ({
   width: '50%'
 })
 
-export const input = style ({
-  padding: vars.space.small,
-  borderRadius: '5px',
-  border: '1px solid black'
-})
-
-export const textarea = style ({
-  padding: vars.space.small,
-  borderRadius: '5px',
-  height: '30%'
-})
-
 export const img = style ({
   borderRadius: '10px'
 })

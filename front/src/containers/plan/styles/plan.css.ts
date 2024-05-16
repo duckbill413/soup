@@ -4,7 +4,7 @@ import vars from '@/styles/variables.css'
 export const container = style ({
   display: 'flex',
   justifyContent: 'center',
-  height:'100vh'
+  height:'100%'
 })
 
 export const mainDivision = style ({
@@ -20,20 +20,21 @@ export const illustDivision = style ({
 })
 
 export const button = style ({
-  width:'40%',
+  height:'40px',
+  width:'37%',
   textAlign: 'center',
   backgroundColor: '#FF7E20',
   borderRadius:'15px',
   fontWeight:'bold',
   color: '#ffffff',
-  boxShadow:vars.boxShadow.customOuter,
+  transition: 'all 0.3s ease',
+  boxShadow: '0 4px #C65102',
   ':hover': {
-    transform: 'scale(1.10)',
-    transitionDuration: '300ms',
+    backgroundColor: '#E76E0A',
   },
   ':active': {
-    transform: 'scale(0.90)',
-    transitionDuration: '300ms'
+    boxShadow: '0 2px #D15C00',
+    transform: 'translateY(3px)'
   }
 })
 
@@ -51,9 +52,12 @@ export const beforeAIMainDiv = style ({
 })
 
 export const tagContainer = style ({
-  backgroundColor: '#9FE0FC',
+  display:'flex',
+  alignItems:'center',
+  backgroundColor: '#E0DFDF',
+  boxShadow:'rgba(0, 0, 0, 0.24) 0px 3px 3px',
   borderRadius: '6px',
-  margin: '0.1rem',
+  margin: '0.23rem',
   padding: '0.2rem'
 })
 
@@ -65,16 +69,15 @@ export const buttonDiv = style ({
   height: '6%',
   display: 'flex',
   justifyContent: 'center',
-  marginTop: vars.space.large
+  marginTop: vars.space.large,
 })
 
-globalStyle(`${mainDivision} p`, {
-  fontWeight:'bold',
-  fontSize: '1.3rem',
-  marginRight:vars.space.tiny,
+export const deleteButton = style ({
+  color: '#515455',
+  fontSize:'0.8rem'
 })
 
-globalStyle(`${mainDivision} input`, {
+export const input = style ({
   height:'4%',
   marginBottom:'1.3rem',
   padding:vars.space.tiny,
@@ -85,8 +88,10 @@ globalStyle(`${mainDivision} input`, {
   borderRadius:'10px',
 })
 
-globalStyle(`${mainDivision} input:focus`, {
-  outline: 'none'
+globalStyle(`${mainDivision} p`, {
+  fontWeight:'bold',
+  fontSize: '1.3rem',
+  marginRight:vars.space.tiny,
 })
 
 globalStyle(`${mainDivision} textarea`, {
