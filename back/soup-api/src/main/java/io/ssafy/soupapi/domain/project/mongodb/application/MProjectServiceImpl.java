@@ -170,6 +170,10 @@ public class MProjectServiceImpl implements MProjectService {
                 .endDate(updateProjectInfo.endDate() == null ?
                         project.getInfo().getEndDate() : updateProjectInfo.endDate()
                 )
+                .jiraHost(project.getInfo().getJiraHost())
+                .jiraProjectKey(project.getInfo().getJiraProjectKey())
+                .jiraUsername(project.getInfo().getJiraUsername())
+                .jiraKey(project.getInfo().getJiraKey())
                 .build();
     }
 
