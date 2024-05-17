@@ -1,5 +1,5 @@
-import { style } from '@vanilla-extract/css'
 import vars from '@/styles/variables.css'
+import { style } from '@vanilla-extract/css'
 
 export const container = style({
   paddingBottom: vars.space.large,
@@ -7,6 +7,7 @@ export const container = style({
   display: 'flex',
   justifyContent: 'space-between',
   alignItems: 'flex-end',
+  position: 'relative',
 })
 
 export const stepNum = style({
