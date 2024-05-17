@@ -2,7 +2,9 @@ package io.ssafy.soupapi.domain.project.mongodb.dao;
 
 import io.ssafy.soupapi.domain.project.mongodb.dto.liveblock.LiveFlowChart;
 import io.ssafy.soupapi.domain.project.mongodb.entity.ChatMessage;
+import io.ssafy.soupapi.domain.project.mongodb.entity.Info;
 import io.ssafy.soupapi.domain.project.mongodb.entity.Project;
+import io.ssafy.soupapi.domain.project.mongodb.entity.Tool;
 import io.ssafy.soupapi.global.common.code.ErrorCode;
 import io.ssafy.soupapi.global.exception.BaseExceptionHandler;
 import io.ssafy.soupapi.global.util.StringParserUtil;
@@ -88,5 +90,19 @@ public class CustomMProjectRepositoryImpl implements CustomMProjectRepository {
             return new LiveFlowChart(pretty);
         }
         throw new BaseExceptionHandler(ErrorCode.FAILED_TO_UPDATE_FLOWCHART);
+    }
+
+    @Override
+    public void updateInfoAndTools(ObjectId projectId, Info projectInfo, List<Tool> tools) {
+        Query query = new Query(Criteria.where("_id").is(projectId));
+        Update update = new Update()
+                .set("project_info", projectInfo)
+                .set("project_tools", tools);
+
+        var result = mongoTemplate.updateFirst(query, update, Project.class);
+        if (result.wasAcknowledged() && result.getModifiedCount() + result.getMatchedCount() > 0) {
+            return;
+        }
+        throw new BaseExceptionHandler(ErrorCode.FAILED_TO_UPDATE_PROJECT);
     }
 }
