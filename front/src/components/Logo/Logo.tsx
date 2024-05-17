@@ -1,15 +1,22 @@
+import Logosvg from '@/../public/assets/icons/logo'
 import logo from '@/components/Logo/logo.css'
 import Link from 'next/link'
-import Logosvg from '@/../public/assets/icons/logo'
 
 type Props = {
+  width: string
+  height: string
   logoColor: string
   leafColor: string
 }
-export default function Logo({ logoColor, leafColor }: Props) {
+export default function Logo({ width, height, logoColor, leafColor }: Props) {
   return (
     <Link href="/" className={logo}>
-      <Logosvg logoColor={logoColor} leafColor={leafColor} />
+      <Logosvg
+        width={width}
+        height={height}
+        logoColor={logoColor}
+        leafColor={leafColor}
+      />
     </Link>
   )
 }
