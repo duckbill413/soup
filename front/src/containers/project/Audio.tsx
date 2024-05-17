@@ -11,10 +11,11 @@ function Audio({ streamManager }: Props) {
     const audioRef = useRef<HTMLVideoElement>(null);
 
     useEffect(() => {
+        // streamManager가 유효할 때만 작업 수행
         if (streamManager && audioRef.current) {
             streamManager.addVideoElement(audioRef.current);
         }
-    }, [streamManager]);
+    }, [streamManager]); // streamManager가 변경될 때만 실행
 
     return (
         <audio autoPlay ref={audioRef}>
