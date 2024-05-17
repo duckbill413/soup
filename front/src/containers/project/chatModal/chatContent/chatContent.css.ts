@@ -39,7 +39,7 @@ export const hrSect = style({
 
 export const chatModalContentList = styleVariants({
     layout: [{ display: 'flex', }],
-    layoutMe: [{ display: 'flex', justifyContent:'end', }],
+    layoutMe: [{ display: 'flex', justifyContent:'flex-end', }],
     profile: [{ marginRight: vars.space.small,width:'10%'}],
     userArea: [{ display: 'flex', flexDirection: 'column', marginRight: vars.space.tiny }],
     content: [{
