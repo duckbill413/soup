@@ -1,6 +1,8 @@
 package io.ssafy.soupapi.domain.project.mongodb.dao;
 
 import io.ssafy.soupapi.domain.project.mongodb.dto.liveblock.LiveFlowChart;
+import io.ssafy.soupapi.domain.project.mongodb.dto.request.UpdateProjectJiraKey;
+import io.ssafy.soupapi.domain.project.mongodb.dto.response.GetProjectJiraKey;
 import io.ssafy.soupapi.domain.project.mongodb.entity.ChatMessage;
 import io.ssafy.soupapi.domain.project.mongodb.entity.Info;
 import io.ssafy.soupapi.domain.project.mongodb.entity.Project;
@@ -102,6 +104,27 @@ public class CustomMProjectRepositoryImpl implements CustomMProjectRepository {
         var result = mongoTemplate.updateFirst(query, update, Project.class);
         if (result.wasAcknowledged() && result.getModifiedCount() + result.getMatchedCount() > 0) {
             return;
+        }
+        throw new BaseExceptionHandler(ErrorCode.FAILED_TO_UPDATE_PROJECT);
+    }
+
+    @Override
+    public GetProjectJiraKey updateJiraInfo(ObjectId projectId, UpdateProjectJiraKey updateProjectJiraKey) {
+        Query query = new Query(Criteria.where("_id").is(projectId));
+        Update update = new Update()
+                .set("project_info.project_jira_host", updateProjectJiraKey.host())
+                .set("project_info.project_jira_project_key", updateProjectJiraKey.projectKey())
+                .set("project_info.project_jira_username", updateProjectJiraKey.username())
+                .set("project_info.project_jira_key", updateProjectJiraKey.key());
+
+        var result = mongoTemplate.updateFirst(query, update, Project.class);
+        if (result.wasAcknowledged() && result.getModifiedCount() + result.getMatchedCount() > 0) {
+            return GetProjectJiraKey.builder()
+                    .jiraHost(updateProjectJiraKey.host())
+                    .jiraProjectKey(updateProjectJiraKey.projectKey())
+                    .jiraUsername(updateProjectJiraKey.username())
+                    .jiraKey(updateProjectJiraKey.key())
+                    .build();
         }
         throw new BaseExceptionHandler(ErrorCode.FAILED_TO_UPDATE_PROJECT);
     }

@@ -1,6 +1,8 @@
 package io.ssafy.soupapi.domain.project.mongodb.dao;
 
 import io.ssafy.soupapi.domain.project.mongodb.dto.liveblock.LiveFlowChart;
+import io.ssafy.soupapi.domain.project.mongodb.dto.request.UpdateProjectJiraKey;
+import io.ssafy.soupapi.domain.project.mongodb.dto.response.GetProjectJiraKey;
 import io.ssafy.soupapi.domain.project.mongodb.entity.ChatMessage;
 import io.ssafy.soupapi.domain.project.mongodb.entity.Info;
 import io.ssafy.soupapi.domain.project.mongodb.entity.Tool;
@@ -16,4 +18,6 @@ public interface CustomMProjectRepository {
     LiveFlowChart updateFlowChart(ObjectId projectId, LiveFlowChart liveFlowChart);
 
     void updateInfoAndTools(ObjectId projectId, Info projectInfo, List<Tool> tools);
+
+    GetProjectJiraKey updateJiraInfo(ObjectId projectId, UpdateProjectJiraKey updateProjectJiraKey);
 }

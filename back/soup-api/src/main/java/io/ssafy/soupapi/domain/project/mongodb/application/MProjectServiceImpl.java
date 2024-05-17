@@ -207,14 +207,7 @@ public class MProjectServiceImpl implements MProjectService {
      */
     @Override
     public GetProjectJiraKey updateProjectJiraKey(ObjectId projectId, UpdateProjectJiraKey updateProjectJiraKey) {
-        var project = mProjectRepository.findProjectJiraInfo(projectId).orElseThrow(() ->
-                new BaseExceptionHandler(ErrorCode.FAILED_TO_UPDATE_PROJECT));
-        project.getInfo().setJiraHost(updateProjectJiraKey.host());
-        project.getInfo().setJiraProjectKey(updateProjectJiraKey.projectKey());
-        project.getInfo().setJiraUsername(updateProjectJiraKey.username());
-        project.getInfo().setJiraKey(updateProjectJiraKey.key());
-        mProjectRepository.save(project);
-        return GetProjectJiraKey.toProjectInfoDto(project.getInfo());
+        return mProjectRepository.updateJiraInfo(projectId, updateProjectJiraKey);
     }
 
     /**
