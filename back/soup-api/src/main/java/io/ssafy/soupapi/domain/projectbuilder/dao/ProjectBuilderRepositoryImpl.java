@@ -176,6 +176,7 @@ public class ProjectBuilderRepositoryImpl implements ProjectBuilderRepository {
     }
 
     private static String getReadmeVariable(Project project) {
+        // 기획서 내용 추가
         StringBuilder readme = new StringBuilder();
         if (!StringParserUtil.isNullOrEmpty(project.getReadme())) {
             readme.append(project.getReadme()).append('\n');
@@ -198,8 +199,16 @@ public class ProjectBuilderRepositoryImpl implements ProjectBuilderRepository {
                 readme.append("\n### 기대 효과\n");
                 readme.append(project.getProposal().getExpectation()).append('\n');
             }
+            readme.append("\n\n---\n\n");
         }
-        readme.append("\n\n---\n\n");
+
+        // Flow Chart 내용 추가
+        if (!StringParserUtil.isNullOrEmpty(project.getFlowChart())) {
+            readme.append("\n## Flow Chart\n");
+            readme.append(project.getFlowChart());
+            readme.append("\n\n---\n\n");
+        }
+
         return readme.toString();
     }
 

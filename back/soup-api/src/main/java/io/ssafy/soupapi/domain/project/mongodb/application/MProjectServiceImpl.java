@@ -6,6 +6,7 @@ import com.google.gson.Gson;
 import io.ssafy.soupapi.domain.project.constant.StepName;
 import io.ssafy.soupapi.domain.project.mongodb.dao.MProjectRepository;
 import io.ssafy.soupapi.domain.project.mongodb.dto.liveblock.LiveApiDetail;
+import io.ssafy.soupapi.domain.project.mongodb.dto.liveblock.LiveFlowChart;
 import io.ssafy.soupapi.domain.project.mongodb.dto.liveblock.LiveProposal;
 import io.ssafy.soupapi.domain.project.mongodb.dto.liveblock.LiveReadme;
 import io.ssafy.soupapi.domain.project.mongodb.dto.request.*;
@@ -109,6 +110,12 @@ public class MProjectServiceImpl implements MProjectService {
 
         mProjectRepository.updateProposal(projectId, proposal);
         return GetProjectProposal.toProjectProposalDto(projectId, proposal);
+    }
+
+    @Override
+    public LiveFlowChart liveUpdateProjectFlowChart(ObjectId projectId) {
+        LiveFlowChart liveFlowChart = liveblocksComponent.getRoomStorageDocument(projectId.toHexString(), StepName.FLOW, LiveFlowChart.class);
+        return mProjectRepository.updateFlowChart(projectId, liveFlowChart);
     }
 
     /**
