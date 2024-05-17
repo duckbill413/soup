@@ -7,6 +7,7 @@ import {addJiraAPI} from '@/apis/outline/outlineAPI'
 import {useParams} from 'next/navigation'
 import useJiraStore from "@/stores/useJiraStore";
 import useMemberStore from "@/stores/useMemberStore";
+import { TextField } from '@mui/material'
 
 function OutlineAddJira() {
     const {projectId} = useParams()
@@ -76,51 +77,56 @@ function OutlineAddJira() {
                 } else Toast.error('권한을 다시 확인하세요.')
             }).catch(error => Toast.error(`등록 실패: , ${error.message}`))
     }
-
-    return (
-
-        <div>
-          {isAdmin && <>
-            <br/><br/>
-
-            <div className={styles.mainDiv}>
-                <p>지라 추가</p>
-                <div className={styles.toggleDiv}>
-                    {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions */}
-                    <div className={`${styles.toggleSwitch} ${isJira ? 'toggled' : ''}`} onClick={handleToggle}>
-                        <div className={styles.slider}
-                             style={{transform: isJira ? 'translateX(30px)' : 'translateX(0)'}}/>
-                    </div>
-                </div>
-            </div>
-            {isJira && (
-                <div>
-                    <div>
-                        <input className={styles.input} placeholder="JIRA HOST"
-                               value={hostInput}
-                               onChange={changeInput(setHostInput)}
-                        />
-                        <input className={styles.input} placeholder="Project Key"
-                               value={projectKeyInput}
-                               onChange={changeInput(setProjectKeyInput)}
-                        />
-                        <input className={styles.input} placeholder="JIRA email"
-                               value={emailInput}
-                               onChange={changeInput(setEmailInput)}
-                        />
-                        <input className={styles.input} placeholder="사용자 KEY값"
-                               value={userKeyInput}
-                               onChange={changeInput(setUserKeyInput)}
-                        />
-                    </div>
-                    <div>
-                        <button type="button" className={styles.button} onClick={register}>등록하기</button>
-                    </div>
-                </div>
-            )}
-          </>}
+    
+  return (
+    <div>
+     {isAdmin && <>
+      <br /><br />
+      <div className={styles.mainDiv}>
+        <p>※ 선택 : Jira 추가</p>
+        <div className={styles.toggleDiv}>
+          {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions */}
+          <div className={`${styles.toggleSwitch} ${isJira ? 'toggled' : ''}`} onClick={handleToggle}>
+          <div className={styles.slider} style={{ transform: isJira ? 'translateX(30px)' : 'translateX(0)' }} />
+          </div>
         </div>
-    )
+      </div>
+      {isJira && (
+      <div>
+        <div className={styles.jiraMainDiv}>
+          <div className={styles.jiraSubDiv}>
+            <TextField label="Jira HOST"
+                       value={hostInput}
+                       onChange={changeInput(setHostInput)}
+            />
+          </div>
+          <div className={styles.jiraSubDiv}>
+            <TextField label="Project Key"
+                       value={projectKeyInput}
+                       onChange={changeInput(setProjectKeyInput)}
+            />
+          </div>
+          <div className={styles.jiraSubDiv}>
+            <TextField label="Jira email"
+                       value={emailInput}
+                       onChange={changeInput(setEmailInput)}
+            />
+          </div>
+          <div className={styles.jiraSubDiv}>
+            <TextField label="사용자 KEY값"
+                       value={userKeyInput}
+                       onChange={changeInput(setUserKeyInput)}
+            />
+          </div>
+        </div>
+        <div>
+        <button type="button" className={styles.button} onClick={register}>Jira 연동</button>
+        </div>
+      </div>
+      )}
+      </>}
+    </div>
+  )
 }
 
 export default OutlineAddJira

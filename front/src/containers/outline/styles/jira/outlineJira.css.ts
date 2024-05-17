@@ -1,6 +1,15 @@
 import vars from '@/styles/variables.css';
 import { style, globalStyle } from '@vanilla-extract/css';
 
+export const jiraMainDiv = style ({
+  display: 'flex'
+})
+
+export const jiraSubDiv = style ({
+  width: '18%',
+  marginRight:'3%'
+})
+
 export const toggleSwitch = style({
   width: '60px',
   height: '30px',
@@ -30,7 +39,8 @@ globalStyle(`${toggleSwitch}.toggled .${slider}`, {
 });
 
 export const mainDiv = style ({
-  display:'flex'
+  display:'flex',
+  alignItems:'center'
 })
 
 export const toggleDiv = style ({
@@ -52,18 +62,18 @@ export const button = style({
   margin:'3%',
   marginLeft:'74%',
   width:"7%",
-  height:'54px',
+  height:'45px',
   borderRadius:'10px',
   backgroundColor:'#FF7E20',
   color:'white',
   textAlign:'center',
-  boxShadow:vars.boxShadow.customOuter,
+  boxShadow: '0 4px #C65102',
+  transition: 'all 0.3s ease',
   ':hover': {
-    transform: 'scale(1.10)',
-    transitionDuration: '300ms',
+    backgroundColor: '#E76E0A',
   },
   ':active': {
-    transform: 'scale(0.90)',
-    transitionDuration: '300ms'
+    boxShadow: '0 2px #D15C00',
+    transform: 'translateY(3px)'
   }
 })

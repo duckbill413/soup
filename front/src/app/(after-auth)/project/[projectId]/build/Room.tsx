@@ -27,6 +27,8 @@ export default function Room({ children }: { children: ReactNode }) {
           description: 'demo project with soup!',
           packageName: 'com.example.demo',
           dependencies: new LiveList<number>(),
+          builtAt: '',
+          building: false,
         }),
       }}
     >

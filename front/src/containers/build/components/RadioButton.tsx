@@ -6,6 +6,7 @@ import { RadioProps } from '@/types/radio'
 import { FormControlLabel, Radio, RadioGroup } from '@mui/material'
 import { useEffect, useState } from 'react'
 import { useMutation, useStorage } from '../../../../liveblocks.config'
+import { Versions } from '../types/buildFile'
 
 export function RadioButton({ checked, label }: RadioProps) {
   return (
@@ -22,7 +23,7 @@ export function RadioButton({ checked, label }: RadioProps) {
 }
 
 export function RadioButtonGroup() {
-  const [versions, setVersions] = useState([])
+  const [versions, setVersions] = useState<Versions>([])
   const data = useStorage((root) => root.build)
 
   const handleChange = useMutation(({ storage }, e) => {

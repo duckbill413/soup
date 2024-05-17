@@ -38,6 +38,8 @@ export const tdMemberImage = style ({
 export const tdDetail = style({
   backgroundColor:'#DEB06E',
   padding:'0.9%',
+  paddingRight:'3%',
+  paddingLeft:'3%',
   marginRight:'2%',
   borderRadius:'7px',
   fontWeight:'bold'

@@ -4,9 +4,10 @@ export type Notification = {
   content: string
   notiPhotoUrl: string
   projectId: string
+  projectName: string
   chatMessageId: string
   createdTime: string
-  read: boolean
+  isRead: boolean
 }
 
 export type NotiEvent = {
