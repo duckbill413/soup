@@ -2,9 +2,9 @@ import { ACCESS_TOKEN, REFRESH_TOKEN } from '@/constants/token'
 import axios from 'axios'
 import { destroyCookie, parseCookies, setCookie } from 'nookies'
 
-const getAccessToken = () => parseCookies({ path: '/' }).accessToken
+const getAccessToken = () => parseCookies(null, { path: '/' }).accessToken
 
-const getRefreshToken = () => parseCookies({ path: '/' }).refreshToken
+const getRefreshToken = () => parseCookies(null, { path: '/' }).refreshToken
 
 const setToken = (accessToken: any, refreshToken: any) => {
   setCookie(null, 'accessToken', accessToken, { path: '/' })
