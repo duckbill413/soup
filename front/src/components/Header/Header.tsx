@@ -39,6 +39,8 @@ export default function Header({ theme, useVoice }: Props) {
     >
       <div>
         <Logo
+          width="85"
+          height="85"
           logoColor={theme === 'white' ? 'black' : vars.color.white}
           leafColor={theme === 'white' ? 'black' : vars.color.lightGreen}
         />

@@ -2,9 +2,9 @@ import { ACCESS_TOKEN, REFRESH_TOKEN } from '@/constants/token'
 import axios from 'axios'
 import { destroyCookie, parseCookies, setCookie } from 'nookies'
 
-const getAccessToken = () => parseCookies().accessToken
+const getAccessToken = () => parseCookies({ path: '/' }).accessToken
 
-const getRefreshToken = () => parseCookies().refreshToken
+const getRefreshToken = () => parseCookies({ path: '/' }).refreshToken
 
 const setToken = (accessToken: any, refreshToken: any) => {
   setCookie(null, 'accessToken', accessToken, { path: '/' })
@@ -31,7 +31,7 @@ const tokenRefresh = async () => {
   } catch (e) {
     console.log('error==', e)
     tokenClear()
-    window.location.href = '/'
+    // window.location.href = '/'
   }
 }
 
