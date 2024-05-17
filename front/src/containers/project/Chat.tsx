@@ -12,6 +12,8 @@ import {useMessageSocketStore} from "@/stores/useMessageSocketStore";
 import {MemberRes} from "@/containers/project/types/member";
 import {getChatting} from "@/apis/chat/chatAPI";
 import useMentionStore from "@/stores/useMentionStore";
+import {getJiraInfo, getJiraMembers} from "@/apis/jira/jiraAPI";
+import useJiraStore, {convertJiraMembers} from "@/stores/useJiraStore";
 
 type Props = {
     projectId: string,
@@ -22,16 +24,18 @@ const SVG_SIZE = 90
 export default function Chat({projectId}: Props) {
 
     const {connect, disconnect, client,setChatList,isVisible,setIsVisible} = useMessageSocketStore();
-    const {setMembers,setMe} = useMemberStore();
+    const {setMembers,setMe,setChatMembers,} = useMemberStore();
     const {setSenders} = useMentionStore();
+    const {setIsConnected,setJiraMembers,isConnected,jiraMembers} = useJiraStore();
+
     const handleVisible = () => {
         if (isVisible === null || isVisible === false) setIsVisible(true)
         else if (isVisible === true) setIsVisible(false)
     }
-
-    useEffect(() => {
+    useEffect (() => {
         getProjectMembers(projectId).then(data => {
             setMembers(data);
+            setChatMembers(data);
             const modifiedData = data.map(d => {
                 const { id, ...rest } = d;
                 return {
@@ -52,17 +56,29 @@ export default function Chat({projectId}: Props) {
         getChatting(projectId).then(data=>{
             setChatList(data);
         });
+        getJiraInfo(projectId).then(data=>{
+            if(data.jiraHost) {
+                getJiraMembers(projectId).then(jiraData => {
+                    setJiraMembers(convertJiraMembers(jiraData));
+                    setIsConnected(true);
+                })
+            }
+
+        })
         connect(projectId);
         return (() => {
+            setIsVisible(false);
             if (client) {
                 disconnect(client);
             }
         });
-    return()=>{
-        setIsVisible(false);
-    }
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [projectId,connect]);
+
+    useEffect(() => {
+        setMembers(jiraMembers);
+    }, [isConnected]);
     return (
         <>
             <ChatModal projectId={projectId}/>

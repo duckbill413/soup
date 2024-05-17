@@ -1,3 +1,5 @@
+'use client'
+
 import { StepTitleWithGuide } from '@/components/StepTitle/StepTitle'
 import Image from 'next/image'
 import jiraSVG from '#/assets/icons/func/jira.svg'
@@ -7,8 +9,32 @@ import IconButton from '@/components/IconButton'
 import { FilterIcon } from '#/assets/icons'
 import Room from '@/app/(after-auth)/project/[projectId]/func/Room'
 import Live from '@/components/cursor/Live'
+import useMemberStore from "@/stores/useMemberStore";
+import {useEffect, useState} from "react";
+import {synchronizationJira} from "@/apis/jira/jiraAPI";
 
-export default function func() {
+type Props = {
+  params: { projectId: string },
+}
+export default function Func({params}:Props) {
+  const [isAdmin, setIsAdmin] = useState<boolean>(false);
+  const {me,chatMembers} = useMemberStore();
+  const {projectId} = params;
+
+  useEffect(() => {
+    chatMembers.some(member => {
+      if (me && member.id === me.id) {
+        setIsAdmin(member.roles?.some(data => data === 'ADMIN'));
+        return true;
+      }
+      return false;
+    });
+  }, [me,chatMembers]);
+  const handleSynchronization = () =>{
+    synchronizationJira(projectId).then(data=>{
+        console.log(data);
+    })
+  }
   return (
     <Room>
       <Live>
@@ -22,9 +48,9 @@ export default function func() {
           <IconButton name="정렬 기준" eventHandler="/sort">
             <FilterIcon color="currentColor" />
           </IconButton>
-          <div>
-            <Image src={jiraSVG} alt="지라 아이콘" />
-            <p>JIRA 동기화</p>
+          <div role="presentation" onClick={handleSynchronization}>
+
+            {isAdmin && <><Image src={jiraSVG} alt="지라 아이콘" /><p>JIRA 동기화</p></>}
           </div>
         </div>
         <FuncTable />

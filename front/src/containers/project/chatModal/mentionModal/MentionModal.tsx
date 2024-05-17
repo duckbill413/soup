@@ -11,7 +11,6 @@ import * as styles from "./mentionModal.css";
 export default function MentionModal({setSelected,selected,selectMember}: MentionModalProps){
 
     const { senders,isSenderModalVisible,setIsSenderModalVisible,setFilteredSenders,filteredSenders} = useMentionStore();
-
     useEffect(() => {
         setFilteredSenders(senders);
         // eslint-disable-next-line react-hooks/exhaustive-deps
