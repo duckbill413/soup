@@ -7,7 +7,6 @@ export const container = style({
   display: 'flex',
   justifyContent: 'space-between',
   alignItems: 'flex-end',
-  position: 'relative',
 })
 
 export const stepNum = style({
