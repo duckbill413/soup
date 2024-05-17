@@ -147,14 +147,15 @@ public class MProjectServiceImpl implements MProjectService {
                 new BaseExceptionHandler(ErrorCode.NOT_FOUND_PROJECT));
 
         // update info
-        project.setInfo(generateInfo(project, updateProjectInfo));
+        var projectInfo = generateInfo(project, updateProjectInfo);
         // update tools
+        var tools = project.getTools();
         if (updateProjectInfo.tools() != null) {
-            var tools = updateProjectInfo.tools().stream().map(UpdateProjectTool::toTool).toList();
-            project.setTools(tools);
+            tools = updateProjectInfo.tools().stream().map(UpdateProjectTool::toTool).toList();
         }
 
-        mProjectRepository.save(project);
+        mProjectRepository.updateInfoAndTools(projectId, projectInfo, tools);
+
         return GetProjectInfo.toProjectInfoDto(project);
     }
     // null로 요청이 들어온 변수는 update 하지 않는다
@@ -206,14 +207,7 @@ public class MProjectServiceImpl implements MProjectService {
      */
     @Override
     public GetProjectJiraKey updateProjectJiraKey(ObjectId projectId, UpdateProjectJiraKey updateProjectJiraKey) {
-        var project = mProjectRepository.findProjectJiraInfo(projectId).orElseThrow(() ->
-                new BaseExceptionHandler(ErrorCode.FAILED_TO_UPDATE_PROJECT));
-        project.getInfo().setJiraHost(updateProjectJiraKey.host());
-        project.getInfo().setJiraProjectKey(updateProjectJiraKey.projectKey());
-        project.getInfo().setJiraUsername(updateProjectJiraKey.username());
-        project.getInfo().setJiraKey(updateProjectJiraKey.key());
-        mProjectRepository.save(project);
-        return GetProjectJiraKey.toProjectInfoDto(project.getInfo());
+        return mProjectRepository.updateJiraInfo(projectId, updateProjectJiraKey);
     }
 
     /**
