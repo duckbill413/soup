@@ -19,7 +19,7 @@ type Props = {
 export default function Func({params}:Props) {
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
   const {me,chatMembers} = useMemberStore();
-  const {projectId} = params;
+  const {projectId} =params;
 
   useEffect(() => {
     chatMembers.some(member => {
@@ -32,7 +32,9 @@ export default function Func({params}:Props) {
   }, [me,chatMembers]);
   const handleSynchronization = () =>{
     synchronizationJira(projectId).then(data=>{
-        console.log(data);
+      if (data.status === 201) {
+        alert("지라 등록완료")
+      }
     })
   }
   return (

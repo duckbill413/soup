@@ -26,7 +26,7 @@ export default function Chat({projectId}: Props) {
     const {connect, disconnect, client,setChatList,isVisible,setIsVisible} = useMessageSocketStore();
     const {setMembers,setMe,setChatMembers,} = useMemberStore();
     const {setSenders} = useMentionStore();
-    const {setIsConnected,setJiraMembers,isConnected,jiraMembers} = useJiraStore();
+    const {setIsConnected,setJiraMembers,isConnected,jiraMembers,setJiraInfo} = useJiraStore();
 
     const handleVisible = () => {
         if (isVisible === null || isVisible === false) setIsVisible(true)
@@ -57,6 +57,7 @@ export default function Chat({projectId}: Props) {
             setChatList(data);
         });
         getJiraInfo(projectId).then(data=>{
+            setJiraInfo(data);
             if(data.jiraHost) {
                 getJiraMembers(projectId).then(jiraData => {
                     setJiraMembers(convertJiraMembers(jiraData));
