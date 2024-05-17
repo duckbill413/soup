@@ -1,9 +1,11 @@
 import { create } from 'zustand';
 import { MemberRes } from "@/containers/project/types/member";
-import { JiraMembersRes } from "@/containers/func/types/jira";
+import {JiraInfoRes, JiraMembersRes} from "@/containers/func/types/jira";
 
 type Store = {
     isConnected: boolean;
+    jiraInfo: JiraInfoRes;
+    setJiraInfo: (jiraInfo:JiraInfoRes) => void;
     setIsConnected: (value:boolean) => void;
     jiraMembers: MemberRes[];
     setJiraMembers: (members: MemberRes[]) => void;
@@ -12,6 +14,13 @@ type Store = {
 const useJiraStore = create<Store>((set) => ({
     isConnected: false,
     setIsConnected: (value) => set({isConnected: value}),
+    jiraInfo: {
+        jiraHost: '',
+        jiraProjectKey: '',
+        jiraUsername: '',
+        jiraKey: ''
+    },
+    setJiraInfo: (jiraInfo) => set({jiraInfo}),
     jiraMembers: [],
     setJiraMembers: (members) => set({jiraMembers: members}),
 }));

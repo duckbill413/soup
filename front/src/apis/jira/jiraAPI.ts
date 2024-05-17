@@ -26,7 +26,7 @@ export const getJiraMembers = async (projectId:string): Promise<JiraMembersRes[]
 }
 
 
-export const synchronizationJira = async (projectId:string): Promise<void> => {
+export const synchronizationJira = async (projectId:string) => {
     try {
         const response = await baseAxios.post(`/projects/${projectId}/jira`)
         return response.data;
