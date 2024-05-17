@@ -9,6 +9,7 @@ import {
     Subscriber,
 } from 'openvidu-browser';
 import useAudioStore from "@/stores/useAudioStore";
+import {OpenViduRes} from "@/containers/project/types/openVidu";
 import Session from './Session';
 
 type Props = {
@@ -21,9 +22,9 @@ export default function SoundChat({projectId}: Props) {
     const [, setSessionId] = useState<string>('');
     const [subscriber, setSubscriber] = useState<Subscriber | null>(null);
     const [OV, setOV] = useState<OpenVidu | null>(null);
-    const [token, setToken] = useState<string>('');
+    const [tokenData, setTokenData] = useState<OpenViduRes>();
 
-    const leaveSession = useCallback(() => {
+    const leave = useCallback(() => {
         if (session) session.disconnect();
         setOV(null);
         setSession('');
@@ -31,19 +32,32 @@ export default function SoundChat({projectId}: Props) {
         setSubscriber(null);
         setLocalStreamManager(null);
         setToggleAudio(false);
+        // if(tokenData) leaveSession(projectId,tokenData?.sessionId,tokenData?.connectionId);
+
     }, [session]);
 
     const joinSession = async () => {
-        if (!token) return;
+        if (!tokenData) return;
         if (!session) return;
         if (!OV) return;
-
+        console.log(tokenData);
         session.on('streamCreated', event => {
             const subscribers = session.subscribe(event.stream, '');
             setSubscriber(subscribers);
         });
+        session.on('streamDestroyed', event => {
+            // Logic when a participant leaves
+            // Check if the remote connection exists
+            const connection = session.remoteConnections.get(event.stream.connection.connectionId);
+            if (!connection) {
+                console.error(`Remote connection ${event.stream.connection.connectionId} unknown when 'onParticipantLeft'.`);
+                 // If the connection does not exist, stop processing here
+            }
+            // Execute other logic...
+        });
 
-        await session.connect(token)
+
+        await session.connect(tokenData.token)
             .then(() => {
                 if (OV) {
                     const publishers = OV.initPublisher(undefined, {
@@ -76,26 +90,26 @@ export default function SoundChat({projectId}: Props) {
         const fetchData = async () => {
             try {
                 const sessionData = await getToken(projectId);
-                if (sessionData) setToken(sessionData.token);
+                if (sessionData) setTokenData(sessionData);
             } catch (error) {
                 console.error('Error fetching session:', error);
             }
         };
         fetchData();
         return () => {
-            leaveSession();
+            leave();
         }
     }, [projectId]);
 
 
     useEffect(() => {
         createSession();
-    }, [token]);
+    }, [tokenData]);
 
 
     return (
         <div>
-            {session && (
+            {session && subscriber && (
                 <Session
                     subscriber={subscriber as Subscriber}
                 />

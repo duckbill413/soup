@@ -9,6 +9,6 @@ export type MemberRes = {
     nickname: string;
     displayName: string;
     phone: string;
-    role: string[];
+    roles: string[];
     profileImageUrl: string;
 }

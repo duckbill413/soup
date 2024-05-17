@@ -27,7 +27,7 @@ type Props = {
 
 export default function ChatModal({projectId}: Props) {
     const {send, chatList,moveChatMessageId,isVisible,tempChatMessageId} = useMessageSocketStore();
-    const {me, members} = useMemberStore();
+    const {me, chatMembers} = useMemberStore();
     const [message, setMessage] = useState<string>("");
     const { isSenderModalVisible,setIsSenderModalVisible,filteredSenders,searchSender} = useMentionStore();
     const { selected,setSelected, handleKey } = useHandleKeys(filteredSenders,
@@ -66,7 +66,7 @@ export default function ChatModal({projectId}: Props) {
     const sendMessage = () => {
         if (!me || !message) return;
         send(projectId, {
-            message, mentionedMemberIds: getMentionedMember(message,members), sender: {
+            message, mentionedMemberIds: getMentionedMember(message,chatMembers), sender: {
                 memberId: me.id,
                 nickname: me.nickname,
                 profileImageUrl: me.profileImageUrl
@@ -97,7 +97,8 @@ export default function ChatModal({projectId}: Props) {
         }
         if (e.key === 'Enter') {
             if(isSenderModalVisible){
-                const searchMember = members.find(data=>data.id===selected)
+                console.log(chatMembers);
+                const searchMember = chatMembers.find(data=>data.id===selected)
                 if(searchMember) {
                     selectMember(searchMember?.nickname);
                 }
@@ -116,7 +117,7 @@ export default function ChatModal({projectId}: Props) {
     let prevYearMonth = null;
     for (let i = 0; i < chatList.length; i+=1) {
         const chat = chatList[i];
-        const member = members.find((data) => data.id === chat.sender.memberId);
+        const member = chatMembers.find((data) => data.id === chat.sender.memberId);
         const profileImage = member ? member.profileImageUrl : defaultImage;
         updatedChatList.push({
             ...chat,
@@ -137,7 +138,7 @@ export default function ChatModal({projectId}: Props) {
                     <div className={styles.chatModalContent.background}>
                         <div>
                             {updatedChatList.map((chat) => (
-                                <ChatContent {...chat} key={chat.chatMessageId} memberNicknames={members.map(data=>data.nickname)} myNickname={me?.nickname} nickname={chat.nickname} header={chat.header} profileImageUrl={chat.profileImageUrl}/>
+                                <ChatContent {...chat} key={chat.chatMessageId} memberNicknames={chatMembers.map(data=>data.nickname)} myNickname={me?.nickname} nickname={chat.nickname} header={chat.header} profileImageUrl={chat.profileImageUrl}/>
                             ))}
                         </div>
                     </div>
