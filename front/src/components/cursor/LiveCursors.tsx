@@ -1,12 +1,11 @@
-import { LiveCursorProps } from "@/types/cursor";
-import COLORS from "@/constants";
-import Cursor from "./Cursor";
+import COLORS from '@/constants'
+import { LiveCursorProps } from '@/types/cursor'
+import Cursor from './Cursor'
 
-
-function LiveCursors ({ others }: LiveCursorProps) {
-  return others.map(({ connectionId, presence }) => {
+function LiveCursors({ others }: LiveCursorProps) {
+  return others.map(({ connectionId, presence, info }) => {
     if (presence == null || !presence?.cursor) {
-      return null;
+      return null
     }
 
     return (
@@ -15,10 +14,11 @@ function LiveCursors ({ others }: LiveCursorProps) {
         color={COLORS[Number(connectionId) % COLORS.length]}
         x={presence.cursor.x}
         y={presence.cursor.y}
+        name={info?.name ?? '팀원'}
         message={presence.message}
       />
-    );
-  });
-};
+    )
+  })
+}
 
-export default LiveCursors;
+export default LiveCursors

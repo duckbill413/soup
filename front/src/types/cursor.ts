@@ -1,4 +1,4 @@
-import { BaseUserMeta, User } from "@liveblocks/client";
+import { BaseUserMeta, User } from '@liveblocks/client'
 
 export enum CursorMode {
   Hidden,
@@ -9,37 +9,38 @@ export enum CursorMode {
 
 export type CursorState =
   | {
-      mode: CursorMode.Hidden;
+      mode: CursorMode.Hidden
     }
   | {
-      mode: CursorMode.Chat;
-      message: string;
-      previousMessage: string | null;
+      mode: CursorMode.Chat
+      message: string
+      previousMessage: string | null
     }
   | {
-      mode: CursorMode.ReactionSelector;
+      mode: CursorMode.ReactionSelector
     }
   | {
-      mode: CursorMode.Reaction;
-      reaction: string;
-      isPressed: boolean;
-    };
+      mode: CursorMode.Reaction
+      reaction: string
+      isPressed: boolean
+    }
 
-export type Presence = any;
+export type Presence = any
 
 export type LiveCursorProps = {
-  others: readonly User<Presence, BaseUserMeta>[];
-};
+  others: readonly User<Presence, BaseUserMeta>[]
+}
 
 export type CursorChatProps = {
-  cursor: { x: number; y: number };
-  cursorState: CursorState;
-  setCursorState: (cursorState: CursorState) => void;
+  cursor: { x: number; y: number }
+  cursorState: CursorState
+  setCursorState: (cursorState: CursorState) => void
   updateMyPresence: (
     presence: Partial<{
-      cursor: { x: number; y: number };
-      cursorColor: string;
-      message: string;
-    }>
-  ) => void;
-};
+      cursor: { x: number; y: number }
+      cursorColor: string
+      message: string
+      name: string
+    }>,
+  ) => void
+}
