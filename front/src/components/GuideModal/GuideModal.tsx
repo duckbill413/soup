@@ -1,3 +1,5 @@
+import * as styles from '@/components/GuideModal/guideModal.css'
+import { Close } from '@mui/icons-material'
 import { ReactNode } from 'react'
 import Draggable from 'react-draggable'
 
@@ -9,34 +11,15 @@ interface GuideProps {
 function GuideModal({ children, onClose }: GuideProps) {
   return (
     <Draggable>
-      <div
-        style={{
-          position: 'absolute',
-          zIndex: 1000,
-          top: 100,
-          right: 15,
-          width: '40%',
-          height: '40%',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          cursor: 'move',
-        }}
-      >
-        <div
-          style={{
-            width: '100%',
-            height: '100%',
-            position: 'absolute',
-            padding: 20,
-            background: 'white',
-            boxShadow: '0 4px 8px rgba(0,0,0,0.3)',
-          }}
-        >
-          <button type="button" onClick={onClose}>
-            X
-          </button>
-          {children}
+      <div className={styles.draggable}>
+        <div className={styles.modal}>
+          <div className={styles.header}>
+            <span className={styles.title}>작성 가이드</span>
+            <button type="button" onClick={onClose}>
+              <Close />
+            </button>
+          </div>
+          <div className={styles.body}>{children}</div>
         </div>
       </div>
     </Draggable>
