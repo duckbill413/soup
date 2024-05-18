@@ -35,7 +35,7 @@ public class ProjectAuth extends BaseEntity {
     @Builder.Default
     @ElementCollection
     @Enumerated(EnumType.STRING)
-    @CollectionTable(name = "project_auth_role", joinColumns = @JoinColumn(name = "member_id"))
+    @CollectionTable(name = "project_auth_role", joinColumns = @JoinColumn(name = "project_auth_id"))
     @Column(name = "role")
     private Set<ProjectRole> roles = new HashSet<>();
     @ManyToOne
