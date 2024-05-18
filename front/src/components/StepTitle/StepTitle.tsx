@@ -8,6 +8,8 @@ import AiPlanGuide from '@/components/GuideModal/AiPlanGuide'
 import FuncGuide from '@/components/GuideModal/FuncGuide'
 import FlowChartGuide from '@/components/GuideModal/FlowChartGuide'
 import GuideModal from '@/components/GuideModal/GuideModal'
+import APIGuide from '@/components/GuideModal/APIGuide'
+import BuildGuide from '@/components/GuideModal/BuildGuide'
 
 export function StepTitle({ stepNum, title, desc, children }: StepTitleProps) {
   return (
@@ -43,6 +45,12 @@ export function StepTitleWithGuide({
         break;
       case '플로우 차트 작성 가이드':
         setGuideContent(<FlowChartGuide/>);
+        break;
+      case 'API 명세서 작성 가이드':
+        setGuideContent(<APIGuide/>);
+        break;
+      case '빌드 가이드':
+        setGuideContent(<BuildGuide/>);
         break;
       default:
         setGuideContent(null);
