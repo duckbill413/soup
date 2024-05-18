@@ -5,7 +5,7 @@ import show from '#/assets/icons/mainpage/spec/showSpec.svg'
 
 function MainSpec() {
   return (
-    <div className={styles.container}>
+    <div className={styles.specContainer}>
       <div>
         <div>
           <p className={styles.boldText}>ERD와 API명세서를 작성하고</p>
@@ -21,7 +21,7 @@ function MainSpec() {
           <Image src={illust} alt="Illust" width={300} height={300} />
         </div>
       </div>
-      <div className={styles.planDiv}>
+      <div>
         <Image src={show} alt="show" width={700} height={514} />
       </div>
     </div>

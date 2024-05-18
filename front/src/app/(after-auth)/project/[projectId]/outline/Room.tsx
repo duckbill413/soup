@@ -16,7 +16,7 @@ function Room({ children }: { children: ReactNode }) {
                   initialPresence={{}}
                   initialStorage={{
                     outline : new LiveObject({
-                      project_name:'',
+                      project_name:'Untitled',
                       project_description:'',
                       project_photo:'',
                       project_startDate:'',
