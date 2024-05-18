@@ -6,6 +6,7 @@ import com.google.gson.Gson;
 import io.ssafy.soupapi.domain.project.constant.StepName;
 import io.ssafy.soupapi.domain.project.mongodb.dao.MProjectRepository;
 import io.ssafy.soupapi.domain.project.mongodb.dto.liveblock.LiveApiDetail;
+import io.ssafy.soupapi.domain.project.mongodb.dto.liveblock.LiveFlowChart;
 import io.ssafy.soupapi.domain.project.mongodb.dto.liveblock.LiveProposal;
 import io.ssafy.soupapi.domain.project.mongodb.dto.liveblock.LiveReadme;
 import io.ssafy.soupapi.domain.project.mongodb.dto.request.*;
@@ -111,6 +112,12 @@ public class MProjectServiceImpl implements MProjectService {
         return GetProjectProposal.toProjectProposalDto(projectId, proposal);
     }
 
+    @Override
+    public LiveFlowChart liveUpdateProjectFlowChart(ObjectId projectId) {
+        LiveFlowChart liveFlowChart = liveblocksComponent.getRoomStorageDocument(projectId.toHexString(), StepName.FLOW, LiveFlowChart.class);
+        return mProjectRepository.updateFlowChart(projectId, liveFlowChart);
+    }
+
     /**
      * 프로젝트 제안서 업데이트
      *
@@ -140,14 +147,15 @@ public class MProjectServiceImpl implements MProjectService {
                 new BaseExceptionHandler(ErrorCode.NOT_FOUND_PROJECT));
 
         // update info
-        project.setInfo(generateInfo(project, updateProjectInfo));
+        var projectInfo = generateInfo(project, updateProjectInfo);
         // update tools
+        var tools = project.getTools();
         if (updateProjectInfo.tools() != null) {
-            var tools = updateProjectInfo.tools().stream().map(UpdateProjectTool::toTool).toList();
-            project.setTools(tools);
+            tools = updateProjectInfo.tools().stream().map(UpdateProjectTool::toTool).toList();
         }
 
-        mProjectRepository.save(project);
+        mProjectRepository.updateInfoAndTools(projectId, projectInfo, tools);
+
         return GetProjectInfo.toProjectInfoDto(project);
     }
     // null로 요청이 들어온 변수는 update 하지 않는다
@@ -199,14 +207,7 @@ public class MProjectServiceImpl implements MProjectService {
      */
     @Override
     public GetProjectJiraKey updateProjectJiraKey(ObjectId projectId, UpdateProjectJiraKey updateProjectJiraKey) {
-        var project = mProjectRepository.findProjectJiraInfo(projectId).orElseThrow(() ->
-                new BaseExceptionHandler(ErrorCode.FAILED_TO_UPDATE_PROJECT));
-        project.getInfo().setJiraHost(updateProjectJiraKey.host());
-        project.getInfo().setJiraProjectKey(updateProjectJiraKey.projectKey());
-        project.getInfo().setJiraUsername(updateProjectJiraKey.username());
-        project.getInfo().setJiraKey(updateProjectJiraKey.key());
-        mProjectRepository.save(project);
-        return GetProjectJiraKey.toProjectInfoDto(project.getInfo());
+        return mProjectRepository.updateJiraInfo(projectId, updateProjectJiraKey);
     }
 
     /**

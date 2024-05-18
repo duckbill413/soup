@@ -1,6 +1,7 @@
 package io.ssafy.soupapi.domain.project.mongodb.api;
 
 import io.ssafy.soupapi.domain.project.mongodb.application.MProjectService;
+import io.ssafy.soupapi.domain.project.mongodb.dto.liveblock.LiveFlowChart;
 import io.ssafy.soupapi.domain.project.mongodb.dto.request.UpdateApiDoc;
 import io.ssafy.soupapi.domain.project.mongodb.dto.request.UpdateProjectJiraKey;
 import io.ssafy.soupapi.domain.project.mongodb.dto.request.UpdateProjectProposal;
@@ -333,6 +334,19 @@ public class MProjectController {
         return BaseResponse.success(
                 SuccessCode.UPDATE_SUCCESS,
                 mProjectService.liveUpdateProjectReadme(new ObjectId(projectId))
+        );
+    }
+
+    @Operation(summary = "Liveblocks 프로젝트 Flow Chart 업데이트")
+    @PostMapping("/{projectId}/flow-chart/live")
+    @PreAuthorize("@authService.hasProjectRoleMember(#projectId, #userSecurityDTO.getId())")
+    public ResponseEntity<BaseResponse<LiveFlowChart>> liveUpdateProjectFlowChart(
+            @PathVariable String projectId,
+            @AuthenticationPrincipal UserSecurityDTO userSecurityDTO
+    ) {
+        return BaseResponse.success(
+                SuccessCode.UPDATE_SUCCESS,
+                mProjectService.liveUpdateProjectFlowChart(new ObjectId(projectId))
         );
     }
 }
