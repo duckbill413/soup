@@ -78,8 +78,9 @@ export default function Generate() {
     } catch (e) {
       console.error(e)
       alert('잠시 후 다시 시도해주세요.')
+    } finally {
+      updateLiveblock('building', false)
     }
-    updateLiveblock('building', false)
   }
 
   const handleClose = () => {
@@ -189,27 +190,33 @@ export default function Generate() {
             {/* </a> */}
           </Toolbar>
           <section className={styles.section}>
-            <div className={`${styles.box} ${styles.file}`}>
-              <SimpleTreeView
-                sx={{
-                  flexGrow: 1,
-                  maxWidth: 400,
-                  overflowY: 'auto',
-                  padding: '12px',
-                }}
-                slots={{
-                  expandIcon: Folder,
-                  collapseIcon: FolderOpen,
-                  endIcon: Description,
-                }}
-              >
-                {renderTree(buildFile?.build, 1, '')}
-              </SimpleTreeView>
-            </div>
+            {Object.keys(buildFile?.build).length !== 0 ? (
+              <div className={`${styles.box} ${styles.file}`}>
+                <SimpleTreeView
+                  sx={{
+                    flexGrow: 1,
+                    maxWidth: 400,
+                    overflowY: 'auto',
+                    padding: '12px',
+                  }}
+                  slots={{
+                    expandIcon: Folder,
+                    collapseIcon: FolderOpen,
+                    endIcon: Description,
+                  }}
+                >
+                  {renderTree(buildFile?.build, 1, '')}
+                </SimpleTreeView>
+              </div>
+            ) : null}
             <div className={`${styles.box} ${styles.code}`}>
               <CodeMirror
                 editable={false}
-                value={code.code}
+                value={
+                  Object.keys(buildFile?.build).length !== 0
+                    ? code.code
+                    : '미리보기가 제공되지 않는 파일입니다.\n빌드 파일 다운로드는 가능합니다.'
+                }
                 height="calc(80vh - 2px)"
                 basicSetup={{
                   foldGutter: false,
