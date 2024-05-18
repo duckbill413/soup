@@ -1,4 +1,3 @@
-import 'highlight.js/styles/a11y-dark.css'
 import Image from 'next/image'
 import ReactMarkdown from 'react-markdown'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
@@ -50,6 +49,7 @@ export default function Markdown({ text }: Props) {
             layout="responsive"
             width={820}
             height={150}
+            unoptimized
           />
         ),
       }}
