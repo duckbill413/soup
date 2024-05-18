@@ -3,10 +3,10 @@
 import InfoIcon from '@/../public/assets/icons/info'
 import GuideModal from '@/components/GuideModal/GuideModal'
 import { APIText, APITitle } from '@/components/GuideModal/text/APIGuide'
+import { BuildText, BuildTitle } from '@/components/GuideModal/text/BuildGuide'
 import * as styles from '@/components/StepTitle/stepTitle.css'
 import { StepTitleProps } from '@/types/step'
 import { useState } from 'react'
-import { BuildText, BuildTitle } from '../GuideModal/text/BuildGuide'
 
 export function StepTitle({ stepNum, title, desc, children }: StepTitleProps) {
   return (

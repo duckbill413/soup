@@ -4,7 +4,7 @@ import { ProjectMemberImageUri, ProjectRes } from '@/containers/project/types/pr
 import * as styles from '@/containers/project.css'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
-import {faker} from "@faker-js/faker";
+import defaultImg from "#/assets/images/defaultProjectImg.png"
 
 const PROJECT_IMAGE_WIDTH = 380
 const PROJECT_IMAGE_HIGHT = 250
@@ -19,8 +19,7 @@ export default function Project({ id,name,imgUrl,projectMemberImageUrls }: Proje
           <Image unoptimized className={styles.projectImage} src={imgUrl} alt="프로젝트 이미지" width={PROJECT_IMAGE_WIDTH}
                  height={PROJECT_IMAGE_HIGHT} />
             :
-            // Todo: Project 기본이미지 뭐 할 지?
-            <Image unoptimized className={styles.projectImage} src={faker.image.urlPicsumPhotos()} alt="프로젝트 이미지" width={PROJECT_IMAGE_WIDTH}
+            <Image unoptimized className={styles.projectImage} src={defaultImg} alt="프로젝트 이미지" width={PROJECT_IMAGE_WIDTH}
                    height={PROJECT_IMAGE_HIGHT} />
           }
         <p className={styles.projectName}>{name}</p>

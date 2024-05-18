@@ -88,6 +88,12 @@ export const input = style ({
   borderRadius:'10px',
 })
 
+export const afterAI = style ({
+  display: 'flex',
+  flexDirection: 'column',
+  width: '40%'
+})
+
 globalStyle(`${mainDivision} p`, {
   fontWeight:'bold',
   fontSize: '1.3rem',

@@ -7,7 +7,24 @@ export const container = style({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'space-around',
-  backgroundColor: '#f7f6cf',
+  backgroundColor: '#F0EDE0',
+});
+
+export const specContainer = style ({
+  height: '90vh',
+  width: '100%',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'space-around',
+  backgroundColor: '#FFEDD3',
+})
+
+export const funcContainer = style({
+  height: '90vh',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'space-around',
+  backgroundColor: '#E2EEFF',
 });
 
 export const boldText = style({
@@ -19,17 +36,6 @@ export const boldText = style({
 export const text = style({
   fontSize: vars.fontSize.small,
   margin: vars.space.tiny,
-});
-
-export const planDiv = style({
-});
-
-export const funcContainer = style({
-  height: '90vh',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'space-around',
-  backgroundColor: '#f4cfdf',
 });
 
 export const funcSubDiv = style ({
