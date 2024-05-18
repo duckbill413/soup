@@ -115,6 +115,9 @@ public class MProjectServiceImpl implements MProjectService {
     @Override
     public LiveFlowChart liveUpdateProjectFlowChart(ObjectId projectId) {
         LiveFlowChart liveFlowChart = liveblocksComponent.getRoomStorageDocument(projectId.toHexString(), StepName.FLOW, LiveFlowChart.class);
+        if (Objects.isNull(liveFlowChart)) {
+            return null;
+        }
         return mProjectRepository.updateFlowChart(projectId, liveFlowChart);
     }
 
@@ -467,7 +470,7 @@ public class MProjectServiceImpl implements MProjectService {
     public Object liveProjectVuerd(ObjectId projectId) {
         var vuerdDoc = liveblocksComponent.getRoomStorageDocument(projectId.toHexString(), StepName.ERD, Object.class);
         if (Objects.isNull(vuerdDoc)) {
-            throw new BaseExceptionHandler(ErrorCode.LIVEBLOCK_DATA_IS_NULL);
+            return null;
         }
         try {
             String data = ((LinkedHashMap<?, ?>) vuerdDoc).get("json").toString();
@@ -513,8 +516,8 @@ public class MProjectServiceImpl implements MProjectService {
     @Override
     public String liveUpdateProjectReadme(ObjectId projectId) {
         LiveReadme liveReadme = liveblocksComponent.getRoomStorageDocument(projectId.toHexString(), StepName.README, LiveReadme.class);
-        if (StringParserUtil.isNullOrEmpty(liveReadme.json())) {
-            return "";
+        if (Objects.isNull(liveReadme) || StringParserUtil.isNullOrEmpty(liveReadme.json())) {
+            return null;
         }
 
         Query query = new Query(Criteria.where("_id").is(projectId));

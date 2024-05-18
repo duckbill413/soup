@@ -49,14 +49,9 @@ public class ProjectBuilderServiceImpl implements ProjectBuilderService {
     public String buildProject(String projectId) {
         var project = mProjectRepository.findById(new ObjectId(projectId)).orElseThrow(() ->
                 new BaseExceptionHandler(ErrorCode.NOT_FOUND_PROJECT));
+
         if (Objects.isNull(project.getInfo())) {
             throw new BaseExceptionHandler(ErrorCode.NEED_PROJECT_BUILD_INFO);
-        }
-        if (Objects.isNull(project.getVuerd())) {
-            throw new BaseExceptionHandler(ErrorCode.NEED_PROJECT_BUILD_ERD);
-        }
-        if (Objects.isNull(project.getApiDocs())) {
-            throw new BaseExceptionHandler(ErrorCode.NEED_PROJECT_BUILD_APIDOC);
         }
         if (Objects.isNull(project.getProjectBuilderInfo())) {
             throw new BaseExceptionHandler(ErrorCode.NEED_PROJECT_BUILD_BUILDINFO);

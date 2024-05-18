@@ -184,21 +184,21 @@ public class ProjectBuilderRepositoryImpl implements ProjectBuilderRepository {
 
         // 기획서 내용 추가
         if (Objects.nonNull(project.getProposal())) {
-            readme.append("\n## 기획서\n");
+            readme.append("\n---\n## 기획서\n");
+            readme.append("\n### 기획 배경\n");
             if (!StringParserUtil.isNullOrEmpty(project.getProposal().getBackground())) {
-                readme.append("\n### 기획 배경\n");
                 readme.append(project.getProposal().getBackground()).append('\n');
             }
+            readme.append("\n### 서비스 소개\n");
             if (!StringParserUtil.isNullOrEmpty(project.getProposal().getIntroduce())) {
-                readme.append("\n### 서비스 소개\n");
                 readme.append(project.getProposal().getIntroduce()).append('\n');
             }
+            readme.append("\n### 서비스 타겟\n");
             if (!StringParserUtil.isNullOrEmpty(project.getProposal().getTarget())) {
-                readme.append("\n### 서비스 타겟\n");
                 readme.append(project.getProposal().getTarget()).append('\n');
             }
+            readme.append("\n### 기대 효과\n");
             if (!StringParserUtil.isNullOrEmpty(project.getProposal().getExpectation())) {
-                readme.append("\n### 기대 효과\n");
                 readme.append(project.getProposal().getExpectation()).append('\n');
             }
             readme.append("\n\n---\n\n");
@@ -282,6 +282,10 @@ public class ProjectBuilderRepositoryImpl implements ProjectBuilderRepository {
         }
 
         // 도메인 리스트에 대한 각각의 폴더 생성 및 하위 폴더 생성
+        if (project.getApiDocs() == null || project.getApiDocs().getDomains() == null) {
+            return; // 도메인 하위 폴더를 생성하지 않는다.
+        }
+
         var domains = project.getApiDocs().getDomains();
         Map<String, List<File>> domainLeafFiles = new HashMap<>();
         for (String domain : domains) {
@@ -326,6 +330,9 @@ public class ProjectBuilderRepositoryImpl implements ProjectBuilderRepository {
     public void replaceClassesVariables(Project project) throws IOException {
         String domainFolder = getProjectMainAbsolutePath(project, MainPath.domain);
         var schema = getProjectSchemaFromERD(project);
+        if (schema == null || schema.getTables() == null) {
+            return;
+        }
 
         for (TableDefinition tableDefinition : schema.getTables().values()) {
             // Entity 파일 수정
@@ -343,6 +350,10 @@ public class ProjectBuilderRepositoryImpl implements ProjectBuilderRepository {
         String domainAbsolutePath = getProjectMainAbsolutePath(project, MainPath.domain);
         String domainPackage = project.getProjectBuilderInfo().getPackageName() + ".domain";
         var schema = getProjectSchemaFromERD(project);
+        if (schema == null || schema.getTables() == null || schema.getRelations() == null) {
+            return;
+        }
+
         var tables = schema.getTables();
 
         for (TableRelationDefinition relation : schema.getRelations().values()) {
@@ -375,7 +386,9 @@ public class ProjectBuilderRepositoryImpl implements ProjectBuilderRepository {
         Set<String> domainResDtoPackage = new HashSet<>();
 
         var apiDocs = project.getApiDocs();
-        if (Objects.isNull(apiDocs) || Objects.isNull(apiDocs.getApiDocList())) return;
+        if (Objects.isNull(apiDocs) || Objects.isNull(apiDocs.getApiDocList())) {
+            return;
+        }
 
         List<ApiDoc> apiDocList = apiDocs.getApiDocList();
         for (ApiDoc apiDoc : apiDocList) {
@@ -438,7 +451,9 @@ public class ProjectBuilderRepositoryImpl implements ProjectBuilderRepository {
     public void projectMethodBuilder(Project project) throws IOException {
         String domainPath = getProjectMainAbsolutePath(project, MainPath.domain);
         ApiDocs apiDocs = project.getApiDocs();
-        if (Objects.isNull(apiDocs) || Objects.isNull(apiDocs.getApiDocList())) return;
+        if (Objects.isNull(apiDocs) || Objects.isNull(apiDocs.getApiDocList()) || Objects.isNull(apiDocs.getDomains())) {
+            return;
+        }
 
         var apiDocList = project.getApiDocs().getApiDocList();
         var usableDomains = new HashSet<>(apiDocs.getDomains().stream().map(String::toUpperCase).toList());
@@ -731,6 +746,10 @@ public class ProjectBuilderRepositoryImpl implements ProjectBuilderRepository {
      */
     private SchemaDefinition getProjectSchemaFromERD(Project project) {
         var vuerdObj = project.getVuerd();
+        if (Objects.isNull(vuerdObj)) {
+            return null;
+        }
+
         Set<String> usableNames = new LinkedHashSet<>();
         Map<String, TableDefinition> tables = new HashMap<>();
         Map<String, TableRelationDefinition> relations = new HashMap<>();
