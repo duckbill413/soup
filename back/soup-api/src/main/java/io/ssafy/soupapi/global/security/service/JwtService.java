@@ -120,7 +120,6 @@ public class JwtService {
         UserSecurityDTO userSecurityDTO = userDetailsService.loadUserByUsername(id);
         String newAccessToken = createAccessToken(userSecurityDTO);
         String newRefreshToken = createRefreshToken(userSecurityDTO);
-        log.info("새로 발급된 토큰은 at {} / rf {}", newAccessToken, newRefreshToken);
 
         return new TokenDto(newAccessToken, newRefreshToken);
     }

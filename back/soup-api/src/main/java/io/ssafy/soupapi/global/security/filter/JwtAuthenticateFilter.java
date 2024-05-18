@@ -27,23 +27,22 @@ public class JwtAuthenticateFilter extends OncePerRequestFilter {
         @NonNull FilterChain filterChain
     ) throws ServletException, IOException {
 
-        /* 수현이가 cors 에러 관련 너무너무 궁금해서 logging을 해놨는데 추후 삭제할게요.. */
 
         log.info("Request URL: {}", request.getRequestURL());
-        log.info("Request URI: {}", request.getRequestURI());
+//        log.info("Request URI: {}", request.getRequestURI());
         log.info("Request Method: {}", request.getMethod());
         log.info("Request Params: {}", request.getParameterMap());
         log.info("Access Token: {}", request.getHeader("Authorization"));
 
         log.info("Header Names: {}", request.getHeaderNames());
 
-        log.info("Servlet Path: {}", request.getServletPath());
-        log.info("Context Path: {}", request.getContextPath());
+//        log.info("Servlet Path: {}", request.getServletPath());
+//        log.info("Context Path: {}", request.getContextPath());
 
-        log.info("Http Servlet Mapping: {}", request.getHttpServletMapping());
-        log.info("Path Info: {}", request.getPathInfo());
-
-        log.info("Http origin: {}", request.getHeader(org.springframework.http.HttpHeaders.ORIGIN));
+//        log.info("Http Servlet Mapping: {}", request.getHttpServletMapping());
+//        log.info("Path Info: {}", request.getPathInfo());
+//
+//        log.info("Http origin: {}", request.getHeader(org.springframework.http.HttpHeaders.ORIGIN));
 
         try {
             Authentication authentication = jwtService.authenticateAccessToken(request);
