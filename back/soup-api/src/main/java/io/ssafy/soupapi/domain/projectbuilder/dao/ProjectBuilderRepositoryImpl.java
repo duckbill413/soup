@@ -176,11 +176,13 @@ public class ProjectBuilderRepositoryImpl implements ProjectBuilderRepository {
     }
 
     private static String getReadmeVariable(Project project) {
-        // 기획서 내용 추가
+        // Readme 내용 추가
         StringBuilder readme = new StringBuilder();
         if (!StringParserUtil.isNullOrEmpty(project.getReadme())) {
             readme.append(project.getReadme()).append('\n');
         }
+
+        // 기획서 내용 추가
         if (Objects.nonNull(project.getProposal())) {
             readme.append("\n## 기획서\n");
             if (!StringParserUtil.isNullOrEmpty(project.getProposal().getBackground())) {
