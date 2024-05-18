@@ -470,7 +470,11 @@ public class MProjectServiceImpl implements MProjectService {
             throw new BaseExceptionHandler(ErrorCode.LIVEBLOCK_DATA_IS_NULL);
         }
         try {
-            return changeProjectVuerd(projectId, objectMapper.readValue(((LinkedHashMap<?, ?>) vuerdDoc).get("json").toString(), Object.class));
+            String data = ((LinkedHashMap<?, ?>) vuerdDoc).get("json").toString();
+            if (data.isEmpty()) {
+                data = "{\"json\":\"\"}";
+            }
+            return changeProjectVuerd(projectId, objectMapper.readValue(data, Object.class));
         } catch (JsonProcessingException e) {
             throw new BaseExceptionHandler(ErrorCode.JSON_PARSE_ERROR);
         }
