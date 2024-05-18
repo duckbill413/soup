@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
 @Service
@@ -28,7 +29,7 @@ public class ChatroomService {
 
     @PostConstruct
     private void init() {
-        topics = new HashMap<>();
+        topics = new ConcurrentHashMap<>();
     }
 
     public ChannelTopic enterChatroom(String chatroomId) {
