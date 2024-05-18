@@ -1,16 +1,19 @@
 package io.ssafy.soupapi.domain.chat.application;
 
 import io.ssafy.soupapi.domain.chat.dao.RChatRepository;
-import io.ssafy.soupapi.domain.chat.entity.RChatMessage;
 import io.ssafy.soupapi.domain.chat.dto.request.ChatMessageReq;
 import io.ssafy.soupapi.domain.chat.dto.response.ChatMessageRes;
+import io.ssafy.soupapi.domain.chat.entity.RChatMessage;
 import io.ssafy.soupapi.domain.member.entity.Member;
 import io.ssafy.soupapi.domain.noti.application.NotiService;
+import io.ssafy.soupapi.domain.noti.application.RNotiService;
+import io.ssafy.soupapi.domain.noti.constant.NotiType;
 import io.ssafy.soupapi.domain.noti.dao.NotiRepository;
 import io.ssafy.soupapi.domain.noti.dao.RNotiRepository;
-import io.ssafy.soupapi.domain.noti.dto.RMentionNoti;
+import io.ssafy.soupapi.domain.noti.dto.Event;
 import io.ssafy.soupapi.domain.noti.dto.response.NewNotiRes;
 import io.ssafy.soupapi.domain.noti.entity.MNoti;
+import io.ssafy.soupapi.domain.noti.redis.RNotiPublisher;
 import io.ssafy.soupapi.domain.project.mongodb.dao.MProjectRepository;
 import io.ssafy.soupapi.domain.project.mongodb.entity.ChatMessage;
 import io.ssafy.soupapi.global.common.request.PageOffsetRequest;
@@ -37,6 +40,7 @@ public class ChatService {
     private final NotiRepository notiRepository;
     private final RNotiRepository rNotiRepository;
     private final FindEntityUtil findEntityUtil;
+    private final RNotiService rNotiService;
 
     // 대화 저장
     @Transactional
@@ -55,23 +59,29 @@ public class ChatService {
         // 태그 알림
         List<MNoti> mNotiList = new ArrayList<>();
         for (String mentioneeId : chatMessageReq.mentionedMemberIds()) {
-            MNoti mNoti = notiService.generateMNoti(chatroomId, chatMessageId, chatMessageReq, mentioneeId, sentAtInstant);
+            MNoti mNoti = notiService.generateMNoti(
+                chatroomId, chatMessageId, chatMessageReq,
+                mentioneeId, sentAtInstant, NotiType.MENTION
+            );
             mNotiList.add(mNoti);
         }
 
-        // 2. 태그 알림 -> MongoDb 저장
-        notiRepository.saveAll(mNotiList);
+        if (!mNotiList.isEmpty()) {
+            // 2. 태그 알림 -> MongoDb 저장
+            notiRepository.saveAll(mNotiList);
 
-        // 3. 태그 알림 -> Redis 저장
-        rNotiRepository.saveNotisToRedis(mNotiList);
+            // 3. 태그 알림 -> Redis 저장
+            rNotiRepository.saveNotisToRedis(mNotiList);
+        }
 
         // 4. 태그 알림 -> SSE 알림 전송
+        String projectName = findEntityUtil.findPProjectById(chatroomId).getName();
         for (MNoti mNoti : mNotiList) {
-            String projectName = findEntityUtil.findPProjectById(mNoti.getProjectId()).getName();
             NewNotiRes newNotiRes = mNoti.generateNewNotiRes(
                 chatMessageReq.sender().getProfileImageUrl(), projectName
             );
-            notiService.notify(mNoti.getReceiverId(), newNotiRes, "mention");
+            Event event = Event.builder().notiType(NotiType.MENTION).data(newNotiRes).build();
+            rNotiService.sendNoti(mNoti.getReceiverId(), event);
         }
 
         // 5. 채팅 메시지 -> Redis 저장

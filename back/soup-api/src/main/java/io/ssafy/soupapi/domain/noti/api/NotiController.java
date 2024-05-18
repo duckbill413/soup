@@ -1,5 +1,6 @@
 package io.ssafy.soupapi.domain.noti.api;
 
+import io.ssafy.soupapi.domain.noti.application.EmitterNotiService;
 import io.ssafy.soupapi.domain.noti.application.NotiService;
 import io.ssafy.soupapi.domain.noti.dto.response.GetNotiRes;
 import io.ssafy.soupapi.global.common.code.SuccessCode;
@@ -23,9 +24,11 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 @Tag(name = "알림", description = "알림")
 public class NotiController {
 
+    private final EmitterNotiService emitterNotiService;
     private final NotiService notiService;
 
     // 유저가 /sub으로 구독하면, 백엔드에서 /sub/{memberId}로 구독된 것으로 처리
+    // Last-Event-ID : 전에 못 받은 이벤트가 존재할 경우(SSE 연결에 대한 시간 만료 혹은 종료) 마지막 이벤트 ID를 넘겨 그 이후의 데이터부터 받을 수 있게 하기 위해 필요
     @GetMapping(value = "/sub", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public SseEmitter subscribe(
         @AuthenticationPrincipal UserSecurityDTO userSecurityDTO,
@@ -34,12 +37,6 @@ public class NotiController {
         String memberId = String.valueOf(userSecurityDTO.getId());
         return notiService.subscribe(memberId, lastEventId);
     }
-
-//    @PostMapping("/send-data")
-//    public void sendData(@AuthenticationPrincipal UserSecurityDTO userSecurityDTO) {
-//        String memberId = String.valueOf(userSecurityDTO.getId());
-//        notiService.notify(memberId, "hi - " + System.currentTimeMillis());
-//    }
 
     @Operation(summary = "수신한 알림 조회", description = "유저가 수신한 모든 알림을 조회한다.\n\n" +
         "Query Parameter인 read의 값을 true 또는 false로 줌에 따라 필터링이 가능하다. (<- 아직 API 미완성)\n\n" +

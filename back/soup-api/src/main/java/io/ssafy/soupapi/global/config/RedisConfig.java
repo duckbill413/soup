@@ -3,6 +3,7 @@ package io.ssafy.soupapi.global.config;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.ssafy.soupapi.domain.chat.entity.RChatMessage;
 import io.ssafy.soupapi.domain.chat.dto.response.ChatMessageRes;
+import io.ssafy.soupapi.domain.noti.dto.Event;
 import io.ssafy.soupapi.domain.noti.entity.MNoti;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -100,6 +101,20 @@ public class RedisConfig {
         redisTemplate.setKeySerializer(new StringRedisSerializer());
 
         Jackson2JsonRedisSerializer<MNoti> serializer = new Jackson2JsonRedisSerializer<>(objectMapper, MNoti.class);
+        redisTemplate.setValueSerializer(serializer);
+        redisTemplate.setHashValueSerializer(serializer);
+        redisTemplate.afterPropertiesSet();
+        return redisTemplate;
+    }
+
+    @Bean
+    public RedisTemplate<String, Event> redisTemplateEvent(RedisConnectionFactory connectionFactory, ObjectMapper objectMapper) {
+        RedisTemplate<String, Event> redisTemplate = new RedisTemplate<>();
+        redisTemplate.setConnectionFactory(connectionFactory);
+
+        redisTemplate.setKeySerializer(new StringRedisSerializer());
+
+        Jackson2JsonRedisSerializer<Event> serializer = new Jackson2JsonRedisSerializer<>(objectMapper, Event.class);
         redisTemplate.setValueSerializer(serializer);
         redisTemplate.setHashValueSerializer(serializer);
         redisTemplate.afterPropertiesSet();

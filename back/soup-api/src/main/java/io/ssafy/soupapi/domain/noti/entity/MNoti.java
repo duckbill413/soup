@@ -1,5 +1,6 @@
 package io.ssafy.soupapi.domain.noti.entity;
 
+import io.ssafy.soupapi.domain.noti.constant.NotiType;
 import io.ssafy.soupapi.domain.noti.dto.response.NewNotiRes;
 import io.ssafy.soupapi.global.util.DateConverterUtil;
 import jakarta.persistence.Id;
@@ -29,6 +30,9 @@ public class MNoti {
     @Builder.Default
     @Field("noti_is_read")
     private Boolean isRead = Boolean.FALSE;
+
+    @Field("noti_type")
+    private NotiType notiType;
 
     @Field("noti_mentioner_id")
     private String senderId;
