@@ -34,7 +34,6 @@ public class RNotiRepository {
     public MNoti findByNotiId(String memberId, ObjectId notiId) {
         Set<MNoti> notiSet = redisTemplateNoti.opsForZSet().range(NOTI_HASH + memberId, 0, -1);
         for (MNoti mNoti : notiSet) {
-            log.info("mNoti는 {}, notiId는 {}", mNoti, notiId);
             if (mNoti.getId().equals(notiId)) {
                 return mNoti;
             }

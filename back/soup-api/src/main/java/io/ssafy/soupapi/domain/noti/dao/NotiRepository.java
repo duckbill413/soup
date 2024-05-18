@@ -15,6 +15,8 @@ public interface NotiRepository extends MongoRepository<MNoti, ObjectId> {
 
     List<MNoti> findByReceiverIdAndCreatedAtBeforeOrderByCreatedAtDesc(String receiverId, Instant createdAt);
 
+    List<MNoti> findByReceiverIdAndCreatedAtAfterOrderByCreatedAtAsc(String receiverId, Instant createdAt);
+
     @Query("{ '_id': ?0 }")
     @Update("{ $set: { noti_is_read:  ?1} }")
     void updateIsReadById(ObjectId notiId, boolean isRead);

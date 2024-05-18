@@ -1,5 +1,6 @@
 package io.ssafy.soupapi.domain.noti.api;
 
+import io.ssafy.soupapi.domain.noti.application.EmitterNotiService;
 import io.ssafy.soupapi.domain.noti.application.NotiService;
 import io.ssafy.soupapi.domain.noti.dto.response.GetNotiRes;
 import io.ssafy.soupapi.global.common.code.SuccessCode;
@@ -25,21 +26,17 @@ public class NotiController {
 
     private final NotiService notiService;
 
-    // 유저가 /sub으로 구독하면, 백엔드에서 /sub/{memberId}로 구독된 것으로 처리
+    @Operation(summary = "SSE 커넥션 생성", description = "SseEmitter를 반환한다." +
+        "lastEventId를 통해 수신 못한 알림이 있다면 보내준다.\n\n")
     @GetMapping(value = "/sub", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public SseEmitter subscribe(
         @AuthenticationPrincipal UserSecurityDTO userSecurityDTO,
-        @RequestHeader(value = "Last-Event-ID", required = false, defaultValue = "") String lastEventId // SSE 연결이 시간 만료 등의 이유로 끊어졌는데 알림이 발생하면? 이를 방지하기 위해, 클라이언트가 마지막으로 수신한 데이터의 ID값을 받는다. 이를 이용해 유실된 데이터를 다시 보내줄 수 있다.
+//        @RequestHeader(value = "Last-Event-ID", required = false, defaultValue = "") String lastEventId // http 표준
+        @RequestParam(value = "lastEventId", required = false, defaultValue = "") String lastEventId
     ) {
         String memberId = String.valueOf(userSecurityDTO.getId());
         return notiService.subscribe(memberId, lastEventId);
     }
-
-//    @PostMapping("/send-data")
-//    public void sendData(@AuthenticationPrincipal UserSecurityDTO userSecurityDTO) {
-//        String memberId = String.valueOf(userSecurityDTO.getId());
-//        notiService.notify(memberId, "hi - " + System.currentTimeMillis());
-//    }
 
     @Operation(summary = "수신한 알림 조회", description = "유저가 수신한 모든 알림을 조회한다.\n\n" +
         "Query Parameter인 read의 값을 true 또는 false로 줌에 따라 필터링이 가능하다. (<- 아직 API 미완성)\n\n" +
