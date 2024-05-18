@@ -1,10 +1,10 @@
 import { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: { template: '%s | Soup', default: '내 프로젝트 | Soup' },
+  title: '기능 명세서',
 }
 
-export default function ProjectLayout({
+export default function FuncLayout({
   children,
 }: Readonly<{ children: React.ReactNode[] }>) {
   return { ...children }
