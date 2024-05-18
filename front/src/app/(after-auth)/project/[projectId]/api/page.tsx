@@ -2,6 +2,11 @@ import Room from '@/app/(after-auth)/project/[projectId]/api/Room'
 import { StepTitleWithGuide } from '@/components/StepTitle/StepTitle'
 import Live from '@/components/cursor/Live'
 import APITable from '@/containers/api/components/APITable'
+import { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'API 명세서',
+}
 
 export default function ApiSpecification() {
   return (
