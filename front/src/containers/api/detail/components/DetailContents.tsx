@@ -123,7 +123,7 @@ export default function DetailContents({ idx }: Props) {
       />
       <InputText
         title="method 이름"
-        placeholder="(예) findSoup / 영어만 가능"
+        placeholder="(예) getMemberInfo / 영어만 가능"
         isEssential
         value={initial ? initial[idx]?.method_name : ''}
         onChange={(e: ChangeEvent<HTMLInputElement>) => {
