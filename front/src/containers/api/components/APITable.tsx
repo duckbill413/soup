@@ -20,7 +20,7 @@ const tableHeaders: Array<TableHead> = [
     isEssential: false,
   },
   {
-    title: '종류',
+    title: 'Method',
     isEssential: false,
   },
   {
