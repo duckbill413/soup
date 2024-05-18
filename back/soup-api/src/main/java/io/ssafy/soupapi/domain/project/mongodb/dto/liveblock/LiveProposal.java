@@ -7,6 +7,9 @@ public record LiveProposal(
         LiveProposalBefore before
 ) {
     public static Proposal toProposal(LiveProposal liveProposal) {
+        if (liveProposal == null || liveProposal.after == null) {
+            return Proposal.builder().build();
+        }
         return Proposal.builder()
                 .background(liveProposal.after().background())
                 .introduce(liveProposal.after().intro())

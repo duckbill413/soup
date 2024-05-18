@@ -66,11 +66,15 @@ public class BuildProjectController {
                         SuccessCode.INSERT_SUCCESS,
                         projectBuilderService.buildProject(projectId)
                 );
+            } catch (Exception e) {
+                e.printStackTrace();
             } finally {
                 lock.unlock();
             }
         } else {
             throw new BaseExceptionHandler(ErrorCode.PROJECT_IS_NOW_BUILDING);
         }
+
+        throw new BaseExceptionHandler(ErrorCode.PROJECT_IS_NOW_BUILDING);
     }
 }
