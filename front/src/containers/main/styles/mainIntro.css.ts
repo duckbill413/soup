@@ -1,35 +1,34 @@
-import { style } from '@vanilla-extract/css';
+import { keyframes, style } from '@vanilla-extract/css'
 import vars from '@/styles/variables.css'
 
-export const container = style ({
-  height:'90vh',
-  width:'100%',
+export const container = style({
+  height: '90vh',
+  width: '100%',
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
-  backgroundColor: '#E3F7CE'
 })
 
-export const mainDiv = style ({
-  height:'100%',
+export const mainDiv = style({
+  height: '100%',
   display: 'flex',
   flexDirection: 'column',
   justifyContent: 'center',
-  alignItems: 'center'
+  alignItems: 'center',
 })
 
-export const title = style ({
+export const title = style({
   margin: vars.space.tiny,
   fontSize: '3.5rem',
-  fontStyle:'italic'
+  fontStyle: 'italic',
 })
 
-export const subTitle = style ({
+export const subTitle = style({
   margin: vars.space.tiny,
-  fontSize: '1.3rem'
+  fontSize: '1.3rem',
 })
 
-export const subDiv = style ({
+export const subDiv = style({
   display: 'flex',
-  justifyContent:'space-between'
+  justifyContent: 'space-between',
 })
