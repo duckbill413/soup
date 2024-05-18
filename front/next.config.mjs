@@ -33,7 +33,11 @@ const nextConfig = {
     return config
   },
   images: {
-    domains: ['placehold.co'],
+    domains: [
+      'placehold.co',
+      'prod-files-secure.s3.us-west-2.amazonaws.com',
+      'file.notion.so',
+    ],
   },
   output: 'standalone',
 }
