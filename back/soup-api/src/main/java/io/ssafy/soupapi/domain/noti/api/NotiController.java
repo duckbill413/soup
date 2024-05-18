@@ -26,6 +26,8 @@ public class NotiController {
 
     private final NotiService notiService;
 
+    @Operation(summary = "SSE 커넥션 생성", description = "SseEmitter를 반환한다." +
+        "lastEventId를 통해 수신 못한 알림이 있다면 보내준다.\n\n")
     @GetMapping(value = "/sub", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public SseEmitter subscribe(
         @AuthenticationPrincipal UserSecurityDTO userSecurityDTO,
