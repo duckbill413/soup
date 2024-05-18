@@ -24,15 +24,13 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 @Tag(name = "알림", description = "알림")
 public class NotiController {
 
-    private final EmitterNotiService emitterNotiService;
     private final NotiService notiService;
 
-    // 유저가 /sub으로 구독하면, 백엔드에서 /sub/{memberId}로 구독된 것으로 처리
-    // Last-Event-ID : 전에 못 받은 이벤트가 존재할 경우(SSE 연결에 대한 시간 만료 혹은 종료) 마지막 이벤트 ID를 넘겨 그 이후의 데이터부터 받을 수 있게 하기 위해 필요
     @GetMapping(value = "/sub", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public SseEmitter subscribe(
         @AuthenticationPrincipal UserSecurityDTO userSecurityDTO,
-        @RequestHeader(value = "Last-Event-ID", required = false, defaultValue = "") String lastEventId // SSE 연결이 시간 만료 등의 이유로 끊어졌는데 알림이 발생하면? 이를 방지하기 위해, 클라이언트가 마지막으로 수신한 데이터의 ID값을 받는다. 이를 이용해 유실된 데이터를 다시 보내줄 수 있다.
+//        @RequestHeader(value = "Last-Event-ID", required = false, defaultValue = "") String lastEventId // http 표준
+        @RequestParam(value = "lastEventId", required = false, defaultValue = "") String lastEventId
     ) {
         String memberId = String.valueOf(userSecurityDTO.getId());
         return notiService.subscribe(memberId, lastEventId);

@@ -109,7 +109,7 @@ public class NotiService {
         notiRepository.updateIsReadById(notiId, true);
 
         Event event = Event.builder().notiType(NotiType.READ_NOTI).build();
-//        notify(memberId, event);
+        rNotiService.sendNoti(memberId, event);
         return true;
     }
 
