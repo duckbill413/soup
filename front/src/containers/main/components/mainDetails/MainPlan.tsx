@@ -15,7 +15,7 @@ function MainPlan() {
         </div>
         <Image src={AI} alt="Illust" width={364} height={364} />
       </div>
-      <div className={styles.planDiv}>
+      <div>
         <Image src={Plan} alt="Plan" width={700} height={514} />
       </div>
     </div>

@@ -7,7 +7,7 @@ export const container = style ({
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
-  backgroundColor: '#b6d8f2'
+  backgroundColor: '#E3F7CE'
 })
 
 export const mainDiv = style ({
