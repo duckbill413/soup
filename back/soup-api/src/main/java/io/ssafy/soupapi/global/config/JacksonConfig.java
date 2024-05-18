@@ -26,6 +26,7 @@ public class JacksonConfig {
 //        objectMapper.configure(SerializationFeature.WRITE_DATES_WITH_CONTEXT_TIME_ZONE, false);
         objectMapper.registerModule(new JavaTimeModule());
 
+        // ObjectId를 역/직렬화 시 : (default) timestamp + date 가 아닌 String 그대로
         SimpleModule objectIdModule = new SimpleModule();
         objectIdModule.addSerializer(ObjectId.class, new JsonSerializer<>() {
             @Override
