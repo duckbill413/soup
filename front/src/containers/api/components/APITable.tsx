@@ -20,7 +20,7 @@ const tableHeaders: Array<TableHead> = [
     isEssential: false,
   },
   {
-    title: '종류',
+    title: 'Method',
     isEssential: false,
   },
   {
@@ -120,6 +120,7 @@ export default function APITable() {
                   result + (item.colSpan ? item.colSpan - 1 : 0),
                 tableHeaders.length,
               )}
+              onClick={handleClick}
             >
               등록된 API가 없습니다.
             </td>

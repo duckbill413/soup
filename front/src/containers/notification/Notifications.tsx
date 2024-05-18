@@ -151,7 +151,6 @@ export default function Notifications() {
     eventSource.addEventListener('sse', (event: any) => {
       const obj: NotiEvent = JSON.parse(event.data)
       const { unreadNotiNum } = obj
-      console.log('??')
       setUnreadCnt(unreadNotiNum)
     })
 
