@@ -25,6 +25,8 @@ export const modal = style({
 export const header = style({
   display: 'flex',
   justifyContent: 'space-between',
+  alignItems: 'center',
+  gap: '8px',
   padding: 20,
 })
 
@@ -43,5 +45,31 @@ export const body = style({
   '::-webkit-scrollbar-thumb': {
     height: '5%',
     background: '#D3D3D3',
+  },
+})
+
+export const step = style({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+  gap: '8px',
+  flex: 1,
+})
+
+export const stepButton = style({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'flex-end',
+  gap: '8px',
+})
+
+export const button = style({
+  backgroundColor: vars.color.lightGray,
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  ':disabled': {
+    cursor: 'not-allowed',
+    color: vars.color.gray,
   },
 })
