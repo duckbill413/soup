@@ -1,16 +1,13 @@
-export const FuncTitle = [
-  `Step1. 세부 내용 작성하기`,
-  `Step2. Jira 연동하기`
-]
+export const FuncTitle = [`Step1. 세부 내용 작성하기`, `Step2. Jira 연동하기`]
 
 export const FuncText = [
   `
   카테고리\n
-  ![Funcfirst](https://file.notion.so/f/f/7fe93563-b680-4a21-8a23-42c5ad3b7a81/9646fc99-466b-4670-9ef5-462ea49c79d8/Untitled.png?id=69c5964c-9337-4b6f-8029-7dfb2e0fd148&table=block&spaceId=7fe93563-b680-4a21-8a23-42c5ad3b7a81&expirationTimestamp=1716213600000&signature=GA5prUUrCyuimr4Hpxp6jPKWwAi1Cn97YMt-GBFPaKc&downloadName=Untitled.png)
+  ![Funcfirst](https://soup-bucket.s3.ap-northeast-2.amazonaws.com/88849e67-1823-4540-8aa8-1177dc172951.png)
   - 기능에 대한 카테고리를 작성합니다.
   
   기능명\n
-  ![FuncSecond](https://file.notion.so/f/f/7fe93563-b680-4a21-8a23-42c5ad3b7a81/10c2a7ca-b4a1-43ff-b559-af1ff51c79db/Untitled.png?id=c1f692e2-3f76-4b17-ad40-18a03b11fb38&table=block&spaceId=7fe93563-b680-4a21-8a23-42c5ad3b7a81&expirationTimestamp=1716213600000&signature=iwkwRx6IlKqmRc_YnBCWCA6-Av1OJPH93HIFQY2PRwA&downloadName=Untitled.png)
+  ![FuncSecond](https://soup-bucket.s3.ap-northeast-2.amazonaws.com/9dc84e39-d068-4faf-82fa-3c6468f8a62b.png)
   - 개발하고자 하는 기능에 대한 설명을 입력해주세요.
   
   설명/n
@@ -27,5 +24,5 @@ export const FuncText = [
   `,
   `
   - Jira를 연동하셨다면, Jira 동기화 버튼으로 연동해보세요!
-  `
+  `,
 ]
