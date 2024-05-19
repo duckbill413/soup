@@ -91,4 +91,14 @@ public class PProjectServiceImpl implements PProjectService {
         project.setImgUrl(updateProjectImage.imgUrl());
         pProjectRepository.save(project);
     }
+
+    @Transactional
+    @Override
+    public String deleteProject(String projectId) {
+        var project = pProjectRepository.findById(projectId).orElseThrow(() ->
+                new BaseExceptionHandler(ErrorCode.NOT_FOUND_PROJECT));
+        project.setStatus(false); // 명시적 삭제 적용
+        pProjectRepository.save(project);
+        return "프로젝트 삭제 성공";
+    }
 }
