@@ -6,6 +6,8 @@
         <a href="https://so-up.store/" target="_blank">SOUP 시작하기</a>
     </p>
         <a href="https://www.notion.so/todays-jiwoo/SSAFY-SOUP-c9762f82ccf343babb6e43dfe4419b75" target="_blank">팀노션</a> &nbsp; &nbsp; |&nbsp; &nbsp;   <a href="" target="_blank">UCC</a>
+</div>
+
 
 
 
@@ -206,7 +208,7 @@
 
 ## 팀원 소개
 
-|                  **정우현**<br /> Back-end                   |                **유수안**<br />Back-end/Infra                |                   **이수현**<br />Back-end                   |                  **고석주**<br />Front-end                   |                  **정승원**<br />Front-end                   |               **최지우**<br />Front-end/Design               |
-| :----------------------------------------------------------: | :----------------------------------------------------------: | :----------------------------------------------------------: | :----------------------------------------------------------: | :----------------------------------------------------------: | :----------------------------------------------------------: |
-| <img src="assets/members/woohyun.png" height=150 width=150><br />프로젝트 정보 관련 CRUD<br/>프로젝트 빌드 API 개발 | <img src="assets/members/sooan.png" height=150 width=150> <br /> 컨테이너 환경 구축<br/>CI/CD  및 무중단 배포 적용<br/>음성채팅 및 README 개발 | <img src="assets/members/suhyun.png" height=150 width=150><br />소셜 로그인 및 회원 인증채팅, 실시간 알림 | <img src="assets/members/seokju.png" height=150 width=150><br />WebSocket, STOMP 활용 채팅기능명세서, 플로우차트<br/>README, 프로젝트 리스트 구현 | <img src="assets/members/seungwon.png" height=150 width=150><br />실시간 커서 및 커서 채팅<br/>실시간 편집 및 공유 구성<br/>메인, 개요, AI 기획서 구현 | <img src="assets/members/jiwoo.png" height=150 width=150><br /><br />소셜 로그인 및 회원 인증<br/>SSE 활용 실시간 알림<br/>API 명세서 및 빌드 화면 구현 |
+|                  **정우현**<br /> Back-end                  |              **유수안**<br />Back-end/Infra               |                  **이수현**<br />Back-end                  |                 **고석주**<br />Front-end                  |                  **정승원**<br />Front-end                   |             **최지우**<br />Front-end/Design              |
+| :---------------------------------------------------------: | :-------------------------------------------------------: | :--------------------------------------------------------: | :--------------------------------------------------------: | :----------------------------------------------------------: | :-------------------------------------------------------: |
+| <img src="assets/members/woohyun.png" height=150 width=150> | <img src="assets/members/sooan.png" height=150 width=150> | <img src="assets/members/suhyun.png" height=150 width=150> | <img src="assets/members/seokju.png" height=150 width=150> | <img src="assets/members/seungwon.png" height=150 width=150> | <img src="assets/members/jiwoo.png" height=150 width=150> |
 
