@@ -22,6 +22,8 @@ spring:
 
   ## Database Configuration
   datasource:
+    hikari:
+      maximum-pool-size: 20
     url: jdbc:postgresql://${POSTGRESQL_URL}/${POSTGRESQL_DATABASE}
     username: ${POSTGRESQL_USER}
     password: ${POSTGRESQL_PASSWORD}
