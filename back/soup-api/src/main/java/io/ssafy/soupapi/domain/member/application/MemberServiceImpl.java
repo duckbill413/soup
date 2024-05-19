@@ -35,6 +35,7 @@ public class MemberServiceImpl implements MemberService {
     }
 
     // Liveblocks에 유저(id: userId)를 등록하고 ID token을 얻는다
+    @Transactional(readOnly = true)
     @Override
     public GetLiveblocksTokenRes getLiveblocksUserIdToken(UUID memberId) {
         Member member = findEntityUtil.findMemberById(memberId);
