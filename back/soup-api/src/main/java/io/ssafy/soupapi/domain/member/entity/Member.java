@@ -1,9 +1,7 @@
 package io.ssafy.soupapi.domain.member.entity;
 
 import io.ssafy.soupapi.domain.BaseEntity;
-import io.ssafy.soupapi.domain.chat.entity.Chat;
 import io.ssafy.soupapi.domain.member.dto.MemberInfoDto;
-import io.ssafy.soupapi.domain.noti.entity.Noti;
 import io.ssafy.soupapi.domain.projectauth.entity.ProjectAuth;
 import jakarta.persistence.*;
 import lombok.*;
@@ -59,41 +57,8 @@ public class Member extends BaseEntity {
 
     @Builder.Default
     @OneToMany(mappedBy = "member")
-    private List<Chat> chatList = new ArrayList<>();
-
-    @Builder.Default
-    @OneToMany(mappedBy = "member")
-    private List<Noti> notiList = new ArrayList<>();
-
-    @Builder.Default
-    @OneToMany(mappedBy = "member")
     private List<ProjectAuth> projectAuthList = new ArrayList<>();
 
-    /**
-     * Chat Entity 추가 메서드
-     * Member - Chat Entity 사이 일관성 유지
-     *
-     * @param chat chat element to be appended to this list
-     */
-    public void addChat(Chat chat) {
-        this.chatList.add(chat);
-        if (chat.getMember() != this) {
-            chat.setMember(this);
-        }
-    }
-
-    /**
-     * Noti Entity 추가 메서드
-     * Member - Noti Entity 사이 일관성 유지
-     *
-     * @param noti noti element to be appended to this list
-     */
-    public void addNoti(Noti noti) {
-        this.notiList.add(noti);
-        if (noti.getMember() != this) {
-            noti.setMember(this);
-        }
-    }
 
     /**
      * ProjectAuth Entity 추가 메서드

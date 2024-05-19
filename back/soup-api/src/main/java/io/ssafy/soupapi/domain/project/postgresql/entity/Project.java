@@ -1,7 +1,6 @@
 package io.ssafy.soupapi.domain.project.postgresql.entity;
 
 import io.ssafy.soupapi.domain.BaseEntity;
-import io.ssafy.soupapi.domain.chat.entity.Chat;
 import io.ssafy.soupapi.domain.projectauth.entity.ProjectAuth;
 import jakarta.persistence.*;
 import lombok.*;
@@ -36,25 +35,8 @@ public class Project extends BaseEntity {
     @Column(name = "project_file_uri", length = 1000)
     private String fileUri;
     @Builder.Default
-    @OneToMany(mappedBy = "project")
-    private List<Chat> chatList = new ArrayList<>();
-    @Builder.Default
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL)
     private List<ProjectAuth> projectAuthList = new ArrayList<>();
-
-    /**
-     * Chat Entity 추가 메서드
-     * Project - Chat Entity 사이 일관성 유지
-     *
-     * @param chat chat element to be appended to this list
-     */
-    public void addChat(Chat chat) {
-        this.chatList.add(chat);
-
-        if (chat.getProject() != this) {
-            chat.setProject(this);
-        }
-    }
 
     /**
      * ProjectAuth Entity 추가 메서드
