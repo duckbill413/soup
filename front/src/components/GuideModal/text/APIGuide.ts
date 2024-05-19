@@ -12,7 +12,7 @@ export const APIText = [
     - ERD에서 생성한 Entity 중 하나를 Domain으로 선택할 수 있습니다.
 `,
   `
-![API 추가.gif](https://file.notion.so/f/f/7fe93563-b680-4a21-8a23-42c5ad3b7a81/f64fe7ce-954c-4b7c-b5dc-e332b4f9467e/API_%EC%B6%94%EA%B0%80.gif?id=5bde6208-a609-4d71-9924-3b9eecff4e97&table=block&spaceId=7fe93563-b680-4a21-8a23-42c5ad3b7a81&expirationTimestamp=1716120000000&signature=SofU_6trRvkMxFiwwNpUmnyP-Cki-dpn9xqlqMfOqUg&downloadName=API+%EC%B6%94%EA%B0%80.gif)
+![API 추가.gif](https://soup-bucket.s3.ap-northeast-2.amazonaws.com/66bd05f8-d1b1-4932-a92b-59eccd343057.gif)
 
 - 테이블 마지막 Row의 "+ 새로 추가하기"를 클릭하면 새로운 API가 생성됩니다.
 - 하나의 Row 클릭 시 API 상세 내역을 확인할 수 있습니다.
@@ -34,6 +34,7 @@ export const APIText = [
     - [JSON 문법](https://www.w3schools.com/whatis/whatis_json.asp#:~:text=JSON%20stands%20for%20JavaScript%20Object,describing%22%20and%20easy%20to%20understand)에 맞춰 작성해주세요.
         - 리스트의 경우 대괄호([])로 묶어주세요.
     - JSON Object의 예시를 작성해주세요.
+        ![example](https://soup-bucket.s3.ap-northeast-2.amazonaws.com/562e009a-c99e-42e5-9a64-0af5365a6e5c.gif)
         - JSON Object는 name : value 의 pair로 구성됩니다.
         - JSON data name에 따라 DTO가 생성됩니다.
         - JSON data value는 type을 고려한 dummy 값을 적어주세요.
@@ -49,37 +50,20 @@ export const APIText = [
   `
 - API 테이블, Query Parameter 테이블에서 입력 데이터 삭제
     
-    ![row 삭제.gif](https://file.notion.so/f/f/7fe93563-b680-4a21-8a23-42c5ad3b7a81/26f51269-2bb0-40ed-a848-3eaf4b10c870/row_%EC%82%AD%EC%A0%9C.gif?id=3a76b156-0e42-43fa-98b1-5903123edf48&table=block&spaceId=7fe93563-b680-4a21-8a23-42c5ad3b7a81&expirationTimestamp=1716120000000&signature=AtD2u_R-ppCRIvIAxAVZeANjgxvN45ji0OFXJTZO4ow&downloadName=row+%EC%82%AD%EC%A0%9C.gif)
+    ![row 삭제.gif](https://soup-bucket.s3.ap-northeast-2.amazonaws.com/51863649-058b-4072-a9fe-2671d1bf92d5.gif)
     
     - Row를 마우스 우클릭 시 삭제가 가능합니다.
 - Path Variable 테이블에서 입력 데이터 삭제
     
-    ![Path Variable 삭제.gif](https://file.notion.so/f/f/7fe93563-b680-4a21-8a23-42c5ad3b7a81/93074f1e-0ab7-432c-98da-f029613af747/Path_Variable_%EC%82%AD%EC%A0%9C.gif?id=f6fcc144-0abf-44f0-80ed-a923d5c40e0a&table=block&spaceId=7fe93563-b680-4a21-8a23-42c5ad3b7a81&expirationTimestamp=1716120000000&signature=ViMjae5UkHWG4IGKgwPgrhCXy_Arzn8IgeQgcAZ8Z14&downloadName=Path+Variable+%EC%82%AD%EC%A0%9C.gif)
+    ![Path Variable 삭제.gif](https://soup-bucket.s3.ap-northeast-2.amazonaws.com/de459ba2-5b38-460f-9335-1b88f8484b72.gif)
     
     - URI path에서 해당 Path Variable을 제거합니다.
 `,
   `
 - 프로젝트 파일 빌드 시 입력하신 Request body, Response body가 DTO로 생성됩니다.
 - 빌드 예시
-    - API 명세서
-        - 도메인: Friend
-        - API 이름: 유저의 친구 목록 조회
-        - method 이름: getFriendList
-        
-        \`\`\`json
-        {
-          "id": 1,
-          "product_id": 2,
-          "name": "최지우",
-          "friend_list": [
-            {
-              "name": "이수현",
-              "age": 101
-            }
-          ]
-        }
-        \`\`\`
-        
+    - API 명세서 작성
+        ![example](https://soup-bucket.s3.ap-northeast-2.amazonaws.com/43087bf4-5a0d-4a9c-8b11-7fd7ea64ce8e.png)        
     - 프로젝트 빌드
         - FriendController.java
         
