@@ -24,7 +24,7 @@ const createNewFuncDescResWithColor = () => new LiveObject<FuncDescResWithColor>
 export default function FuncTable() {
 
     const init:FuncDescResWithColor[] =useStorage((root)=>root.func) as FuncDescResWithColor[];
-    const {funcDescData,filteredCategories,setIsPriorityModalVisible,setIsCategoryModalVisible,setFuncDescData} = useFuncDescStore();
+    const {filteredCategories,setIsPriorityModalVisible,setIsCategoryModalVisible,setFuncDescData} = useFuncDescStore();
     const {members,setMembers,setIsMemberModalVisible} = useMemberStore();
     useEffect(() => {
         setFuncDescData(init);
@@ -105,7 +105,7 @@ export default function FuncTable() {
                 </tr>
                 </thead>
                 <tbody>
-                {funcDescData.map((item, index) => (
+                {init.map((item, index) => (
                     <FuncTableColumn
                         key={index}
                         updateElement={updateElement}
