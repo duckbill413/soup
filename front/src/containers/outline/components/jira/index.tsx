@@ -129,4 +129,4 @@ function OutlineAddJira() {
   )
 }
 
-export default OutlineAddJira
+export default OutlineAddJira;

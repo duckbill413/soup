@@ -1,21 +1,21 @@
 import {create} from 'zustand';
-import { StreamManager, Publisher } from "openvidu-browser";
+import { Publisher } from "openvidu-browser";
 
 type Store = {
-    localStreamManager: StreamManager | null;
-    setLocalStreamManager: (streamManager: StreamManager | null) => void;
+    publisher: Publisher | null;
+    setPublisher: (publisher: Publisher | null) => void;
     toggleAudio: () => void;
     setToggleAudio: (value:boolean) => void;
 };
 
 const useStore = create<Store>((set) => ({
-    localStreamManager: null,
-    setLocalStreamManager: (streamManager) => set({ localStreamManager: streamManager }),
+    publisher: null,
+    setPublisher: (publisher) => set({ publisher }),
     toggleAudio: () => {
         set((state) => {
-            if (state.localStreamManager && state.localStreamManager instanceof Publisher) {
-                const isAudioEnabled = state.localStreamManager.stream.audioActive;
-                state.localStreamManager.publishAudio(!isAudioEnabled);
+            if (state.publisher) {
+                const isAudioEnabled = state.publisher.stream.audioActive;
+                state.publisher.publishAudio(!isAudioEnabled);
                 return { ...state };
             }
             return state;
@@ -23,8 +23,8 @@ const useStore = create<Store>((set) => ({
     },
     setToggleAudio: (value) => {
         set((state) => {
-            if (state.localStreamManager && state.localStreamManager instanceof Publisher) {
-                state.localStreamManager.publishAudio(value);
+            if (state.publisher) {
+                state.publisher.publishAudio(value);
                 return { ...state };
             }
             return state;

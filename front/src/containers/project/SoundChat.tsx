@@ -5,6 +5,7 @@ import {useCallback, useEffect,  useState} from "react";
 
 import {
     OpenVidu,
+    Publisher,
     Session as OVSession,
     Subscriber,
 } from 'openvidu-browser';
@@ -17,7 +18,7 @@ type Props = {
 }
 
 export default function SoundChat({projectId}: Props) {
-    const {setLocalStreamManager,setToggleAudio} = useAudioStore();
+    const {publisher,setPublisher} = useAudioStore();
     const [session, setSession] = useState<OVSession | ''>('');
     const [, setSessionId] = useState<string>('');
     const [subscriber, setSubscriber] = useState<Subscriber | null>(null);
@@ -30,12 +31,46 @@ export default function SoundChat({projectId}: Props) {
         setSession('');
         setSessionId('');
         setSubscriber(null);
-        setLocalStreamManager(null);
-        setToggleAudio(false);
         // if(tokenData) leaveSession(projectId,tokenData?.sessionId,tokenData?.connectionId);
 
     }, [session]);
 
+    useEffect(() => {
+        window.addEventListener('beforeunload', leave);
+
+        return () => {
+            window.removeEventListener('beforeunload', leave);
+        };
+    }, [leave]);
+
+
+    useEffect(() => {
+        if (session === '') return;
+
+        session.on('streamDestroyed', event => {
+            if (subscriber && event.stream.streamId === subscriber.stream.streamId) {
+                setSubscriber(null);
+            }
+        });
+    }, [subscriber, session]);
+    useEffect(() => {
+        window.addEventListener('beforeunload', leave);
+
+        return () => {
+            window.removeEventListener('beforeunload', leave);
+        };
+    }, [leave]);
+
+
+    useEffect(() => {
+        if (session === '') return;
+
+        session.on('streamDestroyed', event => {
+            if (subscriber && event.stream.streamId === subscriber.stream.streamId) {
+                setSubscriber(null);
+            }
+        });
+    }, [subscriber, session]);
     const joinSession = async () => {
         if (!tokenData) return;
         if (!session) return;
@@ -44,16 +79,6 @@ export default function SoundChat({projectId}: Props) {
         session.on('streamCreated', event => {
             const subscribers = session.subscribe(event.stream, '');
             setSubscriber(subscribers);
-        });
-        session.on('streamDestroyed', event => {
-            // Logic when a participant leaves
-            // Check if the remote connection exists
-            const connection = session.remoteConnections.get(event.stream.connection.connectionId);
-            if (!connection) {
-                console.error(`Remote connection ${event.stream.connection.connectionId} unknown when 'onParticipantLeft'.`);
-                 // If the connection does not exist, stop processing here
-            }
-            // Execute other logic...
         });
 
 
@@ -64,7 +89,7 @@ export default function SoundChat({projectId}: Props) {
                         videoSource: false,
                         publishAudio: false,
                     });
-                    setLocalStreamManager(publishers);
+                    setPublisher(publishers);
                     session
                         .publish(publishers)
                         .then(() => {
@@ -109,9 +134,8 @@ export default function SoundChat({projectId}: Props) {
 
     return (
         <div>
-            {session && subscriber && (
-                <Session
-                    subscriber={subscriber as Subscriber}
+            {session && (
+                <Session key={crypto.randomUUID()} publisher={publisher as Publisher} subscriber={subscriber as Subscriber}
                 />
             )}
         </div>

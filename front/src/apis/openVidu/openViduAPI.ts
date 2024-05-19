@@ -27,13 +27,13 @@ export const getToken = async (projectId: string): Promise<OpenViduRes> => {
     }
 }
 
-// export const leaveSession = async (projectId: string,sessionId:string,connectionId:string): Promise<OpenViduRes> => {
-//     try {
-//         const response = await baseAxios.post(`/openvidu/${projectId}/${sessionId}/${connectionId}/leave`)
-//         return response.data.result;
-//     } catch (error) {
-//         return handleApiError('해당 토큰이 세션퇴장을 실패: ', error);
-//     }
-// }
+export const leaveSession = async (projectId: string,sessionId:string,connectionId:string): Promise<OpenViduRes> => {
+    try {
+        const response = await baseAxios.post(`/openvidu/${projectId}/${sessionId}/${connectionId}/leave`)
+        return response.data.result;
+    } catch (error) {
+        return handleApiError('해당 토큰이 세션퇴장을 실패: ', error);
+    }
+}
 
 

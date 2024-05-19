@@ -1,5 +1,3 @@
-'use client'
-
 import React, { useRef, useEffect } from 'react';
 import { StreamManager } from 'openvidu-browser';
 
@@ -8,19 +6,19 @@ interface Props {
 }
 
 function Audio({ streamManager }: Props) {
-    const audioRef = useRef<HTMLVideoElement>(null);
+    const videoRef = useRef<HTMLVideoElement>(null);
+    const autoplay = true;
 
     useEffect(() => {
-        // streamManager가 유효할 때만 작업 수행
-        if (streamManager && audioRef.current) {
-            streamManager.addVideoElement(audioRef.current);
+        if (streamManager && videoRef.current) {
+            streamManager.addVideoElement(videoRef.current);
         }
-    }, [streamManager]); // streamManager가 변경될 때만 실행
+    }, [streamManager]);
 
     return (
-        <audio autoPlay ref={audioRef}>
-            <track kind="captions"/>
-        </audio>
+        <video autoPlay={autoplay} ref={videoRef} style={{ width: '0%' }}>
+            <track kind="captions" />
+        </video>
     );
 }
 
