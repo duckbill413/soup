@@ -1,27 +1,25 @@
 'use client'
 
-import {getToken} from "@/apis/openVidu/openViduAPI";
-import {useCallback, useEffect,  useState} from "react";
+import {getToken, leaveSession} from "@/apis/openVidu/openViduAPI";
+import React, {useCallback, useEffect, useState} from "react";
 
 import {
     OpenVidu,
-    Publisher,
-    Session as OVSession,
-    Subscriber,
+    Session as OVSession, StreamManager,
 } from 'openvidu-browser';
 import useAudioStore from "@/stores/useAudioStore";
 import {OpenViduRes} from "@/containers/project/types/openVidu";
-import Session from './Session';
+import Audio from "@/containers/project/Audio";
 
 type Props = {
     projectId: string;
 }
 
 export default function SoundChat({projectId}: Props) {
-    const {publisher,setPublisher} = useAudioStore();
+    const {publisher, setPublisher} = useAudioStore();
     const [session, setSession] = useState<OVSession | ''>('');
     const [, setSessionId] = useState<string>('');
-    const [subscriber, setSubscriber] = useState<Subscriber | null>(null);
+    const [subscribers, setSubscribers] = useState<StreamManager[]>([]);
     const [OV, setOV] = useState<OpenVidu | null>(null);
     const [tokenData, setTokenData] = useState<OpenViduRes>();
 
@@ -30,8 +28,8 @@ export default function SoundChat({projectId}: Props) {
         setOV(null);
         setSession('');
         setSessionId('');
-        setSubscriber(null);
-        // if(tokenData) leaveSession(projectId,tokenData?.sessionId,tokenData?.connectionId);
+        setSubscribers([]);
+        if (tokenData) leaveSession(projectId, tokenData?.sessionId, tokenData?.connectionId);
 
     }, [session]);
 
@@ -44,26 +42,31 @@ export default function SoundChat({projectId}: Props) {
     }, [leave]);
 
 
-
-    useEffect(() => {
-        window.addEventListener('beforeunload', leave);
-
-        return () => {
-            window.removeEventListener('beforeunload', leave);
-        };
-    }, [leave]);
-
+    const deleteSubscriber = useCallback((streamManager: StreamManager) => {
+        setSubscribers((prevSubscribers) => {
+            const index = prevSubscribers.indexOf(streamManager);
+            if (index > -1) {
+                const newSubscribers = [...prevSubscribers];
+                newSubscribers.splice(index, 1);
+                return newSubscribers;
+            } 
+                return prevSubscribers;
+            
+        });
+    }, []);
 
     const joinSession = async () => {
         if (!tokenData) return;
         if (!session) return;
         if (!OV) return;
-        console.log(tokenData);
-        session.on('streamCreated', event => {
-            const subscribers = session.subscribe(event.stream, '');
-            setSubscriber(subscribers);
+        session.on('streamCreated', (event) => {
+            const subscriber = session.subscribe(event.stream, undefined);
+            setSubscribers((temp) => [...temp, subscriber]);
         });
+        session.on('streamDestroyed', (event) => {
 
+            deleteSubscriber(event.stream.streamManager);
+        });
 
         await session.connect(tokenData.token)
             .then(() => {
@@ -92,7 +95,6 @@ export default function SoundChat({projectId}: Props) {
     };
 
 
-
     useEffect(() => {
         createSession();
         const fetchData = async () => {
@@ -118,8 +120,20 @@ export default function SoundChat({projectId}: Props) {
     return (
         <div>
             {session && (
-                <Session key={crypto.randomUUID()} publisher={publisher as Publisher} subscriber={subscriber as Subscriber}
-                />
+                <>
+                    {publisher &&
+                        <div>
+                            <Audio streamManager={publisher}/>
+                        </div>
+                    }
+                    {subscribers &&
+                        subscribers.map((subscriberItem, index) => (
+                            <div key={index}>
+                                <Audio streamManager={subscriberItem}/>
+                            </div>
+                        ))}
+
+                </>
             )}
         </div>
     );
