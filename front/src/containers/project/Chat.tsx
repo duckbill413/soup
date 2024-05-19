@@ -66,6 +66,7 @@ export default function Chat({projectId}: Props) {
             }
 
         })
+        if(!client)
         connect(projectId);
         return (() => {
             setIsVisible(false);

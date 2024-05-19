@@ -22,7 +22,7 @@ type Props = {
 }
 export default function Header({ theme, useVoice }: Props) {
   const { me } = useMemberStore()
-  const { localStreamManager, toggleAudio } = useAudioStore()
+  const { publisher, toggleAudio } = useAudioStore()
   const [open, setOpen] = useState(false)
 
   const handleMenu = () => {
@@ -48,7 +48,7 @@ export default function Header({ theme, useVoice }: Props) {
       </div>
       <div className={styles.assistant}>
         {useVoice &&
-          (localStreamManager?.stream.audioActive ? (
+          (publisher?.stream.audioActive ? (
             <Image
               onClick={toggleAudio}
               src={voicechat}

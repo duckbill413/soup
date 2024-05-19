@@ -1,31 +1,33 @@
-'use client'
-
 import React, { useState, useEffect } from 'react';
-import { Subscriber } from 'openvidu-browser';
+
+import { Publisher, Subscriber } from 'openvidu-browser';
 import Audio from './Audio';
 
 interface SessionProps {
     subscriber: Subscriber;
+    publisher: Publisher;
 }
 
-function Session({ subscriber }: SessionProps) {
+function Session({ subscriber, publisher }: SessionProps) {
     const [subscribers, setSubscribers] = useState<Subscriber[]>([]);
-
     useEffect(() => {
-        if (subscriber !== null) {
+        if (subscriber) {
             setSubscribers(prevSubscribers => [...prevSubscribers, subscriber]);
         }
     }, [subscriber]);
 
     const renderSubscribers = () => (
-        <div>
-            {subscribers.map((subscriberItem, index) => (
-                <div key={subscriberItem.stream.connection.connectionId || index}>
-                    <Audio streamManager={subscriberItem} />
+            <div >
+                <div>
+                    <Audio streamManager={publisher} />
                 </div>
-            ))}
-        </div>
-    );
+                {subscribers.map((subscriberItem,index) => (
+                    <div key={index}>
+                        <Audio streamManager={subscriberItem} />
+                    </div>
+                ))}
+            </div>
+        );
 
     return <>{renderSubscribers()}</>;
 }
