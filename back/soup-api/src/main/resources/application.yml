@@ -1,0 +1,195 @@
+## Server Configuration
+server:
+  port: 8080
+
+spring:
+  application:
+    name: soup-api
+  data:
+    jdbc:
+      repositories:
+        enabled: false
+    ## Redis Configuration
+    redis:
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT}
+      password: ${REDIS_PASSWORD}
+      repositories:
+        enabled: false
+    ## MongoDB Configuration
+    mongodb:
+      uri: mongodb+srv://${MONGODB_USER}:${MONGODB_PASSWORD}@${MONGODB_NAME}.mongodb.net/${MONGODB_DATABASE}?authSource=admin&retryWrites=true&w=majority
+
+  ## Database Configuration
+  datasource:
+    hikari:
+      maximum-pool-size: 20
+    url: jdbc:postgresql://${POSTGRESQL_URL}/${POSTGRESQL_DATABASE}
+    username: ${POSTGRESQL_USER}
+    password: ${POSTGRESQL_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+  ## JPA/Hibernate Configuration
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+    defer-datasource-initialization: true
+    generate-ddl: true
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${GMAIL_USERNAME}
+    password: ${GMAIL_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          timeout: 5000
+          starttls:
+            enable: true
+
+  ## OAuth 2.0
+  security:
+    oauth2:
+      client:
+        registration: # 어떤 리소스 제공자의 클라이언트인가
+          kakao:
+            client-id: ${KAKAO_CLIENT_ID}
+            client-secret: ${KAKAO_CLIENT_SECRET}
+            scope: # 리소스 오너의 어떤 리소스(scope)가 필요한가
+              - profile_nickname
+              - account_email
+              - profile_image
+            client-name: kakao-login
+            authorization-grant-type: authorization_code # 고정 값
+            redirect-uri: ${KAKAO_BE_REDIRECT_URI} # BE로 redirect
+            client-authentication-method: client_secret_post # http method
+        provider: # 리소스 제공자(여기선 kakao)
+          kakao:
+            authorization-uri: https://kauth.kakao.com/oauth/authorize # 소셜 로그인 요청 시 여기로 redirect
+            token-uri: https://kauth.kakao.com/oauth/token # 카카오에 액세스 가능한 카카오 액세스 토큰을 받아오기 위한 주소
+            user-info-uri: https://kapi.kakao.com/v2/user/me # 유저 정보를 가져오기 위한 주소
+            user-name-attribute: id
+
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
+
+## social login
+social-login:
+  redirect-uri: ${SOCIAL_LOGIN_FE_REDIRECT_URI} # FE로 redirect (accessToken, refreshToken 붙여서)
+
+## JWT
+jwt:
+  secret:
+    key: ${JWT_SECRET_KEY}
+  expire-time:
+    access-token: ${ACCESS_TOKEN_DURATION}
+    refresh-token: ${REFRESH_TOKEN_DURATION}
+  issuer: ${JWT_ISSUER}
+
+logging:
+  level:
+    org:
+      springframework:
+        data:
+          mongodb:
+            core:
+              MongoTemplate: info
+
+## Springdoc Configuration
+springdoc:
+  api-docs:
+    path: /api/api-docs
+    groups:
+      enabled: true
+  swagger-ui:
+    path: /api/swagger-ui.html
+    enabled: true
+    groups-order: asc
+    tags-sorter: alpha
+    operations-sorter: alpha
+    display-request-duration: true
+    doc-expansion: none
+  cache:
+    disabled: true
+  override-with-generic-response: false
+  model-and-view-allowed: false
+  default-consumes-media-type: application/json
+  default-produces-media-type: application/json
+  group-configs:
+    - group: all-api
+      paths-to-match:
+        - /**
+      paths-to-exclude:
+        - /favicon.ico
+        - /health
+    - group: jwt-api
+      paths-to-match:
+        - /api/**
+  show-actuator: true
+
+## AWS S3 Configuration
+cloud:
+  aws:
+    region:
+      static: ap-northeast-2
+    credentials:
+      accessKey: ${AWS_ACCESS_KEY}
+      secretKey: ${AWS_SECRET_KEY}
+    s3:
+      bucket: soup-bucket
+
+management:
+  server:
+    port: 8080
+  health:
+    mail:
+      enabled: false
+  endpoints:
+    web:
+      base-path: /api/actuator
+  endpoint:
+    health:
+      show-details: always # 상세 정보 표시
+      status:
+        http-mapping:
+          down: 500 # server down 시 에러 정보
+          out_of_service: 503
+        order: DOWN, FATAL, OUT-OF-SERVICE, UNKNOWN, UP
+
+# Claude
+claude:
+  api-key: ${CLAUDE_API_KEY}
+  anthropic-version: 2023-06-01
+
+# Feign
+feign:
+  claude:
+    name: claude
+    url: https://api.anthropic.com
+
+# Liveblocks
+liveblocks:
+  base-url: https://api.liveblocks.io/v2
+  secret-key: ${LIVEBLOCKS_SECRET_KEY}
+
+# Openvidu Configuration
+openvidu:
+  url: ${OPENVIDU_SERVER_URL} #https://your-openvidu-server.com
+  secret: ${OPENVIDU_SECRET_KEY}
+
+# Spring Builder Root Path
+springbuilder:
+  source-path: ${PROJECT_SOURCE_PATH}
+  domain-path: ${PROJECT_DOMAIN_PATH}
+  global-path: ${PROJECT_GLOBAL_PATH}
+  build-path: ${FILE_WRITE_PATH}

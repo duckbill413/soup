@@ -1,0 +1,95 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '3.2.5'
+    id 'io.spring.dependency-management' version '1.1.4'
+}
+
+group = 'io.ssafy'
+version = '0.0.1-SNAPSHOT'
+
+java {
+    sourceCompatibility = '17'
+}
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+    testImplementation 'org.projectlombok:lombok:1.18.26'
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+    testAnnotationProcessor 'org.projectlombok:lombok'
+
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.security:spring-security-test'
+
+    // security
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+    testImplementation 'org.springframework.security:spring-security-test'
+
+    // jwt
+    implementation 'io.jsonwebtoken:jjwt-api:0.12.3'
+    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.3'
+    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.3'
+
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    runtimeOnly 'org.postgresql:postgresql'
+
+    // https://mvnrepository.com/artifact/org.modelmapper/modelmapper
+    implementation 'org.modelmapper:modelmapper:3.2.0'
+
+    // https://mvnrepository.com/artifact/com.google.code.gson/gson
+    implementation 'com.google.code.gson:gson:2.10.1'
+
+    // swagger - springdoc
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.2'
+    implementation 'org.springdoc:springdoc-openapi-starter-common:2.0.2'
+    implementation 'org.springdoc:springdoc-openapi-ui:1.6.15'
+
+    implementation 'org.springframework.boot:spring-boot-starter-mail'
+
+    // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-actuator
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+
+    // https://mvnrepository.com/artifact/com.konghq/unirest-java
+    implementation 'com.konghq:unirest-java:3.14.5'
+
+    // openFeign
+    implementation 'org.springframework.cloud:spring-cloud-starter-openfeign:4.1.1'
+
+    // AWS s3
+    implementation 'com.amazonaws:aws-java-sdk-s3:1.12.681'
+
+    // openvidu
+    implementation 'io.openvidu:openvidu-java-client:2.28.0'
+
+    // file io
+    implementation 'commons-io:commons-io:2.11.0'
+
+
+    // WebSocket : WebSocket 연결을 편리하게 도와준다
+    implementation 'org.springframework.boot:spring-boot-starter-websocket'
+//    implementation("org.springframework.security:spring-security-messaging")
+
+    // Jackson이 Java 8의 날짜/시간 타입인 LocalDateTime을 처리하기 위해 필요
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
+
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
