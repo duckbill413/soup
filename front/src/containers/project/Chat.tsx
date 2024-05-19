@@ -23,7 +23,7 @@ const SVG_SIZE = 90
 
 export default function Chat({projectId}: Props) {
 
-    const {connect,  client,setChatList,isVisible,setIsVisible} = useMessageSocketStore();
+    const {connect,disconnect,  client,setChatList,isVisible,setIsVisible} = useMessageSocketStore();
     const {setMembers,setMe,setChatMembers,} = useMemberStore();
     const {setSenders} = useMentionStore();
     const {setIsConnected,setJiraMembers,isConnected,jiraMembers,setJiraInfo} = useJiraStore();
@@ -74,7 +74,10 @@ export default function Chat({projectId}: Props) {
 
         return (() => {
             setIsVisible(false);
+            if(client){
+            disconnect(client);
 
+            }
             if (prevClient) {
                 prevClient.unsubscribe(projectId);
             }

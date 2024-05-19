@@ -1,7 +1,4 @@
-export const FuncTitle = [
-  `Step1. 세부 내용 작성하기`,
-  `Step2. Jira 연동하기`
-]
+export const FuncTitle = [`Step1. 세부 내용 작성하기`, `Step2. Jira 연동하기`]
 
 export const FuncText = [
   `

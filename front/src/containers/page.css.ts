@@ -34,15 +34,16 @@ export const loading = style({
     bottom:0,
     zIndex:'10',
 })
-globalStyle(`${loading} > *`, {
-    position: 'absolute',
-    left:'40%',
-})
-globalStyle(`${content} >div`, {
+export const projectHeader = style({
     display: 'flex',
     justifyContent: 'space-between',
     alignItems:'center',
 })
+globalStyle(`${loading} > *`, {
+    position: 'absolute',
+    left:'40%',
+})
+
 globalStyle(`${content} >div>p`, {
     fontWeight: 'bold',
     fontSize: vars.fontSize.t4
