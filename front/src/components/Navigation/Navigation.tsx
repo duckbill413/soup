@@ -19,7 +19,7 @@ export default function Navigation() {
 
   const iconPathMapping = [
     { icon: outline, path: '/outline', name: '개요' },
-    { icon: plan, path: '/plan', name: '계획서' },
+    { icon: plan, path: '/plan', name: '기획서' },
     { icon: func, path: '/func', name: '기능' },
     { icon: flow, path: '/flow', name: '차트' },
     { icon: ERD, path: '/erd', name: 'ERD' },

@@ -11,7 +11,7 @@ export default function FlowChart() {
         <Room>
             <Live>
                 <StepTitleWithGuide
-                    stepNum={3}
+                    stepNum={4}
                     title="Flow Chart"
                     desc="서비스 주요 로직을 도식화하세요."
                     guideTitle="플로우 차트 작성 가이드"
