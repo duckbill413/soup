@@ -30,7 +30,7 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
-    show-sql: true
+    show-sql: false
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
@@ -101,7 +101,7 @@ logging:
         data:
           mongodb:
             core:
-              MongoTemplate: DEBUG
+              MongoTemplate: info
 
 ## Springdoc Configuration
 springdoc:
