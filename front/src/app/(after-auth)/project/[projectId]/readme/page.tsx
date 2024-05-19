@@ -1,5 +1,5 @@
 import Room from '@/app/(after-auth)/project/[projectId]/readme/Room'
-import { StepTitle } from '@/components/StepTitle/StepTitle'
+import { StepTitleWithGuide } from '@/components/StepTitle/StepTitle'
 import Live from '@/components/cursor/Live'
 import { Metadata } from 'next'
 import dynamic from 'next/dynamic'
@@ -20,10 +20,11 @@ export default function ReadMe({ params }: Props) {
   return (
     <Room>
       <Live>
-        <StepTitle
-          stepNum={8}
+        <StepTitleWithGuide
+          stepNum={7}
           title="README"
           desc="프로젝트 기획, 설계 부분의 REDAME.md를 작성해보세요."
+          guideTitle="README 작성 가이드"
         />
         <ToastEditor projectId={projectId} />
       </Live>
