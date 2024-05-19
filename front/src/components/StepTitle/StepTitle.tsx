@@ -9,6 +9,7 @@ import { StepTitleProps } from '@/types/step'
 import { useState } from 'react'
 import { FlowChartText, FlowChartTitle } from '@/components/GuideModal/text/FlowChartGuide'
 import { AiPlanText, AiPlanTitle } from '@/components/GuideModal/text/AiPlanGuide'
+import { ERDTitle,ERDText } from '@/components/GuideModal/text/ERDGuide'
 
 export function StepTitle({ stepNum, title, desc, children }: StepTitleProps) {
   return (
@@ -48,10 +49,13 @@ export function StepTitleWithGuide({
         setGuideContent({ titleList: AiPlanTitle, textList: AiPlanText})
         break
       case '기능 명세서 작성 가이드':
-        // setGuideContent(<FuncGuide />)
+         // setGuideContent()
         break
       case '플로우 차트 작성 가이드':
         setGuideContent({ titleList: FlowChartTitle, textList: FlowChartText })
+        break
+      case 'ERD 가이드':
+        setGuideContent({ titleList: ERDTitle, textList: ERDText  })
         break
       case 'API 명세서 작성 가이드':
         setGuideContent({ titleList: APITitle, textList: APIText })
