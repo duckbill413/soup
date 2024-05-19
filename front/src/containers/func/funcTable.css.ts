@@ -3,6 +3,7 @@ import vars from '@/styles/variables.css'
 
 export const container = style({
 
+  height:'64vh',
 });
 
 export const table = style({
