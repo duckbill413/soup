@@ -4,8 +4,10 @@ import io.ssafy.soupapi.global.common.code.ErrorCode;
 import io.ssafy.soupapi.global.common.response.ErrorResponse;
 import io.ssafy.soupapi.global.security.exception.AccessTokenException;
 import io.ssafy.soupapi.global.security.exception.RefreshTokenException;
-import kong.unirest.HttpStatus;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.BindingResult;
@@ -48,7 +50,7 @@ public class GlobalControllerAdvice {
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<ErrorResponse> handleAccessDeniedExceptionHandler(AccessDeniedException e) {
         log.info("handleAccessDeniedExceptionHandler에 오셨습니다.");
-        var response = ErrorResponse.fail(HttpStatus.UNAUTHORIZED, "UNAUTHORIZED", e.getMessage());
+        var response = ErrorResponse.fail(HttpStatus.UNAUTHORIZED.value(), "UNAUTHORIZED", e.getMessage());
         return ResponseEntity.status(response.status()).body(response);
     }
 
@@ -82,7 +84,9 @@ public class GlobalControllerAdvice {
         log.info("handleRuntimeExceptions에 오셨습니다.");
         e.printStackTrace();
         var response = ErrorResponse.fail(ErrorCode.INTERNAL_SERVER_ERROR, e.getLocalizedMessage());
-        return ResponseEntity.status(response.status()).body(response);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        return ResponseEntity.status(response.status()).headers(headers).body(response);
     }
 
     /**
@@ -96,7 +100,8 @@ public class GlobalControllerAdvice {
         log.info("handleAllExceptions에 오셨습니다.");
         e.printStackTrace();
         var response = ErrorResponse.fail(ErrorCode.INTERNAL_SERVER_ERROR, e.getMessage());
-
-        return ResponseEntity.status(response.status()).body(response);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        return ResponseEntity.status(response.status()).headers(headers).body(response);
     }
 }
