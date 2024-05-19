@@ -1,5 +1,5 @@
 import Room from '@/app/(after-auth)/project/[projectId]/erd/Room'
-import { StepTitle } from '@/components/StepTitle/StepTitle'
+import {StepTitleWithGuide} from '@/components/StepTitle/StepTitle'
 import Live from '@/components/cursor/Live'
 import ERDDrawing from '@/containers/erd/ERDDrawing'
 import * as styles from '@/containers/erd/erd.css'
@@ -17,7 +17,8 @@ export default function ERD({ params }: Props) {
   return (
     <Room>
       <Live>
-        <StepTitle stepNum={5} title="ERD" desc="데이터베이스를 설계하세요" />
+        <StepTitleWithGuide stepNum={5} title="ERD" desc="데이터베이스를 설계하세요"
+                            guideTitle="ERD 가이드"/>
         <div className={styles.container}>
           <ERDDrawing projectId={projectId} />
         </div>
