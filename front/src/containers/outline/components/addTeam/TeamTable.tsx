@@ -4,6 +4,8 @@ import { getProjectMembers } from '@/apis/member/memberAPI'
 import { useParams } from 'next/navigation'
 import { TeamMember } from '@/containers/outline/types/outlineAPI'
 import Image from 'next/image'
+import useMentionStore from "@/stores/useMentionStore";
+import useMemberStore from "@/stores/useMemberStore";
 import { useStorage } from '../../../../../liveblocks.config'
 
 interface Props {
@@ -13,10 +15,20 @@ interface Props {
 function TeamTable ({showModal}: Props) {
   const {projectId} = useParams()
   const [members, setMembers] = useState<TeamMember[]>([]);
+  const {setSenders} = useMentionStore();
+  const {setChatMembers} =useMemberStore();
   const teamStorage = useStorage((root)=>root.outline)
 
   useEffect (()=> {
-    getProjectMembers(`${projectId}`).then(data => {setMembers(data)})
+    getProjectMembers(`${projectId}`).then(data => {
+        setMembers(data);
+        setChatMembers(data);
+        setSenders(data.map(member=>({
+                memberId:member.id,
+                nickname:member.nickname,
+                profileImageUrl:member.profileImageUrl
+            })));
+    })
   },[projectId, showModal])
 
   const getRolesByEmail = (email: string) => {
