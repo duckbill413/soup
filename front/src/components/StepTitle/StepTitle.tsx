@@ -10,6 +10,7 @@ import { useState } from 'react'
 import { FlowChartText, FlowChartTitle } from '@/components/GuideModal/text/FlowChartGuide'
 import { AiPlanText, AiPlanTitle } from '@/components/GuideModal/text/AiPlanGuide'
 import { ERDTitle,ERDText } from '@/components/GuideModal/text/ERDGuide'
+import { FuncText, FuncTitle } from '@/components/GuideModal/text/FuncGuide'
 
 export function StepTitle({ stepNum, title, desc, children }: StepTitleProps) {
   return (
@@ -49,7 +50,7 @@ export function StepTitleWithGuide({
         setGuideContent({ titleList: AiPlanTitle, textList: AiPlanText})
         break
       case '기능 명세서 작성 가이드':
-         // setGuideContent()
+         setGuideContent({ titleList: FuncTitle, textList: FuncText })
         break
       case '플로우 차트 작성 가이드':
         setGuideContent({ titleList: FlowChartTitle, textList: FlowChartText })
