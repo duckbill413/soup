@@ -66,7 +66,7 @@ export default function AfterAuth() {
           {loading && <div className={styles.loading}><Loading/></div>}
           <Header theme="black" useVoice={false}/>
           <div className={styles.content}>
-              <div>
+              <div className={styles.projectHeader}>
                   <p>내 프로젝트</p>
                   <span>
                         <button type='button' onClick={handleInvite}>초대 코드</button>
