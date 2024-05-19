@@ -1,10 +1,15 @@
 import { StepTitleWithGuide } from '@/components/StepTitle/StepTitle'
 import Live from '@/components/cursor/Live'
-import { Metadata, RadioSection } from '@/containers/build'
+import { Metadata as BuildMetadata, RadioSection } from '@/containers/build'
 import Dependencies from '@/containers/build/components/Dependencies'
 import Generate from '@/containers/build/components/Generate'
 import * as styles from '@/containers/build/styles/page.css'
+import { Metadata } from 'next'
 import Room from './Room'
+
+export const metadata: Metadata = {
+  title: '프로젝트 빌드',
+}
 
 export default function Build() {
   return (
@@ -21,7 +26,7 @@ export default function Build() {
             <RadioSection />
             <hr className={styles.line} />
             <section className={styles.row}>
-              <Metadata />
+              <BuildMetadata />
               <Dependencies />
             </section>
           </div>

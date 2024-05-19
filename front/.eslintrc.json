@@ -12,6 +12,8 @@
     "react/react-in-jsx-scope": "off",
     "react/jsx-props-no-spreading": "off",
     "react/no-array-index-key": "off",
+    "react/no-unstable-nested-components": "off",
+    "react/no-children-prop": "off",
     "import/no-extraneous-dependencies": "off",
     "react/require-default-props": "off",
     "jsx-a11y/label-has-associated-control": [

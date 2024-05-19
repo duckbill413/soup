@@ -152,6 +152,7 @@ export default function QueryTable({ idx }: Props) {
               (result, item) => result + (item.colSpan ? item.colSpan - 1 : 0),
               queryTableHeaders.length,
             )}
+            onClick={addRow}
           >
             등록된 Query Parameter가 없습니다.
           </td>

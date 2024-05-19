@@ -1,9 +1,16 @@
-import dynamic from 'next/dynamic';
-import {StepTitleWithGuide} from '@/components/StepTitle/StepTitle'
-import Room from "@/app/(after-auth)/project/[projectId]/flow/Room";
-import Live from "@/components/cursor/Live";
+import Room from '@/app/(after-auth)/project/[projectId]/flow/Room'
+import { StepTitleWithGuide } from '@/components/StepTitle/StepTitle'
+import Live from '@/components/cursor/Live'
+import { Metadata } from 'next'
+import dynamic from 'next/dynamic'
 
-const Mermaid = dynamic(() => import('@/containers/flow/Mermaid'), {ssr: false});
+export const metadata: Metadata = {
+  title: '플로우 차트',
+}
+
+const Mermaid = dynamic(() => import('@/containers/flow/Mermaid'), {
+  ssr: false,
+})
 
 export default function FlowChart() {
 

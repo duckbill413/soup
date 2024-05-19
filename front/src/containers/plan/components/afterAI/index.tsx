@@ -1,6 +1,7 @@
 'use client'
 
 import Loading from '@/app/loading'
+import * as styles from '@/containers/plan/styles/plan.css'
 import { useMutation, useStorage } from '../../../../../liveblocks.config'
 
 function PlanAfterAI () {
@@ -10,10 +11,10 @@ function PlanAfterAI () {
     target?.set(field, newValue)
   }, [])
 
-  if(initialProject?.before.project_using===true) {return <Loading/>}
+  if(initialProject?.before.project_using===true) {return (<div className={styles.afterAI}><Loading/></div>)}
   
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', width: '40%' }}>
+    <div className={styles.afterAI}>
       <p>기획 배경</p>
       <textarea value={initialProject?.after.project_background}
                 onChange={(e) => updateValue('project_background', e.target.value)}/>
