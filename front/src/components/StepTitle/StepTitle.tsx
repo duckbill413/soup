@@ -7,6 +7,8 @@ import { BuildText, BuildTitle } from '@/components/GuideModal/text/BuildGuide'
 import * as styles from '@/components/StepTitle/stepTitle.css'
 import { StepTitleProps } from '@/types/step'
 import { useState } from 'react'
+import { FlowChartText, FlowChartTitle } from '@/components/GuideModal/text/FlowChartGuide'
+import { AiPlanText, AiPlanTitle } from '@/components/GuideModal/text/AiPlanGuide'
 
 export function StepTitle({ stepNum, title, desc, children }: StepTitleProps) {
   return (
@@ -43,13 +45,13 @@ export function StepTitleWithGuide({
     }
     switch (guideTitle) {
       case '기획서 작성 가이드':
-        // setGuideContent(<AiPlanGuide />)
+        setGuideContent({ titleList: AiPlanTitle, textList: AiPlanText})
         break
       case '기능 명세서 작성 가이드':
         // setGuideContent(<FuncGuide />)
         break
       case '플로우 차트 작성 가이드':
-        // setGuideContent(<FlowChartGuide />)
+        setGuideContent({ titleList: FlowChartTitle, textList: FlowChartText })
         break
       case 'API 명세서 작성 가이드':
         setGuideContent({ titleList: APITitle, textList: APIText })
