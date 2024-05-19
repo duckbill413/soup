@@ -23,7 +23,7 @@ const SVG_SIZE = 90
 
 export default function Chat({projectId}: Props) {
 
-    const {connect, disconnect, client,setChatList,isVisible,setIsVisible} = useMessageSocketStore();
+    const {connect,  client,setChatList,isVisible,setIsVisible} = useMessageSocketStore();
     const {setMembers,setMe,setChatMembers,} = useMemberStore();
     const {setSenders} = useMentionStore();
     const {setIsConnected,setJiraMembers,isConnected,jiraMembers,setJiraInfo} = useJiraStore();
@@ -58,7 +58,7 @@ export default function Chat({projectId}: Props) {
         });
         getJiraInfo(projectId).then(data=>{
             setJiraInfo(data);
-            if(data.jiraHost) {
+            if(data && data.jiraHost) {
                 getJiraMembers(projectId).then(jiraData => {
                     setJiraMembers(convertJiraMembers(jiraData));
                     setIsConnected(true);
@@ -66,17 +66,23 @@ export default function Chat({projectId}: Props) {
             }
 
         })
-        if(!client)
-        connect(projectId);
+
+        const prevClient = client;
+        if(!client){
+            connect(projectId);
+        }
+
         return (() => {
             setIsVisible(false);
-            if (client) {
-                disconnect(client);
+
+            if (prevClient) {
+                prevClient.unsubscribe(projectId);
             }
+
         });
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [projectId,connect]);
+    }, [projectId,connect,client]);
 
     useEffect(() => {
         setMembers(jiraMembers);

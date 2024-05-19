@@ -1,16 +1,17 @@
 import baseAxios from '@/apis/baseAxios'
-import {JiraInfoRes, JiraMembersRes} from "@/containers/func/types/jira";
+import { JiraMembersRes} from "@/containers/func/types/jira";
 
 const handleApiError = (message:any, error:any) => {
     console.error(`${message}: `, error);
     throw new Error(message);
 };
-export const getJiraInfo = async (projectId:string): Promise<JiraInfoRes> => {
+export const getJiraInfo = async (projectId:string) => {
     try {
         const response = await baseAxios.get(`/projects/${projectId}/info/jira`)
         return response.data.result;
     } catch (error) {
-        return handleApiError('지라 인포 불러오기 실패 : ', error)
+        console.log("지라없음");
+        return undefined;
     }
 }
 
