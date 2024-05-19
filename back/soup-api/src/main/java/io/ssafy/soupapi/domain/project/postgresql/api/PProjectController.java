@@ -13,10 +13,9 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -44,6 +43,19 @@ public class PProjectController {
         return BaseResponse.success(
                 SuccessCode.SELECT_SUCCESS,
                 pProjectService.findSimpleProjects(pageOffset, userSecurityDTO)
+        );
+    }
+
+    @Operation(summary = "프로젝트 삭제 API", description = "프로젝트 관리자만 삭제 가능")
+    @DeleteMapping("/{projectId}")
+    @PreAuthorize("@authService.hasPrimaryProjectRoleMember(#projectId, #userSecurityDTO.getId())")
+    public ResponseEntity<BaseResponse<String>> deleteProject(
+            @PathVariable String projectId,
+            @AuthenticationPrincipal UserSecurityDTO userSecurityDTO
+    ) {
+        return BaseResponse.success(
+                SuccessCode.DELETE_SUCCESS,
+                pProjectService.deleteProject(projectId)
         );
     }
 }

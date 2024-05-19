@@ -18,4 +18,6 @@ public interface PProjectService {
     void updateProjectInfo(String projectId, UpdateProjectInfo updateProjectInfo);
 
     void changeProjectImage(String projectId, UpdateProjectImage updateProjectImage);
+
+    String deleteProject(String projectId);
 }
