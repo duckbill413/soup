@@ -23,8 +23,7 @@ public class ProjectStructureRepositoryImpl implements ProjectStructureRepositor
     public Map<String, Object> findProjectStructure(String projectId, GetProjectBuilderInfo builderInfo) {
         String domainPath = getAbsoluteDomainPath(projectId, builderInfo.name(), builderInfo.packageName());
 
-        Map<String, Object> structure = new LinkedHashMap<>();
-
+        Map<String, Object> structure = new TreeMap<>();
         // domain folder 에서 시작
         File domainFolder = new File(domainPath);
         searchStructure(domainFolder, structure);
@@ -39,9 +38,10 @@ public class ProjectStructureRepositoryImpl implements ProjectStructureRepositor
                     var folderName = folder.getName();
                     // request, response 폴더 인지 확인
                     if (List.of("request", "response").contains(folderName)) {
-                        List<Object> subStructure = new ArrayList<>();
+                        List<ClassFileInfo> subStructure = new ArrayList<>();
                         ((Map<String, Object>) structure).put(folder.getName(), subStructure);
                         searchStructure(folder, subStructure);
+                        Collections.sort(subStructure);
                     } else if (List.of("api", "application", "dao", "entity").contains(folderName)) {
                         File[] subFiles = folder.listFiles(File::isFile);
                         assert subFiles != null;
@@ -58,7 +58,7 @@ public class ProjectStructureRepositoryImpl implements ProjectStructureRepositor
                             }
                         }
                     } else {
-                        Map<String, Object> subStructure = new LinkedHashMap<>();
+                        Map<String, Object> subStructure = new TreeMap<>();
                         ((Map<String, Object>) structure).put(folder.getName(), subStructure);
                         searchStructure(folder, subStructure);
                     }
@@ -69,7 +69,7 @@ public class ProjectStructureRepositoryImpl implements ProjectStructureRepositor
             if (Objects.isNull(files) || files.length == 0) {
                 return;
             }
-            ((List<Object>) structure).addAll(Arrays.stream(files).map(file ->
+            ((List<ClassFileInfo>) structure).addAll(Arrays.stream(files).map(file ->
                     {
                         // java 파일이 아닌 경우 읽지 않음
                         if (!BuildFileUtil.getFileExtension(file).equals("java")) {
