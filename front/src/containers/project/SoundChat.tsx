@@ -73,7 +73,7 @@ export default function SoundChat({projectId}: Props) {
                 if (OV) {
                     const publishers = OV.initPublisher(undefined, {
                         videoSource: false,
-                        publishAudio: true,
+                        publishAudio: false,
                     });
                     setPublisher(publishers);
                     session
