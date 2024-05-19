@@ -36,7 +36,7 @@ export const chatModal = style({
   backgroundColor: vars.color.white,
   boxShadow: 'rgba(0, 0, 0, 0.24) 0px 3px 8px',
   borderRadius: '3px',
-  zIndex:100
+  zIndex:1,
 })
 
 export const chatModalAnimation = styleVariants({
@@ -79,6 +79,7 @@ export const hidden = style({
 })
 globalStyle(`${chatModalContent.background} > div`, {
   padding: vars.space.small,
+
 })
 globalStyle(`${chatModalContent.send} > div`, {
   width: '100%',
