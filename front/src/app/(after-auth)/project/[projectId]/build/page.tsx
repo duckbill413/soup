@@ -17,7 +17,7 @@ export default function Build() {
       <Live>
         <div>
           <StepTitleWithGuide
-            stepNum={7}
+            stepNum={8}
             title="Build"
             desc="ERD와 API 명세서를 기반으로 프로젝트를 빌드합니다."
             guideTitle="빌드 가이드"

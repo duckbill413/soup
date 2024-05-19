@@ -11,6 +11,7 @@ import { FlowChartText, FlowChartTitle } from '@/components/GuideModal/text/Flow
 import { AiPlanText, AiPlanTitle } from '@/components/GuideModal/text/AiPlanGuide'
 import { ERDTitle,ERDText } from '@/components/GuideModal/text/ERDGuide'
 import { FuncText, FuncTitle } from '@/components/GuideModal/text/FuncGuide'
+import { ReadMeText, ReadMeTitle } from '@/components/GuideModal/text/ReadMeGuide'
 
 export function StepTitle({ stepNum, title, desc, children }: StepTitleProps) {
   return (
@@ -63,6 +64,9 @@ export function StepTitleWithGuide({
         break
       case '빌드 가이드':
         setGuideContent({ titleList: BuildTitle, textList: BuildText })
+        break
+      case 'README 작성 가이드':
+        setGuideContent({ titleList: ReadMeTitle, textList: ReadMeText })
         break
       default:
         setGuideContent({ titleList: null, textList: null })
