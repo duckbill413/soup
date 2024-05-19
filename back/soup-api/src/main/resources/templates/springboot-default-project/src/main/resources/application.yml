@@ -1,0 +1,25 @@
+server:
+  port: 8080
+
+spring:
+  data:
+    jdbc:
+      repositories:
+        enabled: false
+  datasource:
+    url: { { datasource-url } }
+    username: { { datasource-username } }
+    password: { { datasource-password } }
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+    defer-datasource-initialization: true
+    generate-ddl: true
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
