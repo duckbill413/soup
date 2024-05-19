@@ -44,15 +44,7 @@ export default function SoundChat({projectId}: Props) {
     }, [leave]);
 
 
-    useEffect(() => {
-        if (session === '') return;
 
-        session.on('streamDestroyed', event => {
-            if (subscriber && event.stream.streamId === subscriber.stream.streamId) {
-                setSubscriber(null);
-            }
-        });
-    }, [subscriber, session]);
     useEffect(() => {
         window.addEventListener('beforeunload', leave);
 
@@ -62,15 +54,6 @@ export default function SoundChat({projectId}: Props) {
     }, [leave]);
 
 
-    useEffect(() => {
-        if (session === '') return;
-
-        session.on('streamDestroyed', event => {
-            if (subscriber && event.stream.streamId === subscriber.stream.streamId) {
-                setSubscriber(null);
-            }
-        });
-    }, [subscriber, session]);
     const joinSession = async () => {
         if (!tokenData) return;
         if (!session) return;
@@ -87,7 +70,7 @@ export default function SoundChat({projectId}: Props) {
                 if (OV) {
                     const publishers = OV.initPublisher(undefined, {
                         videoSource: false,
-                        publishAudio: false,
+                        publishAudio: true,
                     });
                     setPublisher(publishers);
                     session
