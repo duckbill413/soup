@@ -1,0 +1,79 @@
+import vars from '@/styles/variables.css';
+import { style, globalStyle } from '@vanilla-extract/css';
+
+export const jiraMainDiv = style ({
+  display: 'flex'
+})
+
+export const jiraSubDiv = style ({
+  width: '18%',
+  marginRight:'3%'
+})
+
+export const toggleSwitch = style({
+  width: '60px',
+  height: '30px',
+  backgroundColor: '#ccc',
+  borderRadius: '15px',
+  position: 'relative',
+  cursor: 'pointer',
+  marginLeft: '10px'
+});
+
+export const slider = style({
+  width: '30px',
+  height: '30px',
+  backgroundColor: '#533C00',
+  borderRadius: '50%',
+  position: 'absolute',
+  top: 0,
+  transition: 'transform 0.3s ease'
+});
+
+globalStyle(`${toggleSwitch}.toggled`, {
+  backgroundColor: '#4caf50'
+});
+
+globalStyle(`${toggleSwitch}.toggled .${slider}`, {
+  transform: 'translateX(30px)'
+});
+
+export const mainDiv = style ({
+  display:'flex',
+  alignItems:'center'
+})
+
+export const toggleDiv = style ({
+  display:'flex',
+  alignItems:'center'
+})
+
+export const input = style ({
+  width:'16%',
+  padding:'1%',
+  marginRight:'3%',
+  backgroundColor:'#F4F4F4',
+  boxShadow:vars.boxShadow.customInner,
+  border:'none',
+  borderRadius:'10px',
+})
+
+export const button = style({
+  margin:'3%',
+  marginLeft:'74%',
+  width:"7%",
+  height:'45px',
+  borderRadius:'10px',
+  backgroundColor:'#FF7E20',
+  color:'white',
+  textAlign:'center',
+  boxShadow: '0 4px #C65102',
+  transition: 'all 0.3s ease',
+  ':hover': {
+    backgroundColor: '#E76E0A',
+  },
+  ':active': {
+    boxShadow: '0 2px #D15C00',
+    transform: 'translateY(3px)'
+  }
+})
