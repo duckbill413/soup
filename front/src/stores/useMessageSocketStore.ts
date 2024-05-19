@@ -44,7 +44,7 @@ export const useMessageSocketStore = create<Store>((set) => ({
             clientdata.subscribe(`/sub/chatrooms/${projectId}`, (message: any) => {
                 const chatRes: ChatRes = JSON.parse(message.body);
                 set((state) => ({ ...state, chatList: [...state.chatList, chatRes] }));
-            });
+            },{ id: projectId});
 
         };
 

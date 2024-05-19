@@ -19,12 +19,12 @@ export default function ChatContent({chatMessageId,header, me, message, nickname
             
         });
     };
-    return(<div className={`a${chatMessageId}`} key={chatMessageId}>
+    return(<div className={`a${chatMessageId}`} key={crypto.randomUUID()}>
             <div className={styles.chatHeader}>
                 {header === new Date().toISOString().slice(0, 10) &&
                     <span className={styles.hrSect}>{dayjs(header).format('MM-DD')}</span>}
                 {(header !== new Date().toISOString().slice(0, 10) && header) &&
-                    <span className={styles.hrSect}>오늘</span>}
+                    <span className={styles.hrSect}>{dayjs(header).format('MM-DD')}</span>}
             </div>
             {!me ?
                 <div
