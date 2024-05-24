@@ -205,7 +205,6 @@
 
 
 
-
 ## 팀원 소개
 
 |                  **정우현**<br /> Back-end                  |              **유수안**<br />Back-end/Infra               |                  **이수현**<br />Back-end                  |                 **고석주**<br />Front-end                  |                  **정승원**<br />Front-end                   |             **최지우**<br />Front-end/Design              |
